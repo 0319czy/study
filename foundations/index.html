@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="工程基础:三门最小课——C 与工程工具、数字电路入门、Linux 用户态入门。" />
+  <title>工程基础 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .course { border: 1px solid #1e2a38; border-radius: 14px; padding: 20px; margin-bottom: 14px; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .course .head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .course .no { font-family: ui-monospace, Menlo, monospace; color: #5eead4; font-weight: 700; }
+    .course h3 { margin: 0; font-size: 17px; }
+    .course .desc { color: #8b9bb0; font-size: 13.5px; line-height: 1.75; margin: 8px 0 10px; }
+    .course .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .course .meta span { font-size: 12px; color: #8b9bb0; border: 1px solid #1e2a38; border-radius: 999px; padding: 2px 9px; font-family: ui-monospace, Menlo, monospace; }
+    .course .links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .course .links a { font-size: 12.5px; color: #7dd3fc; text-decoration: none; border: 1px solid #1e2a38; border-radius: 7px; padding: 4px 9px; }
+    .course .links a.primary { color: #06231f; background: #5eead4; border-color: #5eead4; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">FOUNDATIONS · 阶段 01</div>
+    <h1>工程基础:三门最小课</h1>
+    <p class="lead">
+      这是学习路线阶段 01 的内容。三课按顺序学:先能写 C 并编译调试,再看懂电平与采样,
+      最后在 Linux 用户态里读写文件、读串口、管进程。学完就进入采集监控项目 M0。
+    </p>
+
+    <div class="section">
+      <div class="course">
+        <div class="head"><span class="no">01</span><h3>C 与工程工具</h3><span class="pill ok">已上线</span></div>
+        <div class="desc">指针与数组、位操作、编译链接四个阶段、Git 基础、用 gdb / printf 调试。目标:能编译、调试并解释一个小工程。</div>
+        <div class="meta"><span>前置:无</span><span>成果:小工程可编译可调试</span><span>证据:principle + compiled</span></div>
+        <div class="links">
+          <a class="primary" href="/foundations/c/">开始学习 →</a>
+          <a href="/tools/">环境准备</a>
+        </div>
+      </div>
+
+      <div class="course">
+        <div class="head"><span class="no">02</span><h3>数字电路入门</h3><span class="pill ok">已上线</span></div>
+        <div class="desc">3.3V/5V 电平、上拉/下拉、按键去抖、采样与 ADC 量化、仪器使用。目标:能看懂接线图并解释电平与误差。</div>
+        <div class="meta"><span>前置:C 与工程工具</span><span>成果:能解释按键与 ADC 电路</span><span>证据:principle + simulated</span></div>
+        <div class="links">
+          <a class="primary" href="/foundations/circuits/">开始学习 →</a>
+          <a href="/foundations/c/">先复习 C</a>
+        </div>
+      </div>
+
+      <div class="course">
+        <div class="head"><span class="no">03</span><h3>Linux 用户态入门</h3><span class="pill ok">已上线</span></div>
+        <div class="desc">Shell 与权限、进程/线程与信号、文件 I/O、串口 termios(115200 8N1)、定时与日志。目标:能写设备端应用并读串口数据。</div>
+        <div class="meta"><span>前置:C 与工程工具</span><span>成果:能读串口、管进程</span><span>证据:compiled + simulated</span></div>
+        <div class="links">
+          <a class="primary" href="/foundations/linux-user/">开始学习 →</a>
+          <a href="/projects/collect/">进入项目 M0</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>学完这三门,你能做什么</h2>
+      <table>
+        <tr><th>能力</th><th>验收方式</th></tr>
+        <tr><td>编译并调试一个 C 小工程</td><td>能跑通示例、说出四个编译阶段产物</td></tr>
+        <tr><td>看懂传感器接线与电平</td><td>能判断上拉/下拉、解释 ADC 量化误差</td></tr>
+        <tr><td>在 Linux 上读串口并处理数据</td><td>能用 termios 程序读取模拟串口数据并统计</td></tr>
+        <tr><td>进入项目实战</td><td>完成 M0 采集:解释单位、采样周期、误差</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>课程证据标识</h2>
+      <table>
+        <tr><th>标识</th><th>含义</th></tr>
+        <tr><td><span class="pill">principle</span></td><td>原理示意与讲解,不代表真实运行结果</td></tr>
+        <tr><td><span class="pill ok">compiled</span></td><td>代码在指定工具链/版本下真实编译通过(页面写明命令与版本)</td></tr>
+        <tr><td><span class="pill ok">hardware</span></td><td>在具体型号硬件上实测通过(需用户实机验证,页面不冒充实测)</td></tr>
+        <tr><td><span class="pill warn">simulated</span></td><td>用模拟数据/教学模拟完成流程</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <p><a href="/route/">← 返回学习路线</a> · <a href="/projects/collect/">去项目 M0:传感器采集 →</a></p>
+    </div>
+  </main>
+</body>
+</html>

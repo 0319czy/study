@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="项目实战 M0 采集:多传感器采集与监控——能读到数据,并解释单位、采样周期与误差。" />
+  <title>M0 采集 · 多传感器采集与监控 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .box { border: 1px solid #1e2a38; border-radius: 14px; padding: 18px; margin-bottom: 14px; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .box h3 { margin: 0 0 10px; font-size: 16px; }
+    .kv { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0; }
+    .kv label { color: #8b9bb0; font-size: 13px; }
+    .kv input, .kv select { background: #0f151d; color: #e6edf3; border: 1px solid #1e2a38; border-radius: 8px; padding: 6px 10px; font-size: 13px; }
+    .out { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: #5eead4; background: #0b1117; border: 1px solid #16212c; border-radius: 8px; padding: 10px 12px; margin-top: 10px; white-space: pre-wrap; line-height: 1.7; }
+    .checklist label { display: flex; gap: 8px; align-items: flex-start; color: #c7d3df; font-size: 13.5px; line-height: 1.7; margin: 6px 0; }
+    .checklist input { margin-top: 4px; }
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin-bottom: 6px; }
+    .q .opt { display: block; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; cursor: pointer; }
+    .q .opt:hover { border-color: #2c4257; }
+    .q .opt.right { border-color: rgba(94,234,212,.5); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.5); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin-top: 4px; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    table.data { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
+    pre.code { background: #0b1117; border: 1px solid #16212c; border-radius: 10px; padding: 14px; overflow-x: auto; color: #c7d3df; font-size: 12.5px; line-height: 1.65; }
+    .tagline { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #8b9bb0; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">PROJECT M0 · 采集</div>
+    <h1>M0 采集:能读到数据,并解释它</h1>
+    <p class="lead">
+      多传感器采集与监控系统的第一阶段。目标不是"读出一个数",而是能说清楚:这个数的单位是什么、
+      多久采一次、误差从哪来。完成 M0 才进入 M1 通信。
+    </p>
+    <p class="muted">前置课程:<a href="/foundations/c/">C 与工程工具</a> · <a href="/foundations/circuits/">数字电路入门</a> · <a href="/foundations/linux-user/">Linux 用户态入门</a></p>
+
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>用 STM32 HAL 读取一路模拟传感器(电位器/光敏/热敏均可),输出原始 ADC 值与换算后的物理量</td></tr>
+        <tr><td>可检查结果</td><td>能解释:单位、采样周期、量化误差;能写出 ADC code 与电压的换算公式</td></tr>
+        <tr><td>证据标识</td><td><span class="pill">principle</span> 原理 · <span class="pill warn">simulated</span> 无板模拟 · <span class="pill">hardware-pending</span> 实物验证待你完成</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>2. 两种入口(成果必须区分)</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="t">无开发板:教学模拟</div>
+          <div class="d">用下面的 ADC 模拟器与样例数据完成 M0 的全部计算与检查项。成果标注"模拟验证"。</div>
+          <div class="tagline">simulated</div>
+        </div>
+        <div class="card">
+          <div class="t">有开发板:实物验证</div>
+          <div class="d">按接线表接好传感器,烧录 HAL 采集程序,用串口打印原始值,记录 3 组数据。成果标注"已硬件验证"并写明型号与版本。</div>
+          <div class="tagline">hardware(待你实测)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>3. 原理与接线</h2>
+      <p class="lead">ADC 把电压转成数字码:<code>code = round(Vin / Vref × (2^N − 1))</code>,反算 <code>Vin = code × Vref / (2^N − 1)</code>。</p>
+      <table>
+        <tr><th>参数</th><th>取值(以 STM32F103 为例)</th><th>说明</th></tr>
+        <tr><td>分辨率 N</td><td>12 位</td><td>量化台阶 Vref/4095</td></tr>
+        <tr><td>参考电压 Vref</td><td>3.3 V</td><td>决定量程与误差</td></tr>
+        <tr><td>采样周期</td><td>10 ms(100 Hz)</td><td>与任务周期一致,避免抖动</td></tr>
+        <tr><td>传感器分压</td><td>Vout = Vin × R2/(R1+R2)</td><td>注意阻抗匹配,ADC 输入阻抗有限</td></tr>
+      </table>
+      <pre class="code">接线(无板模式跳过;有板模式按下表):
+STM32F103 3V3  → 传感器 VCC
+STM32F103 GND  → 传感器 GND
+PA0 (ADC1_IN0) → 传感器信号输出
+注意:先共地,再上电;3.3V 传感器不要接 5V。</pre>
+    </div>
+
+    <div class="section">
+      <h2>4. 操作实验:ADC 采样模拟器</h2>
+      <p class="muted">改动输入,观察 code 与量化误差的变化(这就是无板模式的"读数")。</p>
+      <div class="box">
+        <div class="kv">
+          <label>Vref(V)</label><input id="vref" type="number" value="3.3" step="0.1" style="width:80px" />
+          <label>分辨率</label>
+          <select id="bits"><option value="8">8 位</option><option value="10">10 位</option><option value="12" selected>12 位</option></select>
+          <label>输入电压 Vin(V)</label><input id="vin" type="number" value="1.234" step="0.001" style="width:100px" />
+        </div>
+        <div class="out" id="adc-out">—</div>
+      </div>
+      <p class="muted" style="margin-top:8px">样例数据(模拟验证用,可直接复制到表格里算误差):</p>
+      <table class="data">
+        <tr><th>采样点</th><th>t(ms)</th><th>code(12 位, Vref=3.3V)</th><th>Vin(V)</th></tr>
+        <tr><td>1</td><td>0</td><td>1532</td><td>1.234</td></tr>
+        <tr><td>2</td><td>10</td><td>1540</td><td>1.241</td></tr>
+        <tr><td>3</td><td>20</td><td>1528</td><td>1.231</td></tr>
+        <tr><td>4</td><td>30</td><td>1545</td><td>1.245</td></tr>
+        <tr><td>5</td><td>40</td><td>1536</td><td>1.237</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>5. 代码骨架(STM32 HAL,principle)</h2>
+      <pre class="code">uint32_t adc_read(uint32_t ch)
+{
+    ADC_ChannelConfTypeDef sConfig = {0};
+    sConfig.Channel = ch;
+    sConfig.Rank = ADC_REGULAR_RANK_1;
+    sConfig.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
+    HAL_ADC_ConfigChannel(&amp;hadc1, &amp;sConfig);
+    HAL_ADC_Start(&amp;hadc1);
+    HAL_ADC_PollForConversion(&amp;hadc1, 10);
+    uint32_t code = HAL_ADC_GetValue(&amp;hadc1);
+    HAL_ADC_Stop(&amp;hadc1);
+    return code;
+}
+
+float to_voltage(uint32_t code)
+{
+    return (float)code * 3.3f / 4095.0f;
+}</pre>
+      <p class="muted">说明:此骨架为标准 HAL 调用模式,属 principle;需你在 STM32CubeMX 工程中编译(`hardware-pending` 实物验证)。</p>
+    </div>
+
+    <div class="section">
+      <h2>6. 结果检查(完成 M0 的标准)</h2>
+      <div class="checklist" id="checklist">
+        <label><input type="checkbox" /> 能说明传感器输出单位,以及 code → 电压 → 物理量的换算链</label>
+        <label><input type="checkbox" /> 能用模拟器算出 12 位 ADC 的量化台阶(3.3/4095 ≈ 0.806 mV)</label>
+        <label><input type="checkbox" /> 能解释为什么采样周期要用 10 ms,而不是"一有数据就采"</label>
+        <label><input type="checkbox" /> 能指出误差来源:量化误差、参考电压漂移、分压电阻误差、噪声</label>
+        <label><input type="checkbox" /> 无板:完成模拟器与样例数据核对;有板:完成 3 组实测并记录型号/版本</label>
+      </div>
+      <p class="muted" id="check-status">已完成 0 / 5</p>
+    </div>
+
+    <div class="section">
+      <h2>7. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>读数一直是 0</td><td>查 GND 是否共地、PA0 是否配置为模拟输入</td><td>GND 连通、PA0 = Analog</td><td>仍为 0 → 查 CubeMX ADC 时钟与通道</td></tr>
+        <tr><td>读数满量程(4095)</td><td>测传感器输出是否超过 3.3V</td><td>Vout ≤ 3.3V</td><td>超压 → 加分压或换 3.3V 传感器</td></tr>
+        <tr><td>读数跳动 ±20</td><td>查电源纹波、是否靠近电机/继电器</td><td>纹波 &lt; 10 mV</td><td>加滤波电容/软件中值滤波</td></tr>
+        <tr><td>换算后物理量不对</td><td>核对 Vref 是否为实测值、分压比取值</td><td>公式与实测吻合</td><td>用万用表实测 Vref 后重算</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>8. 小测</h2>
+      <div id="quiz"></div>
+      <p class="muted" id="quiz-status">答对 0 / 3</p>
+    </div>
+
+    <div class="section">
+      <h2>9. 下一步</h2>
+      <table>
+        <tr><th>下一步</th><th>内容</th><th>状态</th></tr>
+        <tr><td>M1 通信</td><td>定义串口帧格式,识别错误帧与超时</td><td><span class="pill warn">待建(第一批后续)</span></td></tr>
+        <tr><td>补充课程</td><td><a href="/foundations/linux-user/">Linux 用户态</a>(网关侧读串口)、<a href="/mcu/uart">MCU 站 UART</a></td><td><span class="pill ok">已有</span></td></tr>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var vref = document.getElementById('vref');
+      var bits = document.getElementById('bits');
+      var vin = document.getElementById('vin');
+      var out = document.getElementById('adc-out');
+
+      function renderAdc() {
+        var v = parseFloat(vref.value) || 3.3;
+        var n = parseInt(bits.value, 10) || 12;
+        var x = parseFloat(vin.value) || 0;
+        var max = Math.pow(2, n) - 1;
+        var clamped = Math.max(0, Math.min(x, v));
+        var code = Math.round(clamped / v * max);
+        var back = code * v / max;
+        var lsb = v / max;
+        out.textContent =
+          '量化台阶 LSB = ' + v + ' / ' + max + ' = ' + (lsb * 1000).toFixed(3) + ' mV\n' +
+          'code = round(' + clamped.toFixed(3) + ' / ' + v + ' × ' + max + ') = ' + code + '\n' +
+          '反算 Vin = ' + code + ' × ' + v + ' / ' + max + ' = ' + back.toFixed(4) + ' V\n' +
+          '量化误差 ≤ ±' + (lsb * 500).toFixed(3) + ' mV' + (x > v ? '\n提示:输入超过 Vref,已按满量程计(实际会饱和)。' : '');
+      }
+      vref.addEventListener('input', renderAdc);
+      vin.addEventListener('input', renderAdc);
+      bits.addEventListener('change', renderAdc);
+      renderAdc();
+
+      var checks = document.querySelectorAll('#checklist input');
+      var checkStatus = document.getElementById('check-status');
+      function renderChecks() {
+        var done = 0;
+        checks.forEach(function (c) { if (c.checked) done++; });
+        checkStatus.textContent = '已完成 ' + done + ' / ' + checks.length + (done === checks.length ? ' ✓ M0 结果检查通过' : '');
+      }
+      checks.forEach(function (c) { c.addEventListener('change', renderChecks); });
+      renderChecks();
+
+      var QUESTIONS = [
+        {
+          stem: '12 位 ADC、Vref=3.3V,量化台阶(LSB)约为?',
+          opts: ['3.3 mV', '0.806 mV', '8.06 mV', '0.33 mV'],
+          answer: 1,
+          explain: '3.3 / 4095 ≈ 0.000806 V = 0.806 mV。'
+        },
+        {
+          stem: '采样周期固定为 10 ms 的主要好处是?',
+          opts: ['提高 ADC 分辨率', '降低参考电压误差', '让数据有稳定时间基准,便于滤波与对齐', '减少代码行数'],
+          answer: 2,
+          explain: '固定周期(等间隔采样)才能做滤波、频谱分析与网关端对齐;与分辨率/参考电压无关。'
+        },
+        {
+          stem: '读数在 ±20 之间跳动,最不应该做的第一步是?',
+          opts: ['检查电源纹波', '检查地线', '直接加大软件滤波掩盖', '检查是否靠近电机等干扰源'],
+          answer: 2,
+          explain: '先定位干扰源与硬件问题;直接加大滤波会掩盖问题并引入延迟。'
+        }
+      ];
+      var quiz = document.getElementById('quiz');
+      var quizStatus = document.getElementById('quiz-status');
+      var correct = 0;
+      var answered = 0;
+      QUESTIONS.forEach(function (q, qi) {
+        var wrap = document.createElement('div');
+        wrap.className = 'q';
+        var stem = document.createElement('div');
+        stem.className = 'stem';
+        stem.textContent = (qi + 1) + '. ' + q.stem;
+        wrap.appendChild(stem);
+        var explain = document.createElement('div');
+        explain.className = 'explain';
+        explain.textContent = '解析:' + q.explain;
+        q.opts.forEach(function (text, oi) {
+          var opt = document.createElement('div');
+          opt.className = 'opt';
+          opt.textContent = String.fromCharCode(65 + oi) + '. ' + text;
+          opt.addEventListener('click', function () {
+            if (wrap.dataset.done) return;
+            wrap.dataset.done = '1';
+            answered++;
+            if (oi === q.answer) {
+              opt.classList.add('right');
+              correct++;
+            } else {
+              opt.classList.add('wrong');
+              wrap.querySelectorAll('.opt')[q.answer].classList.add('right');
+            }
+            explain.classList.add('show');
+            quizStatus.textContent = '答对 ' + correct + ' / ' + QUESTIONS.length + (answered === QUESTIONS.length ? ' ✓ 全部作答' : '');
+          });
+          wrap.appendChild(opt);
+        });
+        wrap.appendChild(explain);
+        quiz.appendChild(wrap);
+      });
+    })();
+  </script>
+</body>
+</html>

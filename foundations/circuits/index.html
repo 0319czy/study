@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="数字电路入门:3.3V/5V 电平、TTL/CMOS 门限、上拉下拉、按键去抖、ADC 采样与量化、万用表与示波器。含 3 个页面内交互实验与故障排查。" />
+  <title>数字电路入门 · 工程基础 · 1kni4r 学习实验室</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --panel: #0f151d;
+      --panel-2: #131b25;
+      --line: #1e2a38;
+      --line-2: #2c4257;
+      --text: #e6edf3;
+      --muted: #8b9bb0;
+      --accent: #5eead4;
+      --accent-2: #7dd3fc;
+      --warm: #fbbf24;
+      --danger: #fb7185;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(900px 480px at 12% -8%, rgba(94, 234, 212, 0.10), transparent 70%),
+        radial-gradient(760px 420px at 94% 4%, rgba(125, 211, 252, 0.07), transparent 70%),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page { padding-top: 30px; }
+    .page h1 { font-size: clamp(26px, 3.6vw, 36px); margin: 8px 0 12px; }
+    .breadcrumb {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 7px;
+      font-size: 12.5px; color: var(--muted); font-family: var(--mono);
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb .sep { color: #3b4d61; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11.5px; color: var(--muted);
+      border: 1px solid var(--line); border-radius: 999px;
+      padding: 3px 10px; font-family: var(--mono);
+    }
+    .chip b { color: #c7d3df; font-weight: 600; }
+
+    .evidence-box {
+      margin-top: 22px; border: 1px solid var(--line); border-radius: 14px;
+      padding: 15px 17px 14px;
+      background: linear-gradient(160deg, rgba(19, 27, 37, 0.82), rgba(10, 15, 21, 0.82));
+    }
+    .evidence-box .eb-title {
+      margin: 0 0 10px; font-size: 13px; font-weight: 700; letter-spacing: .02em;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .eb-title span.tag { font-family: var(--mono); font-size: 10.5px; color: var(--muted); font-weight: 400; }
+    .evidence-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 10px; }
+    .evidence-grid p { margin: 0; font-size: 12.5px; line-height: 1.7; color: var(--muted); }
+    .evidence-box > p.small { margin: 10px 0 0; }
+
+    .ev {
+      display: inline-flex; align-items: center;
+      font-family: var(--mono); font-size: 10.5px; line-height: 1.5;
+      letter-spacing: .02em; border: 1px solid; border-radius: 999px;
+      padding: 1px 7px; margin-right: 4px; white-space: nowrap; vertical-align: 1px;
+    }
+    .ev-pr  { color: #7dd3fc; border-color: rgba(125, 211, 252, .38); background: rgba(125, 211, 252, .08); }
+    .ev-sim { color: #fbbf24; border-color: rgba(251, 191, 36, .40); background: rgba(251, 191, 36, .08); }
+    .ev-hw  { color: #fb7185; border-color: rgba(251, 113, 133, .42); background: rgba(251, 113, 133, .08); }
+    .ev-ok  { color: #5eead4; border-color: rgba(94, 234, 212, .38); background: rgba(94, 234, 212, .08); }
+    .ev-none{ color: var(--muted); border-color: var(--line); background: rgba(139, 155, 176, .06); }
+
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .toc a {
+      font-size: 12px; color: var(--muted); text-decoration: none;
+      border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px;
+      font-family: var(--mono);
+    }
+    .toc a:hover { color: var(--accent); border-color: var(--line-2); }
+
+    .seg {
+      margin-top: 28px; padding: 22px 22px 20px;
+      border: 1px solid var(--line); border-radius: 16px;
+      background: linear-gradient(165deg, rgba(19, 27, 37, .66), rgba(9, 14, 20, .72));
+      scroll-margin-top: 78px;
+    }
+    .seg-head {
+      display: flex; gap: 13px; align-items: flex-start;
+      border-bottom: 1px solid rgba(30, 42, 56, .9);
+      padding-bottom: 12px; margin-bottom: 14px;
+    }
+    .seg-no {
+      flex: none; margin-top: 3px;
+      font-family: var(--mono); font-size: 12px; letter-spacing: .06em;
+      color: var(--accent); border: 1px solid rgba(94, 234, 212, .32);
+      border-radius: 8px; padding: 3px 8px;
+    }
+    .seg h2 { margin: 0; font-size: 21px; line-height: 1.3; }
+    .seg-code {
+      margin-top: 4px; font-family: var(--mono); font-size: 10.5px;
+      color: #5f7183; letter-spacing: .02em;
+    }
+    .seg h3 { font-size: 15.5px; margin: 22px 0 8px; color: #dbe7f2; }
+    .seg h3 .ev { margin-left: 6px; }
+    .seg p { font-size: 14px; line-height: 1.85; color: #c7d3df; margin: 10px 0; }
+    .seg ul, .seg ol { margin: 10px 0; padding-left: 22px; }
+    .seg li { font-size: 14px; line-height: 1.8; color: #c7d3df; margin: 6px 0; }
+    .seg strong { color: #fff; }
+    .seg code {
+      font-family: var(--mono); font-size: 12.5px; color: #9fb3c8;
+      background: rgba(139, 155, 176, .08); border-radius: 5px; padding: 1px 5px;
+    }
+    .muted { color: var(--muted); }
+    .small { font-size: 12.5px; line-height: 1.7; }
+
+    .callout {
+      border-left: 3px solid var(--accent-2);
+      background: rgba(125, 211, 252, .055);
+      border-radius: 0 10px 10px 0;
+      padding: 12px 14px; margin: 14px 0;
+      font-size: 13.5px; line-height: 1.75; color: #c7d3df;
+    }
+    .callout.warn { border-color: var(--warm); background: rgba(251, 191, 36, .06); }
+    .callout.danger { border-color: var(--danger); background: rgba(251, 113, 133, .065); }
+    .callout b { color: #fff; }
+    .callout .ev { margin-bottom: 3px; }
+
+    .formula {
+      margin: 12px 0; padding: 12px 14px;
+      border: 1px solid var(--line); border-radius: 10px;
+      background: #0a0f16; color: #dbe7f2;
+      font-family: var(--mono); font-size: 13px; line-height: 1.95;
+      overflow-x: auto;
+    }
+    .formula em { color: var(--accent); font-style: normal; }
+    .formula .dim { color: var(--muted); }
+
+    .table-wrap { overflow-x: auto; margin: 12px 0; }
+    .table-wrap table { width: 100%; min-width: 560px; }
+    .table-wrap th, .table-wrap td { font-size: 12.5px; }
+    .table-wrap td b { color: #e6edf3; }
+    .table-wrap .nowrap { white-space: nowrap; }
+
+    .schematic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+    .schematic {
+      margin: 0; border: 1px solid var(--line); border-radius: 12px;
+      background: #0a1017; padding: 8px 8px 4px;
+    }
+    .schematic svg { display: block; width: 100%; height: auto; }
+    .schematic figcaption {
+      font-size: 12px; line-height: 1.6; color: var(--muted);
+      text-align: center; padding: 6px 6px 4px;
+    }
+
+    /* ---------- 交互实验 ---------- */
+    .lab {
+      margin: 16px 0; padding: 18px;
+      border: 1px solid #24384c; border-radius: 14px;
+      background: linear-gradient(170deg, rgba(18, 28, 40, .86), rgba(9, 14, 20, .86));
+      scroll-margin-top: 78px;
+    }
+    .lab-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+    .lab-head h3 { margin: 0; font-size: 16.5px; }
+    .lab-no {
+      flex: none; font-family: var(--mono); font-size: 11px; font-weight: 700;
+      color: #06231f; background: var(--accent);
+      border-radius: 7px; padding: 2px 8px; letter-spacing: .03em;
+    }
+    .lab-goal { margin: 6px 0 14px; font-size: 13px; line-height: 1.75; color: var(--muted); }
+    .lab-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 16px; align-items: start; }
+    .controls { display: flex; flex-direction: column; gap: 13px; }
+    .field-label {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 8px; font-size: 12.5px; color: var(--muted); margin-bottom: 6px;
+    }
+    .field-label .val { font-family: var(--mono); color: var(--accent); font-size: 12.5px; white-space: nowrap; }
+    .segmented { display: flex; gap: 6px; flex-wrap: wrap; }
+    .segmented button {
+      flex: 1 1 auto; font: inherit; font-size: 12.5px; cursor: pointer;
+      color: var(--muted); background: #0b1118;
+      border: 1px solid var(--line); border-radius: 8px; padding: 8px 6px;
+      transition: color .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .segmented button:hover { color: var(--text); border-color: var(--line-2); }
+    .segmented button.on { color: #06231f; background: var(--accent); border-color: var(--accent); font-weight: 700; }
+    input[type="range"] { width: 100%; margin: 2px 0; accent-color: var(--accent); }
+    .btn {
+      font: inherit; font-size: 13px; cursor: pointer;
+      color: var(--text); background: #101822;
+      border: 1px solid var(--line); border-radius: 9px; padding: 9px 14px;
+      transition: border-color .18s ease, color .18s ease;
+    }
+    .btn:hover { border-color: var(--line-2); }
+    .btn.primary { color: #06231f; background: var(--accent); border-color: var(--accent); font-weight: 700; }
+    .btn.primary:hover { color: #06231f; }
+    .btn.ghost { color: var(--accent-2); background: transparent; border-color: rgba(125, 211, 252, .3); }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .readouts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .ro { border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; background: #0b1118; min-width: 0; }
+    .ro .k { font-size: 11px; color: var(--muted); letter-spacing: .02em; }
+    .ro .v { margin-top: 3px; font-family: var(--mono); font-size: 14.5px; color: var(--text); word-break: break-word; }
+    .ro .v.ok { color: var(--accent); }
+    .ro .v.warn { color: var(--warm); }
+    .ro .v.bad { color: var(--danger); }
+    .viz { min-width: 0; }
+    .canvas-card { border: 1px solid var(--line); border-radius: 12px; background: #070c12; padding: 10px; }
+    .canvas-card canvas { display: block; width: 100%; height: 252px; }
+    .canvas-legend { display: flex; flex-wrap: wrap; gap: 12px; padding: 8px 2px 0; font-size: 11.5px; color: var(--muted); }
+    .canvas-legend i { display: inline-block; width: 16px; height: 2px; vertical-align: middle; margin-right: 5px; }
+    .canvas-legend i.dot { width: 7px; height: 7px; border-radius: 50%; margin: 0 6px 0 0; }
+    .canvas-legend i.dash { background: repeating-linear-gradient(90deg, var(--muted) 0 4px, transparent 4px 7px); height: 2px; }
+
+    .levelbar {
+      position: relative; height: 16px; margin-top: 8px;
+      border: 1px solid var(--line); border-radius: 999px;
+      background: #0b1118; overflow: hidden;
+    }
+    .levelbar .fill {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+      border-radius: 999px; background: linear-gradient(90deg, #5eead4, #7dd3fc);
+      transition: width .22s ease;
+    }
+    .levelbar .fill.is-float {
+      width: 100% !important;
+      background: repeating-linear-gradient(45deg, rgba(251, 113, 133, .55) 0 6px, rgba(251, 113, 133, .14) 6px 12px);
+    }
+    .levelbar .tick { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(251, 191, 36, .8); }
+    .levelbar .tick.vil { left: 24.2%; }
+    .levelbar .tick.vih { left: 60.6%; }
+    .levelbar-labels {
+      display: flex; justify-content: space-between;
+      margin-top: 4px; font-family: var(--mono); font-size: 10.5px; color: var(--muted);
+    }
+    .state-card {
+      margin-top: 12px; padding: 11px 13px;
+      border: 1px solid var(--line); border-radius: 10px;
+      background: #0b1118; font-size: 12.5px; line-height: 1.7; color: var(--muted);
+    }
+    .state-card b { color: var(--text); }
+    .state-card .v { font-family: var(--mono); }
+    .state-card .v.ok { color: var(--accent); }
+    .state-card .v.warn { color: var(--warm); }
+    .state-card .v.bad { color: var(--danger); }
+
+    .steps {
+      margin: 12px 0; padding: 12px 14px;
+      border: 1px solid var(--line); border-radius: 10px; background: #0b1118;
+    }
+    .steps summary { cursor: pointer; font-size: 13px; color: var(--accent-2); }
+    .steps ol { margin: 10px 0 0; }
+    .steps li { font-size: 13px; }
+
+    /* ---------- 结果检查 ---------- */
+    .check-list { list-style: none; margin: 14px 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .check-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 11px 13px; background: #0b1118; cursor: pointer;
+      transition: border-color .18s ease, background .18s ease;
+    }
+    .check-item:hover { border-color: var(--line-2); }
+    .check-item input { flex: none; width: 16px; height: 16px; margin: 4px 0 0; accent-color: var(--accent); }
+    .check-item .txt { font-size: 13.5px; line-height: 1.7; color: #c7d3df; }
+    .check-item .crit { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+    .check-item.is-done { border-color: rgba(94, 234, 212, .42); background: rgba(94, 234, 212, .05); }
+    .progress-wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .progress { flex: 1 1 240px; height: 8px; border: 1px solid var(--line); border-radius: 999px; background: #0b1118; overflow: hidden; }
+    .progress > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .22s ease; }
+    .check-count { font-family: var(--mono); font-size: 12.5px; color: var(--accent); white-space: nowrap; }
+    .check-status { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+    .check-status.done { color: var(--accent); }
+
+    /* ---------- 故障排查 ---------- */
+    .fault { margin: 10px 0; border: 1px solid var(--line); border-radius: 12px; background: #0b1118; }
+    .fault summary {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+      padding: 13px 15px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text);
+      list-style: none;
+    }
+    .fault summary::-webkit-details-marker { display: none; }
+    .fault summary::before { content: "+"; font-family: var(--mono); color: var(--accent); width: 14px; flex: none; }
+    .fault[open] summary::before { content: "−"; }
+    .fault-body { padding: 0 15px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .fault-field { border: 1px solid rgba(30, 42, 56, .75); border-radius: 9px; padding: 9px 11px; }
+    .fault-field .k {
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--accent-2);
+    }
+    .fault-field.next .k { color: var(--warm); }
+    .fault-field .v { margin-top: 4px; font-size: 13px; line-height: 1.7; color: #c7d3df; }
+
+    /* ---------- 小测 ---------- */
+    .quiz-q { margin: 12px 0; padding: 14px 16px 12px; border: 1px solid var(--line); border-radius: 12px; background: #0b1118; }
+    .quiz-q legend {
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+      padding: 0 6px; font-size: 14px; font-weight: 600; color: var(--text);
+    }
+    .qno { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+    .q-status { margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+    .q-status.ok { color: var(--accent); }
+    .q-status.bad { color: var(--danger); }
+    .q-status.warn { color: var(--warm); }
+    .opt {
+      display: flex; gap: 9px; align-items: flex-start;
+      margin: 3px 0; padding: 8px 10px;
+      border: 1px solid transparent; border-radius: 8px;
+      font-size: 13.5px; line-height: 1.65; color: #c7d3df; cursor: pointer;
+    }
+    .opt:hover { background: rgba(125, 211, 252, .05); }
+    .opt input { flex: none; width: 15px; height: 15px; margin: 4px 0 0; accent-color: var(--accent); }
+    .opt.correct { border-color: rgba(94, 234, 212, .45); background: rgba(94, 234, 212, .07); color: var(--text); }
+    .opt.wrong { border-color: rgba(251, 113, 133, .5); background: rgba(251, 113, 133, .08); }
+    .explain {
+      display: none; margin-top: 10px; padding: 10px 12px;
+      border-left: 2px solid var(--accent-2); border-radius: 0 8px 8px 0;
+      background: rgba(125, 211, 252, .05);
+      font-size: 12.5px; line-height: 1.75; color: var(--muted);
+    }
+    .explain.show { display: block; }
+    .explain b { color: var(--accent-2); }
+    .quiz-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+    .quiz-result { min-height: 22px; margin-top: 12px; font-size: 13.5px; color: var(--muted); }
+    .quiz-result .score { font-family: var(--mono); font-size: 18px; color: var(--accent); }
+
+    /* ---------- 下一步 ---------- */
+    .next-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .next-card {
+      display: block; padding: 15px 16px; text-decoration: none;
+      border: 1px solid var(--line); border-radius: 12px;
+      background: linear-gradient(160deg, rgba(19, 27, 37, .78), rgba(10, 15, 21, .78));
+      transition: border-color .2s ease, transform .2s ease;
+    }
+    .next-card:hover { border-color: var(--line-2); transform: translateY(-2px); }
+    .next-card .label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; color: var(--accent-2); }
+    .next-card .t { margin-top: 5px; font-size: 15px; font-weight: 700; color: var(--text); }
+    .next-card .d { margin-top: 5px; font-size: 12.5px; line-height: 1.7; color: var(--muted); }
+
+    .footer { margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.8; color: #5f7183; }
+    .footer a { color: var(--muted); }
+
+    @media (max-width: 880px) {
+      .lab-grid { grid-template-columns: 1fr; }
+      .schematic-grid { grid-template-columns: 1fr; }
+      .fault-body { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .page { padding-left: 16px; padding-right: 16px; }
+      .seg { padding: 18px 16px 16px; }
+      .next-grid { grid-template-columns: 1fr; }
+      .readouts { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="breadcrumb">
+      <a href="/route/">学习路线</a><span class="sep">/</span>
+      <a href="/foundations/">阶段 01 · 工程基础</a><span class="sep">/</span>
+      <span>数字电路入门</span>
+    </div>
+
+    <div class="kicker">FOUNDATIONS · 02 · DIGITAL CIRCUITS</div>
+    <h1>数字电路入门:从电平和按键到 ADC 采样</h1>
+    <p class="lead">
+      数字电路入门不背真值表。它回答三个实际问题:引脚上到底是高还是低、按键为什么按一次会跳好几下、
+      ADC 读到的数字离真实电压有多远。本课用可交互的简化模型把这三件事讲透,并给出仪器使用与故障排查清单。
+    </p>
+
+    <div class="meta-row">
+      <span class="chip">课程 <b>platform:circuits</b></span>
+      <span class="chip">阶段 <b>foundation</b></span>
+      <span class="chip">难度 <b>入门</b></span>
+      <span class="chip">预计 <b>50 分钟</b></span>
+      <span class="chip">更新 <b>2026-11-27</b></span>
+      <span class="chip">8 段 <b>8 / 8</b></span>
+    </div>
+
+    <div class="evidence-box">
+      <p class="eb-title">本页证据标识 <span class="tag">阅读前必看 · schema v1 / A8</span></p>
+      <div class="evidence-grid">
+        <p><span class="ev ev-pr">principle</span>教材原理与手算示例,含数据手册典型值。未在目标硬件上运行或测量。</p>
+        <p><span class="ev ev-sim">simulated</span>页面内 JS 教学模拟,用于观察趋势;模型是理想化的,<b>不是实物测量</b>。</p>
+        <p><span class="ev ev-hw">hardware-pending</span>需要你在真实板卡上用仪器验证的检查项;本文尚未执行,不冒充 <code>hardware</code>。</p>
+      </div>
+      <p class="small muted">本页没有 <code>hardware</code> 证据:所有波形和读数都由浏览器内的模型生成。真实验证清单见第 4 段,证据汇总见第 3.7 节。</p>
+    </div>
+
+    <nav class="toc" aria-label="本课 8 段目录">
+      <a href="#seg-goal">01 目标</a>
+      <a href="#seg-prereq">02 前置知识</a>
+      <a href="#seg-principles">03 原理与图示</a>
+      <a href="#seg-experiment">04 操作实验</a>
+      <a href="#seg-check">05 结果检查</a>
+      <a href="#seg-troubleshoot">06 故障排查</a>
+      <a href="#seg-quiz">07 小测</a>
+      <a href="#seg-next">08 下一步</a>
+    </nav>
+
+    <!-- ============ 01 目标 ============ -->
+    <section class="seg" id="seg-goal" data-seg="goalObjectives">
+      <div class="seg-head">
+        <span class="seg-no">01</span>
+        <div>
+          <h2>目标</h2>
+          <div class="seg-code">schema: goalObjectives · 可验证动词</div>
+        </div>
+      </div>
+      <p>学完这一课,你应该能独立完成下面这些事(都能在下文找到对应讲解与练习):</p>
+      <ul>
+        <li><b>读懂接线图:</b>看到一张按键或传感器接线图,能指出 VDD、GND、信号节点、上拉或下拉电阻,并判断按键按下时引脚是高还是低。</li>
+        <li><b>判断电平兼容:</b>对照数据手册,判断 3.3V 与 5V 器件能否直连;说出 TTL / CMOS 门限差异、绝对最大额定值风险,以及电平转换、电阻分压、5V 容忍引脚三种处理方式。</li>
+        <li><b>解释浮空与选电阻:</b>说明"浮空输入"为什么会误触发,并为按键/开关选择 4.7kΩ–10kΩ 级别的上拉或下拉,算出按下时的电流与功耗。</li>
+        <li><b>估算去抖:</b>用 τ = R·C 估算 RC 去抖的延迟与稳定时间,说出硬件 RC 与软件消抖各自的适用场景和代价。</li>
+        <li><b>算 ADC 误差:</b>由位数 n 与参考电压 Vref 算出 LSB 与量化误差,判断 ±1～3 LSB 的读数跳动是否正常。</li>
+        <li><b>用仪器:</b>用万用表和示波器完成 4 个基本测量(直流电压、通断、按键波形、ADC 输入),并说出至少 3 个"测不准"的常见原因。</li>
+      </ul>
+      <div class="callout">
+        <b>课程边界:</b>本课不涉及 PCB 布局、EMC 整改、模拟滤波器设计细节。文中门限、抖动时间、ADC 参数多为教材 / 数据手册典型值,
+        具体设计必须回归<b>你手上那颗器件的数据手册</b>。
+      </div>
+    </section>
+
+    <!-- ============ 02 前置知识 ============ -->
+    <section class="seg" id="seg-prereq" data-seg="prerequisites">
+      <div class="seg-head">
+        <span class="seg-no">02</span>
+        <div>
+          <h2>前置知识</h2>
+          <div class="seg-code">schema: prerequisites · 全局课程 id</div>
+        </div>
+      </div>
+      <p>本课默认你已经具备下面三项。不满足也没关系,先补最短的那一块再回来。</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>前置</th><th>需要到什么程度</th><th>去哪补</th></tr>
+          <tr>
+            <td><b>C 与工程工具</b> <span class="ev ev-pr">platform:c</span></td>
+            <td>会写 <code>if</code> / <code>while</code>,理解变量与位运算;能读懂文中的示意代码。本课不要求编译。</td>
+            <td><a href="/foundations/c/">/foundations/c/</a></td>
+          </tr>
+          <tr>
+            <td><b>欧姆定律与串并联</b></td>
+            <td>会算 V = I·R、电阻分压、并联阻值;上拉电流和分压电平会直接用。</td>
+            <td>任意初中/高中物理或电路教材</td>
+          </tr>
+          <tr>
+            <td><b>MCU GPIO(推荐)</b></td>
+            <td>知道输入/输出、上拉输入、推挽/开漏这些词;没有也能学,第 3.2 节会解释。</td>
+            <td><a href="/mcu/gpio">/mcu/gpio</a></td>
+          </tr>
+          <tr>
+            <td><b>读数据手册(推荐)</b></td>
+            <td>会在 datasheet 里找 VIH / VIL、绝对最大额定值、ADC 采样时间、内部上拉阻值。</td>
+            <td><a href="/tools/">工具与资料</a> 中的查手册方法</td>
+          </tr>
+        </table>
+      </div>
+      <p class="small muted">顺序建议:先完成 C 与工程工具,再学本课;本课学完进入 <a href="/projects/collect/">项目 M0</a> 的传感器采集。</p>
+    </section>
+
+    <!-- ============ 03 原理与图示 ============ -->
+    <section class="seg" id="seg-principles" data-seg="principles">
+      <div class="seg-head">
+        <span class="seg-no">03</span>
+        <div>
+          <h2>原理与图示</h2>
+          <div class="seg-code">schema: principles · 本节全部为 <span class="ev ev-pr">principle</span></div>
+        </div>
+      </div>
+
+      <h3>3.1 数字输入只认两个区间:低电平与高电平 <span class="ev ev-pr">principle</span></h3>
+      <p>
+        数字芯片内部把电压"翻译"成 0/1,但翻译不是理想的开关。每个输入都有两个门限:
+        <b>VIL</b>(输入低电平最大电压)与 <b>VIH</b>(输入高电平最小电压)。
+        低于 VIL 稳定判为 0,高于 VIH 稳定判为 1,两者之间是<b>不确定区</b>——不能依赖。
+      </p>
+      <div class="table-wrap">
+        <table>
+          <tr>
+            <th>标准 / 器件族</th><th>供电</th><th>VIL 最大</th><th>VIH 最小</th><th>VOL 最大</th><th>VOH 最小</th><th>说明</th>
+          </tr>
+          <tr><td><b>5V TTL</b>(74LS 系列)</td><td>5V</td><td>0.8V</td><td>2.0V</td><td>0.4V</td><td>2.4V</td><td>门限基本不随 VDD 比例变化,历史标准</td></tr>
+          <tr><td><b>5V CMOS</b>(74HC 系列)</td><td>5V</td><td>1.5V(0.3 VDD)</td><td>3.5V(0.7 VDD)</td><td>≈0.1V</td><td>≈4.9V</td><td>门限按 VDD 比例,输入几乎不吃电流</td></tr>
+          <tr><td><b>3.3V LVTTL</b>(多数 MCU 引脚)</td><td>3.3V</td><td>0.8V</td><td>2.0V</td><td>0.4V</td><td>2.4V</td><td>很多 MCU 按 TTL 门限设计,以手册为准</td></tr>
+          <tr><td><b>3.3V CMOS</b>(74LVC 等)</td><td>3.3V</td><td>≈0.99V(0.3 VDD)</td><td>≈2.31V(0.7 VDD)</td><td>—</td><td>—</td><td>输入结构是 CMOS;部分 MCU 引脚也用 0.7 VDD 门限</td></tr>
+        </table>
+      </div>
+      <p class="small muted">
+        表中是常见典型值,目的是建立直觉,<b>不是选型依据</b>。同一个器件的输入门限(VIL/VIH)和输出保证(VOL/VOH)也不对称;
+        设计时要同时满足"输出高 ≥ 对方 VIH"和"输出低 ≤ 对方 VIL",并留噪声余量。
+      </p>
+
+      <h3 style="font-size:14px">把门限用到接线:3.3V 与 5V 互连</h3>
+      <ul>
+        <li><b>3.3V 推挽输出 → 5V TTL 输入:</b>3.3V &gt; VIH 2.0V,通常能识别高电平;但仍要评估驱动能力、线长与边沿,不能只看门限。</li>
+        <li><b>3.3V 输出 → 5V CMOS 输入:</b>3.3V &lt; VIH 3.5V,高电平不可靠,必须电平转换。</li>
+        <li><b>5V 输出 → 3.3V 输入:</b>先看<b>绝对最大额定值</b>,不是 VIH。多数 3.3V 引脚只能承受 VDD + 0.3V;只有 datasheet 明确标注 5V 容忍(如 STM32 的 FT 引脚)时才可能直连,且要确认注入电流与上电顺序。</li>
+        <li><b>5V TTL 输出 → 3.3V TTL 输入:</b>VOH 2.4V &gt; VIH 2.0V,逻辑上可,但余量只有 0.4V;长线/噪声环境需要缓冲或整形。</li>
+      </ul>
+      <p>确认必须转换时,有三条路可走:</p>
+      <ol>
+        <li><b>专用电平转换芯片:</b>如 74LVC1T45(单路双向)、TXS0108E(多路)。注意方向控制、速率与上电顺序。</li>
+        <li><b>电阻分压(仅低速):</b>5V → 3.3V 可用 10kΩ + 20kΩ,输出约 3.33V;代价是输出阻抗高、边沿变慢、负载会改变分压比。</li>
+        <li><b>5V 容忍输入:</b>查 datasheet 的 FT 标注、绝对最大额定值与注入电流限制;不要因为"别人这么接过"就默认安全。</li>
+      </ol>
+      <div class="formula">
+        分压:<em>Vout = Vin × R2 / (R1 + R2)</em><br>
+        <span class="dim">5V × 20kΩ / (10kΩ + 20kΩ) = 3.33V;输出阻抗 ≈ R1∥R2 = 6.67kΩ</span><br>
+        <span class="dim">只适合低速信号;高速时钟/串口请用专用电平转换芯片。</span>
+      </div>
+      <div class="callout danger">
+        <b>逻辑兼容 ≠ 电气安全:</b>5V 高电平进 3.3V 引脚时,即使输入级"看起来"能读,超限电流也可能经 ESD 二极管灌入电源,
+        造成发热、闩锁甚至永久损坏。上电前用万用表确认传感器输出高电平,并查 MCU 的绝对最大额定值;这一步本文未在真板执行,
+        标 <span class="ev ev-hw">hardware-pending</span>。
+      </div>
+
+      <h3>3.2 上拉 / 下拉:给高阻输入一个确定状态 <span class="ev ev-pr">principle</span></h3>
+      <p>
+        CMOS 输入本质上是高阻节点(输入漏电流通常只有 nA～µA)。如果什么都不接,引脚电压由寄生电容、漏电和空间干扰共同决定,
+        这就是<b>浮空</b>:读数随机、易误触发中断、还会因输入级长时间停在中间电平而增加功耗。
+        上拉电阻把默认状态拉到 VDD,下拉电阻把默认状态拉到 GND。
+      </p>
+      <div class="schematic-grid">
+        <figure class="schematic">
+          <svg viewBox="0 0 340 270" role="img" aria-label="上拉电阻加按键接地的接线示意">
+            <line x1="30" y1="34" x2="255" y2="34" stroke="#7dd3fc" stroke-width="2"/>
+            <text x="262" y="38" fill="#7dd3fc" font-size="11" font-family="monospace">VDD 3.3V</text>
+            <line x1="90" y1="34" x2="90" y2="52" stroke="#8b9bb0" stroke-width="2"/>
+            <rect x="78" y="52" width="24" height="46" rx="4" fill="#0b1118" stroke="#5eead4" stroke-width="2"/>
+            <text x="110" y="72" fill="#5eead4" font-size="11" font-family="monospace">R 10kΩ</text>
+            <text x="110" y="87" fill="#8b9bb0" font-size="10" font-family="monospace">上拉</text>
+            <line x1="90" y1="98" x2="90" y2="150" stroke="#8b9bb0" stroke-width="2"/>
+            <circle cx="90" cy="150" r="4" fill="#5eead4"/>
+            <line x1="90" y1="150" x2="180" y2="150" stroke="#5eead4" stroke-width="2"/>
+            <rect x="180" y="130" width="128" height="40" rx="6" fill="#0b1118" stroke="#2c4257" stroke-width="2"/>
+            <text x="244" y="154" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="monospace">MCU 输入引脚</text>
+            <text x="128" y="143" fill="#8b9bb0" font-size="10" font-family="monospace">信号</text>
+            <line x1="90" y1="150" x2="90" y2="190" stroke="#8b9bb0" stroke-width="2"/>
+            <circle cx="90" cy="194" r="3" fill="none" stroke="#8b9bb0" stroke-width="2"/>
+            <circle cx="90" cy="222" r="3" fill="none" stroke="#8b9bb0" stroke-width="2"/>
+            <line x1="90" y1="194" x2="102" y2="184" stroke="#8b9bb0" stroke-width="2"/>
+            <text x="112" y="208" fill="#8b9bb0" font-size="11" font-family="monospace">S1 按键</text>
+            <line x1="90" y1="222" x2="90" y2="245" stroke="#8b9bb0" stroke-width="2"/>
+            <line x1="58" y1="245" x2="122" y2="245" stroke="#8b9bb0" stroke-width="2"/>
+            <line x1="68" y1="251" x2="112" y2="251" stroke="#8b9bb0" stroke-width="2"/>
+            <line x1="78" y1="257" x2="102" y2="257" stroke="#8b9bb0" stroke-width="2"/>
+            <text x="130" y="252" fill="#8b9bb0" font-size="11" font-family="monospace">GND</text>
+          </svg>
+          <figcaption>上拉 + 按键到 GND:松开 = 高,按下 = 低(active-low)。按下电流经 R 到 GND。</figcaption>
+        </figure>
+        <figure class="schematic">
+          <svg viewBox="0 0 340 270" role="img" aria-label="下拉电阻加按键接 VDD 的接线示意">
+            <line x1="60" y1="34" x2="285" y2="34" stroke="#7dd3fc" stroke-width="2"/>
+            <text x="292" y="38" fill="#7dd3fc" font-size="11" font-family="monospace">VDD</text>
+            <line x1="250" y1="34" x2="250" y2="58" stroke="#8b9bb0" stroke-width="2"/>
+            <circle cx="250" cy="62" r="3" fill="none" stroke="#8b9bb0" stroke-width="2"/>
+            <circle cx="250" cy="90" r="3" fill="none" stroke="#8b9bb0" stroke-width="2"/>
+            <line x1="250" y1="62" x2="262" y2="52" stroke="#8b9bb0" stroke-width="2"/>
+            <text x="272" y="78" fill="#8b9bb0" font-size="11" font-family="monospace">S1</text>
+            <line x1="250" y1="94" x2="250" y2="130" stroke="#8b9bb0" stroke-width="2"/>
+            <circle cx="250" cy="130" r="4" fill="#5eead4"/>
+            <line x1="250" y1="130" x2="150" y2="130" stroke="#5eead4" stroke-width="2"/>
+            <rect x="22" y="110" width="128" height="40" rx="6" fill="#0b1118" stroke="#2c4257" stroke-width="2"/>
+            <text x="86" y="134" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="monospace">MCU 输入引脚</text>
+            <text x="188" y="123" fill="#8b9bb0" font-size="10" font-family="monospace">信号</text>
+            <line x1="250" y1="130" x2="250" y2="162" stroke="#8b9bb0" stroke-width="2"/>
+            <rect x="238" y="162" width="24" height="46" rx="4" fill="#0b1118" stroke="#5eead4" stroke-width="2"/>
+            <text x="270" y="182" fill="#5eead4" font-size="11" font-family="monospace">R 10kΩ</text>
+            <text x="270" y="197" fill="#8b9bb0" font-size="10" font-family="monospace">下拉</text>
+            <line x1="250" y1="208" x2="250" y2="240" stroke="#8b9bb0" stroke-width="2"/>
+            <line x1="218" y1="240" x2="282" y2="240" stroke="#8b9bb0" stroke-width="2"/>
+            <line x1="228" y1="246" x2="272" y2="246" stroke="#8b9bb0" stroke-width="2"/>
+            <line x1="238" y1="252" x2="262" y2="252" stroke="#8b9bb0" stroke-width="2"/>
+            <text x="290" y="247" fill="#8b9bb0" font-size="11" font-family="monospace">GND</text>
+          </svg>
+          <figcaption>下拉 + 按键到 VDD:松开 = 低,按下 = 高(active-high)。按下电流经 R 到 GND。</figcaption>
+        </figure>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>配置</th><th>按键</th><th>引脚电压</th><th>通过电阻的电流</th><th>备注</th></tr>
+          <tr><td>上拉 10kΩ</td><td>松开</td><td>≈VDD(高)</td><td>≈0(仅输入漏电)</td><td>默认高电平</td></tr>
+          <tr><td>上拉 10kΩ</td><td>按下</td><td>≈0V(低)</td><td>VDD / R = 0.33mA</td><td>active-low</td></tr>
+          <tr><td>下拉 10kΩ</td><td>松开</td><td>≈0V(低)</td><td>≈0</td><td>默认低电平</td></tr>
+          <tr><td>下拉 10kΩ</td><td>按下</td><td>≈VDD(高)</td><td>VDD / R = 0.33mA</td><td>active-high</td></tr>
+          <tr><td>不接(浮空)</td><td>松开</td><td>不确定</td><td>≈0</td><td>禁止依赖</td></tr>
+          <tr><td>不接(浮空)</td><td>按下</td><td>≈0V(低)</td><td>≈0</td><td>只有按下瞬间才勉强确定</td></tr>
+        </table>
+      </div>
+      <div class="formula">
+        电阻电流:<em>I = VDD / R</em>　　功耗:<em>P = VDD² / R</em><br>
+        <span class="dim">3.3V / 10kΩ = 0.33mA,P ≈ 1.09mW;3.3V / 4.7kΩ = 0.70mA,P ≈ 2.32mW</span><br>
+        分压(仅低速、且确认可接受负载时):<em>Vout = Vin × R2 / (R1 + R2)</em><br>
+        <span class="dim">5V → 3.3V 示例:R1 = 10kΩ,R2 = 20kΩ,Vout = 5 × 20 / 30 = 3.33V</span>
+      </div>
+      <p>
+        阻值怎么选?按键场景常用 <b>4.7kΩ～10kΩ</b>:太小则按下电流和功耗大、触点负担重;太大则抗干扰差,
+        并且与引脚输入电容形成 RC,边沿变慢。MCU 内部上拉(典型几十 kΩ)可以省外部电阻,但阻值离散、噪声环境下偏弱;
+        长线、强干扰或低功耗唤醒场景仍建议外部上拉 + 软件复核。
+      </p>
+      <div class="callout warn">
+        <b>别把 I²C 上拉照搬到这里:</b>I²C 的上拉由总线电容、速率和上升时间决定(常见 1.5kΩ～10kΩ,高速时更小),
+        和按键上拉不是同一套算法。两者都要算,但公式和约束不同。
+      </div>
+      <p class="small muted">
+        <span class="ev ev-hw">hardware-pending</span>具体 MCU 的内部上拉阻值、输入漏电流,请在 datasheet 的 "I/O static characteristics" 表里确认;
+        本文的 4.7kΩ～10kΩ 是常见经验区间,不是强制值。
+      </p>
+
+      <h3>3.3 按键抖动与去抖:为什么按一次会"跳"很多次 <span class="ev ev-pr">principle</span></h3>
+      <p>
+        机械触点在闭合和断开的瞬间不会一次到位,而是在几毫秒内反复通断,这叫<b>抖动(bounce)</b>。
+        教材与常见轻触按键的典型抖动时间是 <b>5～20ms</b>(具体看器件和使用寿命)。对 MCU 来说,
+        每一次通断都可能是一个有效边沿:中断进多次、计数器多加 1、状态机乱跳。
+      </p>
+      <h3 style="font-size:14px">硬件 RC 去抖</h3>
+      <p>
+        在按键节点上加一个 RC 低通,让电压变化变慢,抖动的快速跳变被"抹平"。设门限为 V<sub>TH</sub>,
+        从 0 充电到门限的时间约为:
+      </p>
+      <div class="formula">
+        时间常数:<em>τ = R × C</em>　　(Ω × F = 秒;10kΩ × 1µF = 10ms)<br>
+        充电到门限:<em>t ≈ τ × ln( VDD / (VDD − V<sub>TH</sub>) )</em><br>
+        <span class="dim">以 V<sub>TH</sub> = 0.7 VDD 为例:t ≈ 1.20τ;到 0.5 VDD 则约 0.69τ。工程上常说"3～5τ 基本稳定"。</span>
+      </div>
+      <p>
+        RC 只负责"变慢",不负责"变干净":缓慢的边沿会让数字输入在门限附近停留很久,可能反复翻转或增加功耗。
+        所以 RC 之后通常要接<b>施密特触发器</b>(如 74HC14)把慢边沿整形成干净的数字边沿。RC 参数要同时满足两件事:
+        稳定时间覆盖抖动(一般 ≥ 抖动持续时间的 1～2 倍),又不能慢到按键响应不可接受(按键通常 10～50ms 可接受)。
+      </p>
+      <h3 style="font-size:14px">软件消抖</h3>
+      <p>
+        更常见的做法是定时采样 + 连续多次一致才确认。例如每 5ms 采样一次,连续 3 次读到低才认为"按下",
+        确认延迟约 10～15ms;也可以写成状态机(空闲 → 疑似按下 → 确认 → 等待释放),在 1ms 或 10ms 定时器里推进。
+        软件消抖灵活、可调、支持多按键,代价是占用定时器和中断,并引入确认延迟。
+        <b>不要在中断里用 <code>delay()</code> 等抖动过去</b>:那会阻塞整个系统。
+      </p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>方式</th><th>做法</th><th>优点</th><th>代价 / 坑</th><th>适用</th></tr>
+          <tr><td><b>硬件 RC</b></td><td>R + C 低通,后接施密特触发器</td><td>不占 CPU,能压住毛刺</td><td>边沿变慢、参数固定、需要整形</td><td>单键、强干扰、低功耗唤醒</td></tr>
+          <tr><td><b>软件消抖</b></td><td>定时采样,连续 N 次一致才确认</td><td>灵活可调,多键成本低</td><td>占定时器/中断,有确认延迟;禁止阻塞延时</td><td>多按键、矩阵键盘、可配置设备</td></tr>
+          <tr><td><b>两者结合</b></td><td>RC 粗滤 + 软件确认</td><td>抗干扰最强,边沿干净</td><td>元件与代码都多</td><td>长线、工业现场、强干扰</td></tr>
+        </table>
+      </div>
+      <p class="small muted">下一节的实验 2 会动态展示:τ 太小时门限在抖动期间被反复跨越;τ 太大时稳定时刻被拖到几十甚至上百毫秒。</p>
+
+      <h3>3.4 采样与量化:ADC 读到的数字代表什么 <span class="ev ev-pr">principle</span></h3>
+      <p>
+        ADC 把连续电压变成离散码值,分三步:<b>采样保持</b>(内部采样电容充电并保持)→ <b>量化</b>(把电压切成 2<sup>n</sup> 份)→
+        <b>编码</b>(输出整数码)。n 位 ADC 的最小分辨单位叫 <b>LSB</b>:
+      </p>
+      <div class="formula">
+        <em>LSB = Vref / 2<sup>n</sup></em>　　码值上限 <em>2<sup>n</sup> − 1</em><br>
+        <span class="dim">例:Vref = 3.3V,n = 12 → LSB = 3.3 / 4096 ≈ 0.8057mV,码值 0～4095</span><br>
+        截断式量化:<em>code = floor(Vin / LSB)</em>,回算电压 <em>Vq = code × LSB</em>,误差 <em>e = Vin − Vq</em><br>
+        <span class="dim">理想中心化量化的最大误差约 ±0.5 LSB;截断时误差落在 0 ～ −1 LSB。满量程输入通常饱和在 2<sup>n</sup>−1。</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>位数 n</th><th>Vref = 3.3V 时 LSB</th><th>±0.5 LSB 量化误差</th><th>说明</th></tr>
+          <tr><td>8 位</td><td>12.89mV</td><td>±6.45mV</td><td>粗略检测(电位器、光敏电阻阈值)</td></tr>
+          <tr><td>10 位</td><td>3.223mV</td><td>±1.61mV</td><td>一般传感器趋势</td></tr>
+          <tr><td>12 位</td><td>0.8057mV</td><td>±0.403mV</td><td>STM32 等常见分辨率,注意噪声往往大于量化误差</td></tr>
+          <tr><td>16 位</td><td>50.35µV</td><td>±25.2µV</td><td>高精度测量,对参考、地、布局要求高</td></tr>
+        </table>
+      </div>
+      <p>
+        例子:3.3V、12 位、输入 1.000V → 1.000 / 0.0008057 ≈ 1241.1 → 码值 1241 → 回算 0.999829V,
+        误差约 +0.17mV(约 0.21 LSB)。输入恰好 1.650V 时码值 2048,回算正好 1.650V,误差为 0。
+      </p>
+      <p>一次读数跳动,通常来自下面几项叠加,而不是"ADC 不准":</p>
+      <ul>
+        <li><b>量化误差:</b>理想 ±0.5 LSB,无法消除,只能提高位数或接受。</li>
+        <li><b>参考电压噪声:</b>Vref 的纹波直接按比例进入结果;1 个 LSB 在 12 位 / 3.3V 下只有 0.8mV,参考必须干净。</li>
+        <li><b>地噪声与电源纹波:</b>模拟地和数字地处理不当,或 ADC 供电纹波大,读数会整体晃动。</li>
+        <li><b>源阻抗 / 采样时间:</b>采样保持电容充电不足,读数偏低;源阻抗高时要延长采样时间或加缓冲。</li>
+        <li><b>软件平均:</b>N 次平均对随机噪声约降 √N;但对周期性干扰和混叠无效。</li>
+      </ul>
+
+      <div class="lab" id="quant-tool" style="border-color:#24384c">
+        <div class="lab-head">
+          <span class="lab-no">小工具</span>
+          <h3>量化计算器:LSB、码值与误差</h3>
+          <span class="ev ev-sim">simulated</span>
+        </div>
+        <p class="lab-goal">改位数、参考电压和输入电压,观察码值与量化误差。模型为理想截断式 ADC,不含噪声、增益误差和 INL/DNL。</p>
+        <div class="lab-grid">
+          <div class="controls">
+            <div>
+              <div class="field-label"><span>分辨率</span><span class="val" id="qBitsVal">12 位</span></div>
+              <select id="qBits" class="btn" style="width:100%" aria-label="ADC 分辨率">
+                <option value="8">8 位</option>
+                <option value="10">10 位</option>
+                <option value="12" selected>12 位</option>
+                <option value="16">16 位</option>
+              </select>
+            </div>
+            <div>
+              <div class="field-label"><span>参考电压 Vref</span><span class="val" id="qVrefVal">3.300 V</span></div>
+              <select id="qVref" class="btn" style="width:100%" aria-label="ADC 参考电压">
+                <option value="3.3" selected>3.3 V</option>
+                <option value="5">5.0 V</option>
+                <option value="2.5">2.5 V</option>
+              </select>
+            </div>
+            <div>
+              <div class="field-label"><span>输入电压 Vin</span><span class="val" id="qVinVal">1.000 V</span></div>
+              <input type="range" id="qVin" min="0" max="3.3" step="0.01" value="1" aria-label="ADC 输入电压 Vin" />
+            </div>
+          </div>
+          <div class="viz">
+            <div class="readouts">
+              <div class="ro"><div class="k">LSB</div><div class="v ok" id="qLsb">0.806 mV</div></div>
+              <div class="ro"><div class="k">码值 (10 进制 / 16 进制)</div><div class="v" id="qCode">1241 / 0x4D9</div></div>
+              <div class="ro"><div class="k">回算电压 Vq</div><div class="v" id="qVq">0.999829 V</div></div>
+              <div class="ro"><div class="k">截断误差 e = Vin − Vq</div><div class="v warn" id="qErr">+0.171 mV</div></div>
+              <div class="ro"><div class="k">理想最大误差 (±0.5 LSB)</div><div class="v" id="qMaxErr">0.403 mV</div></div>
+              <div class="ro"><div class="k">满量程码</div><div class="v" id="qFull">4095</div></div>
+            </div>
+            <div class="state-card" id="qNote">12 位、3.3V 时,1 个 LSB 约 0.806mV;这是你能分辨的最小台阶。</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>3.5 采样定理与混叠:数字"看不到"的部分 <span class="ev ev-pr">principle</span></h3>
+      <p>
+        采样是每隔 T<sub>s</sub> = 1/f<sub>s</sub> 读一次电压。要无失真地恢复最高频率 f<sub>max</sub>,必须满足
+        <b>f<sub>s</sub> &gt; 2 f<sub>max</sub></b>(奈奎斯特条件);工程上通常取 <b>5～10 倍</b>并配合模拟抗混叠低通。
+        如果采样太慢,高频信号会"伪装"成低频,这叫<b>混叠(aliasing)</b>:
+      </p>
+      <div class="formula">
+        折叠到 0～f<sub>s</sub>/2 的可见频率:<em>f<sub>alias</sub> = | f − k × f<sub>s</sub> |</em>,其中 <em>k = round(f / f<sub>s</sub>)</em><br>
+        <span class="dim">例:f = 900Hz,f<sub>s</sub> = 1000Hz → k = 1,看到 |900 − 1000| = 100Hz</span><br>
+        <span class="dim">例:f = 45Hz,f<sub>s</sub> = 40Hz(f<sub>s</sub> &lt; 2f)→ k = 1,看到 5Hz</span><br>
+        <span class="dim">关键:混叠一旦发生,软件滤波无法区分真实频率和它的"伪装",必须在采样前用模拟低通把 f &gt; f<sub>s</sub>/2 的成分压掉。</span>
+      </div>
+      <p>
+        除了混叠,ADC 还有两个常被忽略的边界:<b>采样保持充电时间</b>(源阻抗太高或采样周期太短,读数偏低)与
+        <b>参考电压质量</b>(Vref 抖 1mV,12 位结果就抖 1～2 个码)。datasheet 里对应的参数通常是
+        R<sub>AIN</sub> 最大值、采样周期数、V<sub>REF</sub> 范围与噪声。第 4 段的实验 3 可以直观看到混叠。
+      </p>
+
+      <h3>3.6 仪器:万用表与示波器看到的是什么 <span class="ev ev-pr">principle</span></h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>仪器 / 档位</th><th>怎么接</th><th>能测什么</th><th>最容易踩的坑</th></tr>
+          <tr><td><b>万用表 直流电压档</b></td><td>并联在两点之间</td><td>供电电压、静态电平、分压节点</td><td>输入电阻典型 10MΩ,测高阻节点会"加载"改变原电压</td></tr>
+          <tr><td><b>万用表 通断 / 二极管档</b></td><td>并联,<b>必须断电</b></td><td>导线通断、按键触点、焊点</td><td>带电测量读数不可信,甚至损坏表</td></tr>
+          <tr><td><b>万用表 电流档</b></td><td><b>串联</b>进回路</td><td>整条支路电流</td><td>误当电压表并联 → 短路电源、烧保险</td></tr>
+          <tr><td><b>示波器</b></td><td>探头尖端接信号,地夹接电路参考地</td><td>波形、边沿、抖动、纹波、PWM 频率/占空比</td><td>地夹不是"随便夹";浮地测量需差分探头或隔离</td></tr>
+        </table>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>探头</th><th>输入阻抗(典型)</th><th>带宽</th><th>适用</th></tr>
+          <tr><td><b>1X</b></td><td>≈1MΩ ∥ ≈100pF</td><td>较低(常见 6～10MHz)</td><td>低频、电源纹波(配合短地)</td></tr>
+          <tr><td><b>10X</b></td><td>≈10MΩ ∥ ≈15pF</td><td>高(随探头,常见 100～500MHz)</td><td>时钟、PWM、快速边沿;读数记得 ×10</td></tr>
+        </table>
+      </div>
+      <p>几个能立刻提升测量可信度的习惯:</p>
+      <ul>
+        <li><b>示波器带宽 ≥ 5 × 信号频率</b>,采样率 ≥ 5～10 × 带宽;否则看到的边沿是"假圆角"。</li>
+        <li>测电源纹波用 <b>AC 耦合 + 短地弹簧 + 20MHz 带宽限制</b>;长地线会把振铃当成纹波。</li>
+        <li>探头第一次使用先接校准方波,调补偿电容,方波应平直无过冲。</li>
+        <li>测按键抖动用<b>单次触发</b>抓下降沿,时间轴放到 5～20ms/格;测 ADC 输入时同时看 Vref 和地。</li>
+        <li>万用表测 PWM 通常得到平均值或频率,不能直接读占空比;真有效值表也只能给出 RMS 电压,占空比要用示波器看。</li>
+      </ul>
+
+      <h3>3.7 证据与边界(本页)</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>标识</th><th>本文中的含义</th><th>证明了什么</th><th>没证明什么</th></tr>
+          <tr>
+            <td><span class="ev ev-pr">principle</span></td>
+            <td>教材 / 数据手册典型值、手算示例</td>
+            <td>门限关系、τ 与 LSB 公式、互连风险的逻辑</td>
+            <td>未在具体板卡上测量;器件差异、批次差异需查手册</td>
+          </tr>
+          <tr>
+            <td><span class="ev ev-sim">simulated</span></td>
+            <td>页面内 JS 模型(理想一阶 RC、理想正弦采样)</td>
+            <td>趋势与数量级:τ 太小会毛刺、fs 不足会混叠</td>
+            <td>模型不含噪声、寄生参数、器件偏差,<b>不是实物测量</b></td>
+          </tr>
+          <tr>
+            <td><span class="ev ev-hw">hardware-pending</span></td>
+            <td>第 4 段末尾的真机检查清单</td>
+            <td>—(尚未执行)</td>
+            <td>需要你用万用表/示波器在具体板卡上验证后才能升级为 <code>hardware</code></td>
+          </tr>
+          <tr>
+            <td><span class="ev ev-none">hardware · 无</span></td>
+            <td>本页没有 hardware 证据</td>
+            <td>—</td>
+            <td>本页所有波形与读数均为教学模拟,不能当作实测数据引用</td>
+          </tr>
+        </table>
+      </div>
+      <p class="small muted">
+        版本边界:门限与抖动时间为"教材通用 + 常见器件典型值";交互模型运行于当前浏览器(Chrome),不依赖任何外部库。
+        若换成具体型号(如 STM32F103、74HC14、某型号轻触按键),请以对应 datasheet 的数值重新核算。
+      </p>
+    </section>
+
+    <!-- ============ 04 操作实验 ============ -->
+    <section class="seg" id="seg-experiment" data-seg="experiment">
+      <div class="seg-head">
+        <span class="seg-no">04</span>
+        <div>
+          <h2>操作实验</h2>
+          <div class="seg-code">schema: experiment · 3 个页面内交互实验,全部 <span class="ev ev-sim">simulated</span></div>
+        </div>
+      </div>
+      <p>
+        三个实验都在浏览器内运行,不需要连接硬件;"模拟"只表示模型行为,不代表真实板卡上的测量结果。
+        每做完一个,把观察记录到笔记里,再用第 4.4 节的 <span class="ev ev-hw">hardware-pending</span> 清单在真板上复核。
+      </p>
+
+      <!-- 实验 1 -->
+      <div class="lab" id="lab-pullup">
+        <div class="lab-head">
+          <span class="lab-no">实验 1</span>
+          <h3>上拉 / 下拉按键:电平到底由谁决定</h3>
+          <span class="ev ev-sim">simulated</span>
+        </div>
+        <p class="lab-goal">点击切换配置与按键状态,观察引脚电压、逻辑电平、通过电阻的电流和浮空风险。模型取 VDD = 3.3V、R = 10kΩ,忽略输入漏电与寄生电容。</p>
+        <div class="lab-grid">
+          <div class="controls">
+            <div>
+              <div class="field-label"><span>输入配置</span><span class="val" id="pullModeLabel">上拉</span></div>
+              <div class="segmented" role="group" aria-label="选择上拉、下拉或浮空">
+                <button type="button" class="js-mode on" data-mode="up">上拉</button>
+                <button type="button" class="js-mode" data-mode="down">下拉</button>
+                <button type="button" class="js-mode" data-mode="float">浮空</button>
+              </div>
+            </div>
+            <div>
+              <div class="field-label"><span>按键状态</span><span class="val" id="btnState">松开</span></div>
+              <button type="button" class="btn primary" id="btnToggle" aria-pressed="false" style="width:100%">按下按键</button>
+            </div>
+            <div>
+              <div class="field-label"><span>引脚电压(读数)</span><span class="val" id="pinVoltage">3.30 V</span></div>
+              <div class="levelbar" aria-hidden="true">
+                <div class="fill" id="levelFill"></div>
+                <span class="tick vil"></span>
+                <span class="tick vih"></span>
+              </div>
+              <div class="levelbar-labels"><span>0V</span><span>0.8V / 2.0V 门限</span><span>3.3V</span></div>
+            </div>
+            <div class="readouts">
+              <div class="ro"><div class="k">逻辑电平</div><div class="v ok" id="pinLogic">HIGH (1)</div></div>
+              <div class="ro"><div class="k">通过 R 的电流</div><div class="v" id="pinCurrent">0.000 mA</div></div>
+            </div>
+            <div class="state-card"><b>风险:</b><span id="pinRisk">低 —— 上拉电阻给出确定高电平。</span></div>
+          </div>
+          <div class="viz">
+            <div class="state-card" style="margin-top:0">
+              <b>当前配置说明</b>
+              <div id="pullExplain" style="margin-top:6px">上拉:按键一端接引脚、另一端接 GND;10kΩ 电阻把引脚默认拉到 VDD。松开 = 高,按下 = 低(active-low)。</div>
+            </div>
+            <div class="state-card" id="modeNote">
+              提示:点击"按下按键"模拟触点闭合;观察电压与逻辑如何变化。
+            </div>
+            <div class="table-wrap" style="margin-top:12px">
+              <table>
+                <tr><th>配置</th><th>松开</th><th>按下</th><th>有效电平</th></tr>
+                <tr><td>上拉 + 按键到 GND</td><td>高</td><td>低</td><td>active-low</td></tr>
+                <tr><td>下拉 + 按键到 VDD</td><td>低</td><td>高</td><td>active-high</td></tr>
+                <tr><td>浮空 + 按键到 GND</td><td>不确定</td><td>低</td><td>不可依赖</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <details class="steps">
+          <summary>实验步骤与观察记录</summary>
+          <ol>
+            <li>保持"上拉"、松开按键,记录电压(≈3.30V)与逻辑(HIGH)。此时电流为什么接近 0?(输入高阻,电阻上几乎没有电流)</li>
+            <li>点击"按下按键":电压应变为 0V、逻辑 LOW,电流约 0.330mA。说明按键把节点短接到 GND,电流从 VDD 经电阻和按键流回地。</li>
+            <li>切到"下拉",重复松开/按下:松开为低,按下为高,有效电平反过来了(active-high)。</li>
+            <li>切到"浮空"、松开:电压显示"浮动(??)"、逻辑不确定。再按下:变成低——因为按键把节点强行短到 GND,但一松手又回到不确定。</li>
+            <li>在纸上把 R 换成 4.7kΩ:按下电流 = 3.3V / 4.7kΩ ≈ 0.70mA,功耗 ≈ 2.32mW;与 10kΩ 的 0.33mA / 1.09mW 对比。</li>
+          </ol>
+          <p class="small muted" style="margin:10px 0 0">结论:电平由"电阻的默认拉向 + 按键的强制拉向"共同决定;浮空时默认态不存在,只有按下那一刻才确定。实际电路还有输入漏电、寄生电容与 ESD,本模型忽略。</p>
+        </details>
+      </div>
+
+      <!-- 实验 2 -->
+      <div class="lab" id="lab-debounce">
+        <div class="lab-head">
+          <span class="lab-no">实验 2</span>
+          <h3>RC 去抖:拖动 R / C,看抖动怎么被抹平</h3>
+          <span class="ev ev-sim">simulated</span>
+        </div>
+        <p class="lab-goal">拖动电阻 R 与电容 C 滑块,观察原始触点抖动(细灰线)与 RC 滤波后的电压(青色线)何时越过门限(黄色虚线)。模型:VDD = 3.3V,抖动段固定为前 7ms,门限取 0.7VDD = 2.31V。</p>
+        <div class="lab-grid">
+          <div class="controls">
+            <div>
+              <div class="field-label"><span>R(上拉电阻)</span><span class="val" id="rcRVal">10 kΩ</span></div>
+              <input type="range" id="rcR" min="1" max="100" step="1" value="10" aria-label="上拉电阻 R,单位千欧" />
+            </div>
+            <div>
+              <div class="field-label"><span>C(滤波电容)</span><span class="val" id="rcCVal">1.0 µF</span></div>
+              <input type="range" id="rcC" min="0.1" max="10" step="0.1" value="1" aria-label="滤波电容 C,单位微法" />
+            </div>
+            <div class="readouts">
+              <div class="ro"><div class="k">时间常数 τ = R·C</div><div class="v ok" id="rcTau">10.0 ms</div></div>
+              <div class="ro"><div class="k">5τ(基本稳定)</div><div class="v" id="rcFiveTau">50.0 ms</div></div>
+              <div class="ro"><div class="k">抖动持续(模型)</div><div class="v" id="rcBounce">7.0 ms</div></div>
+              <div class="ro"><div class="k">门限穿越次数</div><div class="v" id="rcCross">1</div></div>
+            </div>
+            <div class="state-card"><b>去抖完成时刻:</b><span id="rcStable" class="v ok" style="display:inline;font-size:13px">19.0 ms</span><br><span id="rcVerdictText" style="font-size:12.5px">等待计算…</span></div>
+            <div class="state-card" id="rcNote">提示:τ 很小 → 门限在抖动期间被反复跨越;τ 很大 → 100ms 内都稳定不下来。</div>
+          </div>
+          <div class="viz">
+            <div class="canvas-card">
+              <canvas id="rcCanvas" role="img" aria-label="RC 去抖波形:原始抖动与滤波后电压"></canvas>
+              <div class="canvas-legend">
+                <span><i class="dash"></i>原始触点(0 / 3.3V)</span>
+                <span><i style="background:#5eead4"></i>RC 滤波后电压</span>
+                <span><i style="background:repeating-linear-gradient(90deg,#fbbf24 0 4px,transparent 4px 7px)"></i>0.7VDD 门限</span>
+                <span><i class="dot" style="background:#7dd3fc"></i>每 5ms 采样(按门限判高低)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <details class="steps">
+          <summary>实验步骤与观察记录</summary>
+          <ol>
+            <li>默认 R = 10kΩ、C = 1µF → τ = 10ms。观察滤波电压在抖动结束后约十几毫秒稳定,门限只被穿越 1 次。</li>
+            <li>把 R 调到 1kΩ、C 调到 0.1µF → τ = 0.1ms。观察门限在 0～7ms 抖动期间被反复跨越,采样点出现多个高/低。</li>
+            <li>慢慢增大 τ 到 2～5ms,找到"门限穿越次数 = 1 且稳定时刻可接受"的区间。</li>
+            <li>把 R = 100kΩ、C = 10µF → τ = 1000ms。观察 100ms 窗口内是否稳定,思考按键响应会变成什么样。</li>
+            <li>记录:你能接受的稳定延迟是多少?按键通常 10～50ms,低功耗唤醒键可能要求更短。</li>
+          </ol>
+          <p class="small muted" style="margin:10px 0 0">结论:RC 去抖是用"时间"换"稳定";τ 要与抖动持续时间同量级或略大,同时不能大到影响交互。RC 之后应接施密特触发器整形,或用软件消抖做第二道保险。</p>
+        </details>
+      </div>
+
+      <!-- 实验 3 -->
+      <div class="lab" id="lab-sampling">
+        <div class="lab-head">
+          <span class="lab-no">实验 3</span>
+          <h3>采样与混叠:为什么看到的频率是假的</h3>
+          <span class="ev ev-sim">simulated</span>
+        </div>
+        <p class="lab-goal">调整信号频率 f 与采样率 f<sub>s</sub>,观察采样点连线如何"变成"另一个低频波形。模型为理想正弦 + 瞬时采样,不含量化、噪声、采样保持。</p>
+        <div class="lab-grid">
+          <div class="controls">
+            <div>
+              <div class="field-label"><span>信号频率 f</span><span class="val" id="sigFVal">45 Hz</span></div>
+              <input type="range" id="sigF" min="5" max="60" step="1" value="45" aria-label="信号频率 f,单位赫兹" />
+            </div>
+            <div>
+              <div class="field-label"><span>采样率 f<sub>s</sub></span><span class="val" id="sigFsVal">40 Hz</span></div>
+              <input type="range" id="sigFs" min="10" max="200" step="1" value="40" aria-label="采样率 fs,单位赫兹" />
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn ghost js-preset" data-f="45" data-fs="200">正常采样 f<sub>s</sub>=200</button>
+              <button type="button" class="btn ghost js-preset" data-f="45" data-fs="40">混叠 f<sub>s</sub>=40</button>
+            </div>
+            <div class="readouts">
+              <div class="ro"><div class="k">奈奎斯特下限 2f</div><div class="v" id="sigNyq">90 Hz</div></div>
+              <div class="ro"><div class="k">每周期采样点数 f<sub>s</sub>/f</div><div class="v" id="sigRatio">0.89</div></div>
+              <div class="ro"><div class="k">看到的频率 f<sub>alias</sub></div><div class="v bad" id="sigAlias">5.0 Hz</div></div>
+              <div class="ro"><div class="k">状态</div><div class="v bad" id="sigBadge">混叠</div></div>
+            </div>
+            <div class="state-card" id="sigNote">f<sub>s</sub> &lt; 2f:采样不足。看到的 5Hz 是 45Hz 的混叠结果,软件无法还原真实频率。</div>
+          </div>
+          <div class="viz">
+            <div class="canvas-card">
+              <canvas id="sigCanvas" role="img" aria-label="采样与混叠波形:真实正弦、采样点与连线"></canvas>
+              <div class="canvas-legend">
+                <span><i class="dash"></i>真实信号</span>
+                <span><i class="dot" style="background:#7dd3fc"></i>采样点</span>
+                <span><i style="background:#5eead4"></i>采样点连线(你"看到"的波形)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <details class="steps">
+          <summary>实验步骤与观察记录</summary>
+          <ol>
+            <li>默认 f = 45Hz、f<sub>s</sub> = 40Hz(低于 2f = 90Hz):真实虚线是 45Hz,但采样点连线只有约 5Hz。</li>
+            <li>点"正常采样"(f<sub>s</sub> = 200Hz):每周期约 4.4 个采样点,连线与真实波形基本一致。</li>
+            <li>把 f<sub>s</sub> 从 200 慢慢拖到 40,观察越过 90Hz 后波形"突然变慢";在 90Hz 附近处于临界状态,结果不可靠。</li>
+            <li>把 f 调到 60Hz、f<sub>s</sub> 调到 50Hz,自己算 f<sub>alias</sub> = |60 − 50| = 10Hz,再与读数对照。</li>
+            <li>思考:只给采样数据,你能分辨"45Hz 真实信号"和"5Hz 真实信号"吗?不能——这正是混叠不可逆的原因。</li>
+          </ol>
+          <p class="small muted" style="margin:10px 0 0">结论:采样率必须高于 2 倍最高信号频率(工程上 5～10 倍),并且要在 ADC 之前用模拟低通抗混叠。提高软件采样率不能挽救已经被混叠的数据。</p>
+        </details>
+      </div>
+
+      <h3 id="hw-checklist">4.4 真机验证清单 <span class="ev ev-hw">hardware-pending</span></h3>
+      <p>下面 5 项需要真实板卡和仪器。本文<b>没有执行</b>这些测量,所以只能标 <span class="ev ev-hw">hardware-pending</span>,不能写成 <code>hardware</code>。完成后请记录板卡型号、仪器型号与测量条件。</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>#</th><th>检查项</th><th>工具</th><th>操作</th><th>预期(待你验证)</th></tr>
+          <tr><td>1</td><td>上拉电平</td><td>万用表 DC 电压档</td><td>按键松开时测引脚对 GND;按下再测</td><td>松开 ≈ VDD(如 3.3V),按下 ≈ 0V</td></tr>
+          <tr><td>2</td><td>抖动持续时间</td><td>示波器 10X 探头</td><td>下降沿单次触发,时间轴 5～20ms/格</td><td>能看到几毫秒的多次跳变;实际宽度以你的按键为准</td></tr>
+          <tr><td>3</td><td>RC 去抖效果</td><td>示波器双通道</td><td>CH1 看按键节点,CH2 看施密特输出;改 τ 对比</td><td>输出边沿只出现一次;τ 太小会多次翻转</td></tr>
+          <tr><td>4</td><td>ADC 短接噪声</td><td>MCU + 串口/调试器</td><td>ADC 输入接 GND,连续读 100 次</td><td>码值在 0 附近小幅跳动(几个 LSB 内);再接已知电压核对</td></tr>
+          <tr><td>5</td><td>电平安全</td><td>万用表 + datasheet</td><td>测 5V 传感器输出高电平;查 MCU 引脚绝对最大额定值 / 是否 5V 容忍</td><td>确认是否需要电平转换;不满足时不得直连</td></tr>
+        </table>
+      </div>
+      <div class="callout warn">
+        <b>安全:</b>接传感器前先断电查线;确认共地;5V 信号进 3.3V 板之前先查手册。上电后发烫、复位、IO 异常,立即断电。
+      </div>
+    </section>
+
+    <!-- ============ 05 结果检查 ============ -->
+    <section class="seg" id="seg-check" data-seg="resultCheck">
+      <div class="seg-head">
+        <span class="seg-no">05</span>
+        <div>
+          <h2>结果检查</h2>
+          <div class="seg-code">schema: resultCheck · 可观察、可勾选</div>
+        </div>
+      </div>
+      <p>不要凭"看完了"打勾。每一项都要求你能<b>当场复述或手算</b>;全部勾选表示本课目标达成。</p>
+      <ul class="check-list">
+        <li>
+          <label class="check-item">
+            <input type="checkbox" class="js-check" />
+            <span class="txt">我能指出上拉/下拉电路,并说出按键按下时引脚电平。
+              <span class="crit">通过标准:上拉→按下为低(active-low);下拉→按下为高(active-high)。</span>
+            </span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item">
+            <input type="checkbox" class="js-check" />
+            <span class="txt">我能解释浮空输入为什么会误触发,并给出至少一种修复。
+              <span class="crit">通过标准:说出高阻 + 干扰/漏电导致电压不定,修复 = 外部/内部上拉或下拉、配置输入模式。</span>
+            </span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item">
+            <input type="checkbox" class="js-check" />
+            <span class="txt">我能算 12 位、Vref = 3.3V 的 LSB 与理想量化误差。
+              <span class="crit">通过标准:LSB = 3.3 / 4096 ≈ 0.806mV;±0.5 LSB ≈ ±0.403mV。</span>
+            </span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item">
+            <input type="checkbox" class="js-check" />
+            <span class="txt">我能区分硬件 RC 与软件消抖,并各说出一个适用场景和代价。
+              <span class="crit">通过标准:RC 不占 CPU 但边沿慢、需施密特;软件灵活但占定时器、有确认延迟。</span>
+            </span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item">
+            <input type="checkbox" class="js-check" />
+            <span class="txt">我能说出 3.3V 与 5V 互连的三种安全方案,并知道要查绝对最大额定值。
+              <span class="crit">通过标准:电平转换芯片 / 电阻分压(仅低速)/ 5V 容忍引脚(查手册确认);不能只说"串电阻"。</span>
+            </span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item">
+            <input type="checkbox" class="js-check" />
+            <span class="txt">我能用万用表和示波器各说出一个"测不准"的坑及规避方法。
+              <span class="crit">通过标准:例如万用表 10MΩ 内阻加载高阻节点;1X 探头带宽不足/地线过长导致波形失真。</span>
+            </span>
+          </label>
+        </li>
+      </ul>
+      <div class="progress-wrap">
+        <div class="progress" aria-hidden="true"><i id="checkBar"></i></div>
+        <span class="check-count" id="checkCount">0 / 6</span>
+      </div>
+      <div class="check-status" id="checkStatus" aria-live="polite">还剩 6 项:回到对应段落补一遍。</div>
+    </section>
+
+    <!-- ============ 06 故障排查 ============ -->
+    <section class="seg" id="seg-troubleshoot" data-seg="troubleshooting">
+      <div class="seg-head">
+        <span class="seg-no">06</span>
+        <div>
+          <h2>故障排查</h2>
+          <div class="seg-code">schema: troubleshooting · 现象 → 检查步骤 → 预期结果 → 下一分支</div>
+        </div>
+      </div>
+      <div class="callout">
+        <b>通用顺序:</b>先断电用通断档查接线 → 上电测供电与共地 → 查引脚配置(输入/上拉/复用)→ 用示波器看波形 → 最后才改软件。
+        跳过前两步,很容易在软件里"修"一个接线问题。
+      </div>
+
+      <details class="fault">
+        <summary>按键不按也乱跳 / 手一碰就触发(误触发)</summary>
+        <div class="fault-body">
+          <div class="fault-field"><div class="k">可能原因</div><div class="v">输入浮空或上拉缺失;上拉阻值过大;长线像天线一样拾取干扰;按键触点氧化接触不良。</div></div>
+          <div class="fault-field"><div class="k">检查步骤</div><div class="v">万用表 DC 电压档测引脚:松开、按下各一次;查原理图与 PCB 是否真有上拉/下拉;查 MCU 引脚配置是否为输入且上拉使能;示波器单次触发看边沿。</div></div>
+          <div class="fault-field"><div class="k">预期结果</div><div class="v">松开稳定在 ≈VDD 或 ≈0V,按下稳定在另一端;抖动段 <b>≤ 20ms</b> 且之后不再变化。</div></div>
+          <div class="fault-field next"><div class="k">下一分支</div><div class="v">电压稳定但软件仍多次触发 → 软件消抖;<br>电压停在 1～2V 中间区 → 上拉缺失/阻值过大/焊接;<br>长线干扰 → 缩短线、加 RC + 施密特或改成低阻抗驱动。</div></div>
+        </div>
+      </details>
+
+      <details class="fault">
+        <summary>按键按下没反应,松开反而正常</summary>
+        <div class="fault-body">
+          <div class="fault-field"><div class="k">可能原因</div><div class="v">按键接成了常闭;上拉接到了 VDD 而按键也接 VDD;引脚复用/配置错;按键损坏或焊点虚焊。</div></div>
+          <div class="fault-field"><div class="k">检查步骤</div><div class="v">断电,用通断档测按键两脚:按下应导通(< 1Ω),松开应断开;测按键到 GND/VDD 的连线;对照原理图确认是上拉还是下拉;查引脚是否被配置成输出或复用功能。</div></div>
+          <div class="fault-field"><div class="k">预期结果</div><div class="v">按键通断正常;引脚电压随按下/松开翻转;逻辑与代码里的有效电平一致(active-low 还是 active-high)。</div></div>
+          <div class="fault-field next"><div class="k">下一分支</div><div class="v">按键本身不通 → 换键;<br>按键正常但引脚不变 → 查焊接与配置;<br>电平翻转但程序无响应 → 查中断边沿/轮询周期/去抖逻辑。</div></div>
+        </div>
+      </details>
+
+      <details class="fault">
+        <summary>ADC 读数跳动很大(几十个 LSB),或短接输入也不归零</summary>
+        <div class="fault-body">
+          <div class="fault-field"><div class="k">可能原因</div><div class="v">Vref/VDDA 纹波大;地噪声;采样时间不足或源阻抗过高;输入悬空;软件没有等待转换完成;通道配置错。</div></div>
+          <div class="fault-field"><div class="k">检查步骤</div><div class="v">把 ADC 输入短接到 GND,连读 100 次看跳动;示波器 AC 耦合测 Vref 与 VDDA 纹波;万用表测实际输入电压与 Vref;把采样时间加长再测;检查 ADC 通道与引脚映射。</div></div>
+          <div class="fault-field"><div class="k">预期结果</div><div class="v">短接 GND 时码值应在 0 附近小幅跳动(几个 LSB 内);已知输入电压换算后的码值与读数一致(误差在量化 + 噪声范围内)。</div></div>
+          <div class="fault-field next"><div class="k">下一分支</div><div class="v">短接仍跳很大 → 查参考、供电、地、ADC 配置;<br>短接正常但接传感器跳 → 源阻抗/滤波/线长,加缓冲或延长采样;<br>有周期性干扰 → 软件平均 + 硬件滤波,查开关电源频率。</div></div>
+        </div>
+      </details>
+
+      <details class="fault">
+        <summary>接上 5V 传感器后 IO 发烫、板子复位或引脚损坏</summary>
+        <div class="fault-body">
+          <div class="fault-field"><div class="k">可能原因</div><div class="v">5V 推挽输出直接进 3.3V 引脚,超过绝对最大额定值;电流经 ESD 二极管灌入电源;上电顺序/断电顺序导致反灌。</div></div>
+          <div class="fault-field"><div class="k">检查步骤</div><div class="v">查传感器输出高电平(推挽还是开漏、是否有上拉到 5V);查 MCU datasheet 的绝对最大额定值与"5V 容忍"标注(如 STM32 的 FT 引脚);断电用万用表测引脚对 VDD/GND 阻抗;上电用示波器测实际高电平。</div></div>
+          <div class="fault-field"><div class="k">预期结果</div><div class="v">引脚高电平 ≤ 绝对最大额定值(常见 VDD + 0.3V);若标注 5V 容忍,仍需确认注入电流与上电顺序;不满足就不能直连。</div></div>
+          <div class="fault-field next"><div class="k">下一分支</div><div class="v">不满足 → 加电平转换(如 74LVC1T45)或电阻分压 + 保护(仅低速);<br>已损坏 → 更换芯片/板卡并加保护;<br>开漏输出 → 只需上拉到 3.3V,不要上拉到 5V。</div></div>
+        </div>
+      </details>
+
+      <details class="fault">
+        <summary>示波器测 PWM / 时钟,频率或占空比与代码对不上</summary>
+        <div class="fault-body">
+          <div class="fault-field"><div class="k">可能原因</div><div class="v">1X 探头带宽不足;地线过长引入振铃;触发设置错误;采样率不够;探头未补偿;测的是引脚复用前的信号或错误通道。</div></div>
+          <div class="fault-field"><div class="k">检查步骤</div><div class="v">换 10X 探头并补偿;用短地弹簧;确认触发源/边沿/电平;看示波器采样率是否 ≥ 5× 信号;用万用表/逻辑分析仪交叉验证频率;查引脚复用与时钟配置。</div></div>
+          <div class="fault-field"><div class="k">预期结果</div><div class="v">上升沿干净、无明显振铃;周期与代码配置一致;占空比误差在时钟/分频误差内。</div></div>
+          <div class="fault-field next"><div class="k">下一分支</div><div class="v">波形振铃 → 缩短地线、加串联阻尼、检查布局;<br>频率差整数倍 → 查时钟树/预分频;<br>完全无输出 → 查引脚复用、定时器使能、输出比较配置。</div></div>
+        </div>
+      </details>
+
+      <details class="fault">
+        <summary>采到的频率/振动读数明显偏低或"看起来在慢速摆动"</summary>
+        <div class="fault-body">
+          <div class="fault-field"><div class="k">可能原因</div><div class="v">采样率低于 2 倍信号频率,发生混叠;定时采样抖动大;信号本身有低频包络或拍频。</div></div>
+          <div class="fault-field"><div class="k">检查步骤</div><div class="v">算 f 与 f<sub>s</sub>:是否 f<sub>s</sub> &gt; 2f(工程上 5～10 倍)?把 f<sub>s</sub> 提高 10 倍看读数是否改变;用示波器直接看原始信号;检查定时器采样周期是否稳定。</div></div>
+          <div class="fault-field"><div class="k">预期结果</div><div class="v">提高 f<sub>s</sub> 后读数稳定且与信号源一致;或加上模拟低通后混叠成分消失。</div></div>
+          <div class="fault-field next"><div class="k">下一分支</div><div class="v">提高 f<sub>s</sub> 后读数改变 → 确认是混叠,加抗混叠低通;<br>提高后仍偏 → 查传感器带宽/机械频率/采样定时;<br>读数周期性摆动 → 查拍频与电源干扰。</div></div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============ 07 小测 ============ -->
+    <section class="seg" id="seg-quiz" data-seg="quiz">
+      <div class="seg-head">
+        <span class="seg-no">07</span>
+        <div>
+          <h2>小测</h2>
+          <div class="seg-code">schema: quiz · 5 题,页面内判分并给解析</div>
+        </div>
+      </div>
+      <p>选完 5 题后点"提交答案"。判分只用于自检,答错请回到对应小节。</p>
+
+      <fieldset class="quiz-q" data-q="1" data-correct="a">
+        <legend><span class="qno">Q1</span>上拉 10kΩ、按键另一端接 GND。按键<b>松开</b>时,引脚电平是?<span class="q-status"></span></legend>
+        <label class="opt"><input type="radio" name="q1" value="a" /><span>高电平(接近 VDD)</span></label>
+        <label class="opt"><input type="radio" name="q1" value="b" /><span>低电平(接近 GND)</span></label>
+        <label class="opt"><input type="radio" name="q1" value="c" /><span>浮空,读数随机</span></label>
+        <label class="opt"><input type="radio" name="q1" value="d" /><span>约为 VDD/2</span></label>
+        <div class="explain"><b>解析:</b>上拉电阻把节点默认拉到 VDD,按键到 GND 只在按下时把节点拉低。所以松开 = 高、按下 = 低(active-low)。</div>
+      </fieldset>
+
+      <fieldset class="quiz-q" data-q="2" data-correct="a">
+        <legend><span class="qno">Q2</span>12 位 ADC、Vref = 3.3V,1 个 LSB 约为?<span class="q-status"></span></legend>
+        <label class="opt"><input type="radio" name="q2" value="a" /><span>0.806mV</span></label>
+        <label class="opt"><input type="radio" name="q2" value="b" /><span>8.06mV</span></label>
+        <label class="opt"><input type="radio" name="q2" value="c" /><span>3.3mV</span></label>
+        <label class="opt"><input type="radio" name="q2" value="d" /><span>0.403mV</span></label>
+        <div class="explain"><b>解析:</b>LSB = Vref / 2<sup>n</sup> = 3.3V / 4096 ≈ 0.8057mV。0.403mV 是 ±0.5 LSB 的量化误差,不是 LSB 本身。</div>
+      </fieldset>
+
+      <fieldset class="quiz-q" data-q="3" data-correct="b">
+        <legend><span class="qno">Q3</span>5V 传感器推挽输出接 3.3V MCU 的普通 GPIO,最稳妥的做法是?<span class="q-status"></span></legend>
+        <label class="opt"><input type="radio" name="q3" value="a" /><span>直接接:MCU 能识别 3.3V 高电平,所以 5V 也没问题</span></label>
+        <label class="opt"><input type="radio" name="q3" value="b" /><span>先查该引脚是否 5V 容忍、绝对最大额定值是否允许;不满足就用电平转换</span></label>
+        <label class="opt"><input type="radio" name="q3" value="c" /><span>串一个 10kΩ 电阻限流,就不会损坏</span></label>
+        <label class="opt"><input type="radio" name="q3" value="d" /><span>把 MCU 供电改成 5V,和其他 5V 器件统一</span></label>
+        <div class="explain"><b>解析:</b>"能识别高电平"是逻辑问题,"能承受 5V"是绝对最大额定值问题。多数 3.3V 引脚绝对最大为 VDD+0.3V;串电阻只限流,仍可能经 ESD 二极管灌入并抬高电源;把供电改成 5V 可能损坏其他 3.3V 外设。正确做法是查手册,按需做电平转换(或确认 5V 容忍并加保护)。</div>
+      </fieldset>
+
+      <fieldset class="quiz-q" data-q="4" data-correct="b">
+        <legend><span class="qno">Q4</span>按键抖动持续约 8ms,RC 去抖取 τ = 1ms,最可能的结果是?<span class="q-status"></span></legend>
+        <label class="opt"><input type="radio" name="q4" value="a" /><span>一定能完全消除抖动</span></label>
+        <label class="opt"><input type="radio" name="q4" value="b" /><span>门限可能在抖动期间被多次跨越,仍出现多次边沿</span></label>
+        <label class="opt"><input type="radio" name="q4" value="c" /><span>会固定延迟约 1 秒</span></label>
+        <label class="opt"><input type="radio" name="q4" value="d" /><span>去抖效果与 τ 无关</span></label>
+        <div class="explain"><b>解析:</b>τ = 1ms 时,滤波电压约 1.2τ ≈ 1.2ms 就到达 0.7VDD 门限,而抖动持续约 8ms,所以门限会在抖动期间反复被跨越。τ 通常需要与抖动持续时间同量级或更大,并用施密特触发器整形。</div>
+      </fieldset>
+
+      <fieldset class="quiz-q" data-q="5" data-correct="a">
+        <legend><span class="qno">Q5</span>信号 900Hz,采样率 1000Hz,从采样数据里会看到多少 Hz?<span class="q-status"></span></legend>
+        <label class="opt"><input type="radio" name="q5" value="a" /><span>100Hz</span></label>
+        <label class="opt"><input type="radio" name="q5" value="b" /><span>900Hz</span></label>
+        <label class="opt"><input type="radio" name="q5" value="c" /><span>1900Hz</span></label>
+        <label class="opt"><input type="radio" name="q5" value="d" /><span>50Hz</span></label>
+        <div class="explain"><b>解析:</b>fs = 1000Hz &lt; 2f = 1800Hz,发生混叠;f<sub>alias</sub> = |900 − 1000| = 100Hz。提高软件采样率不能恢复已混叠的数据,必须在采样前加模拟低通或提高 fs。</div>
+      </fieldset>
+
+      <div class="quiz-bar">
+        <button type="button" class="btn primary" id="quizSubmit">提交答案</button>
+        <button type="button" class="btn" id="quizReset">重做</button>
+      </div>
+      <div class="quiz-result" id="quizResult" aria-live="polite">尚未提交。选完答案后点"提交答案"。</div>
+    </section>
+
+    <!-- ============ 08 下一步 ============ -->
+    <section class="seg" id="seg-next" data-seg="nextStep">
+      <div class="seg-head">
+        <span class="seg-no">08</span>
+        <div>
+          <h2>下一步</h2>
+          <div class="seg-code">schema: nextStep · 至少 1 条站内真实路由</div>
+        </div>
+      </div>
+      <p>本课解决了"看懂电平和采样"。接下来把这两件事用起来:</p>
+      <div class="next-grid">
+        <a class="next-card" href="/foundations/c/">
+          <div class="label">REVIEW · 前置课</div>
+          <div class="t">C 与工程工具</div>
+          <div class="d">位操作、指针与调试会直接用于 GPIO/寄存器配置。若前置不牢,先回这一课。</div>
+        </a>
+        <a class="next-card" href="/projects/collect/">
+          <div class="label">PROJECT · M0</div>
+          <div class="t">多传感器采集与监控:进入项目</div>
+          <div class="d">把上拉/去抖/ADC 量化放进真实采集链路:传感器 → STM32 → 串口 → 网关 → 仪表盘。</div>
+        </a>
+        <a class="next-card" href="/mcu/gpio">
+          <div class="label">KNOWLEDGE · 延伸</div>
+          <div class="t">MCU GPIO:把配置落到代码</div>
+          <div class="d">输入/输出、上拉输入、推挽与开漏,以及 HAL 里的对应配置。</div>
+        </a>
+        <a class="next-card" href="/route/">
+          <div class="label">PATH · 学习路线</div>
+          <div class="t">回到阶段 01 与整体路线</div>
+          <div class="d">工程基础之后是 MCU 与外设;按路线确认下一门课和产出。</div>
+        </a>
+      </div>
+      <p class="small muted" style="margin-top:14px">
+        建议顺序:先完成 <a href="/foundations/c/">C 与工程工具</a>,再进入 <a href="/projects/collect/">项目 M0</a>。
+        本页与 <a href="/foundations/">工程基础</a> 索引、<a href="/route/">学习路线</a> 互相链接。
+      </p>
+    </section>
+
+    <div class="footer">
+      <p>
+        数字电路入门 · 平台课程 <code>platform:circuits</code> · schema v1(8 段) · 更新 2026-11-27<br>
+        证据:<span class="ev ev-pr">principle</span> + <span class="ev ev-sim">simulated</span> + <span class="ev ev-hw">hardware-pending</span>;
+        本页没有 <code>hardware</code> 证据,所有波形与读数均为教学模拟,不能当作实测数据引用。<br>
+        页面内交互全部为纯内联 JS,无外部库、无网络请求、无后端依赖。
+      </p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var $ = function (sel, root) { return (root || document).querySelector(sel); };
+      var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+
+      /* =========================================================
+         实验 1:上拉 / 下拉按键
+         ========================================================= */
+      (function initPullupLab() {
+        var VDD = 3.3;
+        var R = 10000;
+        var state = { mode: 'up', pressed: false };
+        var modeBtns = $$('.js-mode');
+        var btnToggle = $('#btnToggle');
+        var btnState = $('#btnState');
+        var modeLabel = $('#pullModeLabel');
+        var pinVoltage = $('#pinVoltage');
+        var pinLogic = $('#pinLogic');
+        var pinCurrent = $('#pinCurrent');
+        var pinRisk = $('#pinRisk');
+        var levelFill = $('#levelFill');
+        var explain = $('#pullExplain');
+        var modeNote = $('#modeNote');
+
+        if (!btnToggle || !modeBtns.length) return;
+
+        function setClass(el, cls) {
+          if (el) el.className = cls;
+        }
+
+        function render() {
+          var v = null;
+          var logic = '—';
+          var current = 0;
+          var risk = '';
+          var riskClass = 'ok';
+          var text = '';
+          var note = '';
+
+          if (state.mode === 'up') {
+            if (state.pressed) {
+              v = 0; logic = 'LOW (0)'; current = (VDD / R) * 1000;
+              risk = '低 —— 按键把节点短接到 GND,上拉电阻限制电流。';
+              text = '上拉:按键一端接引脚、另一端接 GND;10kΩ 电阻把引脚默认拉到 VDD。松开 = 高,按下 = 低(active-low)。';
+              note = '按下时电流路径:VDD → R → 按键 → GND,约 0.330mA。';
+            } else {
+              v = VDD; logic = 'HIGH (1)'; current = 0;
+              risk = '低 —— 上拉电阻给出确定高电平。';
+              text = '上拉:按键一端接引脚、另一端接 GND;10kΩ 电阻把引脚默认拉到 VDD。松开 = 高,按下 = 低(active-low)。';
+              note = '松开时输入高阻,电阻上几乎没有电流;引脚被稳定拉到 3.3V。';
+            }
+          } else if (state.mode === 'down') {
+            if (state.pressed) {
+              v = VDD; logic = 'HIGH (1)'; current = (VDD / R) * 1000;
+              risk = '低 —— 按键把节点短接到 VDD,下拉电阻限制电流。';
+              text = '下拉:按键一端接引脚、另一端接 VDD;10kΩ 电阻把引脚默认拉到 GND。松开 = 低,按下 = 高(active-high)。';
+              note = '按下时电流路径:VDD → 按键 → R → GND,约 0.330mA。';
+            } else {
+              v = 0; logic = 'LOW (0)'; current = 0;
+              risk = '低 —— 下拉电阻给出确定低电平。';
+              text = '下拉:按键一端接引脚、另一端接 VDD;10kΩ 电阻把引脚默认拉到 GND。松开 = 低,按下 = 高(active-high)。';
+              note = '松开时输入高阻,电阻上几乎没有电流;引脚被稳定拉到 0V。';
+            }
+          } else {
+            if (state.pressed) {
+              v = 0; logic = 'LOW (0)(被按键强行拉低)'; current = 0;
+              risk = '中 —— 只有按下时电平确定;松开后仍浮空。';
+              riskClass = 'warn';
+              text = '浮空:没有上拉/下拉,引脚是高阻节点,电压由漏电、寄生电容与空间干扰决定。';
+              note = '按下时按键把节点强行短到 GND,所以读到低电平;但松手后又会回到不确定状态。';
+            } else {
+              v = null; logic = '不确定(禁止依赖)'; current = 0;
+              risk = '高 —— 浮空输入可能误触发、增加功耗,并对 ESD 敏感。';
+              riskClass = 'bad';
+              text = '浮空:没有上拉/下拉,引脚是高阻节点,电压由漏电、寄生电容与空间干扰决定 → 读数不确定。';
+              note = '这是最危险的接法:程序可能随机读到高或低;应加上拉/下拉或启用内部上下拉。';
+            }
+          }
+
+          // 按钮与标签
+          modeBtns.forEach(function (b) {
+            b.classList.toggle('on', b.getAttribute('data-mode') === state.mode);
+          });
+          modeLabel.textContent = state.mode === 'up' ? '上拉' : (state.mode === 'down' ? '下拉' : '浮空');
+          btnToggle.textContent = state.pressed ? '松开按键' : '按下按键';
+          btnToggle.setAttribute('aria-pressed', state.pressed ? 'true' : 'false');
+          btnState.textContent = state.pressed ? '已按下' : '松开';
+
+          // 读数
+          pinVoltage.textContent = v === null ? '浮动 (??)' : v.toFixed(2) + ' V';
+          pinLogic.textContent = logic;
+          setClass(pinLogic, 'v ' + (v === null ? 'bad' : (riskClass === 'ok' ? 'ok' : riskClass)));
+          pinCurrent.textContent = current > 0 ? current.toFixed(3) + ' mA' : '0.000 mA';
+
+          if (levelFill) {
+            if (v === null) {
+              levelFill.className = 'fill is-float';
+              levelFill.style.width = '100%';
+            } else {
+              levelFill.className = 'fill';
+              levelFill.style.width = ((v / VDD) * 100).toFixed(1) + '%';
+            }
+          }
+
+          pinRisk.textContent = risk;
+          pinRisk.parentElement.className = 'state-card';
+          if (riskClass === 'warn') pinRisk.parentElement.style.borderColor = 'rgba(251,191,36,.45)';
+          else if (riskClass === 'bad') pinRisk.parentElement.style.borderColor = 'rgba(251,113,133,.5)';
+          else pinRisk.parentElement.style.borderColor = '';
+
+          explain.textContent = text;
+          modeNote.textContent = note;
+        }
+
+        modeBtns.forEach(function (b) {
+          b.addEventListener('click', function () {
+            state.mode = b.getAttribute('data-mode');
+            render();
+          });
+        });
+        btnToggle.addEventListener('click', function () {
+          state.pressed = !state.pressed;
+          render();
+        });
+        render();
+      })();
+
+      /* =========================================================
+         实验 2:RC 去抖
+         ========================================================= */
+      (function initDebounceLab() {
+        var VDD = 3.3;
+        var VTH = 0.7 * VDD;
+        var BOUNCE_END = 7.0;
+        var BOUNCE_SEQ = [[1.2, true], [0.7, false], [1.5, true], [0.9, false], [2.1, true], [0.6, false]];
+        var WINDOW = 100;
+        var DT = 0.02;
+
+        var rcR = $('#rcR');
+        var rcC = $('#rcC');
+        var rcRVal = $('#rcRVal');
+        var rcCVal = $('#rcCVal');
+        var rcTau = $('#rcTau');
+        var rcFiveTau = $('#rcFiveTau');
+        var rcCross = $('#rcCross');
+        var rcStable = $('#rcStable');
+        var rcVerdictText = $('#rcVerdictText');
+        var rcNote = $('#rcNote');
+        var canvas = $('#rcCanvas');
+        if (!rcR || !canvas) return;
+
+        var ctx = canvas.getContext('2d');
+
+        function pressedAt(t) {
+          var acc = 0;
+          for (var i = 0; i < BOUNCE_SEQ.length; i++) {
+            acc += BOUNCE_SEQ[i][0];
+            if (t < acc) return BOUNCE_SEQ[i][1];
+          }
+          return true;
+        }
+
+        function simulate() {
+          var R = parseFloat(rcR.value);
+          var C = parseFloat(rcC.value);
+          var tau = R * C; // kΩ × µF = ms
+          var steps = Math.round(WINDOW / DT);
+          var v = VDD;
+          var pts = [];
+          var crossings = 0;
+          var prevBelow = false;
+          var firstCross = null;
+          var t, i, rawV, below;
+
+          for (i = 0; i <= steps; i++) {
+            t = i * DT;
+            rawV = pressedAt(t) ? 0 : VDD;
+            if (i > 0) v += (rawV - v) * (DT / Math.max(tau, 1e-6));
+            below = v <= VTH;
+            if (below && !prevBelow) {
+              crossings++;
+              if (firstCross === null) firstCross = t;
+            }
+            prevBelow = below;
+            pts.push({ t: t, v: v, below: below });
+          }
+
+          var stable = null;
+          var last = pts[pts.length - 1];
+          if (last.below) {
+            var idx = pts.length - 1;
+            while (idx > 0 && pts[idx - 1].below) idx--;
+            stable = pts[idx].t;
+          }
+          return { tau: tau, pts: pts, crossings: crossings, stable: stable, firstCross: firstCross };
+        }
+
+        function verdictOf(res) {
+          if (res.stable === null) {
+            return {
+              badge: '过慢',
+              cls: 'bad',
+              text: '在 ' + WINDOW + 'ms 窗口内没有稳定:τ 太大,按键响应会被拖到 ' + (res.tau * 5).toFixed(0) + 'ms 量级,实际使用不可接受。'
+            };
+          }
+          if (res.crossings > 1) {
+            return {
+              badge: '去抖不足',
+              cls: 'bad',
+              text: '门限在抖动期间被穿越 ' + res.crossings + ' 次:输出可能出现多个边沿。把 τ 增大到与抖动持续时间同量级(约 5～20ms)再试。'
+            };
+          }
+          if (res.stable > 40) {
+            return {
+              badge: '偏慢',
+              cls: 'warn',
+              text: '能滤掉抖动,但稳定时刻 ' + res.stable.toFixed(1) + 'ms 偏晚;按键响应会显得迟钝。可适当减小 τ。'
+            };
+          }
+          return {
+            badge: '可用',
+            cls: 'ok',
+            text: '门限只被穿越 1 次,输出在 ' + res.stable.toFixed(1) + 'ms 后保持稳定。RC 把短促的回弹"吃"掉了;再结合施密特触发器或软件消抖更稳。'
+          };
+        }
+
+        function draw(res) {
+          if (!ctx) return;
+          var cssW = canvas.clientWidth || 640;
+          var cssH = canvas.clientHeight || 252;
+          var dpr = window.devicePixelRatio || 1;
+          canvas.width = Math.round(cssW * dpr);
+          canvas.height = Math.round(cssH * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, cssW, cssH);
+
+          var pad = { l: 42, r: 16, t: 26, b: 28 };
+          var w = Math.max(10, cssW - pad.l - pad.r);
+          var h = Math.max(10, cssH - pad.t - pad.b);
+          var X = function (t) { return pad.l + (t / WINDOW) * w; };
+          var Y = function (v) { return pad.t + (1 - v / VDD) * h; };
+
+          // 背景网格
+          ctx.strokeStyle = 'rgba(30,42,56,.85)';
+          ctx.lineWidth = 1;
+          for (var t = 0; t <= WINDOW; t += 10) {
+            ctx.beginPath(); ctx.moveTo(X(t), pad.t); ctx.lineTo(X(t), pad.t + h); ctx.stroke();
+          }
+          [0, 0.8, 2.0, VDD].forEach(function (v) {
+            ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(pad.l + w, Y(v)); ctx.stroke();
+          });
+
+          // 坐标标签
+          ctx.fillStyle = '#6f8296';
+          ctx.font = '10px ui-monospace, Menlo, monospace';
+          ctx.textAlign = 'right';
+          ctx.fillText('3.3V', pad.l - 6, Y(3.3) + 3);
+          ctx.fillText('2.0V', pad.l - 6, Y(2.0) + 3);
+          ctx.fillText('0.8V', pad.l - 6, Y(0.8) + 3);
+          ctx.fillText('0V', pad.l - 6, Y(0) + 3);
+          ctx.textAlign = 'center';
+          for (var tx = 0; tx <= WINDOW; tx += 20) {
+            ctx.fillText(tx + 'ms', X(tx), cssH - 8);
+          }
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#8b9bb0';
+          ctx.fillText('电压', 4, 12);
+
+          // 原始触点波形
+          ctx.beginPath();
+          for (var i = 0; i < res.pts.length; i += 5) {
+            var rawV = pressedAt(res.pts[i].t) ? 0 : VDD;
+            var px = X(res.pts[i].t), py = Y(rawV);
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.strokeStyle = 'rgba(139,155,176,.75)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // 门限
+          ctx.beginPath();
+          ctx.moveTo(pad.l, Y(VTH));
+          ctx.lineTo(pad.l + w, Y(VTH));
+          ctx.setLineDash([5, 5]);
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = '#fbbf24';
+          ctx.font = '10px ui-monospace, Menlo, monospace';
+          ctx.textAlign = 'right';
+          ctx.fillText('0.7VDD = 2.31V', pad.l + w, Y(VTH) - 5);
+
+          // RC 滤波曲线
+          ctx.beginPath();
+          for (i = 0; i < res.pts.length; i++) {
+            px = X(res.pts[i].t); py = Y(res.pts[i].v);
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.strokeStyle = '#5eead4';
+          ctx.lineWidth = 2.2;
+          ctx.stroke();
+
+          // 每 5ms 采样点
+          for (var st = 0; st <= WINDOW; st += 5) {
+            var idx = Math.round(st / DT);
+            if (idx >= res.pts.length) break;
+            var sv = res.pts[idx].v;
+            ctx.beginPath();
+            ctx.arc(X(st), Y(sv), 3, 0, Math.PI * 2);
+            ctx.fillStyle = sv >= VTH ? '#7dd3fc' : '#8b9bb0';
+            ctx.fill();
+          }
+
+          // 稳定时刻
+          if (res.stable !== null) {
+            var sx = X(res.stable);
+            ctx.beginPath();
+            ctx.moveTo(sx, pad.t);
+            ctx.lineTo(sx, pad.t + h);
+            ctx.strokeStyle = 'rgba(94,234,212,.55)';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+            ctx.fillStyle = '#5eead4';
+            ctx.font = '10px ui-monospace, Menlo, monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText('稳定 ' + res.stable.toFixed(1) + 'ms', Math.min(sx + 4, pad.l + w - 74), cssH - 36);
+          }
+        }
+
+        function update() {
+          var R = parseFloat(rcR.value);
+          var C = parseFloat(rcC.value);
+          rcRVal.textContent = R + ' kΩ';
+          rcCVal.textContent = C.toFixed(1) + ' µF';
+          var res = simulate();
+          rcTau.textContent = res.tau.toFixed(res.tau < 10 ? 2 : 1) + ' ms';
+          rcFiveTau.textContent = (res.tau * 5).toFixed(res.tau * 5 < 10 ? 2 : 1) + ' ms';
+          rcCross.textContent = res.crossings + ' 次';
+          rcCross.className = 'v ' + (res.crossings > 1 ? 'bad' : (res.crossings === 1 ? 'ok' : 'warn'));
+
+          if (res.stable === null) {
+            rcStable.textContent = '>' + WINDOW + ' ms';
+            rcStable.className = 'v bad';
+          } else {
+            rcStable.textContent = res.stable.toFixed(1) + ' ms';
+            rcStable.className = 'v ' + (res.stable > 40 ? 'warn' : 'ok');
+          }
+
+          var verdict = verdictOf(res);
+          rcVerdictText.innerHTML = '<b>' + verdict.badge + '</b> · ' + verdict.text;
+          rcVerdictText.className = 'v ' + verdict.cls;
+          rcTau.className = 'v ' + (res.tau < 2 ? 'bad' : (res.tau > 20 ? 'warn' : 'ok'));
+          draw(res);
+        }
+
+        rcR.addEventListener('input', update);
+        rcC.addEventListener('input', update);
+        canvas.__redraw = update;
+        update();
+      })();
+
+      /* =========================================================
+         实验 3:采样与混叠
+         ========================================================= */
+      (function initSamplingLab() {
+        var WINDOW = 0.5; // 秒
+        var sigF = $('#sigF');
+        var sigFs = $('#sigFs');
+        var sigFVal = $('#sigFVal');
+        var sigFsVal = $('#sigFsVal');
+        var sigNyq = $('#sigNyq');
+        var sigRatio = $('#sigRatio');
+        var sigAlias = $('#sigAlias');
+        var sigBadge = $('#sigBadge');
+        var sigNote = $('#sigNote');
+        var canvas = $('#sigCanvas');
+        if (!sigF || !canvas) return;
+        var ctx = canvas.getContext('2d');
+
+        function aliasOf(f, fs) {
+          var nyq = 2 * f;
+          if (Math.abs(fs - nyq) < 0.5) {
+            return { nyq: nyq, alias: null, status: '临界 (2f)', cls: 'warn', note: '采样率正好在奈奎斯特边界,结果取决于相位,实际不可靠。' };
+          }
+          if (fs > nyq) {
+            return { nyq: nyq, alias: f, status: '正常', cls: 'ok', note: 'fs > 2f,采样点足以重建信号;工程上建议再提高 5～10 倍并加抗混叠低通。' };
+          }
+          var k = Math.max(1, Math.round(f / fs));
+          var alias = Math.abs(f - k * fs);
+          return { nyq: nyq, alias: alias, status: '混叠', cls: 'bad', note: 'fs < 2f:采样不足。看到的 ' + alias.toFixed(1) + 'Hz 是 ' + f + 'Hz 的混叠结果,软件无法还原真实频率。' };
+        }
+
+        function draw(f, fs) {
+          if (!ctx) return;
+          var cssW = canvas.clientWidth || 640;
+          var cssH = canvas.clientHeight || 252;
+          var dpr = window.devicePixelRatio || 1;
+          canvas.width = Math.round(cssW * dpr);
+          canvas.height = Math.round(cssH * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, cssW, cssH);
+
+          var pad = { l: 40, r: 14, t: 26, b: 28 };
+          var w = Math.max(10, cssW - pad.l - pad.r);
+          var h = Math.max(10, cssH - pad.t - pad.b);
+          var X = function (t) { return pad.l + (t / WINDOW) * w; };
+          var Y = function (v) { return pad.t + (1 - (v + 1) / 2) * h; };
+
+          // 网格
+          ctx.strokeStyle = 'rgba(30,42,56,.85)';
+          ctx.lineWidth = 1;
+          for (var t = 0; t <= WINDOW + 1e-9; t += 0.1) {
+            ctx.beginPath(); ctx.moveTo(X(t), pad.t); ctx.lineTo(X(t), pad.t + h); ctx.stroke();
+          }
+          [-1, 0, 1].forEach(function (v) {
+            ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(pad.l + w, Y(v)); ctx.stroke();
+          });
+
+          // 坐标标签
+          ctx.fillStyle = '#6f8296';
+          ctx.font = '10px ui-monospace, Menlo, monospace';
+          ctx.textAlign = 'right';
+          ctx.fillText('+1', pad.l - 6, Y(1) + 3);
+          ctx.fillText('0', pad.l - 6, Y(0) + 3);
+          ctx.fillText('−1', pad.l - 6, Y(-1) + 3);
+          ctx.textAlign = 'center';
+          for (var tx = 0; tx <= WINDOW + 1e-9; tx += 0.1) {
+            ctx.fillText(Math.round(tx * 1000) + 'ms', X(tx), cssH - 8);
+          }
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#8b9bb0';
+          ctx.fillText('幅度(归一化)', 4, 12);
+
+          var amp = h * 0.38;
+          var cy = pad.t + h / 2;
+
+          // 真实正弦(虚线)
+          ctx.beginPath();
+          for (var i = 0; i <= 720; i++) {
+            var tt = (i / 720) * WINDOW;
+            var yy = cy - amp * Math.sin(2 * Math.PI * f * tt);
+            var px = X(tt);
+            if (i === 0) ctx.moveTo(px, yy); else ctx.lineTo(px, yy);
+          }
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = 'rgba(139,155,176,.8)';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // 采样点与连线
+          var n = Math.floor(WINDOW * fs);
+          var pts = [];
+          for (i = 0; i <= n; i++) {
+            var st = i / fs;
+            if (st > WINDOW + 1e-9) break;
+            var sv = Math.sin(2 * Math.PI * f * st);
+            pts.push({ x: X(st), y: cy - amp * sv, t: st });
+          }
+          ctx.beginPath();
+          for (i = 0; i < pts.length; i++) {
+            if (i === 0) ctx.moveTo(pts[i].x, pts[i].y); else ctx.lineTo(pts[i].x, pts[i].y);
+          }
+          ctx.strokeStyle = '#5eead4';
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+          for (i = 0; i < pts.length; i++) {
+            ctx.beginPath();
+            ctx.arc(pts[i].x, pts[i].y, 2.6, 0, Math.PI * 2);
+            ctx.fillStyle = '#7dd3fc';
+            ctx.fill();
+          }
+        }
+
+        function update() {
+          var f = parseFloat(sigF.value);
+          var fs = parseFloat(sigFs.value);
+          sigFVal.textContent = f + ' Hz';
+          sigFsVal.textContent = fs + ' Hz';
+          var info = aliasOf(f, fs);
+          sigNyq.textContent = info.nyq.toFixed(0) + ' Hz';
+          sigRatio.textContent = (fs / f).toFixed(2);
+          sigAlias.textContent = info.alias === null ? '不确定' : info.alias.toFixed(1) + ' Hz';
+          sigAlias.className = 'v ' + info.cls;
+          sigBadge.textContent = info.status;
+          sigBadge.className = 'v ' + info.cls;
+          sigNote.textContent = info.note;
+          draw(f, fs);
+        }
+
+        sigF.addEventListener('input', update);
+        sigFs.addEventListener('input', update);
+        canvas.__redraw = update;
+        $$('.js-preset').forEach(function (b) {
+          b.addEventListener('click', function () {
+            sigF.value = b.getAttribute('data-f');
+            sigFs.value = b.getAttribute('data-fs');
+            update();
+          });
+        });
+        update();
+      })();
+
+      /* =========================================================
+         量化计算器
+         ========================================================= */
+      (function initQuantTool() {
+        var qBits = $('#qBits');
+        var qVref = $('#qVref');
+        var qVin = $('#qVin');
+        if (!qBits || !qVref || !qVin) return;
+        var qBitsVal = $('#qBitsVal');
+        var qVrefVal = $('#qVrefVal');
+        var qVinVal = $('#qVinVal');
+        var qLsb = $('#qLsb');
+        var qCode = $('#qCode');
+        var qVq = $('#qVq');
+        var qErr = $('#qErr');
+        var qMaxErr = $('#qMaxErr');
+        var qFull = $('#qFull');
+        var qNote = $('#qNote');
+
+        function fmt(v) {
+          var a = Math.abs(v);
+          if (a >= 0.1) return v.toFixed(4) + ' V';
+          if (a >= 0.0001) return (v * 1000).toFixed(3) + ' mV';
+          return (v * 1e6).toFixed(2) + ' µV';
+        }
+        function fmtSigned(v) {
+          var s = v > 0 ? '+' : (v < 0 ? '−' : '');
+          return s + fmt(Math.abs(v));
+        }
+
+        function render() {
+          var bits = parseInt(qBits.value, 10);
+          var vref = parseFloat(qVref.value);
+          qVin.max = String(vref);
+          if (parseFloat(qVin.value) > vref) qVin.value = String(vref);
+          var vin = parseFloat(qVin.value);
+          var denom = Math.pow(2, bits);
+          var maxCode = denom - 1;
+          var lsb = vref / denom;
+          var code = Math.min(maxCode, Math.max(0, Math.floor(vin / lsb)));
+          var vq = code * lsb;
+          var err = vin - vq;
+
+          qBitsVal.textContent = bits + ' 位';
+          qVrefVal.textContent = vref.toFixed(3) + ' V';
+          qVinVal.textContent = vin.toFixed(2) + ' V';
+          qLsb.textContent = fmt(lsb);
+          qCode.textContent = code + ' / 0x' + code.toString(16).toUpperCase();
+          qVq.textContent = fmt(vq);
+          qErr.textContent = fmtSigned(err);
+          qMaxErr.textContent = fmt(0.5 * lsb);
+          qFull.textContent = String(maxCode);
+          qNote.textContent = bits + ' 位、' + vref.toFixed(1) + 'V 时,1 个 LSB = ' + fmt(lsb) + ';' +
+            (vin >= vref ? '输入已达到满量程,码值饱和在 ' + maxCode + ',存在约 1 LSB 的满量程误差。' : '这是你能分辨的最小台阶;理想量化误差上限为 ±' + fmt(0.5 * lsb) + '。');
+        }
+
+        qBits.addEventListener('change', render);
+        qVref.addEventListener('change', render);
+        qVin.addEventListener('input', render);
+        render();
+      })();
+
+      /* =========================================================
+         结果检查
+         ========================================================= */
+      (function initChecks() {
+        var checks = $$('.js-check');
+        var bar = $('#checkBar');
+        var count = $('#checkCount');
+        var status = $('#checkStatus');
+        if (!checks.length || !bar || !count || !status) return;
+
+        function update() {
+          var n = checks.filter(function (c) { return c.checked; }).length;
+          var total = checks.length;
+          bar.style.width = ((n / total) * 100).toFixed(1) + '%';
+          count.textContent = n + ' / ' + total;
+          checks.forEach(function (c) {
+            var item = c.closest('.check-item');
+            if (item) item.classList.toggle('is-done', c.checked);
+          });
+          if (n === total) {
+            status.textContent = '全部达成:可以进入小测,或直接去项目 M0 做真机验证。';
+            status.className = 'check-status done';
+          } else {
+            status.textContent = '还剩 ' + (total - n) + ' 项:回到对应段落补一遍。';
+            status.className = 'check-status';
+          }
+        }
+
+        checks.forEach(function (c) { c.addEventListener('change', update); });
+        update();
+      })();
+
+      /* =========================================================
+         小测
+         ========================================================= */
+      (function initQuiz() {
+        var quizQs = $$('.quiz-q');
+        var submit = $('#quizSubmit');
+        var reset = $('#quizReset');
+        var result = $('#quizResult');
+        if (!quizQs.length || !submit || !result) return;
+
+        function grade() {
+          var score = 0;
+          var unanswered = 0;
+          quizQs.forEach(function (q) {
+            var correct = q.getAttribute('data-correct');
+            var sel = q.querySelector('input[type="radio"]:checked');
+            var chosen = sel ? sel.value : null;
+            var opts = $$('.opt', q);
+            opts.forEach(function (opt) {
+              var input = opt.querySelector('input');
+              if (!input) return;
+              opt.classList.toggle('correct', input.value === correct);
+              opt.classList.toggle('wrong', chosen !== null && input.value === chosen && chosen !== correct);
+            });
+            var ok = chosen === correct;
+            if (ok) score++;
+            else if (chosen === null) unanswered++;
+            var status = q.querySelector('.q-status');
+            if (status) {
+              status.textContent = ok ? '✓ 正确' : (chosen === null ? '— 未作答' : '✗ 错误');
+              status.className = 'q-status ' + (ok ? 'ok' : (chosen === null ? 'warn' : 'bad'));
+            }
+            var explain = q.querySelector('.explain');
+            if (explain) explain.classList.add('show');
+          });
+          var total = quizQs.length;
+          var html = '得分 <span class="score">' + score + ' / ' + total + '</span>';
+          if (unanswered) html += ' · 未作答 ' + unanswered + ' 题';
+          if (score === total) html += ' · 全部正确,可以进入下一步。';
+          else if (score >= Math.ceil(total * 0.6)) html += ' · 基本掌握,建议回看错题解析。';
+          else html += ' · 建议回到第 3 段和第 4 段重学后再测。';
+          result.innerHTML = html;
+        }
+
+        function resetQuiz() {
+          quizQs.forEach(function (q) {
+            $$('input[type="radio"]', q).forEach(function (i) { i.checked = false; });
+            $$('.opt', q).forEach(function (o) { o.classList.remove('correct', 'wrong'); });
+            var explain = q.querySelector('.explain');
+            if (explain) explain.classList.remove('show');
+            var status = q.querySelector('.q-status');
+            if (status) { status.textContent = ''; status.className = 'q-status'; }
+          });
+          result.textContent = '尚未提交。选完答案后点"提交答案"。';
+        }
+
+        submit.addEventListener('click', grade);
+        if (reset) reset.addEventListener('click', resetQuiz);
+      })();
+
+      /* =========================================================
+         窗口尺寸变化:重绘两个画布
+         ========================================================= */
+      (function initResize() {
+        var timer = null;
+        window.addEventListener('resize', function () {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(function () {
+            var rc = $('#rcCanvas');
+            var sg = $('#sigCanvas');
+            if (rc && rc.__redraw) rc.__redraw();
+            if (sg && sg.__redraw) sg.__redraw();
+          }, 140);
+        });
+      })();
+    })();
+  </script>
+</body>
+</html>
