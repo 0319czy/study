@@ -197,16 +197,17 @@
         t: 0, th: 0.08, thd: 0, x: 0, xd: 0, qr: 0, running: true, hist: [], frame: 0
       };
       var GAINS = [
-        { th: 28, thd: 6, x: 1.8, xd: 3.2, name: '平衡' },
-        { th: 40, thd: 9, x: 2.6, xd: 4.4, name: '角度优先' },
-        { th: 20, thd: 4, x: 1.2, xd: 2.4, name: '省控制' }
+        { th: 29.7, thd: 7.37, x: 1.0, xd: 2.25, name: '平衡(Q/R 中)' },
+        { th: 34.6, thd: 8.61, x: 2.24, xd: 3.51, name: '角度优先(Q 大)' },
+        { th: 25.0, thd: 6.0, x: 0.5, xd: 2.0, name: '省控制(R 大)' }
       ];
-      function penReset() { pen.t = 0; pen.th = 0.08; pen.thd = 0; pen.x = 0; pen.xd = 0; pen.hist = []; pen.frame = 0; }
+      function penReset() { pen.t = 0; pen.th = 0.06; pen.thd = 0; pen.x = 0; pen.xd = 0; pen.hist = []; pen.frame = 0; }
       function penStep(dt) {
         var k = GAINS[pen.qr];
-        var u = -(k.th * pen.th + k.thd * pen.thd + k.x * pen.x + k.xd * pen.xd);
-        u = clamp(u, -8, 8);
-        var thdd = (G / L) * Math.sin(pen.th) + u / (M * L * L) * Math.cos(pen.th);
+        // u = -Kx(K 来自 Riccati):u = kx*x + kxd*xd + kth*th + kthd*thd
+        var u = k.x * pen.x + k.xd * pen.xd + k.th * pen.th + k.thd * pen.thd;
+        u = clamp(u, -12, 12);
+        var thdd = (G / L) * Math.sin(pen.th) - u / (M * L * L) * Math.cos(pen.th);
         pen.thd += thdd * dt; pen.th += pen.thd * dt;
         var xdd = u / M;
         pen.xd += xdd * dt; pen.x += pen.xd * dt;
