@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="把"能编译"推进到"能定位内存错误":指针与数组退化、结构体对齐、栈/堆布局,用 gdb 与 ASan 复现并修复三类常见错误。" />
+  <title>C 进阶:指针、内存与调试 · C 学科子站 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin: 0 0 7px; color: #e6edf3; }
+    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #26323f; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; background: #0e141b; cursor: pointer; }
+    .q .opt.right { border-color: rgba(94,234,212,.55); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.55); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
+    .q .explain.show { display: block; }
+  </style>
+<style>html,body{overflow-x:hidden}pre,table{max-width:100%}pre{overflow-x:auto}</style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">FOUNDATIONS · C 进阶</div>
+    <h1>C 进阶:指针、内存与调试</h1>
+    <p class="lead">把"能编译"推进到"能定位内存错误":指针与数组退化、结构体对齐、栈/堆布局,用 gdb 与 ASan 复现并修复三类常见错误。</p>
+    <p class="muted">主地址:<code>/c/memory-debug/</code> · 旧地址 <a href="/foundations/c-advanced/">/foundations/c-advanced/</a> 继续可用 · 学科首页:<a href="/c/">/c/</a></p>
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>能解释指针、数组退化、结构体对齐与栈/堆布局;能用 gdb 与 ASan 定位内存错误</td></tr>
+        <tr><td>可检查结果</td><td>复现并修复 3 类错误:越界写、悬垂指针、未初始化读;留下 ASan 报告与修复对比</td></tr>
+        <tr><td>证据标识</td><td><span class="pill">principle</span> · <span class="pill ok">compiled</span>(本机 gcc 13.3.0 可复现命令)</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>C 基础语法与编译</td><td>变量、函数、数组、指针初步</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>终端与 gcc</td><td>编译、运行、看报错</td><td><a href="/foundations/linux-user/">Linux 用户态入门</a></td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>3. 原理与图示</h2>
+      <p>C 的内存布局:栈(函数局部变量、向下增长)、堆(malloc/free)、全局/静态区、只读段。数组作为函数参数时退化为指针,<code>sizeof</code> 只在定义处有效。</p>
+      <p>结构体对齐:成员按最大对齐数补齐,<code>sizeof(struct)</code> 可能大于成员之和;调整成员顺序可减小体积。</p>
+      <p><code>const</code> 修饰的是"只读视图",不保证底层不被改;<code>volatile</code> 告诉编译器"每次都要真正读写",用于硬件寄存器与中断共享变量。</p>      <pre class="code">struct reading { uint32_t seq; int16_t temp; uint8_t hum; };  /* 4+2+1+1 补齐 = 8 */</pre>
+    </div>
+    <div class="section">
+      <h2>4. 操作实验</h2>
+      <ol><li>把下面三段程序分别保存为 <code>oob.c</code>、<code>dangling.c</code>、<code>uninit.c</code>。</li><li>用 <code>gcc -g -fsanitize=address -o /tmp/x oob.c</code> 编译并运行,记录 ASan 报告的"错误类型 + 文件:行号"。</li><li>用 <code>gdb /tmp/x</code> 的 <code>bt</code> 查看调用栈;修复后重新编译运行,确认报告消失。</li><li>把三次对比写进错题本或 /archive/ 的笔记。</li></ol>      <pre class="code">/* oob.c */
+#include &lt;stdlib.h&gt;
+int main(void) { int *p = malloc(4 * sizeof(int)); p[4] = 1; free(p); return 0; }
+/* dangling.c */
+int main(void) { int *p = malloc(sizeof(int)); free(p); return *p; }
+/* uninit.c */
+#include &lt;stdio.h&gt;
+int main(void) { int x; return x &gt; 0 ? 0 : 1; }</pre>
+    </div>
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <table>
+        <tr><th>检查项</th><th>预期</th></tr>
+        <tr><td>越界写</td><td>ASan 报 heap-buffer-overflow,含文件:行号</td></tr>
+        <tr><td>悬垂指针</td><td>ASan 报 heap-use-after-free</td></tr>
+        <tr><td>未初始化读</td><td>valgrind 或 -Wuninitialized 提示(ASan 不覆盖)</td></tr>
+        <tr><td>修复后</td><td>三次运行均无错误报告;gdb bt 只在出错时使用</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>段错误但无 ASan 报告</td><td>是否忘了 -g/-fsanitize=address?是否直接运行了旧二进制?</td><td>重新编译并确认文件时间</td><td>用 gdb bt 或 core 文件</td></tr>
+        <tr><td>结构体 sizeof 与预期不符</td><td>对齐规则与成员顺序</td><td>按最大对齐数补齐</td><td>重排成员或加 packing(慎用)</td></tr>
+        <tr><td>优化后行为改变</td><td>未定义行为被优化利用</td><td>-O0 与 -O2 对比</td><td>先修 UB,再谈优化</td></tr>
+      </table>
+    </div>
+    <p class="muted" style="font-size:12.5px">证据边界:示例命令在本机 gcc 13.3.0 可复现;真实硬件相关问题请结合具体板卡验证。</p>
+    <div class="section">
+      <h2>7. 小测</h2>
+      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
+      <div id="quiz"></div>
+    </div>
+
+    <div class="section">
+      <h2>8. 下一步</h2>
+      <p><a href="/foundations/c/">← 回到 C 与工程工具</a> · <a href="/foundations/circuits/">数字电路入门</a> · <a href="/projects/collect/">用 M0 采集练习</a></p>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var DATA = [{"q": "数组作为函数参数传入后,函数内 sizeof(arr) 得到什么?", "opts": ["数组总字节数", "指针大小(通常是 8 或 4 字节)", "元素个数", "编译错误"], "a": 1, "ex": "数组在形参中退化为指针,必须额外传长度。"}, {"q": "ASan 能直接发现哪一类问题?", "opts": ["未初始化读", "堆越界与 use-after-free", "逻辑错误", "内存泄漏(部分场景)"], "a": 1, "ex": "ASan 主要覆盖越界/悬垂;未初始化用 MSan/valgrind,泄漏可用 LeakSanitizer 但需确认。"}, {"q": "volatile 的主要作用是?", "opts": ["让变量只读", "保证原子性", "阻止编译器把每次访问优化成缓存值", "加锁"], "a": 2, "ex": "volatile 不保证原子性,也不替代锁;它只约束编译器对访问的合并/消除。"}];
+      var root = document.getElementById('quiz');
+      DATA.forEach(function (q, i) {
+        var box = document.createElement('div'); box.className = 'q';
+        var stem = document.createElement('p'); stem.className = 'stem';
+        stem.textContent = (i + 1) + '. ' + q.q; box.appendChild(stem);
+        q.opts.forEach(function (o, oi) {
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'opt';
+          b.textContent = String.fromCharCode(65 + oi) + '. ' + o;
+          b.addEventListener('click', function () {
+            if (box.dataset.done) return;
+            box.dataset.done = '1';
+            var right = oi === q.a;
+            b.className += right ? ' right' : ' wrong';
+            if (!right) box.querySelectorAll('.opt')[q.a].className += ' right';
+            var ex = document.createElement('p'); ex.className = 'explain show'; ex.textContent = q.ex;
+            box.appendChild(ex);
+          });
+          box.appendChild(b);
+        });
+        root.appendChild(box);
+      });
+    })();
+  </script>
+</body>
+</html>

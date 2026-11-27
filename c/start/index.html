@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="C 与工程工具:指针与数组、位操作、编译链接四阶段、Git 基础、gdb / printf 调试。全部 gcc 示例在 gcc 13.3.0 本机实测,8 段课程结构,含判分小测。" />
+  <title>C 与工程工具 · 工程基础 01 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #080b10;
+      color: #e6edf3;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .crumbs { font-size: 12.5px; color: #8b9bb0; font-family: ui-monospace, Menlo, monospace; margin-top: 6px; }
+    .crumbs a { color: #8b9bb0; text-decoration: none; }
+    .crumbs a:hover { color: #5eead4; }
+    .lesson-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; }
+    .lesson-meta .chip { font-size: 12px; color: #8b9bb0; border: 1px solid #1e2a38; border-radius: 999px; padding: 4px 10px; }
+    .lesson-meta .chip b { color: #e6edf3; font-weight: 600; }
+    .ev-legend { margin-top: 12px; font-size: 12.5px; color: #8b9bb0; line-height: 1.8; }
+    .ev { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-size: 11px; line-height: 1.7; padding: 1px 8px; border-radius: 999px; border: 1px solid #1e2a38; color: #8b9bb0; white-space: nowrap; vertical-align: 1px; }
+    .ev-compiled { color: #06231f; background: #5eead4; border-color: #5eead4; font-weight: 700; }
+    .ev-principle { color: #fbbf24; border-color: rgba(251, 191, 36, .35); background: rgba(251, 191, 36, .06); }
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
+    .toc a { font-size: 12.5px; color: #9fb3c8; text-decoration: none; border: 1px solid #1e2a38; border-radius: 8px; padding: 5px 10px; }
+    .toc a:hover { color: #5eead4; border-color: #2c4257; }
+    .sec { margin-top: 46px; scroll-margin-top: 78px; }
+    .sec-head { display: flex; align-items: center; gap: 10px; }
+    .sec-head .no { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: #5eead4; border: 1px solid rgba(94, 234, 212, .32); border-radius: 8px; padding: 2px 8px; flex: none; }
+    .sec-head h2 { font-size: 22px; margin: 0; }
+    .sec-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; font-size: 12.5px; color: #8b9bb0; }
+    .sub { margin-top: 28px; }
+    .sub h3 { font-size: 16.5px; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .box { border: 1px solid #1e2a38; border-radius: 14px; padding: 16px 18px; background: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9)); margin: 14px 0; }
+    .box h4 { margin: 0 0 8px; font-size: 14.5px; color: #5eead4; }
+    pre { background: #0b1017; border: 1px solid #1e2a38; border-radius: 10px; padding: 12px 14px; overflow-x: auto; line-height: 1.55; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; color: #c9d6e2; margin: 10px 0; tab-size: 4; }
+    pre code { color: inherit; font-size: inherit; font-family: inherit; }
+    .code-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 16px 0 -2px; }
+    .code-head .fname { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #7dd3fc; border: 1px solid #1e2a38; border-radius: 7px; padding: 2px 8px; background: #0b1017; }
+    .code-head .tag { font-size: 11.5px; color: #8b9bb0; }
+    .out { margin: 12px 0; border-left: 3px solid #5eead4; border-radius: 0 10px 10px 0; background: rgba(94, 234, 212, .045); padding: 10px 14px; }
+    .out .out-title { font-size: 11.5px; letter-spacing: .08em; color: #5eead4; font-family: ui-monospace, Menlo, monospace; margin-bottom: 4px; }
+    .out pre { margin: 6px 0 2px; background: #0b1017; }
+    .callout { border-left: 3px solid #fbbf24; border-radius: 0 10px 10px 0; background: rgba(251, 191, 36, .055); padding: 12px 14px; margin: 14px 0; color: #cfdae6; line-height: 1.8; font-size: 14px; }
+    .callout b { color: #fbbf24; }
+    .callout.ok { border-left-color: #5eead4; background: rgba(94, 234, 212, .05); }
+    .callout.ok b { color: #5eead4; }
+    .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; margin: 14px 0; }
+    .flow .node { border: 1px solid #1e2a38; border-radius: 10px; padding: 8px 10px; background: rgba(12, 17, 24, .85); font-size: 12.5px; color: #b6c4d2; min-width: 116px; line-height: 1.5; }
+    .flow .node b { display: block; color: #5eead4; font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; font-weight: 600; }
+    .flow .arr { display: flex; align-items: center; color: #5eead4; font-size: 15px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps > li { position: relative; padding: 0 0 0 36px; margin: 12px 0; line-height: 1.8; }
+    .steps > li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 2px; width: 23px; height: 23px; border-radius: 50%; background: rgba(94, 234, 212, .12); border: 1px solid rgba(94, 234, 212, .4); color: #5eead4; font-size: 12px; display: flex; align-items: center; justify-content: center; font-family: ui-monospace, Menlo, monospace; }
+    .obj { counter-reset: obj; list-style: none; padding: 0; margin: 10px 0; }
+    .obj > li { position: relative; padding: 0 0 0 34px; margin: 10px 0; line-height: 1.8; }
+    .obj > li::before { counter-increment: obj; content: "0" counter(obj); position: absolute; left: 0; top: 1px; color: #5eead4; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; font-weight: 700; }
+    .lab { border: 1px solid #1e2a38; border-radius: 14px; padding: 18px; margin: 20px 0; background: rgba(12, 17, 24, .55); }
+    .lab-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+    .lab-head .lab-no { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #06231f; background: #5eead4; border-radius: 7px; padding: 1px 8px; font-weight: 700; }
+    .lab-head h3 { margin: 0; font-size: 17px; }
+    .lab .lab-goal { color: #8b9bb0; font-size: 13.5px; line-height: 1.75; margin: 6px 0 8px; }
+    .lab .lab-goal b { color: #e6edf3; }
+    .filegroup { margin: 12px 0; }
+    .filegroup .file { margin: 10px 0; }
+    .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .checklist li { border: 1px solid #1e2a38; border-radius: 10px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; background: rgba(12, 17, 24, .5); line-height: 1.75; }
+    .checklist input { margin-top: 4px; width: 16px; height: 16px; accent-color: #5eead4; flex: none; }
+    .check-progress { margin-top: 10px; font-size: 12.5px; color: #5eead4; font-family: ui-monospace, Menlo, monospace; }
+    .trouble { border: 1px solid #1e2a38; border-radius: 14px; padding: 16px 18px; margin: 12px 0; background: rgba(12, 17, 24, .5); }
+    .trouble h3 { margin: 0 0 10px; font-size: 15px; line-height: 1.6; }
+    .trouble dl { margin: 0; display: grid; grid-template-columns: 86px 1fr; gap: 8px 12px; font-size: 13.5px; }
+    .trouble dt { color: #5eead4; font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding-top: 1px; }
+    .trouble dd { margin: 0; color: #b6c4d2; line-height: 1.75; }
+    .quiz { margin-top: 6px; }
+    .quiz-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin: 0 0 10px; }
+    .quiz-bar .score { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: #5eead4; }
+    .q { border: 1px solid #1e2a38; border-radius: 14px; padding: 16px 18px; margin: 14px 0; background: rgba(12, 17, 24, .55); }
+    .q .q-title { margin: 0 0 8px; font-size: 14.5px; }
+    .q .q-title b { color: #5eead4; font-family: ui-monospace, Menlo, monospace; }
+    .q .q-stem { margin: 0 0 10px; color: #c4d1de; font-size: 14px; line-height: 1.85; }
+    .q .q-stem code { color: #9fb3c8; }
+    .opt { display: block; width: 100%; text-align: left; margin: 7px 0; padding: 10px 12px; border: 1px solid #1e2a38; border-radius: 9px; background: #0e141c; color: #d8e2ec; font-size: 13.5px; line-height: 1.6; cursor: pointer; font-family: inherit; transition: border-color .15s ease, background .15s ease; }
+    .opt:hover:not(:disabled) { border-color: #2c4257; background: #111a24; }
+    .opt.ok { border-color: rgba(94, 234, 212, .7); background: rgba(94, 234, 212, .12); color: #d7fff8; }
+    .opt.bad { border-color: rgba(248, 113, 113, .6); background: rgba(248, 113, 113, .1); color: #ffe0e0; }
+    .opt:disabled { cursor: default; opacity: 1; }
+    .feedback { margin-top: 10px; padding: 10px 12px; border-radius: 9px; font-size: 13.5px; line-height: 1.8; }
+    .feedback.ok { background: rgba(94, 234, 212, .08); border: 1px solid rgba(94, 234, 212, .25); color: #b8f3e8; }
+    .feedback.bad { background: rgba(248, 113, 113, .07); border: 1px solid rgba(248, 113, 113, .25); color: #ffd2d2; }
+    .feedback[hidden] { display: none; }
+    .quiz-summary { margin-top: 12px; padding: 12px 14px; border-radius: 10px; font-size: 13.5px; line-height: 1.8; }
+    .quiz-summary[hidden] { display: none; }
+    .quiz-summary.ok { background: rgba(94, 234, 212, .08); border: 1px solid rgba(94, 234, 212, .3); color: #b8f3e8; }
+    .quiz-summary.warnbox { background: rgba(251, 191, 36, .07); border: 1px solid rgba(251, 191, 36, .3); color: #f4e3b4; }
+    .btn { margin-top: 12px; padding: 7px 14px; border: 1px solid #1e2a38; border-radius: 8px; background: #0e141c; color: #9fb3c8; font-size: 13px; cursor: pointer; font-family: inherit; }
+    .btn:hover { color: #5eead4; border-color: #2c4257; }
+    .nextcards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin: 14px 0; }
+    .nextcard { display: flex; flex-direction: column; gap: 6px; border: 1px solid #1e2a38; border-radius: 14px; padding: 16px 18px; background: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9)); text-decoration: none; color: inherit; }
+    .nextcard:hover { border-color: #2c4257; }
+    .nextcard .t { font-weight: 700; font-size: 15px; color: #e6edf3; }
+    .nextcard .d { color: #8b9bb0; font-size: 13px; line-height: 1.7; }
+    .nextcard .p { color: #5eead4; font-size: 11.5px; font-family: ui-monospace, Menlo, monospace; }
+    .table-wrap { overflow-x: auto; margin: 12px 0; }
+    details { margin: 14px 0; border: 1px solid #1e2a38; border-radius: 10px; padding: 10px 14px; background: rgba(12, 17, 24, .5); }
+    summary { cursor: pointer; color: #5eead4; font-size: 13.5px; line-height: 1.8; }
+    details[open] summary { margin-bottom: 8px; }
+    .meta-note { font-size: 12.5px; color: #8b9bb0; line-height: 1.8; }
+    .footer { margin-top: 52px; padding-top: 18px; border-top: 1px solid #1a2430; color: #8b9bb0; font-size: 12.5px; line-height: 1.9; }
+    .footer a { color: #5eead4; }
+    @media (max-width: 640px) {
+      .trouble dl { grid-template-columns: 1fr; }
+      .trouble dt { margin-top: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">FOUNDATIONS · 阶段 01 · 课 01</div>
+    <div class="crumbs"><a href="/">学习工作台</a> / <a href="/route/">学习路线</a> / <a href="/foundations/">工程基础</a> / <span>C 与工程工具</span></div>
+    <h1>C 与工程工具:让代码跑起来、看得到、改得回</h1>
+    <p class="lead">
+      这门课不追求把 C 讲全,只解决四个问题:数据放在哪里(指针与数组)、怎么只改一位(位操作)、
+      从 .c 到可执行文件发生了什么(编译链接)、出错时怎么定位(printf / gdb)。最后用 Git 把每次改动存成能回看的节点。
+      页面里的全部 gcc 命令都在本机执行过,输出原样贴出;原理部分单独标注,不与实测混淆。
+    </p>
+    <p class="muted">主地址:<code>/c/start/</code> · 旧地址 <a href="/foundations/c/">/foundations/c/</a> 继续可用 · 学科首页:<a href="/c/">/c/</a></p>
+
+    <div class="lesson-meta">
+      <span class="chip">课程 id <b>platform:foundations-c</b></span>
+      <span class="chip">阶段 <b>foundation</b></span>
+      <span class="chip">预计 <b>90 分钟</b></span>
+      <span class="chip">难度 <b>零基础可学</b></span>
+      <span class="chip">工具链 <b>gcc 13.3.0 · gdb 15.1 · git 2.43.0</b></span>
+    </div>
+    <p class="ev-legend">
+      证据标识:<span class="ev ev-compiled">compiled</span> = 在文中声明的 gcc 版本下真实编译并运行过;
+      <span class="ev ev-principle">principle</span> = 教材通用原理 / 示意 / 命令记录,未在目标硬件上验证。
+      每条内容的证据等级见文末「证据标识」清单。
+    </p>
+
+    <ul class="toc">
+      <li><a href="#goal">01 目标</a></li>
+      <li><a href="#prereq">02 前置知识</a></li>
+      <li><a href="#principles">03 原理与图示</a></li>
+      <li><a href="#experiment">04 操作实验</a></li>
+      <li><a href="#result-check">05 结果检查</a></li>
+      <li><a href="#troubleshooting">06 故障排查</a></li>
+      <li><a href="#quiz">07 小测</a></li>
+      <li><a href="#next">08 下一步</a></li>
+    </ul>
+
+    <!-- ============================ 01 目标 ============================ -->
+    <section class="sec" id="goal">
+      <div class="sec-head"><span class="no" aria-hidden="true">01</span><h2>目标</h2></div>
+      <p class="sec-meta"><span class="ev ev-principle">principle</span> 目标是对学完能力的定义,不涉及具体数值验证</p>
+      <p>学完这一页,你应该能独立完成下面 5 件事。每条都是可检查的动作,不是"了解"。</p>
+      <ol class="obj">
+        <li><b>解释指针与数组:</b>能对一个 4 元素 int 数组写出 <code>p = a + 1</code> 后 <code>*p</code>、<code>*(p+2)</code>、<code>p - a</code>、<code>sizeof(a)</code> 的值,并说明"数组名退化"和"指针按元素大小移动"。</li>
+        <li><b>手算位操作:</b>能对 <code>uint8_t</code> 完成置位 / 清零 / 翻转 / 读取某一位,并写出每一步的十六进制与二进制结果。</li>
+        <li><b>跑通四阶段:</b>能执行 <code>gcc -E</code>、<code>-S</code>、<code>-c</code> 与链接命令,说出每步产物(.i / .s / .o / 可执行文件),并用 <code>nm</code> 区分 <code>U</code> 与 <code>T</code>。</li>
+        <li><b>定位一次崩溃:</b>能用 <code>gdb</code> 找到段错误的文件名与行号、打印局部变量,并解释"崩溃前的 printf 为什么没出现"。</li>
+        <li><b>留下可回看的改动:</b>能用 <code>git init / add / commit / log / diff</code> 保存并对照一次真实修改。</li>
+      </ol>
+      <div class="box">
+        <h4>本课成果</h4>
+        <p>有一个放在 <code>/tmp/c-course-lab</code> 的小工程:两个可执行程序编译通过且输出可复现,一个崩溃程序能被 gdb 定位到行,
+        一次 Git 提交能通过 <code>git diff</code> 回看改动。完成后进入下一课「数字电路入门」。</p>
+      </div>
+    </section>
+
+    <!-- ============================ 02 前置知识 ============================ -->
+    <section class="sec" id="prereq">
+      <div class="sec-head"><span class="no" aria-hidden="true">02</span><h2>前置知识</h2></div>
+      <p class="sec-meta"><span class="ev ev-principle">principle</span> 前置要求按课程 schema v1 的 Prerequisite 约定编写</p>
+      <p>本课是工程基础(阶段 01)的起点,<b>前置课程为空</b>。但下面 3 项能力必须已经具备,否则实验会卡在环境问题上。</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>前置能力</th><th>是否必须</th><th>自检方法(现在就能做)</th></tr>
+          <tr><td>终端操作:cd / ls / mkdir / 运行命令</td><td>必须</td><td>能执行 <code>cd /tmp &amp;&amp; mkdir -p c-course-lab &amp;&amp; cd c-course-lab</code> 且不报错</td></tr>
+          <tr><td>写过 C:变量、函数、if、for、数组</td><td>必须</td><td>能不看资料写出"求 int 数组和"的 main 函数并编译通过</td></tr>
+          <tr><td>文本编辑器 / 能确认文件名</td><td>必须</td><td>能把代码保存为 <code>bitops.c</code>,而不是 <code>bitops.c.txt</code></td></tr>
+          <tr><td>能读英文报错</td><td>建议</td><td>遇到 <code>undefined reference</code> 愿意逐词查,而不是直接重装环境</td></tr>
+        </table>
+      </div>
+      <p>不需要:指针基础、数据结构、操作系统原理。这些会在本课里从零建起来。</p>
+      <div class="code-head"><span class="fname">终端 · 环境自检</span><span class="tag">约 30 秒</span></div>
+      <pre><code>$ mkdir -p /tmp/c-course-lab
+$ cd /tmp/c-course-lab
+$ gcc --version | head -1
+$ gdb --version | head -1
+$ git --version</code></pre>
+      <div class="out">
+        <div class="out-title">本机实测输出(2026-11-27)</div>
+        <pre><code>gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1
+git version 2.43.0</code></pre>
+      </div>
+      <p class="meta-note">版本不同不影响本课内容;若 <code>gcc</code> / <code>gdb</code> / <code>git</code> 提示找不到命令,先到 <a href="/tools/">工具与资料</a> 按操作系统安装,再回到这里。</p>
+    </section>
+
+    <!-- ============================ 03 原理与图示 ============================ -->
+    <section class="sec" id="principles">
+      <div class="sec-head"><span class="no" aria-hidden="true">03</span><h2>原理与图示</h2></div>
+      <p class="sec-meta"><span class="ev ev-principle">principle</span> ×5 本节全部为教材通用原理与示意,代码片段用于说明,不作为运行证据</p>
+      <p>五块内容按依赖顺序排列:指针(数据在哪)→ 位操作(怎么改一位)→ 编译链接(代码怎么变成程序)→ Git(改动怎么存)→ 调试(错了怎么找)。</p>
+
+      <div class="sub">
+        <h3>3.1 指针与数组:数组名会退化,指针加法按元素大小走 <span class="ev ev-principle">principle</span></h3>
+        <p>数组在内存里是一段连续的元素;指针保存的是地址。<code>int a[4]</code> 的 <code>a</code> 在表达式里几乎总是"首元素地址"。</p>
+        <pre><code>int a[4] = {3, 6, 9, 12};   /* 假设 int 占 4 字节,起始地址 0x1000 */
+
+  p = a          p = a + 1        p = a + 3
+    |               |                |
+    v               v                v
++-------+-------+-------+-------+
+|   3   |   6   |   9   |  12   |   每格 4 字节
++-------+-------+-------+-------+
+  a[0]    a[1]    a[2]    a[3]
+ 0x1000  0x1004  0x1008  0x100C     地址为示意,不是本机真实地址</code></pre>
+        <div class="table-wrap">
+          <table>
+            <tr><th>规则</th><th>写法</th><th>含义</th></tr>
+            <tr><td>数组名退化</td><td><code>a == &amp;a[0]</code></td><td>在表达式中 <code>a</code> 代表首元素地址,不是整个数组</td></tr>
+            <tr><td>指针加法</td><td><code>p + 1</code></td><td>前进 <code>sizeof(*p)</code> 字节;int 指针一次走 4 字节,不是 1 字节</td></tr>
+            <tr><td>下标等价</td><td><code>p[i] == *(p + i)</code></td><td><code>p[-1]</code> 也合法,等于 <code>*(p - 1)</code>,只要没走出数组范围</td></tr>
+            <tr><td>指针相减</td><td><code>p - a</code></td><td>得到<b>元素个数</b>(不是字节数),类型是 <code>ptrdiff_t</code></td></tr>
+            <tr><td>元素个数</td><td><code>sizeof(a) / sizeof(a[0])</code></td><td>只在数组定义所在作用域成立;传进函数后 <code>a</code> 退化成指针,<code>sizeof(a)</code> 变成 8(64 位)</td></tr>
+          </table>
+        </div>
+        <div class="callout"><b>易错点:</b><code>&amp;a</code> 的数值和 <code>a</code> 相同,但类型是 <code>int (*)[4]</code>:<code>&amp;a + 1</code> 前进 16 字节(整个数组),而 <code>a + 1</code> 前进 4 字节。写代码时先问"这个 +1 是按什么单位走的"。</div>
+      </div>
+
+      <div class="sub">
+        <h3>3.2 位操作:置位 / 清零 / 翻转 / 读取 <span class="ev ev-principle">principle</span></h3>
+        <p>嵌入式里最常见的动作是"只改一个寄存器的某一位,别动其他位"。四种基本操作都基于位掩码(mask)。</p>
+        <div class="table-wrap">
+          <table>
+            <tr><th>目的</th><th>写法(设 n 为位号,0 起)</th><th>解释</th></tr>
+            <tr><td>置位(0→1)</td><td><code>x |= (1u &lt;&lt; n);</code></td><td>OR 0 不变、OR 1 置 1;其他位保持</td></tr>
+            <tr><td>清零(1→0)</td><td><code>x &amp;= ~(1u &lt;&lt; n);</code></td><td>AND 1 不变、AND 0 清零;先取反得到"只有第 n 位是 0"的掩码</td></tr>
+            <tr><td>翻转</td><td><code>x ^= (1u &lt;&lt; n);</code></td><td>XOR 1 翻转、XOR 0 不变</td></tr>
+            <tr><td>读取</td><td><code>(x &gt;&gt; n) &amp; 1u</code></td><td>把第 n 位移到最低位,再用 1 掩掉其他位</td></tr>
+            <tr><td>取一段</td><td><code>(x &gt;&gt; n) &amp; 0x0F</code></td><td>取从第 n 位起的 4 位(字段)</td></tr>
+            <tr><td>写回一段</td><td><code>x = (x &amp; ~(0x0Fu &lt;&lt; n)) | (v &lt;&lt; n);</code></td><td>先清字段再或上新值,不破坏相邻位</td></tr>
+          </table>
+        </div>
+        <div class="callout"><b>为什么写 <code>1u</code>:</b>有符号 int 左移进入符号位是未定义行为;用无符号的 <code>1u</code>、并让掩码变量用 <code>uint8_t / uint32_t</code>,行为才是可移植的。清零时 <code>~(1u &lt;&lt; n)</code> 的高位是全 1,配合无符号变量才安全。</div>
+        <p>假设一个控制寄存器的位定义是:bit3 = ENABLE,bit1 = IRQ,bit0 = START。对应的三种写法:</p>
+        <pre><code>ctrl |=  (1u &lt;&lt; 3);   /* 打开使能,其他位不动 */
+ctrl &amp;= ~(1u &lt;&lt; 1);   /* 关闭中断 */
+ctrl ^=  (1u &lt;&lt; 0);   /* 翻转启动位 */</code></pre>
+        <p class="meta-note">这一段是原理说明;真实运行结果见「操作实验 · 实验 01」,那里对 <code>uint8_t ctrl</code> 逐步打印了二进制与十进制值。</p>
+      </div>
+
+      <div class="sub">
+        <h3>3.3 编译链接四阶段:预处理 → 编译 → 汇编 → 链接 <span class="ev ev-principle">principle</span></h3>
+        <p>一条 <code>gcc main.c -o app</code> 背后其实有四个阶段。拆开看,每一步都有明确的输入与产物。</p>
+        <div class="flow">
+          <div class="node"><b>main.c</b>源码</div><div class="arr">→</div>
+          <div class="node"><b>gcc -E</b>main.i 预处理</div><div class="arr">→</div>
+          <div class="node"><b>gcc -S</b>main.s 编译</div><div class="arr">→</div>
+          <div class="node"><b>gcc -c</b>main.o 汇编</div><div class="arr">→</div>
+          <div class="node"><b>gcc 链接</b>app 链接</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <tr><th>阶段</th><th>命令</th><th>产物</th><th>做了什么</th></tr>
+            <tr><td>预处理</td><td><code>gcc -E main.c -o main.i</code></td><td><code>.i</code>(纯 C 文本)</td><td>展开 <code>#include</code>、替换 <code>#define</code>、处理条件编译</td></tr>
+            <tr><td>编译</td><td><code>gcc -S main.c -o main.s</code></td><td><code>.s</code>(汇编文本)</td><td>语法/类型检查,生成目标平台汇编</td></tr>
+            <tr><td>汇编</td><td><code>gcc -c main.c -o main.o</code></td><td><code>.o</code>(ELF 可重定位文件)</td><td>把汇编翻译成机器码 + 符号表,还不能运行</td></tr>
+            <tr><td>链接</td><td><code>gcc main.o sensor.o -o app</code></td><td><code>app</code>(ELF 可执行文件)</td><td>合并多个 .o,解析外部符号,补上启动代码与库</td></tr>
+          </table>
+        </div>
+        <div class="callout"><b>头文件不是独立编译单元:</b><code>#include "sensor.h"</code> 只是把文件内容原样粘进 .c。所以 <code>gcc -c main.c</code> 能找到同目录的 <code>sensor.h</code>,但换到别的目录编译就会报 <code>fatal error: sensor.h: No such file or directory</code>。<br>
+        <b>符号怎么解析:</b><code>main.o</code> 里调用了 <code>sensor_pack</code>,但定义不在这个文件里,<code>nm</code> 把它标成 <code>U</code>(undefined);链接器在 <code>sensor.o</code> 里找到 <code>T sensor_pack</code>(代码段定义),把地址填进去。少给一个 .o,链接就报 <code>undefined reference</code>。</div>
+      </div>
+
+      <div class="sub">
+        <h3>3.4 Git 基础:工作区 → 暂存区 → 提交 <span class="ev ev-principle">principle</span></h3>
+        <p>Git 的核心不是"上传代码",而是把改动拆成一个个可以回看的提交。三个区各自承担不同职责。</p>
+        <div class="flow">
+          <div class="node"><b>工作区</b>你编辑的文件</div><div class="arr">→ git add →</div>
+          <div class="node"><b>暂存区 index</b>下一次提交的内容</div><div class="arr">→ git commit →</div>
+          <div class="node"><b>本地仓库</b>一条条提交历史</div><div class="arr">→ git push →</div>
+          <div class="node"><b>远端(可选)</b>备份/协作</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <tr><th>动作</th><th>命令</th><th>要点</th></tr>
+            <tr><td>初始化仓库</td><td><code>git init</code></td><td>在当前目录创建 <code>.git</code></td></tr>
+            <tr><td>看状态</td><td><code>git status --short</code></td><td><code>??</code> 未跟踪、<code>A</code> 已暂存、<code>M</code> 已修改</td></tr>
+            <tr><td>暂存</td><td><code>git add README.md</code></td><td>把改动放进下一次提交;先 add 再 commit</td></tr>
+            <tr><td>提交</td><td><code>git commit -m "说明做了什么"</code></td><td>生成一个带哈希的节点,可随时回看</td></tr>
+            <tr><td>看历史</td><td><code>git log --oneline</code></td><td>一行一个提交,哈希 + 提交信息</td></tr>
+            <tr><td>看改动</td><td><code>git diff</code></td><td>工作区相对暂存区的差异;提交前先看一遍</td></tr>
+            <tr><td>开分支</td><td><code>git switch -c dev</code></td><td>在新分支上做实验,不影响主线</td></tr>
+          </table>
+        </div>
+        <p class="meta-note">Git 命令不属于编译验证,按 schema 证据枚举归 <span class="ev ev-principle">principle</span>;但「操作实验 · 实验 04」贴出的是本机 git 2.43.0 的真实终端输出(含真实提交哈希),不是编造的示例。</p>
+      </div>
+
+      <div class="sub">
+        <h3>3.5 调试:printf 插桩 vs gdb 断点 <span class="ev ev-principle">principle</span></h3>
+        <p>两条路线各有适用场景,先用 printf 快速缩小范围,再用 gdb 看现场。</p>
+        <div class="table-wrap">
+          <table>
+            <tr><th>路线</th><th>做法</th><th>优点</th><th>代价</th></tr>
+            <tr><td>printf 插桩</td><td>在关键分支打印变量与状态,必要时 <code>fflush(stdout)</code></td><td>零学习成本,能快速验证假设</td><td>要改代码;崩溃时可能丢输出</td></tr>
+            <tr><td>gdb</td><td><code>gcc -g -O0</code> 编译,gdb 下断点、单步、打印变量、看调用栈</td><td>不改代码就能看现场、能定位崩溃行</td><td>需要记住命令;优化后变量可能被优化掉</td></tr>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <tr><th>gdb 命令</th><th>作用</th></tr>
+            <tr><td><code>break crash.c:26</code></td><td>在指定文件行下断点(也可写函数名 <code>break main</code>)</td></tr>
+            <tr><td><code>run</code></td><td>启动程序,直到断点或信号</td></tr>
+            <tr><td><code>bt</code></td><td>打印调用栈,崩溃时第一行就是出错位置</td></tr>
+            <tr><td><code>p 变量</code></td><td>打印变量值,例如 <code>p bad</code>、<code>p ring.buf</code></td></tr>
+            <tr><td><code>info locals</code></td><td>打印当前帧所有局部变量</td></tr>
+            <tr><td><code>next</code> / <code>step</code></td><td>单步(不进入函数 / 进入函数)</td></tr>
+            <tr><td><code>continue</code> / <code>quit</code></td><td>继续到下一个断点 / 退出</td></tr>
+          </table>
+        </div>
+        <div class="callout"><b>最容易被误判的坑:</b>程序崩溃前 <code>printf</code> 一行都没打印,不代表没执行。stdout 接终端时是行缓冲,接管道/文件时是全缓冲;进程被 SIGSEGV 终止时缓冲区来不及刷新,输出就丢了。用 <code>stdbuf -o0 ./app</code>、<code>fflush(stdout)</code> 或直接写 <code>stderr</code> 就能看见。<b>实测记录见实验 03。</b></div>
+      </div>
+    </section>
+
+    <!-- ============================ 04 操作实验 ============================ -->
+    <section class="sec" id="experiment">
+      <div class="sec-head"><span class="no" aria-hidden="true">04</span><h2>操作实验</h2></div>
+      <p class="sec-meta"><span class="ev ev-compiled">compiled</span> ×3(实验 01–03,gcc 13.3.0) · <span class="ev ev-principle">principle</span> ×1(实验 04 Git 命令记录)</p>
+      <p>全部实验在 <code>/tmp/c-course-lab</code> 完成,不修改站点任何文件。实验 01–03 的编译命令与输出是 gcc 13.3.0 在本机 Linux x86_64 上的真实记录;实验 04 是 git 2.43.0 的真实终端记录。</p>
+
+      <!-- Lab 01 -->
+      <div class="lab" id="lab-01">
+        <div class="lab-head"><span class="lab-no">LAB 01</span><h3>指针与位操作:把每一步打印出来</h3><span class="ev ev-compiled">compiled · gcc 13.3.0</span></div>
+        <p class="lab-goal"><b>目标:</b>亲手看到置位/清零/翻转对 8 位变量的影响,以及指针偏移、数组名退化、指针相减的真实数值。</p>
+
+        <ol class="steps">
+          <li>建目录,准备一个干净的工作区。
+            <div class="code-head"><span class="fname">终端</span></div>
+            <pre><code>$ mkdir -p /tmp/c-course-lab/build
+$ cd /tmp/c-course-lab</code></pre>
+          </li>
+          <li>把下面的程序保存为 <code>bitops.c</code>。
+            <div class="code-head"><span class="fname">bitops.c</span><span class="tag">保存到 /tmp/c-course-lab/bitops.c</span></div>
+            <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+static void show(const char *tag, uint8_t v)
+{
+    printf("%-14s0b", tag);
+    for (int i = 7; i &gt;= 0; --i) {
+        putchar(((v &gt;&gt; i) &amp; 1u) ? '1' : '0');
+    }
+    printf("  0x%02X  %3u\n", v, v);
+}
+
+int main(void)
+{
+    uint8_t ctrl = 0x12; /* 0b0001_0010 */
+
+    show("start", ctrl);
+    printf("bit3=%u bit1=%u\n", (unsigned)((ctrl &gt;&gt; 3) &amp; 1u), (unsigned)((ctrl &gt;&gt; 1) &amp; 1u));
+
+    ctrl |= (uint8_t)(1u &lt;&lt; 3);   /* 置位:bit3 = 1 */
+    show("set bit3", ctrl);
+
+    ctrl &amp;= (uint8_t)~(1u &lt;&lt; 1);  /* 清零:bit1 = 0 */
+    show("clear bit1", ctrl);
+
+    ctrl ^= (uint8_t)(1u &lt;&lt; 3);   /* 翻转:bit3 取反 */
+    show("toggle bit3", ctrl);
+
+    int a[4] = {3, 6, 9, 12};
+    int *p = a;                   /* 数组名退化为首元素地址 */
+    printf("a[0]=%d *(a+2)=%d p[3]=%d\n", a[0], *(a + 2), p[3]);
+
+    p = a + 1;                    /* 指针 +1 = 前进一个 int(4 字节) */
+    printf("*p=%d *(p+2)=%d p-a=%ld sizeof(int)=%zu\n",
+           *p, *(p + 2), (long)(p - a), sizeof(int));
+
+    int sum = 0;
+    for (int *q = a; q &lt; a + 4; ++q) {
+        sum += *q;
+    }
+    printf("sum=%d\n", sum);
+    return 0;
+}</code></pre>
+          </li>
+          <li>编译并运行。开启 <code>-Wall -Wextra</code>,让常见错误在编译期暴露。
+            <div class="code-head"><span class="fname">终端</span></div>
+            <pre><code>$ gcc -Wall -Wextra -std=c11 -O2 -o build/demo bitops.c
+$ ./build/demo</code></pre>
+          </li>
+          <li><b>预期输出</b>(以下为本机真实输出,不是示意):
+            <div class="out">
+              <div class="out-title">实际输出 · gcc 13.3.0 · 2026-11-27</div>
+              <pre><code>start         0b00010010  0x12   18
+bit3=0 bit1=1
+set bit3      0b00011010  0x1A   26
+clear bit1    0b00011000  0x18   24
+toggle bit3   0b00010000  0x10   16
+a[0]=3 *(a+2)=9 p[3]=12
+*p=6 *(p+2)=12 p-a=1 sizeof(int)=4
+sum=30</code></pre>
+            </div>
+          </li>
+        </ol>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">逐行看什么</h4>
+        <ul>
+          <li><code>start</code>:初值 <code>0x12</code> = <code>0b0001_0010</code> = 18。</li>
+          <li><code>set bit3</code>:OR 上 bit3,值从 <code>0x12</code> 变 <code>0x1A</code>,其他位不动。</li>
+          <li><code>clear bit1</code>:AND 取反掩码,<code>0x1A</code> 变 <code>0x18</code>;bit3 仍然是 1。</li>
+          <li><code>toggle bit3</code>:XOR 翻转 bit3,<code>0x18</code> 变 <code>0x10</code>。</li>
+          <li><code>p[3]</code> 和 <code>*(a+2)</code>:下标与指针偏移等价。</li>
+          <li><code>p-a=1</code>:指针相减得到"相隔几个元素",不是字节数;<code>sizeof(int)=4</code> 解释了为什么 1 个元素 = 4 字节。</li>
+          <li><code>sum=30</code>:<code>3+6+9+12=30</code>,指针遍历数组的常见写法。</li>
+        </ul>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">读代码写结果(指针 + 位操作)</h4>
+        <p>先不要运行,把每一步的结果写在纸上,再展开答案核对。</p>
+        <pre><code>uint8_t s = 0x09;          /* 0b0000_1001 */
+s |= (uint8_t)(1u &lt;&lt; 2);   /* ① 之后 s = ? */
+s &amp;= (uint8_t)~(1u &lt;&lt; 0);  /* ② 之后 s = ? */
+s ^= (uint8_t)(1u &lt;&lt; 3);   /* ③ 之后 s = ? */
+
+int a[4] = {3, 6, 9, 12};
+int *p = a + 1;
+printf("%d %d\n", *p, *(p + 2));   /* ④ 输出? */</code></pre>
+        <details>
+          <summary>展开答案与推导</summary>
+          <ul>
+            <li>① 置位 bit2:<code>0b0000_1001 | 0b0000_0100 = 0b0000_1101 = 0x0D</code>(13)。</li>
+            <li>② 清零 bit0:<code>0b0000_1101 &amp; 0b1111_1110 = 0b0000_1100 = 0x0C</code>(12)。</li>
+            <li>③ 翻转 bit3:<code>0b0000_1100 ^ 0b0000_1000 = 0b0000_0100 = 0x04</code>(4)。</li>
+            <li>④ <code>p = a + 1</code> 指向 <code>a[1] = 6</code>;<code>*(p + 2) = a[3] = 12</code>;输出 <code>6 12</code>。</li>
+          </ul>
+        </details>
+      </div>
+
+      <!-- Lab 02 -->
+      <div class="lab" id="lab-02">
+        <div class="lab-head"><span class="lab-no">LAB 02</span><h3>编译链接四阶段:两个 .o 才能链接成程序</h3><span class="ev ev-compiled">compiled · gcc 13.3.0</span></div>
+        <p class="lab-goal"><b>目标:</b>分别执行预处理、编译、汇编、链接,亲眼看四类产物;故意只链接 <code>main.o</code>,读懂 <code>undefined reference</code> 报错,再用 <code>nm</code> 找到原因并修好。</p>
+
+        <div class="filegroup">
+          <p>准备三个文件(同一目录 <code>/tmp/c-course-lab</code>):</p>
+          <div class="file">
+            <div class="code-head"><span class="fname">sensor.h</span></div>
+            <pre><code>#ifndef SENSOR_H
+#define SENSOR_H
+
+#include &lt;stdint.h&gt;
+
+/* 把 12 位原始值(0..4095)线性映射到 0..255 */
+uint8_t sensor_scale(uint16_t raw);
+
+/* 低 8 位放数值,bit8 放"超出量程"标志 */
+uint16_t sensor_pack(uint16_t raw);
+
+#endif</code></pre>
+          </div>
+          <div class="file">
+            <div class="code-head"><span class="fname">sensor.c</span></div>
+            <pre><code>#include "sensor.h"
+
+uint8_t sensor_scale(uint16_t raw)
+{
+    if (raw &gt; 4095u) {
+        raw = 4095u;
+    }
+    return (uint8_t)((raw * 255u + 2047u) / 4095u);
+}
+
+uint16_t sensor_pack(uint16_t raw)
+{
+    uint16_t v = sensor_scale(raw);
+
+    if (raw &gt; 4095u) {
+        v |= (uint16_t)(1u &lt;&lt; 8);
+    }
+    return v;
+}</code></pre>
+          </div>
+          <div class="file">
+            <div class="code-head"><span class="fname">main.c</span></div>
+            <pre><code>#include &lt;stdio.h&gt;
+#include "sensor.h"
+
+int main(void)
+{
+    const uint16_t raw[] = {0, 512, 2048, 4095, 5000};
+
+    for (unsigned i = 0; i &lt; sizeof(raw) / sizeof(raw[0]); ++i) {
+        uint16_t packed = sensor_pack(raw[i]);
+        printf("raw=%4u scale=%3u overflow=%u packed=0x%04X\n",
+               raw[i],
+               (unsigned)(packed &amp; 0xFFu),
+               (unsigned)((packed &gt;&gt; 8) &amp; 1u),
+               (unsigned)packed);
+    }
+    return 0;
+}</code></pre>
+          </div>
+        </div>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">第 1–3 步:分开执行前三个阶段</h4>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ cd /tmp/c-course-lab
+$ mkdir -p build
+
+# 预处理:生成展开后的 C 文本
+$ gcc -E main.c -o build/main.i
+
+# 编译:生成汇编文本
+$ gcc -S main.c -o build/main.s
+
+# 汇编:生成可重定位目标文件(.o)
+$ gcc -c main.c -o build/main.o
+$ gcc -c sensor.c -o build/sensor.o
+
+$ wc -l build/main.i build/main.s</code></pre>
+        <div class="out">
+          <div class="out-title">实际输出</div>
+          <pre><code>913 build/main.i
+87 build/main.s</code></pre>
+        </div>
+        <p class="meta-note">原始 <code>main.c</code> 只有 18 行,预处理后 <code>main.i</code> 变成 913 行——因为 <code>#include &lt;stdio.h&gt;</code> 把头文件全文粘了进来。这就是"头文件不单独编译"的直接证据。</p>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">第 4 步:故意只链接 main.o(预期失败)</h4>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ gcc build/main.o -o build/app
+/usr/bin/ld: build/main.o: in function `main':
+main.c:(.text+0x50): undefined reference to `sensor_pack'
+collect2: error: ld returned 1 exit status</code></pre>
+        <p>这个报错来自链接器 <code>ld</code>,不是编译器:<code>main.o</code> 里对 <code>sensor_pack</code> 的调用只有一个符号名,没有函数体。用 <code>nm</code> 检查:</p>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ nm build/main.o</code></pre>
+        <div class="out">
+          <div class="out-title">实际输出</div>
+          <pre><code>0000000000000000 T main
+                 U printf
+                 U sensor_pack
+                 U __stack_chk_fail</code></pre>
+        </div>
+        <p><code>T</code> = 本文件定义的代码(<code>main</code>);<code>U</code> = 未定义、需要链接时由别处提供(<code>printf</code> 来自 libc,<code>sensor_pack</code> 来自 <code>sensor.o</code>,<code>__stack_chk_fail</code> 来自 libc 的栈保护支持)。</p>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">第 5 步:补上 sensor.o,链接并运行</h4>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ gcc build/main.o build/sensor.o -o build/app
+$ ./build/app</code></pre>
+        <div class="out">
+          <div class="out-title">实际输出</div>
+          <pre><code>raw=   0 scale=  0 overflow=0 packed=0x0000
+raw= 512 scale= 32 overflow=0 packed=0x0020
+raw=2048 scale=128 overflow=0 packed=0x0080
+raw=4095 scale=255 overflow=0 packed=0x00FF
+raw=5000 scale=255 overflow=1 packed=0x01FF</code></pre>
+        </div>
+        <p>链接成功后,<code>U sensor_pack</code> 被解析为 <code>T sensor_pack</code>:</p>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ nm build/app | grep sensor_</code></pre>
+        <div class="out">
+          <div class="out-title">实际输出(地址随构建变化,行内容稳定)</div>
+          <pre><code>0000000000001260 T sensor_pack
+0000000000001220 T sensor_scale</code></pre>
+        </div>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">四阶段产物对照(实测)</h4>
+        <div class="table-wrap">
+          <table>
+            <tr><th>阶段</th><th>命令</th><th>产物</th><th>文件类型(<code>file</code> 实测)</th><th>怎么检查</th></tr>
+            <tr><td>预处理</td><td><code>gcc -E main.c -o build/main.i</code></td><td><code>build/main.i</code></td><td>C source, ASCII text</td><td><code>wc -l</code> 看到 913 行</td></tr>
+            <tr><td>编译</td><td><code>gcc -S main.c -o build/main.s</code></td><td><code>build/main.s</code></td><td>assembler source, ASCII text</td><td><code>wc -l</code> 看到 87 行</td></tr>
+            <tr><td>汇编</td><td><code>gcc -c main.c -o build/main.o</code></td><td><code>build/main.o</code></td><td>ELF 64-bit LSB relocatable, x86-64</td><td><code>nm</code> 看 T / U 符号</td></tr>
+            <tr><td>链接</td><td><code>gcc main.o sensor.o -o build/app</code></td><td><code>build/app</code></td><td>ELF 64-bit LSB pie executable, x86-64</td><td><code>./build/app</code> 直接运行</td></tr>
+          </table>
+        </div>
+        <div class="out">
+          <div class="out-title">file / size 实际输出</div>
+          <pre><code>$ file build/main.i build/main.s build/main.o build/app
+build/main.i: C source, ASCII text
+build/main.s: assembler source, ASCII text
+build/main.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped
+build/app:    ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=5e281da54a34ee7e6d4ab4d114d4763e94e7fe4e, for GNU/Linux 3.2.0, not stripped
+
+$ size build/main.o build/app
+   text	   data	    bss	    dec	    hex	filename
+    321	      0	      0	    321	    141	build/main.o
+   1957	    608	      8	   2573	    a0d	build/app</code></pre>
+        </div>
+        <p class="meta-note">BuildID 与地址每次构建可能不同,这是正常的;<code>text/data/bss</code> 的数值随 gcc 版本与源码变化。关键结论:可执行文件是由多个 .o 链接得到的,单独一个 .o 不能运行,也不能单独解释外部调用。</p>
+      </div>
+
+      <!-- Lab 03 -->
+      <div class="lab" id="lab-03">
+        <div class="lab-head"><span class="lab-no">LAB 03</span><h3>用 gdb 抓住段错误:从 139 到 crash.c:26</h3><span class="ev ev-compiled">compiled · gcc 13.3.0 · gdb 15.1</span></div>
+        <p class="lab-goal"><b>目标:</b>制造一次确定的段错误,理解退出码 139、stdout 缓冲陷阱,并用 gdb 得到出错文件、行号与变量值。</p>
+
+        <div class="code-head"><span class="fname">crash.c</span><span class="tag">保存到 /tmp/c-course-lab/crash.c</span></div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+struct ring {
+    int buf[4];
+    int head;
+};
+
+static void ring_push(struct ring *r, int v)
+{
+    r-&gt;buf[r-&gt;head] = v;
+    r-&gt;head = (r-&gt;head + 1) % 4;
+}
+
+int main(void)
+{
+    struct ring ring = {{0}, 0};
+
+    for (int i = 0; i &lt; 6; ++i) {
+        ring_push(&amp;ring, i * 10);
+    }
+    printf("head=%d buf=[%d %d %d %d]\n",
+           ring.head, ring.buf[0], ring.buf[1], ring.buf[2], ring.buf[3]);
+
+    struct ring *bad = NULL;
+    printf("about to deref NULL\n");
+    bad-&gt;head = 1; /* 故意制造段错误,给 gdb 演示用 */
+
+    return 0;
+}</code></pre>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">第 1 步:带调试信息编译并直接运行</h4>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ gcc -g -O0 -Wall -Wextra -std=c11 crash.c -o build/crash
+$ ./build/crash
+$ echo $?</code></pre>
+        <div class="out">
+          <div class="out-title">实际输出</div>
+          <pre><code>段错误(核心已转储)
+139</code></pre>
+        </div>
+        <p class="meta-note">"段错误(核心已转储)"是 shell 在中文 locale 下打印的;英文 locale 下是 <code>Segmentation fault (core dumped)</code>。退出码 <code>139 = 128 + 11</code>,11 是 SIGSEGV 的信号编号。注意:程序里两行 <code>printf</code> 一个字都没出现——不是没执行,见下一步。</p>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">第 2 步:关掉 stdout 缓冲,同样的程序就能看到输出</h4>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ stdbuf -o0 ./build/crash
+$ echo $?</code></pre>
+        <div class="out">
+          <div class="out-title">实际输出</div>
+          <pre><code>head=2 buf=[40 50 20 30]
+about to deref NULL
+段错误(核心已转储)
+139</code></pre>
+        </div>
+        <p><b>结论:</b>程序确实执行到了 <code>printf</code>。输出被重定向时 stdout 是全缓冲,进程被信号杀死时缓冲区没有刷新,所以直接运行时看不到。调试崩溃程序时,这一点经常让人误判"根本没走到这里"。</p>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">第 3 步:gdb 直接定位崩溃行</h4>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ gdb -q -batch -ex 'run' -ex 'bt' -ex 'p bad' ./build/crash</code></pre>
+        <div class="out">
+          <div class="out-title">实际输出(地址随运行环境变化,行号稳定)</div>
+          <pre><code>[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000055555555526c in main () at crash.c:26
+26	    bad-&gt;head = 1; /* 故意制造段错误,给 gdb 演示用 */
+#0  0x000055555555526c in main () at crash.c:26
+$1 = (struct ring *) 0x0</code></pre>
+        </div>
+        <p>gdb 直接给出三件事:信号类型(SIGSEGV)、出错文件行号(<code>crash.c:26</code>)、可疑变量(<code>bad = 0x0</code>)。没有 gdb 时,你只有"段错误"三个字和退出码 139。</p>
+
+        <h4 style="font-size:14.5px;color:#5eead4;margin:18px 0 6px">第 4 步:在崩溃前下断点,看现场</h4>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ gdb -q -batch -ex 'break crash.c:26' -ex 'run' -ex 'p ring.head' -ex 'p ring.buf' -ex 'p bad' ./build/crash</code></pre>
+        <div class="out">
+          <div class="out-title">实际输出(断点地址随构建变化)</div>
+          <pre><code>Breakpoint 1 at 0x1268: file crash.c, line 26.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Breakpoint 1, main () at crash.c:26
+26	    bad-&gt;head = 1; /* 故意制造段错误,给 gdb 演示用 */
+$1 = 2
+$2 = {40, 50, 20, 30}
+$3 = (struct ring *) 0x0</code></pre>
+        </div>
+        <p><b>读结果:</b>6 次 <code>ring_push</code> 后 <code>head=2</code>,缓冲区被覆盖成 <code>{40, 50, 20, 30}</code>(环形缓冲写满后从头覆盖);<code>bad</code> 是空指针,下一行解引用必然崩溃。这类"程序逻辑本身没崩,空指针才崩"的情况,正是 gdb 比 printf 更快的地方。</p>
+      </div>
+
+      <!-- Lab 04 -->
+      <div class="lab" id="lab-04">
+        <div class="lab-head"><span class="lab-no">LAB 04</span><h3>Git:把这次改动存成能回看的节点</h3><span class="ev ev-principle">principle</span><span class="tag">git 2.43.0 真实终端记录</span></div>
+        <p class="lab-goal"><b>目标:</b>用 <code>init / status / add / commit / log / diff / switch</code> 走一遍最小工作流。本节命令输出是本机 git 2.43.0 的真实记录;Git 操作不属于编译验证,因此按 schema 归 <span class="ev ev-principle">principle</span>,但哈希、状态标记都是实际产生的。</p>
+        <div class="code-head"><span class="fname">终端</span></div>
+        <pre><code>$ cd /tmp/c-course-lab
+$ mkdir -p gitdemo &amp;&amp; cd gitdemo
+$ git init -q
+$ git config user.name "C Course Lab"
+$ git config user.email "lab@example.com"
+
+$ printf '# 采集工程\n' &gt; README.md
+$ git status --short
+?? README.md
+$ git add README.md
+$ git status --short
+A  README.md
+$ git commit -q -m "M0: 初始化采集工程"
+$ git log --oneline
+e8f9684 M0: 初始化采集工程
+
+$ printf 'sample_rate_hz = 10\n' &gt;&gt; README.md
+$ git diff
+diff --git a/README.md b/README.md
+index 0d657b4..27e9abd 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,2 @@
+ # 采集工程
++sample_rate_hz = 10
+
+$ git switch -c dev -q
+$ git branch --show-current
+dev</code></pre>
+        <p><b>看什么:</b><code>??</code> 表示未跟踪;<code>git add</code> 后变成 <code>A</code>(已暂存);commit 之后 <code>git log</code> 出现哈希 <code>e8f9684</code>;修改文件后 <code>git diff</code> 用 <code>+</code> 标出新增行;最后在 <code>dev</code> 分支上继续实验,不影响主线。<b>这些输出是真实终端记录,不是示意图;你的提交哈希会不同,行内容一致。</b></p>
+      </div>
+    </section>
+
+    <!-- ============================ 05 结果检查 ============================ -->
+    <section class="sec" id="result-check">
+      <div class="sec-head"><span class="no" aria-hidden="true">05</span><h2>结果检查</h2></div>
+      <p class="sec-meta"><span class="ev ev-principle">principle</span> 可观察、可勾选的验收项(不是"看完了")</p>
+      <p>逐条勾选,全部勾上再进入小测。勾选框只是本页自检,不上传、不保存。</p>
+      <ul class="checklist" id="checklist">
+        <li><input type="checkbox" id="c1" /><label for="c1"><b>能解释 3 个概念:</b>数组名退化(<code>a == &amp;a[0]</code>)、指针 <code>+1</code> 按 <code>sizeof(int)</code> 移动、<code>nm</code> 里 <code>U</code> 与 <code>T</code> 的区别。</label></li>
+        <li><input type="checkbox" id="c2" /><label for="c2"><b>能跑通 2 个示例:</b><code>./build/demo</code> 输出 8 行且含 <code>sum=30</code>;<code>./build/app</code> 输出 5 行且最后一行为 <code>packed=0x01FF</code>。</label></li>
+        <li><input type="checkbox" id="c3" /><label for="c3"><b>能说出编译链接各阶段产物:</b>预处理 <code>.i</code>、编译 <code>.s</code>、汇编 <code>.o</code>、链接后可执行文件(ELF),并知道头文件不单独编译。</label></li>
+        <li><input type="checkbox" id="c4" /><label for="c4"><b>能解释链接失败:</b>只链接 <code>main.o</code> 时为什么报 <code>undefined reference to `sensor_pack'</code>,以及补上 <code>sensor.o</code> 后为什么就好了。</label></li>
+        <li><input type="checkbox" id="c5" /><label for="c5"><b>能用 gdb 定位崩溃:</b>得到 <code>crash.c:26</code> 与 <code>bad = 0x0</code>,并说出退出码 139 的含义。</label></li>
+        <li><input type="checkbox" id="c6" /><label for="c6"><b>能解释 printf 消失:</b>stdout 重定向时全缓冲、崩溃未刷新;<code>stdbuf -o0</code> 能看到 <code>head=2 buf=[40 50 20 30]</code>。</label></li>
+        <li><input type="checkbox" id="c7" /><label for="c7"><b>Git 改动可追溯:</b>仓库里有一个提交,<code>git log --oneline</code> 能看到,<code>git diff</code> 能显示新增的 <code>sample_rate_hz = 10</code>。</label></li>
+        <li><input type="checkbox" id="c8" /><label for="c8"><b>小测达标:</b>完成下面的 5 题,正确 ≥ 4 题。</label></li>
+      </ul>
+      <p class="check-progress" id="check-count">已完成 0 / 8</p>
+    </section>
+
+    <!-- ============================ 06 故障排查 ============================ -->
+    <section class="sec" id="troubleshooting">
+      <div class="sec-head"><span class="no" aria-hidden="true">06</span><h2>故障排查</h2></div>
+      <p class="sec-meta"><span class="ev ev-principle">principle</span> 条目来自真实操作记录与 gcc 13.3.0 实际报错;每条按"现象 → 检查步骤 → 预期结果 → 下一分支"组织</p>
+
+      <div class="trouble">
+        <h3>1. 编译报错 <code>fatal error: sensor.h: 没有那个文件或目录</code></h3>
+        <dl>
+          <dt>现象</dt><dd><code>main.c:2:10: fatal error: sensor.h: 没有那个文件或目录</code>,随后 <code>compilation terminated.</code>,退出码 1。</dd>
+          <dt>检查步骤</dt><dd>① 看 <code>#include "sensor.h"</code> 是引号还是尖括号;② <code>ls</code> 确认 <code>sensor.h</code> 与 <code>main.c</code> 在同一个目录;③ 确认当前编译的是哪个 <code>main.c</code>(是不是把文件复制到了别的目录);④ 需要跨目录时用 <code>-I 目录</code>。</dd>
+          <dt>预期结果</dt><dd>在正确目录执行 <code>gcc -c main.c -o build/main.o</code> 没有任何输出、退出码 0,<code>ls build/main.o</code> 能看到文件。</dd>
+          <dt>下一分支</dt><dd>若文件确实存在仍报错,检查文件名大小写(Windows 拷来的文件常是 <code>Sensor.h</code>)与是否误存成 <code>sensor.h.txt</code>;仍不行就把头文件与 .c 放进同一目录重试。</dd>
+        </dl>
+      </div>
+
+      <div class="trouble">
+        <h3>2. 链接报错 <code>undefined reference to `sensor_pack'</code></h3>
+        <dl>
+          <dt>现象</dt><dd><code>/usr/bin/ld: build/main.o: in function `main':</code> + <code>undefined reference to `sensor_pack'</code> + <code>collect2: error: ld returned 1 exit status</code>。</dd>
+          <dt>检查步骤</dt><dd>① <code>nm build/main.o</code> 看 <code>sensor_pack</code> 是否为 <code>U</code>;② 确认 <code>sensor.c</code> 是否已经用 <code>gcc -c</code> 生成 <code>sensor.o</code>;③ 确认链接命令里是否真的写上了 <code>build/sensor.o</code>。</dd>
+          <dt>预期结果</dt><dd><code>nm build/main.o</code> 显示 <code>U sensor_pack</code>(需要外部提供);链接命令改为 <code>gcc build/main.o build/sensor.o -o build/app</code> 后无输出、退出码 0。</dd>
+          <dt>下一分支</dt><dd>补上 <code>sensor.o</code> 后仍报错:检查 <code>sensor.c</code> 里的函数名拼写是否与声明一致,以及是否漏了 <code>#include "sensor.h"</code> 导致定义被写成另一个名字。</dd>
+        </dl>
+      </div>
+
+      <div class="trouble">
+        <h3>3. 程序段错误,但崩溃前的 printf 一行都没出现</h3>
+        <dl>
+          <dt>现象</dt><dd><code>./build/crash</code> 只显示 <code>段错误(核心已转储)</code>,退出码 139;程序里的 <code>printf</code> 输出全部消失。</dd>
+          <dt>检查步骤</dt><dd>① 确认 stdout 是否接终端还是被管道/文件重定向;② 用 <code>stdbuf -o0 ./build/crash</code> 重跑;③ 在关键 printf 后加 <code>fflush(stdout);</code> 或改用 <code>fprintf(stderr, ...)</code>。</dd>
+          <dt>预期结果</dt><dd>用 <code>stdbuf -o0</code> 后能看到 <code>head=2 buf=[40 50 20 30]</code> 与 <code>about to deref NULL</code>,证明 printf 确实执行过。</dd>
+          <dt>下一分支</dt><dd>若仍无输出,程序可能连 main 都没进(动态库加载失败等);用 <code>gdb ./build/crash</code> 后 <code>run</code> 看最早停在哪里。</dd>
+        </dl>
+      </div>
+
+      <div class="trouble">
+        <h3>4. 编译警告 <code>format `%u' expects argument of type `unsigned int'</code></h3>
+        <dl>
+          <dt>现象</dt><dd><code>warning: format `%u' expects argument of type `unsigned int', but argument 2 has type `long int' [-Wformat=]</code>,并附带 <code>%lu</code> 提示。</dd>
+          <dt>检查步骤</dt><dd>① 对照 <code>printf</code> 格式符与变量真实类型;② 确认是否用 <code>unsigned</code> 强转或换格式符;③ 保持 <code>-Wall -Wextra</code> 编译,不要关警告。</dd>
+          <dt>预期结果</dt><dd>修正后 <code>gcc -Wall -Wextra</code> 零警告(退出码 0、无 warning 输出)。</dd>
+          <dt>下一分支</dt><dd>类型较多时统一用 <code>stdint.h</code> 的 <code>uint32_t</code> + <code>PRIu32</code>,或先强转成 <code>(unsigned)</code> 再交给 <code>%u</code>,不要靠"碰巧能跑"。</dd>
+        </dl>
+      </div>
+
+      <div class="trouble">
+        <h3>5. gdb 只显示地址,没有 <code>crash.c:26</code> 行号</h3>
+        <dl>
+          <dt>现象</dt><dd><code>0x00005555555550f2 in main ()</code>,<code>bt</code> 也只有 <code>#0  0x... in main ()</code>,没有源文件名和行号。</dd>
+          <dt>检查步骤</dt><dd>① 确认编译时是否加了 <code>-g</code>;② 确认是否加了 <code>-O0</code>(优化会重排/删掉变量);③ 重新编译后再在 gdb 里 <code>run</code>、<code>bt</code>。</dd>
+          <dt>预期结果</dt><dd>带 <code>-g -O0</code> 重编译后,<code>bt</code> 显示 <code>in main () at crash.c:26</code>,<code>p bad</code> 显示 <code>(struct ring *) 0x0</code>。</dd>
+          <dt>下一分支</dt><dd>若加了 <code>-g</code> 仍无行号,检查是否运行了旧的二进制(路径写错),<code>ls -l build/crash</code> 确认时间戳后重新编译。</dd>
+        </dl>
+      </div>
+
+      <div class="trouble">
+        <h3>6. Git 提交报"作者身份未知 / 无法自动探测邮件地址"</h3>
+        <dl>
+          <dt>现象</dt><dd><code>作者身份未知</code> + <code>fatal: 无法自动探测邮件地址(得到 'czy@czy.(none)')</code>,退出码 128。</dd>
+          <dt>检查步骤</dt><dd>① <code>git config user.name</code> 与 <code>git config user.email</code> 是否为空;② 新机器/新容器上是否从未配置过;③ 本仓库内配置即可,不必全局。</dd>
+          <dt>预期结果</dt><dd><code>git config user.name "C Course Lab"</code> 与 <code>git config user.email "lab@example.com"</code> 之后,<code>git commit</code> 成功,<code>git log --oneline</code> 出现提交。</dd>
+          <dt>下一分支</dt><dd>若多人共用机器,用 <code>git config --global</code> 配个人身份,避免覆盖别人的提交者信息;CI 环境用 <code>GIT_AUTHOR_NAME</code> 等环境变量显式指定。</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ============================ 07 小测 ============================ -->
+    <section class="sec" id="quiz">
+      <div class="sec-head"><span class="no" aria-hidden="true">07</span><h2>小测</h2></div>
+      <p class="sec-meta"><span class="ev ev-principle">principle</span> 5 道选择题,页面内 JS 判分,点击选项立即显示对错与解析,不依赖后端</p>
+      <p>每题只能作答一次,答完显示解析;全部答完后显示总分(达标线 4/5)。可以点"重新作答"清零重来。</p>
+
+      <div class="quiz" id="quiz">
+        <div class="quiz-bar">
+          <span class="score" id="quiz-score">已答 0/5 · 正确 0</span>
+          <span class="muted" style="font-size:12.5px">点击选项即判分</span>
+        </div>
+
+        <div class="q" data-qid="q1">
+          <p class="q-title"><b>Q1.</b> 指针与数组</p>
+          <p class="q-stem"><code>int a[5] = {1, 2, 3, 4, 5};</code><br /><code>int *p = a + 2;</code><br /><code>printf("%d\n", p[-1]);</code> 的输出是?</p>
+          <button type="button" class="opt" data-opt="a">A. 1</button>
+          <button type="button" class="opt" data-opt="b">B. 2</button>
+          <button type="button" class="opt" data-opt="c">C. 3</button>
+          <button type="button" class="opt" data-opt="d">D. 4</button>
+          <div class="feedback" hidden></div>
+        </div>
+
+        <div class="q" data-qid="q2">
+          <p class="q-title"><b>Q2.</b> 位操作</p>
+          <p class="q-stem"><code>uint8_t x = 0x12;</code><br /><code>x |= (uint8_t)(1u &lt;&lt; 3);</code><br /><code>x &amp;= (uint8_t)~(1u &lt;&lt; 1);</code><br />两步之后 <code>x</code> 的值是?</p>
+          <button type="button" class="opt" data-opt="a">A. 0x1A</button>
+          <button type="button" class="opt" data-opt="b">B. 0x18</button>
+          <button type="button" class="opt" data-opt="c">C. 0x10</button>
+          <button type="button" class="opt" data-opt="d">D. 0x08</button>
+          <div class="feedback" hidden></div>
+        </div>
+
+        <div class="q" data-qid="q3">
+          <p class="q-title"><b>Q3.</b> 编译链接</p>
+          <p class="q-stem">哪条命令只做到"汇编"这一步,产物是 <code>.o</code> 可重定位目标文件?</p>
+          <button type="button" class="opt" data-opt="a">A. <code>gcc -E main.c -o main.i</code></button>
+          <button type="button" class="opt" data-opt="b">B. <code>gcc -S main.c -o main.s</code></button>
+          <button type="button" class="opt" data-opt="c">C. <code>gcc -c main.c -o main.o</code></button>
+          <button type="button" class="opt" data-opt="d">D. <code>gcc main.o sensor.o -o app</code></button>
+          <div class="feedback" hidden></div>
+        </div>
+
+        <div class="q" data-qid="q4">
+          <p class="q-title"><b>Q4.</b> 调试</p>
+          <p class="q-stem">程序崩溃前 <code>printf</code> 的内容没有出现,最可能的原因是?</p>
+          <button type="button" class="opt" data-opt="a">A. 编译器 <code>-O2</code> 把 <code>printf</code> 删掉了</button>
+          <button type="button" class="opt" data-opt="b">B. stdout 被重定向时是全缓冲,崩溃前没有刷新</button>
+          <button type="button" class="opt" data-opt="c">C. gcc 版本太新,<code>printf</code> 不兼容</button>
+          <button type="button" class="opt" data-opt="d">D. 没有加 <code>-O0</code>,调试信息丢失</button>
+          <div class="feedback" hidden></div>
+        </div>
+
+        <div class="q" data-qid="q5">
+          <p class="q-title"><b>Q5.</b> Git</p>
+          <p class="q-stem">希望下一次 <code>git commit</code> 包含刚改过的 <code>README.md</code>,应该先执行?</p>
+          <button type="button" class="opt" data-opt="a">A. <code>git commit -m "update"</code></button>
+          <button type="button" class="opt" data-opt="b">B. <code>git add README.md</code></button>
+          <button type="button" class="opt" data-opt="c">C. <code>git push</code></button>
+          <button type="button" class="opt" data-opt="d">D. <code>git log --oneline</code></button>
+          <div class="feedback" hidden></div>
+        </div>
+
+        <div class="quiz-summary" id="quiz-summary" hidden></div>
+        <button type="button" class="btn" id="quiz-reset">重新作答</button>
+      </div>
+    </section>
+
+    <!-- ============================ 08 下一步 ============================ -->
+    <section class="sec" id="next">
+      <div class="sec-head"><span class="no" aria-hidden="true">08</span><h2>下一步</h2></div>
+      <p class="sec-meta"><span class="ev ev-principle">principle</span> 下一步链接按课程依赖关系推荐</p>
+      <p>按顺序走:先学「数字电路入门」把电平与电路看懂,再进「采集监控项目 M0」把本课的 C 用到真实数据上。</p>
+      <div class="nextcards">
+        <a class="nextcard" href="/foundations/circuits/">
+          <span class="p">NEXT · 阶段 01 · 课 02</span>
+          <span class="t">数字电路入门 →</span>
+          <span class="d">3.3V/5V 电平、上拉/下拉、按键去抖、采样与 ADC 量化、仪器使用。学完能看懂接线图并解释电平与误差。</span>
+        </a>
+        <a class="nextcard" href="/projects/collect/">
+          <span class="p">PROJECT · M0</span>
+          <span class="t">采集监控项目:M0 传感器采集 →</span>
+          <span class="d">把指针、位操作、编译调试用到真实采集流程:读传感器原始值、按位打包、算单位与误差、记录数据。</span>
+        </a>
+        <a class="nextcard" href="/foundations/linux-user/">
+          <span class="p">SAME STAGE · 课 03</span>
+          <span class="t">Linux 用户态入门 →</span>
+          <span class="d">Shell 与权限、进程与信号、文件 I/O、串口 termios(115200 8N1)。需要先会本课的 C 与编译。</span>
+        </a>
+        <a class="nextcard" href="/tools/">
+          <span class="p">REFERENCE</span>
+          <span class="t">工具与资料 →</span>
+          <span class="d">gcc / gdb / git 的安装与速查;编译选项、调试命令、Git 常用操作。</span>
+        </a>
+      </div>
+      <p class="meta-note">也可以回到 <a href="/foundations/">工程基础总览</a> 或 <a href="/route/">学习路线</a> 继续按阶段学习。</p>
+    </section>
+
+    <!-- ============================ 附 · 证据标识 ============================ -->
+    <section class="sec" id="evidence">
+      <div class="sec-head"><span class="no" aria-hidden="true">附</span><h2>证据标识</h2></div>
+      <p class="sec-meta"><span class="ev ev-compiled">compiled</span> ×3 · <span class="ev ev-principle">principle</span> ×6 · 工具版本逐个列出</p>
+      <p>按课程 schema v1 的 A8 约定:每条内容必须能追溯到证据等级;<code>principle</code> 不得写成"已验证",<code>compiled</code> 必须写明工具链与命令。</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>#</th><th>内容 / 代码</th><th>等级</th><th>版本 / 环境</th><th>证明了什么</th><th>没证明什么</th><th>命令 / 出处</th></tr>
+          <tr>
+            <td>E1</td>
+            <td>实验 01 <code>bitops.c</code>:指针与位操作</td>
+            <td><span class="ev ev-compiled">compiled</span></td>
+            <td>gcc 13.3.0(Ubuntu 13.3.0-6ubuntu2~24.04.1),Linux x86_64</td>
+            <td>代码在 <code>-Wall -Wextra -std=c11 -O2</code> 下编译零警告,运行输出与本页截图一致(8 行)</td>
+            <td>未在 MCU / 交叉编译工具链上验证;未证明位移在 8 位寄存器上的硬件行为</td>
+            <td><code>gcc -Wall -Wextra -std=c11 -O2 -o build/demo bitops.c &amp;&amp; ./build/demo</code></td>
+          </tr>
+          <tr>
+            <td>E2</td>
+            <td>实验 02 多文件工程:<code>sensor.h / sensor.c / main.c</code></td>
+            <td><span class="ev ev-compiled">compiled</span></td>
+            <td>gcc 13.3.0;GNU ld;file 5.45</td>
+            <td>四阶段产物(.i 913 行 / .s 87 行 / .o / ELF 可执行)真实生成;缺 <code>sensor.o</code> 的链接失败与补齐后运行输出均为实测</td>
+            <td>未验证交叉编译目标;BuildID 与符号地址因构建而异,不能当作固定值</td>
+            <td><code>gcc -E/-S/-c</code>、<code>gcc main.o sensor.o -o app</code>、<code>file / size / nm</code>(输出见实验 02)</td>
+          </tr>
+          <tr>
+            <td>E3</td>
+            <td>实验 03 <code>crash.c</code>:段错误与 gdb 定位</td>
+            <td><span class="ev ev-compiled">compiled</span></td>
+            <td>gcc 13.3.0;GNU gdb 15.1(Ubuntu 15.1-1ubuntu1~24.04.1)</td>
+            <td>SIGSEGV 真实发生、退出码 139;gdb 给出 <code>crash.c:26</code> 与 <code>bad = 0x0</code>;断点处变量值 <code>head=2 / buf={40,50,20,30}</code> 实测</td>
+            <td>运行时地址随 ASLR/构建变化,不能当作固定地址;未覆盖 core dump 分析与多线程崩溃</td>
+            <td><code>gcc -g -O0 -o build/crash crash.c</code>;<code>gdb -q -batch -ex run -ex bt -ex 'p bad' ./build/crash</code></td>
+          </tr>
+          <tr>
+            <td>E4</td>
+            <td>3.1 指针与数组规则、内存布局示意</td>
+            <td><span class="ev ev-principle">principle</span></td>
+            <td>教材通用(C11;x86-64 假设 <code>sizeof(int)=4</code>)</td>
+            <td>解释数组名退化、指针偏移、指针相减、<code>sizeof</code> 退化的通用规则</td>
+            <td>内存图中的地址 0x1000 是示意值,不是真实地址;不同平台上 <code>sizeof(int)</code> 可能不同</td>
+            <td>本文 3.1;没有独立运行产物</td>
+          </tr>
+          <tr>
+            <td>E5</td>
+            <td>3.2 位操作表(置位/清零/翻转/读取/字段)</td>
+            <td><span class="ev ev-principle">principle</span></td>
+            <td>教材通用(C11)</td>
+            <td>四种基本位操作与字段读写写法的正确性</td>
+            <td>不对应某一款具体寄存器;真实芯片的位定义须查手册;未做硬件写寄存器验证</td>
+            <td>本文 3.2;运行验证在 E1</td>
+          </tr>
+          <tr>
+            <td>E6</td>
+            <td>3.3 编译链接四阶段流程</td>
+            <td><span class="ev ev-principle">principle</span></td>
+            <td>gcc 13.3.0 / GNU binutils</td>
+            <td>各阶段命令、产物扩展名与职责划分</td>
+            <td>流程图为通用模型;未覆盖链接脚本、静态库、交叉编译等复杂场景</td>
+            <td>本文 3.3;产物实证在 E2</td>
+          </tr>
+          <tr>
+            <td>E7</td>
+            <td>3.5 调试方法:printf 与 gdb 命令表</td>
+            <td><span class="ev ev-principle">principle</span></td>
+            <td>GNU gdb 15.1</td>
+            <td>常用 gdb 命令的用途与两条调试路线的取舍</td>
+            <td>命令表未逐条实测(实测仅覆盖 run / bt / p / break);未涉及远程调试与 RTOS 调试</td>
+            <td>本文 3.5;实测命令见 E3</td>
+          </tr>
+          <tr>
+            <td>E8</td>
+            <td>3.4 / 实验 04 Git 工作流</td>
+            <td><span class="ev ev-principle">principle</span></td>
+            <td>git 2.43.0</td>
+            <td>三区模型与 init/add/commit/log/diff/switch 的用途;实验 04 的终端输出为本机真实记录(含提交哈希 e8f9684)</td>
+            <td>Git 操作不属于编译或硬件验证,按 schema 证据枚举只能归 <code>principle</code>;未涉及 rebase/merge 冲突等进阶场景</td>
+            <td><code>git init -q &amp;&amp; git add &amp;&amp; git commit -q -m ... &amp;&amp; git log --oneline</code>(输出见实验 04)</td>
+          </tr>
+          <tr>
+            <td>E9</td>
+            <td>06 故障排查 6 条(含真实报错原文)</td>
+            <td><span class="ev ev-principle">principle</span></td>
+            <td>gcc 13.3.0 / gdb 15.1 / git 2.43.0;中文 locale</td>
+            <td>第 2、3、4、5、6 条的现象文本来自真实终端输出(链接失败、printf 丢失、格式警告、无 -g 的 gdb、Git 身份错误)</td>
+            <td>报错文案随 locale 与工具版本变化;英文环境措辞不同;排查分支是经验性建议,未逐条复现到底</td>
+            <td>本页 06 节各条;命令记录见实验 02/03/04</td>
+          </tr>
+        </table>
+      </div>
+      <div class="box">
+        <h4>工具版本(本页所有实测共用)</h4>
+        <ul>
+          <li>操作系统:Linux 7.0.0-43-generic x86_64(Ubuntu 24.04 环境)</li>
+          <li>编译器:gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0</li>
+          <li>调试器:GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1</li>
+          <li>版本控制:git 2.43.0</li>
+          <li>辅助工具:file 5.45、nm / size / ld(GNU binutils)</li>
+          <li>实测日期:2026-11-27;实验目录:<code>/tmp/c-course-lab</code></li>
+        </ul>
+        <p class="meta-note">复现方式:按「操作实验」逐条执行命令;输出中的地址、BuildID、提交哈希与时间戳类字段允许不同,其余内容应一致。若你的 gcc 不是 13.3.0,编译警告措辞可能不同,但程序输出与结论不变。</p>
+      </div>
+      <div class="box">
+        <h4>本页与课程 schema v1 的对应</h4>
+        <p class="meta-note">8 段结构:目标(<code>goalObjectives</code>)→ 前置知识(<code>prerequisites</code>)→ 原理与图示(<code>principles</code>)→ 操作实验(<code>experiment</code>)→ 结果检查(<code>resultCheck</code>)→ 故障排查(<code>troubleshooting</code>)→ 小测(<code>quiz</code>)→ 下一步(<code>nextStep</code>)。课程 id <code>platform:foundations-c</code>,阶段 <code>foundation</code>,路由 <code>/foundations/c/</code>。证据 9 条(3 条 compiled + 6 条 principle),工具版本见上表。</p>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>工程基础 · 课 01 / 共 3 课 · <a href="/foundations/">课程总览</a> · <a href="/route/">学习路线</a> · <a href="/projects/collect/">项目 M0</a></p>
+      <p>本页为静态页面:样式引用 <code>/shared/site.css</code>,其余 CSS / JS 全部内联,小测判分在浏览器本地完成,不依赖后端。</p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ---------- 小测判分 ---------- */
+      var ANSWERS = {
+        q1: {
+          correct: "b",
+          explain: "p = a + 2 指向 a[2] = 3;p[-1] 等价于 *(p - 1),即 a[1] = 2。"
+        },
+        q2: {
+          correct: "b",
+          explain: "0x12 = 0b0001_0010。先置 bit3 → 0b0001_1010 = 0x1A;再清 bit1 → 0b0001_1000 = 0x18。"
+        },
+        q3: {
+          correct: "c",
+          explain: "gcc -c 只做汇编:源码/汇编 → 可重定位目标文件 .o。gcc -E 得到 .i,gcc -S 得到 .s,不带选项才会调用链接器。"
+        },
+        q4: {
+          correct: "b",
+          explain: "stdout 接终端时是行缓冲,接管道或文件时是全缓冲。进程被信号终止时缓冲区来不及刷新,printf 的内容就丢了;用 stdbuf -o0、fflush(stdout) 或 fprintf(stderr, ...) 可以看到。"
+        },
+        q5: {
+          correct: "b",
+          explain: "git add 把工作区的改动放进暂存区;git commit 把暂存区做成一次提交;git push 推到远端;git log 只查看历史。"
+        }
+      };
+
+      var total = Object.keys(ANSWERS).length;
+      var answered = {};
+      var correctCount = 0;
+      var quizRoot = document.getElementById("quiz");
+      var scoreEl = document.getElementById("quiz-score");
+      var summaryEl = document.getElementById("quiz-summary");
+      var resetBtn = document.getElementById("quiz-reset");
+
+      function updateScore() {
+        var n = Object.keys(answered).length;
+        scoreEl.textContent = "已答 " + n + "/" + total + " · 正确 " + correctCount;
+        if (n === total) {
+          summaryEl.hidden = false;
+          if (correctCount >= 4) {
+            summaryEl.className = "quiz-summary ok";
+            summaryEl.textContent = "小测完成:" + correctCount + "/" + total + " 正确,达到 4/5 门槛。把错题的解析再看一遍,然后进入下一课「数字电路入门」。";
+          } else {
+            summaryEl.className = "quiz-summary warnbox";
+            summaryEl.textContent = "小测完成:" + correctCount + "/" + total + " 正确,未到 4/5。先回到第 03、04 段把对应原理和实验重做一遍,再点「重新作答」。";
+          }
+        }
+      }
+
+      function resetQuiz() {
+        answered = {};
+        correctCount = 0;
+        var qs = quizRoot.querySelectorAll(".q");
+        for (var i = 0; i < qs.length; i++) {
+          var opts = qs[i].querySelectorAll(".opt");
+          for (var j = 0; j < opts.length; j++) {
+            opts[j].disabled = false;
+            opts[j].classList.remove("ok");
+            opts[j].classList.remove("bad");
+          }
+          var fb = qs[i].querySelector(".feedback");
+          fb.hidden = true;
+          fb.className = "feedback";
+          fb.textContent = "";
+        }
+        summaryEl.hidden = true;
+        summaryEl.className = "quiz-summary";
+        summaryEl.textContent = "";
+        updateScore();
+      }
+
+      quizRoot.addEventListener("click", function (ev) {
+        var target = ev.target;
+        var btn = target && target.closest ? target.closest(".opt") : null;
+        if (!btn || !quizRoot.contains(btn)) {
+          return;
+        }
+        var q = btn.closest(".q");
+        var qid = q.getAttribute("data-qid");
+        if (answered[qid]) {
+          return;
+        }
+        var answer = ANSWERS[qid];
+        if (!answer) {
+          return;
+        }
+        var chosen = btn.getAttribute("data-opt");
+        var correctBtn = q.querySelector('.opt[data-opt="' + answer.correct + '"]');
+        var opts = q.querySelectorAll(".opt");
+        for (var k = 0; k < opts.length; k++) {
+          opts[k].disabled = true;
+        }
+        answered[qid] = chosen;
+        if (chosen === answer.correct) {
+          btn.classList.add("ok");
+          correctCount++;
+        } else {
+          btn.classList.add("bad");
+          if (correctBtn) {
+            correctBtn.classList.add("ok");
+          }
+        }
+        var fb = q.querySelector(".feedback");
+        fb.hidden = false;
+        fb.className = "feedback " + (chosen === answer.correct ? "ok" : "bad");
+        fb.textContent = (chosen === answer.correct ? "\u2713 正确。" : "\u2717 不对。正确答案是 " + answer.correct.toUpperCase() + "。") + answer.explain;
+        updateScore();
+      });
+
+      if (resetBtn) {
+        resetBtn.addEventListener("click", resetQuiz);
+      }
+      updateScore();
+
+      /* ---------- 结果检查进度 ---------- */
+      var boxes = document.querySelectorAll("#checklist input[type=checkbox]");
+      var countEl = document.getElementById("check-count");
+      function updateChecks() {
+        if (!countEl) {
+          return;
+        }
+        var done = 0;
+        for (var m = 0; m < boxes.length; m++) {
+          if (boxes[m].checked) {
+            done++;
+          }
+        }
+        countEl.textContent = "已完成 " + done + " / " + boxes.length;
+      }
+      for (var n = 0; n < boxes.length; n++) {
+        boxes[n].addEventListener("change", updateChecks);
+      }
+      updateChecks();
+    })();
+  </script>
+</body>
+</html>

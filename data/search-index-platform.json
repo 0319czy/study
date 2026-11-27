@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-27T14:05:32.376Z",
+  "generatedAt": "2026-11-27T14:16:52.306Z",
   "site": "platform",
-  "count": 19,
+  "count": 21,
   "items": [
     {
       "id": "platform:page:foundations",
@@ -11,24 +11,6 @@
       "type": "page",
       "route": "/foundations/",
       "keywords": "工程基础 · 三门最小课 foundations page 平台层 · 基础课/项目/方向 platform 工程基础 基础课 c 数字电路 linux"
-    },
-    {
-      "id": "platform:lesson:foundations:c",
-      "title": "C 与工程工具",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/foundations/c/",
-      "keywords": "c 与工程工具 foundations:c lesson 平台层 · 基础课/项目/方向 platform c 语言 指针 编译 git 工具链"
-    },
-    {
-      "id": "platform:lesson:foundations:circuits",
-      "title": "数字电路入门",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/foundations/circuits/",
-      "keywords": "数字电路入门 foundations:circuits lesson 平台层 · 基础课/项目/方向 platform 数字电路 门电路 时序 adc"
     },
     {
       "id": "platform:lesson:foundations:linux-user",
@@ -148,24 +130,6 @@
       "keywords": "边缘 ai 模型部署 directions:edge-ai lesson 平台层 · 基础课/项目/方向 platform 边缘 ai 量化 部署 int8"
     },
     {
-      "id": "platform:lesson:foundations:c-advanced",
-      "title": "C 进阶:指针、内存与调试",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/foundations/c-advanced/",
-      "keywords": "c 进阶:指针、内存与调试 foundations:c-advanced lesson 平台层 · 基础课/项目/方向 platform c 指针 内存 asan gdb 调试"
-    },
-    {
-      "id": "platform:lesson:foundations:circuits-practice",
-      "title": "数字电路实战:采样、去抖与电平",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/foundations/circuits-practice/",
-      "keywords": "数字电路实战:采样、去抖与电平 foundations:circuits-practice lesson 平台层 · 基础课/项目/方向 platform 数字电路 去抖 采样 adc 上拉"
-    },
-    {
       "id": "platform:lesson:directions:linux-build-deep",
       "title": "Linux 系统构建深入:Buildroot、内核与启动",
       "site": "platform",
@@ -173,6 +137,60 @@
       "type": "lesson",
       "route": "/directions/linux-build-deep/",
       "keywords": "linux 系统构建深入:buildroot、内核与启动 directions:linux-build-deep lesson 平台层 · 基础课/项目/方向 platform buildroot 内核 dtb rootfs 启动链"
+    },
+    {
+      "id": "platform:page:c:home",
+      "title": "C 语言学科子站",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/c/",
+      "keywords": "c 语言学科子站 c:home page 平台层 · 基础课/项目/方向 platform c 语言 学科子站 指针 内存"
+    },
+    {
+      "id": "platform:lesson:c:start",
+      "title": "C 与工程工具(子站版)",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/c/start/",
+      "keywords": "c 与工程工具(子站版) c:start lesson 平台层 · 基础课/项目/方向 platform c 与工程工具 c 入门 指针 编译"
+    },
+    {
+      "id": "platform:lesson:c:memory-debug",
+      "title": "C 进阶:指针、内存与调试",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/c/memory-debug/",
+      "keywords": "c 进阶:指针、内存与调试 c:memory-debug lesson 平台层 · 基础课/项目/方向 platform c 进阶 asan 指针 内存 gdb 调试"
+    },
+    {
+      "id": "platform:page:digital:home",
+      "title": "数字电路学科子站",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/digital/",
+      "keywords": "数字电路学科子站 digital:home page 平台层 · 基础课/项目/方向 platform 数字电路 学科子站 电平 去抖"
+    },
+    {
+      "id": "platform:lesson:digital:start",
+      "title": "数字电路入门(子站版)",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/digital/start/",
+      "keywords": "数字电路入门(子站版) digital:start lesson 平台层 · 基础课/项目/方向 platform 数字电路入门 数字电路 电平 上拉"
+    },
+    {
+      "id": "platform:lesson:digital:sampling-debounce",
+      "title": "数字电路实战:采样、去抖与电平",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/digital/sampling-debounce/",
+      "keywords": "数字电路实战:采样、去抖与电平 digital:sampling-debounce lesson 平台层 · 基础课/项目/方向 platform 数字电路实战 去抖 采样 adc 上拉"
     }
   ]
 }

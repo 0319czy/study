@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="把带抖动的传感器信号变成可靠数字输入:上拉/下拉、RC 去抖、软件去抖与 ADC 采样量化,参数都能算出来。" />
+  <title>数字电路实战:采样、去抖与电平 · 数字电路学科子站 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin: 0 0 7px; color: #e6edf3; }
+    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #26323f; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; background: #0e141b; cursor: pointer; }
+    .q .opt.right { border-color: rgba(94,234,212,.55); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.55); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
+    .q .explain.show { display: block; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">FOUNDATIONS · 数字电路实战</div>
+    <h1>数字电路实战:采样、去抖与电平</h1>
+    <p class="lead">把带抖动的传感器信号变成可靠数字输入:上拉/下拉、RC 去抖、软件去抖与 ADC 采样量化,参数都能算出来。</p>
+    <p class="muted">主地址:<code>/digital/sampling-debounce/</code> · 旧地址 <a href="/foundations/circuits-practice/">/foundations/circuits-practice/</a> 继续可用 · 学科首页:<a href="/digital/">/digital/</a></p>
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>能把带抖动的传感器信号变成可靠的数字输入,并解释上拉、去抖、采样与量化误差</td></tr>
+        <tr><td>可检查结果</td><td>算出一组 RC 去抖参数;记录一组 ADC 采样率与量化误差;在 M0 模拟器上复现</td></tr>
+        <tr><td>证据标识</td><td><span class="pill">principle</span> · <span class="pill">hardware-pending</span>(真实板卡由你验证)</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>逻辑门与电平</td><td>高/低、阈值、上拉/下拉</td><td><a href="/foundations/circuits/">数字电路入门</a></td></tr>
+        <tr><td>RC 与时间常数</td><td>τ=RC、充电曲线</td><td><a href="/foundations/circuits/">数字电路入门</a></td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>3. 原理与图示</h2>
+      <p>机械按键在按下/松开瞬间会抖动 1–20ms。硬件去抖用 RC 低通(τ=RC),软件去抖用"连续 N 次采样一致才确认"。</p>
+      <p>ADC 量化误差 = 满量程 / 2^位数 / 2;例如 12 位、3.3V 量程,理论分辨率约 0.4mV,但噪声与参考电压误差会让实际误差更大。</p>
+      <p>采样定理:采样率至少是信号最高频率的 2 倍;工程上通常取 5–10 倍。</p>      <pre class="code">去抖时间常数:τ = R × C
+示例:R = 10kΩ, C = 100nF → τ = 1ms;确认时间取 5τ ≈ 5ms</pre>
+    </div>
+    <div class="section">
+      <h2>4. 操作实验</h2>
+      <ol><li>打开 <a href="/projects/collect/">M0 采集</a>,把模拟器采样率设为 1kHz,阈值设为 20℃,记录 30 个点。</li><li>计算:若按键抖动 8ms,软件去抖每 2ms 采样一次,至少需要连续几次一致?</li><li>用 12 位 ADC、3.3V 量程,计算 1LSB 对应电压与 25℃ 附近 0.1℃ 需要的位数。</li><li>把参数与结论写进 /archive/ 的笔记。</li></ol>      <pre class="code">去抖次数 = ceil(抖动时间 / 采样间隔) + 1
+= ceil(8ms / 2ms) + 1 = 5 次</pre>
+    </div>
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <table>
+        <tr><th>检查项</th><th>预期</th></tr>
+        <tr><td>去抖参数</td><td>τ≈1ms、确认 5 次可覆盖 8ms 抖动</td></tr>
+        <tr><td>采样率</td><td>1kHz 采样对 50Hz 信号有 20 倍余量</td></tr>
+        <tr><td>量化误差</td><td>12 位 3.3V:1LSB≈0.806mV;0.1℃ 需约 0.4mV 分辨率(实际受噪声限制)</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>按键误触发多次</td><td>是否只做了软件消抖但采样太慢?</td><td>采样间隔 ≤ 抖动时间/3</td><td>加 RC + 提高采样率</td></tr>
+        <tr><td>输入电平悬空</td><td>是否缺上拉/下拉?</td><td>空闲时电平确定</td><td>加 10kΩ 上拉或下拉</td></tr>
+        <tr><td>ADC 读数跳动大</td><td>参考电压/地线/采样保持时间</td><td>短接输入时读数稳定</td><td>加滤波电容、延长采样时间</td></tr>
+      </table>
+    </div>
+    <p class="muted" style="font-size:12.5px">证据边界:参数计算为 principle;真实按键/ADC 波形需在板卡上复测(hardware-pending)。</p>
+    <div class="section">
+      <h2>7. 小测</h2>
+      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
+      <div id="quiz"></div>
+    </div>
+
+    <div class="section">
+      <h2>8. 下一步</h2>
+      <p><a href="/foundations/circuits/">← 回到数字电路入门</a> · <a href="/projects/collect/">M0 采集</a> · <a href="/projects/m1/">M1 通信</a></p>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var DATA = [{"q": "按键抖动 8ms、每 2ms 采样一次,软件去抖至少需要连续几次一致?", "opts": ["2 次", "4 次", "5 次", "8 次"], "a": 2, "ex": "ceil(8/2)+1=5 次,留 1 次余量。"}, {"q": "12 位 ADC、3.3V 量程,1LSB 约为?", "opts": ["0.4mV", "0.806mV", "1.6mV", "3.3mV"], "a": 1, "ex": "3.3V / 4096 ≈ 0.806mV。"}, {"q": "上拉电阻的主要作用是?", "opts": ["提高采样率", "让空闲输入有确定电平", "降低功耗", "放大信号"], "a": 1, "ex": "悬空输入会漂移;上拉/下拉给确定默认电平。"}];
+      var root = document.getElementById('quiz');
+      DATA.forEach(function (q, i) {
+        var box = document.createElement('div'); box.className = 'q';
+        var stem = document.createElement('p'); stem.className = 'stem';
+        stem.textContent = (i + 1) + '. ' + q.q; box.appendChild(stem);
+        q.opts.forEach(function (o, oi) {
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'opt';
+          b.textContent = String.fromCharCode(65 + oi) + '. ' + o;
+          b.addEventListener('click', function () {
+            if (box.dataset.done) return;
+            box.dataset.done = '1';
+            var right = oi === q.a;
+            b.className += right ? ' right' : ' wrong';
+            if (!right) box.querySelectorAll('.opt')[q.a].className += ' right';
+            var ex = document.createElement('p'); ex.className = 'explain show'; ex.textContent = q.ex;
+            box.appendChild(ex);
+          });
+          box.appendChild(b);
+        });
+        root.appendChild(box);
+      });
+    })();
+  </script>
+</body>
+</html>
