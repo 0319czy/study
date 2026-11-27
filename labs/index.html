@@ -29,8 +29,8 @@
     <div class="kicker">LABS</div>
     <h1>实验室:可看、可玩、可练的交互实验</h1>
     <p class="lead">
-      现有六站自带交互实验(动画、模拟器、参数联动)。平台层先做统一入口与"证据标识",
-      实验框架统一(环境准备、结果检查、排障)在第一批建设。
+      各学科子站自带交互实验(动画、模拟器、参数联动),平台层统一入口与"证据标识"。
+      实验框架统一(环境准备、结果检查、排障)已上线;打开页面不算完成,以结果检查为准。
     </p>
 
     <div class="section">
@@ -76,11 +76,36 @@
           <div class="d">甘特图动画、任务状态机、队列/信号量/互斥量联动。</div>
           <div class="tagline">/rtos/paths</div>
         </a>
+        <a class="card" href="/control/labs/">
+          <div class="t">控制理论 · 交互实验(4 组)</div>
+          <div class="d">寻迹小车 PID、倒立摆 LQR、电机转速、观测器误差;60 FPS 动画 + 同步波形,可调参/暂停/单步/复位。</div>
+          <div class="tagline">/control/labs/</div>
+        </a>
+        <a class="card" href="/linux-user/serial-pty/">
+          <div class="t">Linux 用户态 · 串口与 PTY 实验</div>
+          <div class="d">用 PTY 模拟串口:文件描述符读写、超时/错误处理,接着进 M3 网关。</div>
+          <div class="tagline">/linux-user/serial-pty/</div>
+        </a>
+        <a class="card" href="/linux-build/buildroot/">
+          <div class="t">Linux 构建 · Buildroot 与启动</div>
+          <div class="d">产物核对、DTB 匹配、启动链排障;配合构建模拟器使用。</div>
+          <div class="tagline">/linux-build/buildroot/</div>
+        </a>
+        <a class="card" href="/pcb/check/">
+          <div class="t">PCB · ERC/DRC 与交付检查</div>
+          <div class="d">可打样审查表:ERC/DRC、载流/压降、制造文件与回板测试。</div>
+          <div class="tagline">/pcb/check/</div>
+        </a>
+        <a class="card" href="/edge-ai/budget/">
+          <div class="t">边缘 AI · 资源预算</div>
+          <div class="d">权重/激活内存、算力下限、延迟与精度预算表。</div>
+          <div class="tagline">/edge-ai/budget/</div>
+        </a>
       </div>
     </div>
 
     <div class="section">
-      <h2>实验规则(第一批统一)</h2>
+      <h2>实验规则</h2>
       <table>
         <tr><th>类型</th><th>含义</th><th>成果标注</th></tr>
         <tr><td>原理示意</td><td>动画/模拟器演示机制,不代表真实运行</td><td><span class="pill">principle</span></td></tr>
