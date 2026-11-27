@@ -1,118 +1,42 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="采样、零阶保持、离散化、z 域极点与延迟:控制周期里的"离散代价"。" />
-  <title>数字控制 · 1kni4r.top</title>
-  <link rel="stylesheet" href="/shared/site.css" />
-  <style>
-    .q { margin-bottom: 14px; }
-    .q .stem { font-size: 14px; margin: 0 0 7px; }
-    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #d8ded6; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #16211d; background: #fff; cursor: pointer; }
-    .q .opt.right { border-color: rgba(15,118,110,.55); background: #e7f4f0; color: #0b5c56; }
-    .q .opt.wrong { border-color: rgba(185,28,28,.5); background: #fdeceb; color: #b91c1c; }
-    .q .explain { display: none; color: #5c6a63; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
-    .q .explain.show { display: block; }
-    pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
-  </style>
-<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
-</head>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="采样、零阶保持、离散化、z 域极点与延迟:控制周期里的"离散代价"。" /><title>数字控制 · 控制理论 · 1kni4r.top</title>
+<link rel="stylesheet" href="/shared/site.css" /><style>
+.q{margin:0 0 14px}.q .stem{font-size:14px;margin:0 0 7px}.q .opt{display:block;width:100%;text-align:left;border:1px solid #26323f;border-radius:8px;padding:8px 10px;margin:5px 0;font-size:13px;color:#c7d3df;background:#0e141b;cursor:pointer}
+.q .opt.right{border-color:rgba(94,234,212,.55);background:rgba(94,234,212,.1);color:#5eead4}.q .opt.wrong{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.1);color:#f87171}
+.q .explain{display:none;color:#8b9bb0;font-size:12.5px;margin:6px 0 0;line-height:1.7}.q .explain.show{display:block}
+pre.code{background:#0b1117;border:1px solid #16212c;border-radius:10px;padding:14px;overflow-x:auto;color:#c7d3df;font-size:12.5px;line-height:1.7}
+</style></head>
 <body>
   <nav class="topnav">
     <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
     <div class="navlinks">
-      <a href="/">学习工作台</a>
-      <a href="/route/">学习路线</a>
-      <a href="/knowledge/">知识库</a>
-      <a href="/labs/">实验室</a>
-      <a href="/projects/">项目实战</a>
-      <a href="/tools/">工具与资料</a>
+      <a href="/">学习工作台</a><a href="/route/">学习路线</a><a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a><a href="/projects/">项目实战</a><a href="/tools/">工具与资料</a>
     </div>
-    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
-
-  <main class="page">
-    <div class="kicker">CONTROL · 数字控制</div>
-    <h1>数字控制</h1>
-    <p class="lead">采样、零阶保持、离散化、z 域极点与延迟:控制周期里的"离散代价"。</p>
-    <div class="section">
-      <h2>1. 目标与成果</h2>
-      <table>
-        <tr><th>项</th><th>内容</th></tr>
-        <tr><td>能力</td><td>能解释采样周期/延迟对稳定性的影响,做简单离散化</td></tr>
-        <tr><td>可检查结果</td><td>同一模型两组采样周期/延迟的对照</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>2. 前置知识</h2>
-      <table>
-        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
-        <tr><td>数学建模</td><td>连续模型</td><td>/control/modeling/</td></tr>
-        <tr><td>PID</td><td>控制律</td><td>/control/pid/</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>3. 原理</h2>
-      <p>采样把连续系统变成离散序列;零阶保持近似。z 域稳定:极点在单位圆内。采样周期越大、延迟越大,相位滞后越多,稳定裕度越小;控制周期与执行周期抖动也要算进延迟。</p>
-    </div>
-    <div class="section">
-      <p class="muted">变量与单位:Ts s、z 无量纲(复)、延迟 s。假设采样同步、ZOH。</p>
-      <h2>4. 操作实验</h2>
-      <ol><li>对同一对象用两组采样周期仿真。</li><li>加入一个控制周期延迟,观察超调/振荡。</li><li>把连续增益离散化,检查 z 极点。</li></ol>
-      <p><a href="/control/labs/">打开交互实验(labs)</a></p>
-    </div>
-    <div class="section">
-      <h2>5. 结果检查</h2>
-      <table>
-        <tr><th>检查项</th><th>预期</th></tr>
-        <tr><td>小周期</td><td>接近连续设计</td></tr>
-        <tr><td>大周期</td><td>裕度下降、振荡</td></tr>
-        <tr><td>延迟</td><td>等效相位滞后</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>6. 故障排查</h2>
-      <table>
-        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
-        <tr><td>离散后振荡</td><td>采样太慢/延迟</td><td>缩短周期或降增益</td><td>对照</td></tr>
-        <tr><td>不稳定</td><td>z 极点出圆</td><td>重新设计</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>7. 小测</h2>
-      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
-      <div id="quiz"></div>
-    </div>
-    <div class="section">
-      <h2>8. 下一步</h2>
-<p><a href="/control/state-space/">现代控制基础</a> · <a href="/control/labs/">交互实验</a></p>
-    </div>
-  </main>
-  <script>
-    (function(){
-      var DATA = [{"q": "离散系统稳定的条件?", "opts": ["z 极点实部<0", "z 极点模<1", "s 极点<0", "增益<1"], "a": 1, "ex": "z 域极点在单位圆内。"}, {"q": "采样周期增大通常?", "opts": ["裕度增大", "相位滞后增大、稳定性下降", "无影响", "消除延迟"], "a": 1, "ex": "采样/保持与延迟等效为相位滞后。"}, {"q": "零阶保持的作用?", "opts": ["平滑插值", "把离散值保持一个周期", "滤波", "放大"], "a": 1, "ex": "ZOH 把采样值保持到下一周期。"}];
-      var root = document.getElementById('quiz');
-      DATA.forEach(function(q,i){
-        var box=document.createElement('div'); box.className='q';
-        var stem=document.createElement('p'); stem.className='stem'; stem.textContent=(i+1)+'. '+q.q; box.appendChild(stem);
-        q.opts.forEach(function(o,oi){
-          var b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=String.fromCharCode(65+oi)+'. '+o;
-          b.addEventListener('click',function(){
-            if(box.dataset.done)return; box.dataset.done='1';
-            var right=oi===q.a; b.className += right?' right':' wrong';
-            if(!right) box.querySelectorAll('.opt')[q.a].className += ' right';
-            var ex=document.createElement('p'); ex.className='explain show'; ex.textContent=q.ex; box.appendChild(ex);
-          });
-          box.appendChild(b);
-        });
-        root.appendChild(box);
-      });
-    })();
-  </script>
-<script src="/shared/theme.js" data-platform-theme-js="1"></script>
-</body>
-</html>
+<main class="page">
+<div class="kicker">CONTROL · 数字控制</div>
+<h1>数字控制</h1>
+<p class="lead">采样、零阶保持、离散化、z 域极点与延迟:控制周期里的"离散代价"。</p>
+<div class="section"><h2>1. 目标与成果</h2><table><tr><th>项</th><th>内容</th></tr><tr><td>能力</td><td>采样/ZOH/离散化/延迟对稳定性的影响</td></tr><tr><td>会做</td><td>离散化一阶对象,检查 z 极点是否在单位圆内</td></tr><tr><td>可检查结果</td><td>不同采样周期/延迟下的超调与振荡</td></tr></table></div>
+<div class="section"><h2>2. 前置知识</h2><table><tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr><tr><td>数学建模</td><td>连续 G(s)</td><td>/control/modeling/</td></tr><tr><td>PID</td><td>控制律</td><td>/control/pid/</td></tr><tr><td>稳定性</td><td>裕度</td><td>/control/stability/</td></tr></table></div>
+<div class="section"><h2>3. 原理与公式</h2><table><tr><th>符号</th><th>含义</th><th>单位</th><th>作用</th></tr><tr><td>Ts</td><td>采样周期</td><td>s</td><td>离散化程度</td></tr><tr><td>z</td><td>z 变换变量</td><td>无量纲</td><td>离散稳定性</td></tr><tr><td>Td</td><td>延迟</td><td>s</td><td>相位滞后</td></tr><tr><td>u[k]</td><td>离散控制</td><td>执行器单位</td><td>实现</td></tr></table><pre class="code">离散系统稳定 ⇔ 所有 z 极点 |z| &lt; 1
+ZOH 近似:G(z) ≈ (1−z⁻¹) Z{G(s)/s}
+一阶:y[k+1]=a y[k]+b u[k],  a=e^(−Ts/τ)
+延迟 Td 近似增加 e^(−sTd) → 相位滞后 ωTd</pre><ol><li>把连续对象按 Ts 采样,加 ZOH。</li><li>写差分方程与 z 传递函数。</li><li>求 z 极点,判断单位圆。</li><li>加入延迟,分析相位滞后与裕度下降。</li></ol><p class="muted">假设与边界:线性时不变、传感器噪声可忽略或已建模;超出范围需回到建模或非线性方法。</p></div>
+<div class="section"><h3>图示</h3><svg viewBox="0 0 520 150" width="100%" height="auto" style="max-width:560px"><line x1="40" y1="60" x2="160" y2="60" stroke="#5eead4"/><line x1="160" y1="60" x2="160" y2="30" stroke="#5eead4"/><line x1="40" y1="60" x2="160" y2="60" stroke="#5eead4" stroke-dasharray="3 3"/><line x1="160" y1="60" x2="280" y2="60" stroke="#5eead4"/><line x1="280" y1="60" x2="280" y2="90" stroke="#5eead4"/><line x1="160" y1="60" x2="160" y2="60" stroke="#5eead4"/><polyline points="40,60 90,60 90,30 160,30 160,60 210,60 210,30 280,30 280,60 330,60 330,30 430,30" fill="none" stroke="#5eead4" stroke-width="2"/><line x1="40" y1="110" x2="460" y2="110" stroke="#8b9bb0"/><text x="40" y="128" fill="#8b9bb0" font-size="12">采样点(Ts)与 ZOH 保持</text><text x="40" y="140" fill="#8b9bb0" font-size="11">延迟与采样周期会吃相位裕度</text></svg></div><div class="section"><h2>4. 操作实验</h2><table><tr><th>项</th><th>内容</th><th>看什么</th></tr><tr><td>对象</td><td>一阶 τ=0.5s</td><td>Ts=0.05/0.2s 对照</td></tr><tr><td>延迟</td><td>Td=0/1/2 Ts</td><td>观察振荡</td></tr><tr><td>测量</td><td>z 极点、超调、ts</td><td>与连续对照</td></tr><tr><td>仿真</td><td>labs 改采样周期/延迟</td><td>对照结论</td></tr></table><ol><li>对 τ=0.5s 对象取 Ts=0.05s 与 0.2s,分别求 a、b 与 z 极点。</li><li>仿真两组阶跃,记录超调与调节时间。</li><li>加入 1–2 个控制周期延迟,记录振荡变化。</li><li>用 labs 的采样/延迟参数复现,写"离散代价"结论。</li></ol></div>
+<div class="section"><h3>参考实现(可复现)</h3><pre class="code"># 一阶离散化
+import math
+Ts=0.05; tau=0.5
+ a = math.exp(-Ts/tau)
+b = 1-a
+print("a=",a,"b=",b,"z 极点",a)  # |a|&lt;1 稳定</pre></div><div class="section"><h2>5. 结果检查</h2><table><tr><th>检查项</th><th>预期</th><th>通过</th></tr><tr><td>小 Ts</td><td>接近连续</td><td>是</td></tr><tr><td>大 Ts</td><td>裕度下降、振荡</td><td>是</td></tr><tr><td>延迟</td><td>等效相位滞后</td><td>是</td></tr><tr><td>z 极点</td><td>|z|<1</td><td>是</td></tr></table></div>
+<div class="section"><h2>6. 故障排查</h2><table><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr><tr><td>离散后振荡</td><td>采样慢/延迟</td><td>缩短 Ts 或降增益</td><td>对照</td></tr><tr><td>不稳定</td><td>z 极点出圆</td><td>重新设计</td><td>检查离散化</td></tr><tr><td>实现抖动</td><td>控制周期不稳</td><td>固定周期/优先级</td><td>用 RTOS</td></tr></table></div>
+<div class="section"><h3>练习(计算)</h3><details><summary>计算:一阶 τ=0.5s,t=1.5s 时阶跃到多少?</summary><p class="muted">1.5s=3τ → 1−e⁻³≈95.0%</p></details><details><summary>计算:Kp=4、对象 K=1,闭环稳态误差(阶跃)?</summary><p class="muted">P 控制 ess=1/(1+KpK)=20%</p></details><details><summary>实验:若 Kp=10,超调应比 Kp=1 大还是小?</summary><p class="muted">大;增益提高相位滞后增加,超调增大</p></details></div><div class="section"><h2>7. 小测</h2><p class="muted">点选选项即时判分;答错会标出正确项并给出解释。</p><div id="quiz"></div></div>
+<div class="section"><h2>8. 下一步</h2><p><a href="/control/state-space/">现代控制基础</a> · <a href="/control/labs/">labs</a></p><p class="muted" style="font-size:12.5px">证据边界:principle;数值为模型计算,实物延迟/抖动需实测。</p></div>
+</main>
+<script>(function(){var D=[["离散稳定条件?", ["z 极点实部<0", "z 极点模<1", "s 极点<0", "增益<1"], 1, "单位圆内。"], ["采样周期增大通常?", ["裕度增大", "相位滞后增大", "无影响", "消除延迟"], 1, "采样/保持等效滞后。"], ["ZOH 的作用?", ["平滑插值", "保持采样值到下一周期", "滤波", "放大"], 1, "零阶保持。"], ["一阶离散 a 等于?", ["e^(−Ts/τ)", "Ts/τ", "1−Ts", "τ/Ts"], 0, "a=e^(−Ts/τ)。"], ["延迟对相位?", ["超前", "滞后", "不变", "抵消"], 1, "延迟产生相位滞后。"]];var r=document.getElementById('quiz');D.forEach(function(q,i){var b=document.createElement('div');b.className='q';var s=document.createElement('p');s.className='stem';s.textContent=(i+1)+'. '+q.q;b.appendChild(s);q.o.forEach(function(o,oi){var x=document.createElement('button');x.type='button';x.className='opt';x.textContent=String.fromCharCode(65+oi)+'. '+o;x.addEventListener('click',function(){if(b.dataset.done)return;b.dataset.done='1';var ok=oi===q.a;x.className+=ok?' right':' wrong';if(!ok)b.querySelectorAll('.opt')[q.a].className+=' right';var e=document.createElement('p');e.className='explain show';e.textContent=q.e;b.appendChild(e);});b.appendChild(x);});r.appendChild(b);});})();</script>
+</body></html>

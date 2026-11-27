@@ -1,118 +1,46 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="P/I/D 分工、限幅与抗饱和、微分噪声;可调参数的小车寻迹实验。" />
-  <title>PID 设计 · 1kni4r.top</title>
-  <link rel="stylesheet" href="/shared/site.css" />
-  <style>
-    .q { margin-bottom: 14px; }
-    .q .stem { font-size: 14px; margin: 0 0 7px; }
-    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #d8ded6; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #16211d; background: #fff; cursor: pointer; }
-    .q .opt.right { border-color: rgba(15,118,110,.55); background: #e7f4f0; color: #0b5c56; }
-    .q .opt.wrong { border-color: rgba(185,28,28,.5); background: #fdeceb; color: #b91c1c; }
-    .q .explain { display: none; color: #5c6a63; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
-    .q .explain.show { display: block; }
-    pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
-  </style>
-<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
-</head>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="P/I/D 各管什么、限幅与抗饱和、微分噪声;用小车寻迹把参数和现象对应起来。" /><title>PID 设计 · 控制理论 · 1kni4r.top</title>
+<link rel="stylesheet" href="/shared/site.css" /><style>
+.q{margin:0 0 14px}.q .stem{font-size:14px;margin:0 0 7px}.q .opt{display:block;width:100%;text-align:left;border:1px solid #26323f;border-radius:8px;padding:8px 10px;margin:5px 0;font-size:13px;color:#c7d3df;background:#0e141b;cursor:pointer}
+.q .opt.right{border-color:rgba(94,234,212,.55);background:rgba(94,234,212,.1);color:#5eead4}.q .opt.wrong{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.1);color:#f87171}
+.q .explain{display:none;color:#8b9bb0;font-size:12.5px;margin:6px 0 0;line-height:1.7}.q .explain.show{display:block}
+pre.code{background:#0b1117;border:1px solid #16212c;border-radius:10px;padding:14px;overflow-x:auto;color:#c7d3df;font-size:12.5px;line-height:1.7}
+</style></head>
 <body>
   <nav class="topnav">
     <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
     <div class="navlinks">
-      <a href="/">学习工作台</a>
-      <a href="/route/">学习路线</a>
-      <a href="/knowledge/">知识库</a>
-      <a href="/labs/">实验室</a>
-      <a href="/projects/">项目实战</a>
-      <a href="/tools/">工具与资料</a>
+      <a href="/">学习工作台</a><a href="/route/">学习路线</a><a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a><a href="/projects/">项目实战</a><a href="/tools/">工具与资料</a>
     </div>
-    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
-
-  <main class="page">
-    <div class="kicker">CONTROL · PID 设计</div>
-    <h1>PID 设计</h1>
-    <p class="lead">P/I/D 分工、限幅与抗饱和、微分噪声;可调参数的小车寻迹实验。</p>
-    <div class="section">
-      <h2>1. 目标与成果</h2>
-      <table>
-        <tr><th>项</th><th>内容</th></tr>
-        <tr><td>能力</td><td>能按误差、稳态误差与噪声选择 P/PI/PID 并处理限幅</td></tr>
-        <tr><td>可检查结果</td><td>小车完成 S 弯;高增益/高速下能解释误差与振荡</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>2. 前置知识</h2>
-      <table>
-        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
-        <tr><td>反馈原理</td><td>误差</td><td>/control/feedback/</td></tr>
-        <tr><td>数学建模</td><td>一阶/二阶</td><td>/control/modeling/</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>3. 原理</h2>
-      <p>u = Kp e + Ki ∫e + Kd de/dt。P 决定响应速度,代价是稳态误差;I 消除稳态误差,代价是超调/积分饱和;D 抑制振荡但对噪声敏感。工程上要限幅、抗饱和(积分分离/回算)、微分滤波。</p>
-    </div>
-    <div class="section">
-      <p class="muted">变量与单位:Kp/Ki/Kd 的量纲随误差与输出而定;u 为执行器输入。假设执行器线性、限幅已知。</p>
-      <h2>4. 操作实验</h2>
-      <ol><li>打开 <a href="/control/labs/#car">寻迹小车实验</a>,默认 PID 走 S 弯。</li><li>改 Kp/Ki/Kd、车速、采样周期,记录横向误差与转向命令。</li><li>故意加大增益,观察振荡;开启/关闭抗饱和对比。</li></ol>
-      <p><a href="/control/labs/">打开交互实验(labs)</a></p>
-    </div>
-    <div class="section">
-      <h2>5. 结果检查</h2>
-      <table>
-        <tr><th>检查项</th><th>预期</th></tr>
-        <tr><td>默认</td><td>S 弯完成,误差有界</td></tr>
-        <tr><td>高增益</td><td>振荡/饱和,能解释原因</td></tr>
-        <tr><td>抗饱和</td><td>饱和恢复变快</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>6. 故障排查</h2>
-      <table>
-        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
-        <tr><td>弯道振荡</td><td>Kp 过大/D 不足</td><td>降低 Kp 或加 D</td><td>复测</td></tr>
-        <tr><td>起步冲出去</td><td>积分饱和</td><td>抗饱和/限幅</td><td>检查积分项</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>7. 小测</h2>
-      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
-      <div id="quiz"></div>
-    </div>
-    <div class="section">
-      <h2>8. 下一步</h2>
-<p><a href="/control/labs/#car">打开寻迹小车实验</a> · <a href="/control/digital/">数字控制</a> · <a href="/control/lqr/">LQR</a></p>
-    </div>
-  </main>
-  <script>
-    (function(){
-      var DATA = [{"q": "积分项主要消除?", "opts": ["超调", "稳态误差", "噪声", "延迟"], "a": 1, "ex": "积分累积误差,消除稳态误差。"}, {"q": "微分项的主要风险?", "opts": ["稳态误差", "放大测量噪声", "积分饱和", "采样率下降"], "a": 1, "ex": "微分放大高频噪声,通常要滤波。"}, {"q": "抗饱和的作用?", "opts": ["提高采样率", "防止积分在限幅时累积过多", "消除噪声", "加快 CPU"], "a": 1, "ex": "限幅期间停止/回算积分,避免退出饱和时的大超调。"}];
-      var root = document.getElementById('quiz');
-      DATA.forEach(function(q,i){
-        var box=document.createElement('div'); box.className='q';
-        var stem=document.createElement('p'); stem.className='stem'; stem.textContent=(i+1)+'. '+q.q; box.appendChild(stem);
-        q.opts.forEach(function(o,oi){
-          var b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=String.fromCharCode(65+oi)+'. '+o;
-          b.addEventListener('click',function(){
-            if(box.dataset.done)return; box.dataset.done='1';
-            var right=oi===q.a; b.className += right?' right':' wrong';
-            if(!right) box.querySelectorAll('.opt')[q.a].className += ' right';
-            var ex=document.createElement('p'); ex.className='explain show'; ex.textContent=q.ex; box.appendChild(ex);
-          });
-          box.appendChild(b);
-        });
-        root.appendChild(box);
-      });
-    })();
-  </script>
-<script src="/shared/theme.js" data-platform-theme-js="1"></script>
-</body>
-</html>
+<main class="page">
+<div class="kicker">CONTROL · PID 设计</div>
+<h1>PID 设计</h1>
+<p class="lead">P/I/D 各管什么、限幅与抗饱和、微分噪声;用小车寻迹把参数和现象对应起来。</p>
+<div class="section"><h2>1. 目标与成果</h2><table><tr><th>项</th><th>内容</th></tr><tr><td>能力</td><td>P 快速/有稳态误差;I 消差/易饱和;D 抑振/放大噪声</td></tr><tr><td>会做</td><td>按"先 P、再加 I、最后 D"的顺序,结合限幅/抗饱和</td></tr><tr><td>可检查结果</td><td>振荡、慢、超调、饱和恢复慢分别对应哪一项</td></tr></table></div>
+<div class="section"><h2>2. 前置知识</h2><table><tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr><tr><td>反馈原理</td><td>误差与指标</td><td>/control/feedback/</td></tr><tr><td>数学建模</td><td>一阶/二阶</td><td>/control/modeling/</td></tr><tr><td>稳定性</td><td>裕度</td><td>/control/stability/</td></tr></table></div>
+<div class="section"><h2>3. 原理与公式</h2><table><tr><th>符号</th><th>含义</th><th>单位</th><th>作用</th></tr><tr><td>e</td><td>误差</td><td>同参考</td><td>输入</td></tr><tr><td>u</td><td>控制量</td><td>执行器单位</td><td>输出</td></tr><tr><td>Kp</td><td>比例增益</td><td>输出/误差</td><td>快速性</td></tr><tr><td>Ki</td><td>积分增益</td><td>输出/(误差·s)</td><td>消差</td></tr><tr><td>Kd</td><td>微分增益</td><td>输出·s/误差</td><td>抑振</td></tr></table><pre class="code">u(t) = Kp e + Ki ∫e dt + Kd de/dt
+离散:u[k]=Kp e[k] + Ki Ts Σe + Kd (e[k]−e[k−1])/Ts
+限幅:u = clamp(u, umin, umax)
+抗饱和:饱和时冻结积分或回算(back-calculation)</pre><ol><li>从误差到控制量列三项:比例、积分、微分。</li><li>说明每项对 tr、Mp、ess、噪声的作用。</li><li>给出离散化公式与采样周期 Ts。</li><li>加限幅/抗饱和,解释饱和恢复过程。</li></ol><p class="muted">假设与边界:线性时不变、传感器噪声可忽略或已建模;超出范围需回到建模或非线性方法。</p></div>
+<div class="section"><h3>图示</h3><svg viewBox="0 0 520 150" width="100%" height="auto" style="max-width:560px"><line x1="20" y1="50" x2="110" y2="50" stroke="#5eead4"/><circle cx="130" cy="50" r="12" fill="none" stroke="#5eead4"/><text x="124" y="56" fill="#5eead4" font-size="13">+</text><line x1="142" y1="50" x2="200" y2="50" stroke="#5eead4"/><rect x="200" y="22" width="150" height="56" rx="8" fill="#111815" stroke="#5eead4"/><text x="214" y="46" fill="#e6efea" font-size="12">Kp e + Ki ∫e + Kd e′</text><text x="214" y="66" fill="#8b9bb0" font-size="11">限幅 / 抗饱和</text><line x1="350" y1="50" x2="470" y2="50" stroke="#5eead4"/><text x="452" y="42" fill="#c7d3df" font-size="12">u</text><line x1="430" y1="50" x2="430" y2="110" stroke="#5eead4"/><line x1="430" y1="110" x2="130" y2="110" stroke="#5eead4"/><line x1="130" y1="110" x2="130" y2="62" stroke="#5eead4"/><text x="230" y="130" fill="#8b9bb0" font-size="12">误差反馈 → 控制量 → 对象</text></svg></div><div class="section"><h2>4. 操作实验</h2><table><tr><th>项</th><th>内容</th><th>看什么</th></tr><tr><td>对象</td><td>寻迹小车(Kp=1.2,Ki=0.15,Kd=0.25)</td><td>默认走 S 弯</td></tr><tr><td>参数</td><td>Kp 0.5–3、Ki 0–1.5、Kd 0–1.5</td><td>观察误差</td></tr><tr><td>对照</td><td>P vs PI vs PID</td><td>稳态误差/超调</td></tr><tr><td>抗饱和</td><td>开关抗饱和</td><td>饱和恢复速度</td></tr></table><ol><li>打开 <a href="/control/labs/#car">寻迹小车</a>,用默认参数跑完 S 弯。</li><li>只加 P(Ki=Kd=0),逐步增大 Kp 到临界,记录振荡现象。</li><li>加 Ki 观察稳态误差下降;再加大到出现超调。</li><li>加 Kd 抑制振荡;改变车速/采样周期,记录参数失效点。</li><li>开启/关闭抗饱和,对比限幅后的恢复。</li></ol></div>
+<div class="section"><h3>参考实现(可复现)</h3><pre class="code"># 小车 PID 离散实现(简化)
+Ts=0.02; Kp=1.2; Ki=0.15; Kd=0.25
+e=0; e1=0; I=0
+for k in range(500):
+    e = path(t) - y          # 横向误差
+    I += e*Ts
+    u = Kp*e + Ki*I + Kd*(e-e1)/Ts
+    u = max(-1, min(1, u))   # 限幅
+    e1 = e
+    y += v*Ts*math.sin(u)</pre></div><div class="section"><h2>5. 结果检查</h2><table><tr><th>检查项</th><th>预期</th><th>通过</th></tr><tr><td>默认</td><td>S 弯完成,误差有界</td><td>是</td></tr><tr><td>高增益</td><td>振荡/饱和可解释</td><td>是</td></tr><tr><td>抗饱和</td><td>恢复更快、超调更小</td><td>是</td></tr><tr><td>参数表</td><td>Kp/Ki/Kd 与现象对应</td><td>是</td></tr></table></div>
+<div class="section"><h2>6. 故障排查</h2><table><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr><tr><td>弯道振荡</td><td>Kp 过大/D 不足</td><td>降 Kp 或加 D</td><td>复测</td></tr><tr><td>稳态误差</td><td>纯 P </td><td>加 I</td><td>检查积分</td></tr><tr><td>积分饱和</td><td>限幅后超调大</td><td>抗饱和/限幅</td><td>对比</td></tr><tr><td>噪声抖动</td><td>D 放大噪声</td><td>滤波/降 D</td><td>检查传感器</td></tr></table></div>
+<div class="section"><h3>练习(计算)</h3><details><summary>计算:一阶 τ=0.5s,t=1.5s 时阶跃到多少?</summary><p class="muted">1.5s=3τ → 1−e⁻³≈95.0%</p></details><details><summary>计算:Kp=4、对象 K=1,闭环稳态误差(阶跃)?</summary><p class="muted">P 控制 ess=1/(1+KpK)=20%</p></details><details><summary>实验:若 Kp=10,超调应比 Kp=1 大还是小?</summary><p class="muted">大;增益提高相位滞后增加,超调增大</p></details></div><div class="section"><h2>7. 小测</h2><p class="muted">点选选项即时判分;答错会标出正确项并给出解释。</p><div id="quiz"></div></div>
+<div class="section"><h2>8. 下一步</h2><p><a href="/control/labs/#car">打开小车实验</a> · <a href="/control/digital/">数字控制</a> · <a href="/control/lqr/">LQR</a></p><p class="muted" style="font-size:12.5px">证据边界:principle;小车为浏览器模拟,实物需 hardware-pending。</p></div>
+</main>
+<script>(function(){var D=[["积分项主要消除?", ["超调", "稳态误差", "噪声", "延迟"], 1, "积分累积误差,消稳态误差。"], ["微分项的主要风险?", ["稳态误差", "放大噪声", "积分饱和", "采样率下降"], 1, "微分放大高频噪声。"], ["抗饱和的作用?", ["提高采样率", "防止限幅期间积分累积过多", "消除噪声", "加快 CPU"], 1, "避免退出饱和时的大超调。"], ["调参常见顺序?", ["I→D→P", "P→I→D", "D→P→I", "任意"], 1, "先 P 建立响应,再加 I、D。"], ["采样周期变大通常?", ["D 项更准", "离散近似变差、稳定性下降", "无影响", "积分更快"], 1, "采样/延迟影响离散实现。"]];var r=document.getElementById('quiz');D.forEach(function(q,i){var b=document.createElement('div');b.className='q';var s=document.createElement('p');s.className='stem';s.textContent=(i+1)+'. '+q.q;b.appendChild(s);q.o.forEach(function(o,oi){var x=document.createElement('button');x.type='button';x.className='opt';x.textContent=String.fromCharCode(65+oi)+'. '+o;x.addEventListener('click',function(){if(b.dataset.done)return;b.dataset.done='1';var ok=oi===q.a;x.className+=ok?' right':' wrong';if(!ok)b.querySelectorAll('.opt')[q.a].className+=' right';var e=document.createElement('p');e.className='explain show';e.textContent=q.e;b.appendChild(e);});b.appendChild(x);});r.appendChild(b);});})();</script>
+</body></html>

@@ -1,118 +1,52 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="开环、闭环、负反馈:为什么"测出来再改"比"照着计划做"更稳;用同一对象对比开环与闭环。" />
-  <title>反馈原理 · 1kni4r.top</title>
-  <link rel="stylesheet" href="/shared/site.css" />
-  <style>
-    .q { margin-bottom: 14px; }
-    .q .stem { font-size: 14px; margin: 0 0 7px; }
-    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #d8ded6; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #16211d; background: #fff; cursor: pointer; }
-    .q .opt.right { border-color: rgba(15,118,110,.55); background: #e7f4f0; color: #0b5c56; }
-    .q .opt.wrong { border-color: rgba(185,28,28,.5); background: #fdeceb; color: #b91c1c; }
-    .q .explain { display: none; color: #5c6a63; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
-    .q .explain.show { display: block; }
-    pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
-  </style>
-<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
-</head>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="开环与闭环的区别不是"有没有控制器",而是"输出有没有被测量并参与决策"。本课用同一对象对比开环与闭环,定义上升时间、超调、调节时间与稳态误差。" /><title>反馈原理 · 控制理论 · 1kni4r.top</title>
+<link rel="stylesheet" href="/shared/site.css" /><style>
+.q{margin:0 0 14px}.q .stem{font-size:14px;margin:0 0 7px}.q .opt{display:block;width:100%;text-align:left;border:1px solid #26323f;border-radius:8px;padding:8px 10px;margin:5px 0;font-size:13px;color:#c7d3df;background:#0e141b;cursor:pointer}
+.q .opt.right{border-color:rgba(94,234,212,.55);background:rgba(94,234,212,.1);color:#5eead4}.q .opt.wrong{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.1);color:#f87171}
+.q .explain{display:none;color:#8b9bb0;font-size:12.5px;margin:6px 0 0;line-height:1.7}.q .explain.show{display:block}
+pre.code{background:#0b1117;border:1px solid #16212c;border-radius:10px;padding:14px;overflow-x:auto;color:#c7d3df;font-size:12.5px;line-height:1.7}
+</style></head>
 <body>
   <nav class="topnav">
     <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
     <div class="navlinks">
-      <a href="/">学习工作台</a>
-      <a href="/route/">学习路线</a>
-      <a href="/knowledge/">知识库</a>
-      <a href="/labs/">实验室</a>
-      <a href="/projects/">项目实战</a>
-      <a href="/tools/">工具与资料</a>
+      <a href="/">学习工作台</a><a href="/route/">学习路线</a><a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a><a href="/projects/">项目实战</a><a href="/tools/">工具与资料</a>
     </div>
-    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
+<main class="page">
+<div class="kicker">CONTROL · 反馈原理</div>
+<h1>反馈原理</h1>
+<p class="lead">开环与闭环的区别不是"有没有控制器",而是"输出有没有被测量并参与决策"。本课用同一对象对比开环与闭环,定义上升时间、超调、调节时间与稳态误差。</p>
+<div class="section"><h2>1. 目标与成果</h2><table><tr><th>项</th><th>内容</th></tr><tr><td>能力</td><td>开环/闭环/负反馈的框图与信号(参考、误差、控制量、扰动、测量)</td></tr><tr><td>会做</td><td>用阶跃响应量出上升时间、超调、调节时间、稳态误差</td></tr><tr><td>可检查结果</td><td>同一对象加负载:开环偏差 vs 闭环抑制,能解释差别</td></tr></table></div>
+<div class="section"><h2>2. 前置知识</h2><table><tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr><tr><td>代数</td><td>框图合并、比例关系</td><td>无</td></tr><tr><td>微积分</td><td>导数、一阶响应</td><td>/control/modeling/</td></tr><tr><td>基础物理</td><td>质量-弹簧-阻尼</td><td>无</td></tr></table></div>
+<div class="section"><h2>3. 原理与公式</h2><table><tr><th>符号</th><th>含义</th><th>单位</th><th>作用</th></tr><tr><td>r</td><td>参考输入</td><td>随对象(如 rad/s)</td><td>期望值</td></tr><tr><td>y</td><td>输出</td><td>同 r</td><td>被控量</td></tr><tr><td>e = r − y</td><td>误差</td><td>同 r</td><td>反馈核心</td></tr><tr><td>u</td><td>控制量</td><td>执行器单位</td><td>驱动对象</td></tr><tr><td>d</td><td>扰动</td><td>输入侧单位</td><td>负载等</td></tr></table><pre class="code">闭环框图(单位负反馈):
+y = G(s)u,  u = C(s)(r − y)
+→ y/r = G C / (1 + G C)
+→ y/d = G / (1 + G C)   (扰动抑制)
 
-  <main class="page">
-    <div class="kicker">CONTROL · 反馈原理</div>
-    <h1>反馈原理</h1>
-    <p class="lead">开环、闭环、负反馈:为什么"测出来再改"比"照着计划做"更稳;用同一对象对比开环与闭环。</p>
-    <div class="section">
-      <h2>1. 目标与成果</h2>
-      <table>
-        <tr><th>项</th><th>内容</th></tr>
-        <tr><td>能力</td><td>能画反馈框图,区分参考值、误差、扰动与测量噪声</td></tr>
-        <tr><td>可检查结果</td><td>同一对象开环 vs 闭环负载实验,给出上升时间/超调/稳态误差对比</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>2. 前置知识</h2>
-      <table>
-        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
-        <tr><td>代数与函数</td><td>框图、比例关系</td><td>无</td></tr>
-        <tr><td>基础物理</td><td>质量-弹簧-阻尼</td><td>/control/modeling/</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>3. 原理</h2>
-      <p>负反馈把输出测回来与参考比较,用误差驱动执行器;闭环降低对模型误差与扰动的敏感度,但会引入稳定性与噪声放大问题。指标:上升时间(10%→90%)、超调、调节时间(±2%)、稳态误差。</p>
-    </div>
-    <div class="section">
-      <p class="muted">变量与单位:参考 r、输出 y、误差 e = r−y(单位随对象);时间 s。假设线性时不变、传感器无噪声。</p>
-      <h2>4. 操作实验</h2>
-      <ol><li>在同一对象上先只给固定输入(开环),再加负载阶跃,记录输出偏差。</li><li>切到闭环,重复负载阶跃;对比同一扰动下的偏差。</li><li>把参考值做阶跃,记录上升时间、超调、调节时间。</li></ol>
-      <p><a href="/control/labs/">打开交互实验(labs)</a></p>
-    </div>
-    <div class="section">
-      <h2>5. 结果检查</h2>
-      <table>
-        <tr><th>检查项</th><th>预期</th></tr>
-        <tr><td>开环负载</td><td>输出偏差随负载持续</td></tr>
-        <tr><td>闭环负载</td><td>偏差被抑制,但可能出现振荡</td></tr>
-        <tr><td>参考阶跃</td><td>指标可重复测量</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>6. 故障排查</h2>
-      <table>
-        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
-        <tr><td>闭环振荡</td><td>增益过高/相位裕度不足</td><td>降低增益或加校正</td><td>/control/stability/</td></tr>
-        <tr><td>稳态误差大</td><td>纯比例控制/积分不足</td><td>加积分</td><td>/control/pid/</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>7. 小测</h2>
-      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
-      <div id="quiz"></div>
-    </div>
-    <div class="section">
-      <h2>8. 下一步</h2>
-<p><a href="/control/modeling/">下一课:数学建模</a> · <a href="/control/">控制站首页</a> · <a href="/control/labs/">交互实验</a></p>
-    </div>
-  </main>
-  <script>
-    (function(){
-      var DATA = [{"q": "负反馈最直接的作用是?", "opts": ["放大误差", "用测量值与参考值之差修正输出", "消除所有扰动", "提高采样率"], "a": 1, "ex": "负反馈靠误差修正,降低对扰动与模型误差的敏感度。"}, {"q": "上升时间通常定义为?", "opts": ["0→100%", "10%→90%", "0→50%", "任意区间"], "a": 1, "ex": "工程上常用 10%→90% 的稳态值区间。"}, {"q": "闭环增益过高最可能?", "opts": ["稳态误差变大", "振荡甚至发散", "上升时间变长", "采样率下降"], "a": 1, "ex": "增益过高会降低相位裕度,导致振荡/发散。"}];
-      var root = document.getElementById('quiz');
-      DATA.forEach(function(q,i){
-        var box=document.createElement('div'); box.className='q';
-        var stem=document.createElement('p'); stem.className='stem'; stem.textContent=(i+1)+'. '+q.q; box.appendChild(stem);
-        q.opts.forEach(function(o,oi){
-          var b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=String.fromCharCode(65+oi)+'. '+o;
-          b.addEventListener('click',function(){
-            if(box.dataset.done)return; box.dataset.done='1';
-            var right=oi===q.a; b.className += right?' right':' wrong';
-            if(!right) box.querySelectorAll('.opt')[q.a].className += ' right';
-            var ex=document.createElement('p'); ex.className='explain show'; ex.textContent=q.ex; box.appendChild(ex);
-          });
-          box.appendChild(b);
-        });
-        root.appendChild(box);
-      });
-    })();
-  </script>
-<script src="/shared/theme.js" data-platform-theme-js="1"></script>
-</body>
-</html>
+阶跃指标:
+上升时间 tr: 10% → 90% 稳态值
+超调 Mp = (ymax − yss)/yss × 100%
+调节时间 ts: 进入 ±2%(或 ±5%)并保持</pre><ol><li>写出开环传递函数 G(s) 与控制器 C(s)。</li><li>令扰动 d=0,求参考到输出的闭环传递函数。</li><li>令参考 r=0,求扰动到输出的传递函数。</li><li>比较 1+GC 在低频的增益:越大,扰动抑制越强,但可能牺牲稳定性。</li></ol><p class="muted">假设与边界:线性时不变、传感器噪声可忽略或已建模;超出范围需回到建模或非线性方法。</p></div>
+<div class="section"><h3>图示</h3><svg viewBox="0 0 520 150" width="100%" height="auto" style="max-width:560px"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#5eead4"/></marker></defs><text x="8" y="26" fill="#c7d3df" font-size="13">r</text><line x1="22" y1="22" x2="80" y2="22" stroke="#5eead4" marker-end="url(#a)"/><circle cx="95" cy="22" r="12" fill="none" stroke="#5eead4"/><text x="90" y="27" fill="#5eead4" font-size="14">+</text><text x="94" y="46" fill="#5eead4" font-size="12">−</text><line x1="107" y1="22" x2="150" y2="22" stroke="#5eead4" marker-end="url(#a)"/><text x="150" y="14" fill="#c7d3df" font-size="12">e</text><rect x="150" y="6" width="70" height="32" rx="6" fill="#111815" stroke="#5eead4"/><text x="160" y="27" fill="#e6efea" font-size="12">C(s)</text><line x1="220" y1="22" x2="300" y2="22" stroke="#5eead4" marker-end="url(#a)"/><text x="250" y="14" fill="#c7d3df" font-size="12">u</text><rect x="300" y="6" width="80" height="32" rx="6" fill="#111815" stroke="#5eead4"/><text x="310" y="27" fill="#e6efea" font-size="12">G(s)</text><line x1="380" y1="22" x2="480" y2="22" stroke="#5eead4" marker-end="url(#a)"/><text x="460" y="14" fill="#c7d3df" font-size="12">y</text><line x1="430" y1="22" x2="430" y2="90" stroke="#5eead4"/><line x1="430" y1="90" x2="95" y2="90" stroke="#5eead4"/><line x1="95" y1="90" x2="95" y2="36" stroke="#5eead4" marker-end="url(#a)"/><text x="250" y="106" fill="#8b9bb0" font-size="12">负反馈:测量 y 与 r 比较</text></svg></div><div class="section"><h2>4. 操作实验</h2><table><tr><th>项</th><th>内容</th><th>看什么</th></tr><tr><td>对象</td><td>一阶 G(s)=K/(τs+1),K=1,τ=0.5s</td><td>阶跃 1</td></tr><tr><td>开环</td><td>u=1 固定,2s 后加负载 d=0.3</td><td>输出下跌后不恢复</td></tr><tr><td>闭环</td><td>P 控制 C(s)=Kp,Kp=4</td><td>输出被拉回,有超调</td></tr><tr><td>测量</td><td>记录 y(t),量 tr/Mp/ts/ess</td><td>与公式对照</td></tr></table><ol><li>先开环:u 固定,记录 y 到稳态;2s 后加负载,再记录 1s。</li><li>切闭环 Kp=4,重复同一参考与负载;记录 y。</li><li>改变 Kp=1/4/10,记录 tr、Mp、ess,填入下表。</li><li>用 <a href="/control/labs/#car">labs 小车</a>观察"参考跟踪 vs 扰动抑制"的差别。</li></ol></div>
+<div class="section"><h3>参考实现(可复现)</h3><pre class="code"># 一阶闭环阶跃:对比 Kp
+import numpy as np
+Ts=0.01; tau=0.5; K=1.0
+y=0.0
+for Kp in (1,4,10):
+    y=0.0; ys=[]
+    for k in range(300):
+        u=Kp*(1-y)
+        y += ((u*K)-y)/tau*Ts   # 一阶对象放这里
+        ys.append(y)
+    print(Kp, "稳态", round(ys[-1],3), "超调", round(max(ys),3))</pre></div><div class="section"><h2>5. 结果检查</h2><table><tr><th>检查项</th><th>预期</th><th>通过</th></tr><tr><td>开环负载</td><td>加负载后偏差长期存在</td><td>是</td></tr><tr><td>闭环负载</td><td>偏差被抑制,可能振荡</td><td>是</td></tr><tr><td>参考阶跃</td><td>tr/Mp/ts 可重复测量</td><td>是</td></tr><tr><td>Kp 趋势</td><td>Kp↑ → tr↓、Mp↑、ess↓</td><td>方向正确</td></tr></table></div>
+<div class="section"><h2>6. 故障排查</h2><table><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr><tr><td>闭环持续振荡</td><td>Kp 过大或延迟未建模</td><td>减小 Kp/加 D</td><td>/control/stability/</td></tr><tr><td>稳态误差大</td><td>纯比例控制</td><td>加积分</td><td>/control/pid/</td></tr><tr><td>指标量错</td><td>未到稳态或基线错</td><td>延长记录、确认 yss</td><td>重新测量</td></tr></table></div>
+<div class="section"><h3>练习(计算)</h3><details><summary>计算:一阶 τ=0.5s,t=1.5s 时阶跃到多少?</summary><p class="muted">1.5s=3τ → 1−e⁻³≈95.0%</p></details><details><summary>计算:Kp=4、对象 K=1,闭环稳态误差(阶跃)?</summary><p class="muted">P 控制 ess=1/(1+KpK)=20%</p></details><details><summary>实验:若 Kp=10,超调应比 Kp=1 大还是小?</summary><p class="muted">大;增益提高相位滞后增加,超调增大</p></details></div><div class="section"><h2>7. 小测</h2><p class="muted">点选选项即时判分;答错会标出正确项并给出解释。</p><div id="quiz"></div></div>
+<div class="section"><h2>8. 下一步</h2><p><a href="/control/modeling/">下一课:数学建模</a> · <a href="/control/labs/#car">labs 小车</a> · <a href="/control/">控制首页</a></p><p class="muted" style="font-size:12.5px">证据边界:principle;实验中为浏览器模拟(可复现参数),实物需 hardware-pending。</p></div>
+</main>
+<script>(function(){var D=[["负反馈的核心信号是?", ["输出本身", "误差 e = r − y", "扰动 d", "参考 r"], 1, "控制器依据误差动作,不是输出本身。"], ["上升时间通常取?", ["0→100%", "10%→90%", "50%→100%", "任意"], 1, "工程上常用 10%→90%。"], ["超调的定义?", ["ymax/yss", "(ymax−yss)/yss", "tr/ts", "ess/r"], 1, "超调是相对稳态值的百分比。"], ["开环加负载后?", ["偏差自动消除", "偏差长期存在", "一定振荡", "超调减小"], 1, "没有反馈就没有自动修正。"], ["Kp 增大通常?", ["tr 变长", "Mp 增大、ess 减小", "ess 变大", "无影响"], 1, "比例增益加快响应但增加超调。"]];var r=document.getElementById('quiz');D.forEach(function(q,i){var b=document.createElement('div');b.className='q';var s=document.createElement('p');s.className='stem';s.textContent=(i+1)+'. '+q.q;b.appendChild(s);q.o.forEach(function(o,oi){var x=document.createElement('button');x.type='button';x.className='opt';x.textContent=String.fromCharCode(65+oi)+'. '+o;x.addEventListener('click',function(){if(b.dataset.done)return;b.dataset.done='1';var ok=oi===q.a;x.className+=ok?' right':' wrong';if(!ok)b.querySelectorAll('.opt')[q.a].className+=' right';var e=document.createElement('p');e.className='explain show';e.textContent=q.e;b.appendChild(e);});b.appendChild(x);});r.appendChild(b);});})();</script>
+</body></html>

@@ -1,117 +1,42 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="u=−Kx、极点配置、Luenberger 观测器与分离原理:只测位置也能估速度。" />
-  <title>状态反馈与观测器 · 1kni4r.top</title>
-  <link rel="stylesheet" href="/shared/site.css" />
-  <style>
-    .q { margin-bottom: 14px; }
-    .q .stem { font-size: 14px; margin: 0 0 7px; }
-    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #d8ded6; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #16211d; background: #fff; cursor: pointer; }
-    .q .opt.right { border-color: rgba(15,118,110,.55); background: #e7f4f0; color: #0b5c56; }
-    .q .opt.wrong { border-color: rgba(185,28,28,.5); background: #fdeceb; color: #b91c1c; }
-    .q .explain { display: none; color: #5c6a63; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
-    .q .explain.show { display: block; }
-    pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
-  </style>
-<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
-</head>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="u=−Kx、极点配置、Luenberger 观测器与分离原理:只测位置也能估速度。" /><title>状态反馈与观测器 · 控制理论 · 1kni4r.top</title>
+<link rel="stylesheet" href="/shared/site.css" /><style>
+.q{margin:0 0 14px}.q .stem{font-size:14px;margin:0 0 7px}.q .opt{display:block;width:100%;text-align:left;border:1px solid #26323f;border-radius:8px;padding:8px 10px;margin:5px 0;font-size:13px;color:#c7d3df;background:#0e141b;cursor:pointer}
+.q .opt.right{border-color:rgba(94,234,212,.55);background:rgba(94,234,212,.1);color:#5eead4}.q .opt.wrong{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.1);color:#f87171}
+.q .explain{display:none;color:#8b9bb0;font-size:12.5px;margin:6px 0 0;line-height:1.7}.q .explain.show{display:block}
+pre.code{background:#0b1117;border:1px solid #16212c;border-radius:10px;padding:14px;overflow-x:auto;color:#c7d3df;font-size:12.5px;line-height:1.7}
+</style></head>
 <body>
   <nav class="topnav">
     <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
     <div class="navlinks">
-      <a href="/">学习工作台</a>
-      <a href="/route/">学习路线</a>
-      <a href="/knowledge/">知识库</a>
-      <a href="/labs/">实验室</a>
-      <a href="/projects/">项目实战</a>
-      <a href="/tools/">工具与资料</a>
+      <a href="/">学习工作台</a><a href="/route/">学习路线</a><a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a><a href="/projects/">项目实战</a><a href="/tools/">工具与资料</a>
     </div>
-    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
-
-  <main class="page">
-    <div class="kicker">CONTROL · 状态反馈与观测器</div>
-    <h1>状态反馈与观测器</h1>
-    <p class="lead">u=−Kx、极点配置、Luenberger 观测器与分离原理:只测位置也能估速度。</p>
-    <div class="section">
-      <h2>1. 目标与成果</h2>
-      <table>
-        <tr><th>项</th><th>内容</th></tr>
-        <tr><td>能力</td><td>设计状态反馈增益与观测器,理解分离原理</td></tr>
-        <tr><td>可检查结果</td><td>观测器误差收敛曲线与噪声权衡</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>2. 前置知识</h2>
-      <table>
-        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
-        <tr><td>现代控制基础</td><td>A/B/C/D、可控可观</td><td>/control/state-space/</td></tr>
-        <tr><td>线性代数</td><td>特征值</td><td>无</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>3. 原理</h2>
-      <p>状态反馈 u=−Kx 把闭环极点放到期望位置(需可控)。观测器 x̂′ = A x̂ + B u + L(y−C x̂),误差 e′=(A−LC)e。分离原理:反馈与观测可分开设计(线性时不变)。参考输入与调节是两件事。</p>
-    </div>
-    <div class="section">
-      <p class="muted">变量与单位:K 状态反馈增益、L 观测器增益;误差 e 与状态同量纲。假设可控可观、LTI。</p>
-      <h2>4. 操作实验</h2>
-      <ol><li>对位置/速度模型设计 K 与 L。</li><li>用只测位置估计速度,画真实/估计与误差。</li><li>改变观测器增益,看收敛速度与噪声放大。</li></ol>
-    </div>
-    <div class="section">
-      <h2>5. 结果检查</h2>
-      <table>
-        <tr><th>检查项</th><th>预期</th></tr>
-        <tr><td>闭环极点</td><td>与设计一致</td></tr>
-        <tr><td>误差收敛</td><td>e→0</td></tr>
-        <tr><td>噪声</td><td>高增益放大噪声</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>6. 故障排查</h2>
-      <table>
-        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
-        <tr><td>误差不收敛</td><td>(A−LC) 不稳定</td><td>重设 L</td><td>检查可观性</td></tr>
-        <tr><td>控制抖</td><td>噪声放大</td><td>降低 L/滤波</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>7. 小测</h2>
-      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
-      <div id="quiz"></div>
-    </div>
-    <div class="section">
-      <h2>8. 下一步</h2>
-<p><a href="/control/lqr/">LQR 入门</a> · <a href="/control/labs/#pendulum">倒立摆实验</a></p>
-    </div>
-  </main>
-  <script>
-    (function(){
-      var DATA = [{"q": "状态反馈 u=−Kx 要求?", "opts": ["可观", "可控", "无要求", "稳定"], "a": 1, "ex": "极点配置需要可控。"}, {"q": "Luenberger 观测器误差动态?", "opts": ["(A−BK)e", "(A−LC)e", "A e", "C e"], "a": 1, "ex": "e′=x′−x̂′=(A−LC)e。"}, {"q": "分离原理适用条件?", "opts": ["任意非线性", "线性时不变且可观可控", "仅 SISO", "仅离散"], "a": 1, "ex": "LTI 系统可分开设计反馈与观测器。"}];
-      var root = document.getElementById('quiz');
-      DATA.forEach(function(q,i){
-        var box=document.createElement('div'); box.className='q';
-        var stem=document.createElement('p'); stem.className='stem'; stem.textContent=(i+1)+'. '+q.q; box.appendChild(stem);
-        q.opts.forEach(function(o,oi){
-          var b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=String.fromCharCode(65+oi)+'. '+o;
-          b.addEventListener('click',function(){
-            if(box.dataset.done)return; box.dataset.done='1';
-            var right=oi===q.a; b.className += right?' right':' wrong';
-            if(!right) box.querySelectorAll('.opt')[q.a].className += ' right';
-            var ex=document.createElement('p'); ex.className='explain show'; ex.textContent=q.ex; box.appendChild(ex);
-          });
-          box.appendChild(b);
-        });
-        root.appendChild(box);
-      });
-    })();
-  </script>
-<script src="/shared/theme.js" data-platform-theme-js="1"></script>
-</body>
-</html>
+<main class="page">
+<div class="kicker">CONTROL · 状态反馈与观测器</div>
+<h1>状态反馈与观测器</h1>
+<p class="lead">u=−Kx、极点配置、Luenberger 观测器与分离原理:只测位置也能估速度。</p>
+<div class="section"><h2>1. 目标与成果</h2><table><tr><th>项</th><th>内容</th></tr><tr><td>能力</td><td>状态反馈极点配置与可控性;观测器误差动态</td></tr><tr><td>会做</td><td>K 与 L 的极点位置,权衡收敛与噪声</td></tr><tr><td>可检查结果</td><td>误差收敛曲线与噪声放大</td></tr></table></div>
+<div class="section"><h2>2. 前置知识</h2><table><tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr><tr><td>现代控制基础</td><td>A/B/C/D、可控可观</td><td>/control/state-space/</td></tr><tr><td>线性代数</td><td>特征值</td><td>无</td></tr><tr><td>稳定性</td><td>极点</td><td>/control/stability/</td></tr></table></div>
+<div class="section"><h2>3. 原理与公式</h2><table><tr><th>符号</th><th>含义</th><th>单位</th><th>作用</th></tr><tr><td>K</td><td>状态反馈增益</td><td>随量纲</td><td>反馈</td></tr><tr><td>L</td><td>观测器增益</td><td>随量纲</td><td>估计</td></tr><tr><td>x̂</td><td>状态估计</td><td>同 x</td><td>观测器</td></tr><tr><td>e</td><td>估计误差</td><td>同 x</td><td>收敛</td></tr></table><pre class="code">反馈:u = −Kx(或 −Kx̂ + 参考前馈)
+闭环:A − B K,极点由 K 配置(需可控)
+观测器:x̂′ = A x̂ + B u + L(y − C x̂)
+误差:e′ = (A − L C)e
+分离原理:LTI 系统可分别设计 K 与 L</pre><ol><li>对 x′=Ax+Bu 选期望闭环极点,求 K。</li><li>对给定 C 设计 L,使 A−LC 极点更快。</li><li>组合 u=−Kx̂,验证分离原理。</li><li>加入测量噪声,观察 L 的权衡。</li></ol><p class="muted">假设与边界:线性时不变、传感器噪声可忽略或已建模;超出范围需回到建模或非线性方法。</p></div>
+<div class="section"><h3>图示</h3><svg viewBox="0 0 520 160" width="100%" height="auto" style="max-width:560px"><rect x="40" y="30" width="80" height="50" rx="8" fill="#111815" stroke="#5eead4"/><text x="52" y="60" fill="#e6efea" font-size="12">对象</text><line x1="120" y1="55" x2="200" y2="55" stroke="#5eead4"/><rect x="200" y="24" width="90" height="62" rx="8" fill="#111815" stroke="#5eead4"/><text x="212" y="46" fill="#e6efea" font-size="12">观测器</text><text x="212" y="66" fill="#8b9bb0" font-size="11">A−LC</text><line x1="290" y1="55" x2="380" y2="55" stroke="#5eead4"/><text x="350" y="44" fill="#c7d3df" font-size="12">x̂</text><line x1="430" y1="55" x2="430" y2="110" stroke="#5eead4"/><line x1="430" y1="110" x2="80" y2="110" stroke="#5eead4"/><line x1="80" y1="110" x2="80" y2="80" stroke="#5eead4"/><text x="230" y="132" fill="#8b9bb0" font-size="12">只测 y,用 L 估计 x;u=−Kx̂</text></svg></div><div class="section"><h2>4. 操作实验</h2><table><tr><th>项</th><th>内容</th><th>看什么</th></tr><tr><td>模型</td><td>双积分</td><td>只测位置</td></tr><tr><td>K</td><td>极点 −2,−3</td><td>求 K</td></tr><tr><td>L</td><td>极点 −5,−6</td><td>求 L</td></tr><tr><td>仿真</td><td>labs 观测器</td><td>改 L 看误差/噪声</td></tr></table><ol><li>对双积分模型设计 K,使闭环极点在 −2±j 或 −2,−3。</li><li>设计 L 使观测器误差快速收敛。</li><li>仿真:真实 vs 估计、误差曲线。</li><li>增大 L,观察噪声放大与收敛的权衡。</li></ol></div>
+<div class="section"><h3>参考实现(可复现)</h3><pre class="code"># 极点配置与观测器
+K = np.array([[4, 4]])          # 闭环极点 -2,-2
+L = np.array([[6],[9]])         # A-LC 极点 -3,-3
+print("A-BK eig", np.linalg.eigvals(A-B@K))
+print("A-LC eig", np.linalg.eigvals(A-L@C))</pre></div><div class="section"><h2>5. 结果检查</h2><table><tr><th>检查项</th><th>预期</th><th>通过</th></tr><tr><td>闭环极点</td><td>与设计一致</td><td>是</td></tr><tr><td>误差</td><td>e→0</td><td>是</td></tr><tr><td>L 大</td><td>收敛快但噪声放大</td><td>是</td></tr><tr><td>分离</td><td>K/L 可分开设计</td><td>是</td></tr></table></div>
+<div class="section"><h2>6. 故障排查</h2><table><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr><tr><td>误差不收敛</td><td>A−LC 不稳定</td><td>重设 L</td><td>检查可观性</td></tr><tr><td>控制抖</td><td>噪声放大</td><td>降 L/滤波</td><td>权衡</td></tr><tr><td>极点放错</td><td>K 计算错</td><td>重算特征多项式</td><td>核对</td></tr></table></div>
+<div class="section"><h3>练习(计算)</h3><details><summary>计算:一阶 τ=0.5s,t=1.5s 时阶跃到多少?</summary><p class="muted">1.5s=3τ → 1−e⁻³≈95.0%</p></details><details><summary>计算:Kp=4、对象 K=1,闭环稳态误差(阶跃)?</summary><p class="muted">P 控制 ess=1/(1+KpK)=20%</p></details><details><summary>实验:若 Kp=10,超调应比 Kp=1 大还是小?</summary><p class="muted">大;增益提高相位滞后增加,超调增大</p></details></div><div class="section"><h2>7. 小测</h2><p class="muted">点选选项即时判分;答错会标出正确项并给出解释。</p><div id="quiz"></div></div>
+<div class="section"><h2>8. 下一步</h2><p><a href="/control/lqr/">LQR 入门</a> · <a href="/control/labs/#observer">labs 观测器</a></p><p class="muted" style="font-size:12.5px">证据边界:principle;数值为模型计算。</p></div>
+</main>
+<script>(function(){var D=[["状态反馈要求?", ["可观", "可控", "无要求", "稳定"], 1, "极点配置需可控。"], ["观测器误差动态?", ["(A−BK)e", "(A−LC)e", "Ae", "Ce"], 1, "e′=(A−LC)e。"], ["分离原理适用?", ["任意非线性", "LTI 可观可控", "仅 SISO", "仅离散"], 1, "LTI 可分开设计。"], ["L 增大通常?", ["收敛慢", "收敛快且噪声放大", "无影响", "失控"], 1, "权衡。"], ["u=−Kx 需要?", ["全部状态可测或估计", "仅输出", "仅参考", "仅扰动"], 0, "需要状态(可测或观测器)。"]];var r=document.getElementById('quiz');D.forEach(function(q,i){var b=document.createElement('div');b.className='q';var s=document.createElement('p');s.className='stem';s.textContent=(i+1)+'. '+q.q;b.appendChild(s);q.o.forEach(function(o,oi){var x=document.createElement('button');x.type='button';x.className='opt';x.textContent=String.fromCharCode(65+oi)+'. '+o;x.addEventListener('click',function(){if(b.dataset.done)return;b.dataset.done='1';var ok=oi===q.a;x.className+=ok?' right':' wrong';if(!ok)b.querySelectorAll('.opt')[q.a].className+=' right';var e=document.createElement('p');e.className='explain show';e.textContent=q.e;b.appendChild(e);});b.appendChild(x);});r.appendChild(b);});})();</script>
+</body></html>

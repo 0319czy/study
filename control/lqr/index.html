@@ -1,118 +1,45 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Q/R 权衡、Riccati 方程与反馈增益:调节到原点的"代价最小"。" />
-  <title>LQR 最优控制入门 · 1kni4r.top</title>
-  <link rel="stylesheet" href="/shared/site.css" />
-  <style>
-    .q { margin-bottom: 14px; }
-    .q .stem { font-size: 14px; margin: 0 0 7px; }
-    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #d8ded6; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #16211d; background: #fff; cursor: pointer; }
-    .q .opt.right { border-color: rgba(15,118,110,.55); background: #e7f4f0; color: #0b5c56; }
-    .q .opt.wrong { border-color: rgba(185,28,28,.5); background: #fdeceb; color: #b91c1c; }
-    .q .explain { display: none; color: #5c6a63; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
-    .q .explain.show { display: block; }
-    pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
-  </style>
-<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
-</head>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Q/R 权衡、Riccati 方程与反馈增益:调节到原点的"代价最小"。" /><title>LQR 最优控制入门 · 控制理论 · 1kni4r.top</title>
+<link rel="stylesheet" href="/shared/site.css" /><style>
+.q{margin:0 0 14px}.q .stem{font-size:14px;margin:0 0 7px}.q .opt{display:block;width:100%;text-align:left;border:1px solid #26323f;border-radius:8px;padding:8px 10px;margin:5px 0;font-size:13px;color:#c7d3df;background:#0e141b;cursor:pointer}
+.q .opt.right{border-color:rgba(94,234,212,.55);background:rgba(94,234,212,.1);color:#5eead4}.q .opt.wrong{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.1);color:#f87171}
+.q .explain{display:none;color:#8b9bb0;font-size:12.5px;margin:6px 0 0;line-height:1.7}.q .explain.show{display:block}
+pre.code{background:#0b1117;border:1px solid #16212c;border-radius:10px;padding:14px;overflow-x:auto;color:#c7d3df;font-size:12.5px;line-height:1.7}
+</style></head>
 <body>
   <nav class="topnav">
     <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
     <div class="navlinks">
-      <a href="/">学习工作台</a>
-      <a href="/route/">学习路线</a>
-      <a href="/knowledge/">知识库</a>
-      <a href="/labs/">实验室</a>
-      <a href="/projects/">项目实战</a>
-      <a href="/tools/">工具与资料</a>
+      <a href="/">学习工作台</a><a href="/route/">学习路线</a><a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a><a href="/projects/">项目实战</a><a href="/tools/">工具与资料</a>
     </div>
-    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
-
-  <main class="page">
-    <div class="kicker">CONTROL · LQR 最优控制入门</div>
-    <h1>LQR 最优控制入门</h1>
-    <p class="lead">Q/R 权衡、Riccati 方程与反馈增益:调节到原点的"代价最小"。</p>
-    <div class="section">
-      <h2>1. 目标与成果</h2>
-      <table>
-        <tr><th>项</th><th>内容</th></tr>
-        <tr><td>能力</td><td>理解 Q/R 对状态偏差与控制量的权衡,用预设比较</td></tr>
-        <tr><td>可检查结果</td><td>双积分器/倒立摆调节,状态、输入与代价</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>2. 前置知识</h2>
-      <table>
-        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
-        <tr><td>状态反馈</td><td>极点配置、可控</td><td>/control/state-feedback/</td></tr>
-        <tr><td>线性代数</td><td>Riccati</td><td>无</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>3. 原理</h2>
-      <p>最小化 J=∫(xᵀQx + uᵀRu)dt;连续 Riccati 方程 AᵀP+PA−PBR⁻¹BᵀP+Q=0,u=−Kx,K=R⁻¹BᵀP。Q 大→更压状态偏差、控制更猛;R 大→更省控制。离散实现要限幅,超出线性化范围要停用。</p>
-    </div>
-    <div class="section">
-      <p class="muted">变量与单位:Q/R 为权重(单位按状态/输入)、P 为 Riccati 解。假设线性、限幅未触发。</p>
-      <h2>4. 操作实验</h2>
-      <ol><li>对双积分器用三组 Q/R 预设调节到原点。</li><li>对比状态轨迹、输入与代价。</li><li>打开 <a href="/control/labs/#pendulum">倒立摆实验</a>,小扰动下回到误差带。</li></ol>
-      <p><a href="/control/labs/">打开交互实验(labs)</a></p>
-    </div>
-    <div class="section">
-      <h2>5. 结果检查</h2>
-      <table>
-        <tr><th>检查项</th><th>预期</th></tr>
-        <tr><td>收敛</td><td>状态回 0</td></tr>
-        <tr><td>Q/R</td><td>趋势符合预期</td></tr>
-        <tr><td>限幅</td><td>超范围提示</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>6. 故障排查</h2>
-      <table>
-        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
-        <tr><td>发散</td><td>超出线性化范围/限幅</td><td>减小扰动/检查模型</td><td>停用线性例程</td></tr>
-        <tr><td>控制太猛</td><td>R 太小</td><td>增大 R</td></tr>
-      </table>
-    </div>
-    <div class="section">
-      <h2>7. 小测</h2>
-      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
-      <div id="quiz"></div>
-    </div>
-    <div class="section">
-      <h2>8. 下一步</h2>
-<p><a href="/control/labs/#pendulum">打开倒立摆实验</a> · <a href="/control/estimation/">进阶:卡尔曼滤波</a> · <a href="/control/">控制首页</a></p>
-    </div>
-  </main>
-  <script>
-    (function(){
-      var DATA = [{"q": "LQR 增大 Q 通常?", "opts": ["更省控制", "更压状态偏差、控制更猛", "更稳定但更慢", "不变"], "a": 1, "ex": "Q 大→状态偏差权重高,反馈更强。"}, {"q": "R 增大使?", "opts": ["控制更猛", "控制更省、响应更慢", "状态更差", "无影响"], "a": 1, "ex": "R 大→控制代价高,增益变小。"}, {"q": "LQR 反馈增益由?", "opts": ["极点随意配置", "Riccati 方程解", "Bode 图", "Routh 表"], "a": 1, "ex": "K=R⁻¹BᵀP,P 解 Riccati 方程。"}];
-      var root = document.getElementById('quiz');
-      DATA.forEach(function(q,i){
-        var box=document.createElement('div'); box.className='q';
-        var stem=document.createElement('p'); stem.className='stem'; stem.textContent=(i+1)+'. '+q.q; box.appendChild(stem);
-        q.opts.forEach(function(o,oi){
-          var b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=String.fromCharCode(65+oi)+'. '+o;
-          b.addEventListener('click',function(){
-            if(box.dataset.done)return; box.dataset.done='1';
-            var right=oi===q.a; b.className += right?' right':' wrong';
-            if(!right) box.querySelectorAll('.opt')[q.a].className += ' right';
-            var ex=document.createElement('p'); ex.className='explain show'; ex.textContent=q.ex; box.appendChild(ex);
-          });
-          box.appendChild(b);
-        });
-        root.appendChild(box);
-      });
-    })();
-  </script>
-<script src="/shared/theme.js" data-platform-theme-js="1"></script>
-</body>
-</html>
+<main class="page">
+<div class="kicker">CONTROL · LQR 最优控制入门</div>
+<h1>LQR 最优控制入门</h1>
+<p class="lead">Q/R 权衡、Riccati 方程与反馈增益:调节到原点的"代价最小"。</p>
+<div class="section"><h2>1. 目标与成果</h2><table><tr><th>项</th><th>内容</th></tr><tr><td>能力</td><td>二次代价 J=∫(xᵀQx+uᵀRu)dt 的权衡</td></tr><tr><td>会做</td><td>解 Riccati 得 P 与 K=R⁻¹BᵀP</td></tr><tr><td>可检查结果</td><td>Q/R 预设对轨迹/输入的影响与限幅边界</td></tr></table></div>
+<div class="section"><h2>2. 前置知识</h2><table><tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr><tr><td>状态反馈</td><td>极点配置</td><td>/control/state-feedback/</td></tr><tr><td>线性代数</td><td>矩阵方程</td><td>无</td></tr><tr><td>稳定性</td><td>闭环极点</td><td>/control/stability/</td></tr></table></div>
+<div class="section"><h2>3. 原理与公式</h2><table><tr><th>符号</th><th>含义</th><th>单位</th><th>作用</th></tr><tr><td>Q</td><td>状态权重</td><td>对称半正定</td><td>压状态</td></tr><tr><td>R</td><td>控制权重</td><td>对称正定</td><td>省控制</td></tr><tr><td>P</td><td>Riccati 解</td><td>对称正定</td><td>代价</td></tr><tr><td>K</td><td>反馈增益</td><td>随量纲</td><td>u=−Kx</td></tr></table><pre class="code">J = ∫₀∞ (xᵀQx + uᵀRu) dt
+Riccati:AᵀP + PA − P B R⁻¹ Bᵀ P + Q = 0
+K = R⁻¹ Bᵀ P,u = −Kx
+Q↑:更强压状态;R↑:更省控制
+离散:dlqr(A,B,Q,R) 得 K</pre><ol><li>选 Q 与 R(对角、量纲对齐)。</li><li>解连续 Riccati 得 P。</li><li>算 K=R⁻¹BᵀP。</li><li>仿真验证轨迹/输入/代价;检查限幅。</li></ol><p class="muted">假设与边界:线性时不变、传感器噪声可忽略或已建模;超出范围需回到建模或非线性方法。</p></div>
+<div class="section"><h3>图示</h3><svg viewBox="0 0 520 160" width="100%" height="auto" style="max-width:560px"><line x1="40" y1="110" x2="480" y2="110" stroke="#3d524a"/><line x1="40" y1="110" x2="40" y2="20" stroke="#3d524a"/><polyline points="40,110 90,90 140,60 190,38 240,30 320,60 400,80 480,92" fill="none" stroke="#5eead4" stroke-width="2"/><polyline points="40,110 100,80 160,50 220,34 300,70 380,86 480,96" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="5 4"/><text x="300" y="30" fill="#5eead4" font-size="12">Q 大:压状态</text><text x="300" y="50" fill="#c2410c" font-size="12">R 大:省控制</text><text x="40" y="140" fill="#8b9bb0" font-size="12">同一初始偏差下的状态轨迹对比(示意)</text></svg></div><div class="section"><h2>4. 操作实验</h2><table><tr><th>项</th><th>内容</th><th>看什么</th></tr><tr><td>模型</td><td>双积分 / 倒立摆</td><td>线性化</td></tr><tr><td>预设</td><td>Q=diag(1,1),R=1;Q 大;R 大</td><td>三组对照</td></tr><tr><td>测量</td><td>状态轨迹、u、J</td><td>趋势符合</td></tr><tr><td>仿真</td><td>labs 倒立摆</td><td>看回落/超范围提示</td></tr></table><ol><li>对双积分模型求 K(可用离线工具或预设)。</li><li>三组 Q/R 预设:比较状态收敛速度与控制量峰值。</li><li>计算每次的代价 J(数值积分),对照趋势。</li><li>在 labs 倒立摆中验证小扰动回落;超范围时停止线性例程。</li></ol></div>
+<div class="section"><h3>参考实现(可复现)</h3><pre class="code"># LQR(可用 scipy 或手算双积分解析)
+import numpy as np
+from scipy.linalg import solve_continuous_are
+A=np.array([[0,1],[0,0]]); B=np.array([[0],[1]])
+Q=np.eye(2); R=np.array([[1]])
+P=solve_continuous_are(A,B,Q,R)
+K=np.linalg.inv(R)@B.T@P
+print("K=",K)  # 可对照 labs 预设</pre></div><div class="section"><h2>5. 结果检查</h2><table><tr><th>检查项</th><th>预期</th><th>通过</th></tr><tr><td>收敛</td><td>状态回 0</td><td>是</td></tr><tr><td>Q/R 趋势</td><td>符合预期</td><td>是</td></tr><tr><td>限幅</td><td>超范围提示</td><td>是</td></tr><tr><td>代价</td><td>J 与权重一致</td><td>是</td></tr></table></div>
+<div class="section"><h2>6. 故障排查</h2><table><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr><tr><td>发散</td><td>超出线性化/限幅</td><td>减小扰动或检查模型</td><td>停用线性例程</td></tr><tr><td>控制太猛</td><td>R 太小</td><td>增大 R</td><td>对照</td></tr><tr><td>收敛慢</td><td>Q 太小/R 太大</td><td>调权重</td><td>对照</td></tr></table></div>
+<div class="section"><h3>练习(计算)</h3><details><summary>计算:一阶 τ=0.5s,t=1.5s 时阶跃到多少?</summary><p class="muted">1.5s=3τ → 1−e⁻³≈95.0%</p></details><details><summary>计算:Kp=4、对象 K=1,闭环稳态误差(阶跃)?</summary><p class="muted">P 控制 ess=1/(1+KpK)=20%</p></details><details><summary>实验:若 Kp=10,超调应比 Kp=1 大还是小?</summary><p class="muted">大;增益提高相位滞后增加,超调增大</p></details></div><div class="section"><h2>7. 小测</h2><p class="muted">点选选项即时判分;答错会标出正确项并给出解释。</p><div id="quiz"></div></div>
+<div class="section"><h2>8. 下一步</h2><p><a href="/control/labs/#pendulum">labs 倒立摆</a> · <a href="/control/estimation/">进阶:卡尔曼</a> · <a href="/control/">控制首页</a></p><p class="muted" style="font-size:12.5px">证据边界:principle;数值为模型/预设,实物需 hardware-pending。</p></div>
+</main>
+<script>(function(){var D=[["LQR 增大 Q 通常?", ["更省控制", "更压状态、控制更猛", "更慢", "不变"], 1, "Q 大权重高。"], ["R 增大使?", ["控制更猛", "控制更省", "状态更差", "无影响"], 1, "R 大省控制。"], ["K 由?", ["极点随意", "Riccati 解", "Bode", "Routh"], 1, "K=R⁻¹BᵀP。"], ["LQR 的适用边界?", ["任意非线性", "线性化/限幅内", "仅离散", "仅 SISO"], 1, "线性模型 + 约束内。"], ["代价 J 包含?", ["仅状态", "状态与控制", "仅控制", "仅时间"], 1, "二次代价含两者。"]];var r=document.getElementById('quiz');D.forEach(function(q,i){var b=document.createElement('div');b.className='q';var s=document.createElement('p');s.className='stem';s.textContent=(i+1)+'. '+q.q;b.appendChild(s);q.o.forEach(function(o,oi){var x=document.createElement('button');x.type='button';x.className='opt';x.textContent=String.fromCharCode(65+oi)+'. '+o;x.addEventListener('click',function(){if(b.dataset.done)return;b.dataset.done='1';var ok=oi===q.a;x.className+=ok?' right':' wrong';if(!ok)b.querySelectorAll('.opt')[q.a].className+=' right';var e=document.createElement('p');e.className='explain show';e.textContent=q.e;b.appendChild(e);});b.appendChild(x);});r.appendChild(b);});})();</script>
+</body></html>
