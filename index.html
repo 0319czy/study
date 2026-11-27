@@ -201,6 +201,18 @@
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; }
     }
+    .panel { border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px; margin-top: 34px; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); text-align: left; }
+    .panel-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .panel-head h2 { font-size: 16px; margin: 0; }
+    .panel .badge { font-size: 11.5px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+    .panel .badge.active { color: var(--accent); border-color: rgba(94,234,212,.3); }
+    #progress-body { color: var(--muted); font-size: 14px; line-height: 1.75; margin-top: 10px; }
+    #progress-body b { color: var(--text); }
+    #progress-body a { color: var(--accent); }
+    .panel .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+    .panel select, .panel button { background: #0f151d; color: var(--text); border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; font-size: 13px; }
+    .panel button { background: var(--accent); color: #06231f; font-weight: 700; border-color: var(--accent); cursor: pointer; }
+    .panel a.btn2 { color: var(--accent); border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; font-size: 13px; text-decoration: none; }
   </style>
 </head>
 <body>
@@ -239,6 +251,20 @@
         <a href="/foundations/" style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#06231f;background:#5eead4;border-radius:10px;padding:10px 18px;font-weight:700;text-decoration:none">新用户从这里开始:工程基础三门最小课 →</a>
       </p>
     </header>
+
+    <section class="panel" id="progress-panel" aria-label="学习工作台">
+      <div class="panel-head">
+        <h2>学习工作台</h2>
+        <span class="badge" id="progress-badge">新用户</span>
+      </div>
+      <div id="progress-body"></div>
+      <div class="row">
+        <select id="stage-select" aria-label="当前阶段"></select>
+        <select id="task-select" aria-label="当前任务"></select>
+        <button id="save-progress" type="button">记录当前进度</button>
+      </div>
+      <p style="margin-top:10px;font-size:12px;color:#5f7186">进度只存在本机浏览器(localStorage),不上传、不需要登录。后续批次会接入课程内的自动记录。</p>
+    </section>
 
     <main>
       <div class="cards" id="cards">
@@ -331,6 +357,83 @@
   </div>
 
   <script>
+    // 学习工作台:本地进度(localStorage),新用户/已开始两种状态
+    (function () {
+      var KEY = '1kni4r-progress-v1';
+      var STAGES = [
+        ['foundations', '01 工程基础'],
+        ['mcu', '02 MCU 与外设'],
+        ['rtos', '03 RTOS'],
+        ['embedded-linux', '04 嵌入式 Linux'],
+        ['driver', '05 驱动与硬件协同'],
+        ['connectivity', '06 联网与交付'],
+        ['advanced', '07 方向进阶']
+      ];
+      var TASKS = [
+        ['c', 'C 与工程工具', '/foundations/c/'],
+        ['circuits', '数字电路入门', '/foundations/circuits/'],
+        ['linux-user', 'Linux 用户态入门', '/foundations/linux-user/'],
+        ['m0', 'M0 采集', '/projects/collect/'],
+        ['m1', 'M1 通信', '/projects/m1/'],
+        ['m2', 'M2 多任务', '/projects/m2/'],
+        ['m3', 'M3 网关', '/projects/m3/']
+      ];
+      var badge = document.getElementById('progress-badge');
+      var body = document.getElementById('progress-body');
+      var stageSel = document.getElementById('stage-select');
+      var taskSel = document.getElementById('task-select');
+      var saveBtn = document.getElementById('save-progress');
+      if (!badge || !body || !stageSel || !taskSel || !saveBtn) return;
+
+      STAGES.forEach(function (s) {
+        var o = document.createElement('option');
+        o.value = s[0]; o.textContent = s[1];
+        stageSel.appendChild(o);
+      });
+      TASKS.forEach(function (t) {
+        var o = document.createElement('option');
+        o.value = t[0]; o.textContent = t[1];
+        taskSel.appendChild(o);
+      });
+
+      function load() {
+        try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; }
+      }
+      function find(list, id) {
+        for (var i = 0; i < list.length; i++) if (list[i][0] === id) return list[i];
+        return null;
+      }
+      function render() {
+        var p = load();
+        if (!p) {
+          badge.textContent = '新用户';
+          badge.classList.remove('active');
+          body.innerHTML = '还没有学习记录。建议从 <a href="/foundations/">工程基础三门最小课</a> 开始(先 C 与工程工具,再数字电路,然后 Linux 用户态),完成后在下面记录进度,下次打开就能"继续上次任务"。';
+          return;
+        }
+        var t = find(TASKS, p.task) || TASKS[0];
+        var s = find(STAGES, p.stage);
+        badge.textContent = '已开始学习';
+        badge.classList.add('active');
+        var done = (p.completed || []).length;
+        body.innerHTML = '继续上次任务:<b>' + t[1] + '</b>' + (s ? ' · 当前阶段 ' + s[1] : '') +
+          '<br>已完成 ' + done + ' 个任务' +
+          (p.updatedAt ? ' · 最近更新 ' + new Date(p.updatedAt).toLocaleString('zh-CN') : '') +
+          '<br><a href="' + t[2] + '">继续 →</a>';
+      }
+      saveBtn.addEventListener('click', function () {
+        var p = load() || { completed: [] };
+        p.stage = stageSel.value;
+        p.task = taskSel.value;
+        p.updatedAt = Date.now();
+        p.completed = p.completed || [];
+        if (p.completed.indexOf(p.task) === -1) p.completed.push(p.task);
+        try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}
+        render();
+      });
+      render();
+    })();
+
     // 卡片跟随鼠标的柔光效果(纯装饰,不影响可用性)
     document.querySelectorAll('a.card').forEach(function (card) {
       card.addEventListener('pointermove', function (e) {

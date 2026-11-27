@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="项目实战 M1 通信:AA 55 | LEN | SEQ | CMD | DATA | XOR 帧的构造、错误注入与 500ms 超时判定。含逐字节 XOR 计算过程、四类错误解析与判分小测;模拟结果标注 simulated,实物验证标注 hardware-pending。" />
+  <title>M1 通信:AA 55 帧与 500ms 超时 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --panel: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9));
+      --line: #1e2a38;
+      --line-2: #16212c;
+      --ink: #e6edf3;
+      --muted: #8b9bb0;
+      --teal: #5eead4;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --blue: #7dd3fc;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(900px 480px at 10% -10%, rgba(94, 234, 212, .10), transparent 62%),
+        radial-gradient(780px 460px at 92% 4%, rgba(125, 211, 252, .07), transparent 60%),
+        radial-gradient(640px 420px at 50% 100%, rgba(251, 191, 36, .045), transparent 65%);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page { padding-top: 34px; }
+    .crumbs { font-size: 12.5px; color: var(--muted); font-family: var(--mono); }
+    .crumbs a { color: var(--muted); text-decoration: none; }
+    .crumbs a:hover { color: var(--teal); }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; }
+    .meta .chip {
+      font-size: 12px; color: var(--muted);
+      border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px;
+      background: rgba(12, 17, 24, .5);
+    }
+    .meta .chip b { color: var(--ink); font-weight: 600; }
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+    .toc a {
+      font-size: 12.5px; color: #9fb3c8; text-decoration: none;
+      border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px;
+      background: rgba(12, 17, 24, .4);
+    }
+    .toc a:hover { color: var(--teal); border-color: #2c4257; }
+    .small { font-size: 12.5px; }
+
+    /* 证据标识 */
+    .ev {
+      display: inline-block; font-family: var(--mono); font-size: 10.5px; line-height: 1.7;
+      padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line);
+      color: var(--muted); white-space: nowrap; vertical-align: 1px;
+    }
+    .ev.p { color: var(--amber); border-color: rgba(251, 191, 36, .38); background: rgba(251, 191, 36, .06); }
+    .ev.s { color: var(--teal); border-color: rgba(94, 234, 212, .38); background: rgba(94, 234, 212, .06); }
+    .ev.h { color: var(--blue); border-color: rgba(125, 211, 252, .38); background: rgba(125, 211, 252, .06); }
+    .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 18px 0 0; }
+    .legend-item {
+      display: flex; flex-direction: column; gap: 6px; align-items: flex-start;
+      border: 1px solid var(--line-2); border-radius: 12px; padding: 12px 14px;
+      background: rgba(12, 17, 24, .55); font-size: 12.5px; color: var(--muted); line-height: 1.65;
+    }
+
+    /* 段落 */
+    .sec { margin-top: 52px; scroll-margin-top: 78px; }
+    .sec-head { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .sec-head .no {
+      font-family: var(--mono); font-size: 13px; color: var(--teal);
+      border: 1px solid rgba(94, 234, 212, .32); border-radius: 8px; padding: 2px 8px; flex: none;
+    }
+    .page .sec-head h2 { font-size: 22px; margin: 0; letter-spacing: .01em; }
+    .sub { margin-top: 30px; }
+    .sub h3 { font-size: 16.5px; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    .callout {
+      border-left: 3px solid var(--amber); border-radius: 0 10px 10px 0;
+      background: rgba(251, 191, 36, .055); padding: 12px 14px; margin: 16px 0;
+      color: #cfdae6; line-height: 1.8; font-size: 13.5px;
+    }
+    .callout b { color: var(--amber); }
+    .callout.ok { border-left-color: var(--teal); background: rgba(94, 234, 212, .05); }
+    .callout.ok b { color: var(--teal); }
+    .callout ul { margin: 8px 0 0; padding-left: 18px; }
+
+    .box {
+      border: 1px solid var(--line); border-radius: 14px; padding: 18px;
+      background: var(--panel); margin: 16px 0;
+    }
+    .box h3 { margin: 0 0 10px; font-size: 15.5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .box h4 { margin: 0 0 8px; font-size: 14px; color: var(--teal); }
+    .box p { line-height: 1.75; }
+
+    .kv { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 6px 0 12px; }
+    .kv label { color: var(--muted); font-size: 12.5px; }
+    .page input[type="number"], .page input[type="text"], .page select, .page textarea {
+      background: #0b1117; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 13px;
+    }
+    .page input[type="number"] { width: 96px; }
+    .page input:focus, .page select:focus, .page textarea:focus {
+      outline: none; border-color: #2f5a6e; box-shadow: 0 0 0 2px rgba(94, 234, 212, .12);
+    }
+    .page input:disabled { opacity: .45; }
+    .page textarea {
+      width: 100%; resize: vertical; font-family: var(--mono); font-size: 12.5px;
+      line-height: 1.7; letter-spacing: .06em;
+    }
+
+    .btnrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+    .btn {
+      font: inherit; font-size: 12.5px; color: #c7d3df; background: #0f151d;
+      border: 1px solid #24384c; border-radius: 8px; padding: 7px 12px; cursor: pointer;
+      transition: border-color .15s ease, color .15s ease, background .15s ease;
+    }
+    .btn:hover { border-color: #3a5673; color: var(--ink); }
+    .btn:active { transform: translateY(1px); }
+    .btn.warn { color: var(--amber); border-color: rgba(251, 191, 36, .32); background: rgba(251, 191, 36, .05); }
+    .btn.warn:hover { border-color: rgba(251, 191, 36, .6); }
+    .btn.ghost { color: var(--muted); }
+    .btn.ghost:hover { color: var(--teal); border-color: rgba(94, 234, 212, .45); }
+
+    .hexout { margin: 6px 0 12px; }
+    .out-label { font-size: 11px; letter-spacing: .1em; color: var(--muted); font-family: var(--mono); margin-bottom: 6px; }
+    .hexline {
+      font-family: var(--mono); font-size: 17px; font-weight: 700; color: var(--teal);
+      background: #0b1117; border: 1px solid var(--line-2); border-radius: 10px;
+      padding: 12px 14px; letter-spacing: .12em; word-break: break-all;
+    }
+    .hexout .btn { margin-top: 8px; }
+
+    .bytes { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .byte {
+      min-width: 54px; border: 1px solid var(--line); border-radius: 9px;
+      background: #0b1117; padding: 6px 8px; text-align: center;
+    }
+    .byte .role { display: block; font-size: 9.5px; color: #7b8da3; letter-spacing: .04em; }
+    .byte .val { display: block; font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+    .byte.hdr .val { color: #c7d3df; }
+    .byte.len .val { color: var(--amber); }
+    .byte.seq .val { color: var(--blue); }
+    .byte.cmd .val { color: #c084fc; }
+    .byte.data .val { color: var(--teal); }
+    .byte.xor { border-color: rgba(94, 234, 212, .45); background: rgba(94, 234, 212, .06); }
+    .byte.xor .val { color: var(--teal); }
+    .byte.bad { border-color: rgba(248, 113, 113, .7); background: rgba(248, 113, 113, .12); }
+    .byte.bad .val { color: var(--red); }
+    .byte.miss { border-style: dashed; border-color: rgba(248, 113, 113, .45); background: transparent; display: flex; align-items: center; }
+    .byte.miss .val { color: var(--red); font-size: 12px; font-weight: 500; }
+
+    .warn { display: none; color: var(--amber); font-size: 12.5px; line-height: 1.8; margin: 8px 0; }
+
+    .calc { list-style: none; counter-reset: step; margin: 8px 0 0; padding: 0; }
+    .calc li { position: relative; padding-left: 34px; margin: 11px 0; font-size: 13px; color: #c7d3df; line-height: 1.75; }
+    .calc li::before {
+      counter-increment: step; content: counter(step);
+      position: absolute; left: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(94, 234, 212, .1); border: 1px solid rgba(94, 234, 212, .35); color: var(--teal);
+      font-family: var(--mono); font-size: 11.5px; display: flex; align-items: center; justify-content: center;
+    }
+    .calc li b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+    .calc code {
+      color: var(--teal); background: rgba(94, 234, 212, .06); border-radius: 4px;
+      padding: 1px 5px; font-size: 12.5px; word-break: break-word;
+    }
+    .chain { display: block; margin-top: 4px; color: #9fe8d9; font-family: var(--mono); font-size: 12px; line-height: 1.9; word-break: break-word; }
+
+    .frame-map { margin: 14px 0; }
+    .fm-scroll { overflow-x: auto; padding-bottom: 4px; }
+    .fm-grid { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; min-width: 600px; }
+    .fm-cell { border: 1px solid var(--line); border-radius: 8px; background: #0b1117; padding: 7px 3px; text-align: center; }
+    .fm-cell .r { font-size: 9.5px; color: #7b8da3; display: block; }
+    .fm-cell .v { font-family: var(--mono); font-size: 14px; color: var(--ink); display: block; margin-top: 2px; }
+    .fm-cell.xor { border-color: rgba(94, 234, 212, .45); background: rgba(94, 234, 212, .06); }
+    .fm-cell.xor .v { color: var(--teal); }
+    .fm-bracket { margin-top: 7px; width: calc(90% - 4px); border-top: 1px dashed rgba(94, 234, 212, .55); }
+    .fm-bracket span { display: block; margin-top: 5px; font-size: 11px; color: var(--teal); }
+
+    .endian { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; }
+    .e-cell {
+      border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px;
+      background: #0b1117; font-family: var(--mono); color: var(--teal); font-size: 13px;
+    }
+    .e-cell small { display: block; font-family: -apple-system, "Noto Sans SC", sans-serif; color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+    .e-arrow { color: var(--amber); font-size: 11.5px; }
+
+    .table-wrap { overflow-x: auto; margin: 10px 0; }
+    .table-wrap table { min-width: 560px; }
+    .fault { min-width: 680px; }
+    .fault td:first-child { color: #f3c9c9; width: 21%; }
+    .fault td:nth-child(2) { width: 33%; }
+    .fault td:nth-child(3) { width: 25%; }
+    .fault td { line-height: 1.7; }
+
+    .fig { border: 1px solid var(--line-2); border-radius: 12px; background: #0b1117; padding: 12px 12px 8px; margin: 16px 0; }
+    .fig svg { display: block; width: 100%; height: auto; }
+    .fig-cap { font-size: 12px; color: var(--muted); line-height: 1.75; margin-top: 6px; }
+
+    .order { margin: 10px 0 0; padding: 0; list-style: none; counter-reset: ord; }
+    .order li {
+      counter-increment: ord; position: relative; padding: 7px 0 7px 40px;
+      border-bottom: 1px dashed #17222e; font-size: 13px; color: #c7d3df; line-height: 1.7;
+    }
+    .order li:last-child { border-bottom: 0; }
+    .order li::before {
+      content: "0" counter(ord); position: absolute; left: 0; top: 8px;
+      font-family: var(--mono); font-size: 11px; color: var(--teal);
+      border: 1px solid rgba(94, 234, 212, .28); border-radius: 6px; padding: 1px 5px;
+    }
+    .order li b { color: var(--ink); }
+    .order .err { color: var(--red); font-family: var(--mono); font-size: 11.5px; margin-left: 6px; }
+
+    .parse-order { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin: 12px 0 0; line-height: 1.9; }
+    .parse-order .arr { color: var(--teal); margin: 0 4px; }
+
+    .status {
+      display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700;
+      padding: 5px 11px; border-radius: 999px; border: 1px solid; margin: 12px 0 0;
+    }
+    .status.ok { color: var(--teal); border-color: rgba(94, 234, 212, .35); background: rgba(94, 234, 212, .08); }
+    .status.bad { color: var(--red); border-color: rgba(248, 113, 113, .35); background: rgba(248, 113, 113, .08); }
+    .err-detail { font-size: 13px; color: #cfdae6; line-height: 1.8; margin: 8px 0 0; }
+    .err-detail .k { color: var(--muted); font-family: var(--mono); font-size: 11.5px; margin-right: 6px; }
+    .advice { margin: 8px 0 0; padding-left: 18px; color: #c7d3df; font-size: 12.8px; line-height: 1.85; }
+    .advice li::marker { color: var(--teal); }
+
+    .res { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 8px; margin: 12px 0; }
+    .res-item { border: 1px solid var(--line-2); border-radius: 9px; padding: 8px 10px; background: #0b1117; }
+    .res-k { font-size: 10px; letter-spacing: .05em; color: var(--muted); }
+    .res-v { font-family: var(--mono); font-size: 14px; color: var(--ink); margin-top: 2px; }
+    .res-v.teal { color: var(--teal); }
+    .res-v.red { color: var(--red); }
+    .verdict { font-size: 13px; line-height: 1.8; margin: 8px 0 14px; color: #cfdae6; }
+    .verdict.ok { color: #b7f5ea; }
+    .verdict.bad { color: #fbd5d5; }
+    .note { font-size: 12px; color: var(--muted); line-height: 1.8; margin-top: 8px; }
+
+    .bars { border: 1px solid var(--line-2); border-radius: 10px; background: #0b1117; padding: 16px 10px 8px; margin: 10px 0 4px; }
+    .bars-plot { position: relative; height: 170px; display: flex; align-items: flex-end; gap: 5px; }
+    .bars-plot .empty { color: var(--muted); font-size: 12px; margin: auto; }
+    .bar { flex: 1 1 0; min-width: 3px; background: linear-gradient(180deg, #5eead4, #2aa79a); border-radius: 3px 3px 0 0; }
+    .bar.over { background: linear-gradient(180deg, #fca5a5, #dc2626); }
+    .thr { position: absolute; left: 0; right: 0; border-top: 1px dashed rgba(251, 191, 36, .8); z-index: 2; pointer-events: none; }
+    .thr span {
+      position: absolute; right: 4px; top: -16px; font-size: 10px; color: var(--amber);
+      background: #0b1117; padding: 0 4px; font-family: var(--mono);
+    }
+    .gap-table td:nth-child(5) { font-family: var(--mono); font-size: 12px; }
+    .gap-table tr.over td { color: #fbd5d5; background: rgba(248, 113, 113, .05); }
+    .gap-table tr.over td:last-child { color: var(--red); }
+    .gap-table td:last-child { color: var(--teal); }
+
+    .checklist label { display: flex; gap: 9px; align-items: flex-start; color: #c7d3df; font-size: 13.3px; line-height: 1.75; margin: 8px 0; }
+    .checklist input { margin-top: 4px; accent-color: #5eead4; flex: none; }
+
+    .q { border-bottom: 1px dashed #17222e; padding: 4px 0 16px; margin-bottom: 14px; }
+    .q:last-of-type { border-bottom: 0; }
+    .q .stem { font-size: 14px; margin-bottom: 8px; line-height: 1.7; }
+    .opt {
+      display: block; width: 100%; text-align: left; font: inherit; font-size: 13px;
+      color: #c7d3df; background: transparent; border: 1px solid var(--line);
+      border-radius: 8px; padding: 8px 10px; margin: 5px 0; cursor: pointer; line-height: 1.65;
+    }
+    .opt:hover { border-color: #2c4257; background: rgba(94, 234, 212, .04); }
+    .opt.right { border-color: rgba(94, 234, 212, .5); background: rgba(94, 234, 212, .08); color: var(--teal); }
+    .opt.wrong { border-color: rgba(248, 113, 113, .5); background: rgba(248, 113, 113, .08); color: var(--red); }
+    .explain { display: none; color: var(--muted); font-size: 12.5px; margin-top: 6px; line-height: 1.8; }
+    .explain.show { display: block; }
+    .quiz-foot { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 6px; }
+    .quiz-status { font-size: 12.5px; color: var(--muted); }
+
+    .plain { margin: 6px 0 0; padding-left: 20px; color: #c7d3df; font-size: 13px; line-height: 1.9; }
+    .plain li::marker { color: var(--teal); }
+
+    pre.code {
+      background: #0b1017; border: 1px solid var(--line); border-radius: 10px;
+      padding: 13px 15px; overflow-x: auto; color: #c9d6e2;
+      font-family: var(--mono); font-size: 12.3px; line-height: 1.65; margin: 10px 0; tab-size: 4;
+    }
+    pre.code .cm { color: #6f8297; }
+
+    .foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 18px; color: var(--muted); font-size: 12.5px; line-height: 1.85; }
+    .foot b { color: var(--ink); }
+
+    @media (max-width: 720px) {
+      .page { padding-left: 16px; padding-right: 16px; }
+      .page .sec-head h2 { font-size: 19px; }
+      .hexline { font-size: 14px; letter-spacing: .08em; }
+      .byte { min-width: 46px; padding: 5px 6px; }
+      .byte .val { font-size: 13px; }
+      .bars-plot { height: 140px; gap: 3px; }
+      .kv { gap: 8px 10px; }
+      .page input[type="number"] { width: 84px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="crumbs"><a href="/projects/">项目实战</a> / M1 通信</div>
+    <div class="kicker">PROJECT M1 · 通信</div>
+    <h1>M1 通信:把一帧说清楚</h1>
+    <p class="lead">
+      M0 你已经有"一个数";M1 要把它变成"一条两端都能核对的消息":帧头定位边界、LEN 说明长度、
+      SEQ 编号、CMD 区分数据类型、XOR 自校验,并且在 500 ms 没有消息时明确报超时,而不是假装一切正常。
+      本页的构造器、错误注入和超时模拟都可以直接改参数复算,但它们是<strong>模拟</strong>;真实串口上的那一帧标注为
+      <span class="ev h">hardware-pending</span>,需要你上板完成。
+    </p>
+    <div class="meta">
+      <span class="chip">帧长 <b>6 + LEN</b>(6~14 字节)</span>
+      <span class="chip">超时阈值 <b>500 ms</b></span>
+      <span class="chip">错误类型 <b>4 类</b></span>
+      <span class="chip">校验 <b>XOR 单字节</b></span>
+    </div>
+    <p class="muted small" style="margin-top:12px">前置:<a href="/projects/collect/">M0 采集</a>(已完成:能读到数据并解释单位)。本页不包含 CRC、重传或应答,契约没有定义的东西不擅自加。</p>
+
+    <div class="legend">
+      <div class="legend-item"><span class="ev p">principle</span><span>由契约规则与手算/脚本可复现的结论,不依赖某块板子。</span></div>
+      <div class="legend-item"><span class="ev s">simulated</span><span>本页浏览器内脚本的运行结果:真实计算,但不是实物收发。</span></div>
+      <div class="legend-item"><span class="ev h">hardware-pending</span><span>需要你在开发板 + 串口上完成;本页不代填、不冒充实测数据。</span></div>
+    </div>
+
+    <ul class="toc">
+      <li><a href="#s1">目标</a></li>
+      <li><a href="#s2">前置知识</a></li>
+      <li><a href="#s3">原理与图示</a></li>
+      <li><a href="#s4">操作实验</a></li>
+      <li><a href="#s5">结果检查</a></li>
+      <li><a href="#s6">故障排查</a></li>
+      <li><a href="#s7">小测</a></li>
+      <li><a href="#s8">下一步</a></li>
+    </ul>
+
+    <!-- 1 目标 -->
+    <div class="section sec" id="s1">
+      <div class="sec-head"><span class="no">01</span><h2>目标</h2></div>
+      <p class="lead">
+        用一句话说:M1 结束时,你能把 M0 的温度/湿度按 <code>AA 55 | LEN | SEQ | CMD | DATA | XOR</code>
+        发出,并写一个能把"好帧、坏帧、没帧"分开处理的接收端。
+      </p>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>按契约实现 0x01 传感器帧与 0x02 心跳帧的构造与解析;按固定顺序定位四类错误;判定并统计 500 ms 超时</td></tr>
+        <tr><td>可检查结果</td><td>① 手算 23.45 ℃ / 56.78 % / SEQ=1 的完整帧与 XOR,与构造器一致;② 在错误注入里复现四类错误并说出处理动作;③ 用超时模拟解释"间隔 vs 阈值"的判定与统计;④ 在真实串口抓到一帧并核对(待你完成)</td></tr>
+        <tr><td>交付物</td><td>协议一页纸(帧表 + 命令表 + 错误处理表)、发送函数、接收解析函数、抓帧记录(时间/波特率/工具)</td></tr>
+        <tr><td>不在本阶段</td><td>CRC、重传/应答、多字节长度、分片、加密。契约没定义,不要私自加进帧里,否则 M3 网关会对不上</td></tr>
+        <tr><td>证据标识</td><td><span class="ev p">principle</span> 规则可手算 · <span class="ev s">simulated</span> 浏览器内模拟 · <span class="ev h">hardware-pending</span> 需实物验证</td></tr>
+      </table>
+      <div class="callout">
+        <b>为什么 M0 不够?</b>串口打印 <code>23.45,56.78</code> 人类看得懂,机器却不知道:温度从哪个字节开始、这一串有没有坏、
+        数据是不是十秒前的旧值。帧恰好回答三件事——<b>边界</b>(帧头 + LEN)、<b>可信度</b>(XOR)、<b>新鲜度</b>(SEQ + 500 ms 超时)。
+      </div>
+      <p class="muted">完成标准:默认参数构造出的帧是 <code>AA 55 04 01 01 29 09 2E 16 E3</code>(XOR = 0xE3);你能不查页面独立复核这条链。</p>
+    </div>
+
+    <!-- 2 前置知识 -->
+    <div class="section sec" id="s2">
+      <div class="sec-head"><span class="no">02</span><h2>前置知识</h2></div>
+      <p class="lead">M1 只依赖四件事:十六进制与位运算、字节序、UART 8N1、定点数。缺哪一项,后面的排查都会变成猜。</p>
+      <table>
+        <tr><th>前置</th><th>你应当会</th><th>入口</th></tr>
+        <tr><td>M0 采集</td><td>ADC 读数、单位、采样周期、量化误差;明白"发出去的数"必须先有单位</td><td><a href="/projects/collect/">M0 采集</a></td></tr>
+        <tr><td>十六进制与位运算</td><td><code>0x</code> 前缀;<code>&amp;</code>、<code>|</code>、<code>^</code>、<code>&lt;&lt;</code>;知道异或两次会抵消</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>字节序</td><td>小端 = 低字节先发;uint16 范围 0~65535;int16 范围 -32768~32767(补码)</td><td><a href="/knowledge/">知识库</a></td></tr>
+        <tr><td>UART</td><td>波特率、8N1、起始/停止位、LSB 先发、TX/RX 交叉与共地</td><td><a href="/mcu/uart">MCU · UART</a></td></tr>
+        <tr><td>定点数</td><td>×100 存整数、接收端 ÷100 还原;分辨率 0.01;知道上下限</td><td>本页 3.3 节</td></tr>
+      </table>
+      <div class="box">
+        <h3>30 秒自测(答不出就先补前置,别直接抄解析器)</h3>
+        <ul class="plain">
+          <li><code>0x29 ^ 0x09</code> 等于多少? → <code>0x20</code></li>
+          <li>2345 的十六进制是什么?小端时先发哪个字节? → <code>0x0929</code>,先发 <code>0x29</code></li>
+          <li>115200 8N1 传 1 个字节要几位、多少微秒? → 10 位,约 86.8 µs</li>
+          <li>int16 能表示 -5.25 ℃ 吗?原始值怎么写? → 能,原始值 -525,补码 <code>0xFDF3</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3 原理与图示 -->
+    <div class="section sec" id="s3">
+      <div class="sec-head"><span class="no">03</span><h2>原理与图示</h2><span class="ev p">principle</span></div>
+      <p class="lead">先记住一条主线:帧是"自描述 + 自校验"的字节序列。下面每个字段都只回答一个问题,不多也不少。</p>
+
+      <div class="sub">
+        <h3>3.1 帧结构:每个字段只回答一个问题</h3>
+        <div class="frame-map">
+          <div class="fm-scroll">
+            <div class="fm-grid">
+              <div class="fm-cell"><span class="r">帧头</span><span class="v">AA</span></div>
+              <div class="fm-cell"><span class="r">帧头</span><span class="v">55</span></div>
+              <div class="fm-cell"><span class="r">LEN</span><span class="v">04</span></div>
+              <div class="fm-cell"><span class="r">SEQ</span><span class="v">01</span></div>
+              <div class="fm-cell"><span class="r">CMD</span><span class="v">01</span></div>
+              <div class="fm-cell"><span class="r">DATA[0]</span><span class="v">29</span></div>
+              <div class="fm-cell"><span class="r">DATA[1]</span><span class="v">09</span></div>
+              <div class="fm-cell"><span class="r">DATA[2]</span><span class="v">2E</span></div>
+              <div class="fm-cell"><span class="r">DATA[3]</span><span class="v">16</span></div>
+              <div class="fm-cell xor"><span class="r">XOR</span><span class="v">E3</span></div>
+            </div>
+          </div>
+          <div class="fm-bracket"><span>XOR 覆盖偏移 0 ~ 8(AA 到最后一个 DATA 字节),不含自己的 E3</span></div>
+        </div>
+        <table>
+          <tr><th>字段</th><th>字节</th><th>取值</th><th>作用 / 边界</th></tr>
+          <tr><td>帧头 <code>AA 55</code></td><td>2</td><td>固定</td><td>让接收端能从任意噪声中重新对齐;坏一字节即"帧头错"</td></tr>
+          <tr><td><code>LEN</code></td><td>1</td><td>0 ~ 8</td><td><b>只数 DATA</b>,不含帧头/LEN/SEQ/CMD/XOR;总长 = 6 + LEN</td></tr>
+          <tr><td><code>SEQ</code></td><td>1</td><td>0 ~ 255,回绕</td><td>发现丢帧与乱序;255 之后回到 0</td></tr>
+          <tr><td><code>CMD</code></td><td>1</td><td><code>0x01</code> / <code>0x02</code></td><td>0x01 传感器数据;0x02 心跳</td></tr>
+          <tr><td><code>DATA[LEN]</code></td><td>LEN</td><td>命令相关</td><td>传感器帧 4 字节;心跳帧为空</td></tr>
+          <tr><td><code>XOR</code></td><td>1</td><td>0 ~ 255</td><td>偏移 0 到 DATA 末字节逐字节异或</td></tr>
+        </table>
+        <p class="muted small">最小帧 = 心跳 6 字节;最大帧 = 6 + 8 = 14 字节。LEN 写成"整帧长度"是最常见的错误之一,例子里整帧 10 字节而 LEN = 4。</p>
+      </div>
+
+      <div class="sub">
+        <h3>3.2 两种命令:同一层帧,不同语义</h3>
+        <table>
+          <tr><th>CMD</th><th>LEN</th><th>DATA</th><th>接收端如何解释</th></tr>
+          <tr><td><code>0x01</code> 传感器</td><td>4</td><td><code>[0..1]</code> int16 小端,温度 ×100<br /><code>[2..3]</code> uint16 小端,湿度 ×100</td><td>温度 = raw / 100 ℃;湿度 = raw / 100 %</td></tr>
+          <tr><td><code>0x02</code> 心跳</td><td>0</td><td>无</td><td>只表示"链路还活着",不产生数据</td></tr>
+          <tr><td>其他</td><td>—</td><td>—</td><td>契约外:解析器标"未知命令",不得当有效数据用</td></tr>
+        </table>
+        <p class="muted small">注意:0x01 与 0x02 的 LEN 是硬约定。CMD=0x01 但 LEN≠4、或 CMD=0x02 但 LEN≠0,都属于契约不符,应丢弃并记录日志。</p>
+      </div>
+
+      <div class="sub">
+        <h3>3.3 数字怎么放进字节:×100 定点 + 小端</h3>
+        <p>先把小数变成整数,再拆成两个字节。以 23.45 ℃、56.78 % 为例:</p>
+        <table>
+          <tr><th>量</th><th>原始类型</th><th>计算</th><th>原始值</th><th>物理范围</th><th>分辨率</th></tr>
+          <tr><td>温度</td><td>int16</td><td><code>round(T × 100)</code></td><td>2345</td><td>-327.68 ~ +327.67 ℃</td><td>0.01 ℃</td></tr>
+          <tr><td>湿度</td><td>uint16</td><td><code>round(RH × 100)</code></td><td>5678</td><td>0 ~ 655.35 %</td><td>0.01 %</td></tr>
+        </table>
+        <div class="endian">
+          <div class="e-cell">DATA[0] = 0x29<small>低字节,先发</small></div>
+          <div class="e-arrow">线上顺序 →</div>
+          <div class="e-cell">DATA[1] = 0x09<small>高字节,后发</small></div>
+          <div class="e-arrow">还原 →</div>
+          <div class="e-cell">0x0929 = 2345<small>÷100 = 23.45 ℃</small></div>
+        </div>
+        <p class="muted small">
+          为什么不用 float?定点在 MCU 与 Linux 上结果完全一致、不依赖浮点格式、占 2 字节且可精确复算;
+          float 虽然有 4 字节,但两端字节序/格式约定更麻烦。代价是必须自己处理溢出:超出范围要截断并告警,不能让补码回绕成"−327.68"或"655.35"。
+        </p>
+      </div>
+
+      <div class="sub">
+        <h3>3.4 XOR 校验:一条链,两个用途</h3>
+        <p>
+          规则只有一句:<code>XOR = buf[0] ⊕ buf[1] ⊕ … ⊕ buf[5+LEN-1]</code>,即从 <code>AA</code> 一直异或到 DATA 的最后一个字节,
+          结果作为 1 字节附在末尾。
+        </p>
+        <p>示例帧的逐字节链(每一步都能手算):</p>
+        <pre class="code">AA ^ 55 = FF
+FF ^ 04 = FB
+FB ^ 01 = FA
+FA ^ 01 = FB
+FB ^ 29 = D2
+D2 ^ 09 = DB
+DB ^ 2E = F5
+F5 ^ 16 = E3   ← XOR = 0xE3,追加到帧尾</pre>
+        <p>
+          由此得到一个非常实用的自检:<b>把 XOR 字节也一起异或,合法帧的结果必为 0x00</b>
+          (E3 ⊕ E3 = 00)。接收端既可以"重算前 9 字节再比较",也可以"整帧异或判零",两者等价。
+        </p>
+        <p class="muted small">
+          边界也要说清:XOR 是弱校验。它能发现任意单比特错误,但发现不了"同一位上偶数个比特翻转"这类互相抵消的错误,
+          也发现不了字节顺序互换。生产环境通常用 CRC16;本契约固定 XOR,<b>不要为了"更安全"擅自换成 CRC</b>——
+          那会让两端算出的校验永远对不上。要换就升协议版本,两端同时改。
+        </p>
+      </div>
+
+      <div class="sub">
+        <h3>3.5 解析顺序:先结构,后校验,最后语义</h3>
+        <p>四类错误的判定有严格先后,顺序错了会把"没发完"误报成"校验错"。按下面五步走:</p>
+        <ol class="order">
+          <li><b>找帧头</b>:前两字节必须是 <code>AA 55</code>。<span class="err">失败 → 帧头错</span></li>
+          <li><b>看长度</b>:<code>LEN ≤ 8</code>。<span class="err">失败 → LEN 超限</span></li>
+          <li><b>等收全</b>:缓冲区至少 <code>6 + LEN</code> 字节(含 XOR 尾)。<span class="err">失败 → 帧尾缺失/未收全</span></li>
+          <li><b>验校验</b>:重算前 <code>6+LEN-1</code> 字节的 XOR,与末字节比较。<span class="err">失败 → XOR 错</span></li>
+          <li><b>解语义</b>:按 CMD 解释 DATA;CMD 与 LEN 不符(如 0x01 却 LEN=2)属契约不符,不是上面四类收发错误,单独记日志。</li>
+        </ol>
+        <p class="muted small">
+          这里的"帧尾"就是 XOR 字节(本协议没有额外的结束符)。所以"帧尾缺失"= 缓冲区还没到 <code>6+LEN</code>,
+          "未收全"= 同一件事的另一种说法。出现这种情况时保留缓冲继续收,不要立刻清空,否则永远拼不出整帧。
+        </p>
+      </div>
+
+      <div class="sub">
+        <h3>3.6 超时:500 ms 没来有效帧,就要说"没来"</h3>
+        <p>
+          判定公式:<code>now − t_last_valid &gt; 500 ms</code> → 超时。其中 <code>t_last_valid</code> 是<b>最后一条通过校验的有效帧</b>的到达时刻。
+          收到任意有效帧(按本页实现,含心跳)后清除超时标志并重新计时。
+        </p>
+        <p>
+          为什么 500 ms 合理?一帧最多 14 字节,115200 8N1 下约 1.2 ms;<b>500 ms 不是"帧太长",而是给"整帧没来"留的宽限</b>,
+          大约能容忍两三个发送周期。反过来,如果你的发送周期本身就 ≥ 500 ms,这个阈值没有意义——那是契约前提没对齐,应先改周期,而不是把阈值调大。
+        </p>
+        <div class="fig">
+          <svg viewBox="0 0 620 210" preserveAspectRatio="xMidYMid meet" role="img" aria-label="超时判定时序:300 毫秒收到帧,800 毫秒判定超时,900 毫秒收到下一帧后恢复">
+            <line x1="56" y1="120" x2="596" y2="120" stroke="#1e2a38" stroke-width="1.5" />
+            <rect x="164" y="102" width="180" height="16" rx="4" fill="rgba(251,191,36,.08)" stroke="#fbbf24" stroke-dasharray="4 4" />
+            <text x="254" y="96" text-anchor="middle" fill="#fbbf24" font-size="10">等待窗口 500 ms(300 → 800)</text>
+            <rect x="344" y="102" width="36" height="16" rx="3" fill="rgba(248,113,113,.25)" stroke="#f87171" />
+            <g fill="#5eead4">
+              <circle cx="56" cy="120" r="3.5" />
+              <circle cx="164" cy="120" r="3.5" />
+              <circle cx="380" cy="120" r="3.5" />
+              <circle cx="452" cy="120" r="3.5" />
+              <circle cx="560" cy="120" r="3.5" />
+            </g>
+            <g fill="#7b8da3" font-size="9.5" text-anchor="middle">
+              <text x="56" y="138">0</text>
+              <text x="164" y="138">300</text>
+              <text x="380" y="138">900</text>
+              <text x="452" y="138">1100</text>
+              <text x="560" y="138">1400 ms</text>
+            </g>
+            <line x1="344" y1="52" x2="344" y2="118" stroke="#f87171" stroke-dasharray="4 4" />
+            <line x1="380" y1="52" x2="380" y2="118" stroke="#5eead4" stroke-dasharray="4 4" />
+            <text x="338" y="46" text-anchor="end" fill="#f87171" font-size="10">800 ms:仍无帧 → 判定超时</text>
+            <text x="386" y="46" fill="#5eead4" font-size="10">900 ms:帧到 → 清除并重新计时</text>
+            <line x1="164" y1="168" x2="380" y2="168" stroke="#2c4257" />
+            <line x1="164" y1="162" x2="164" y2="174" stroke="#2c4257" />
+            <line x1="380" y1="162" x2="380" y2="174" stroke="#2c4257" />
+            <text x="272" y="188" text-anchor="middle" fill="#fbbf24" font-size="10.5">Δt = 600 ms &gt; 500 ms → 这次间隔会触发一次超时</text>
+          </svg>
+          <div class="fig-cap">时序举例:300 ms 收到帧并开始计时;到 800 ms 满 500 ms 仍无帧,报超时;900 ms 帧到达,清除标志、从 900 ms 重新计时。</div>
+        </div>
+        <div class="callout">
+          <b>实现建议(不是契约):</b>把"链路超时"与"传感器数据断流"分开计时。心跳 0x02 可以刷新链路活跃时间,
+          但不能替代 0x01 的数据新鲜度;否则"传感器坏了但心跳还在"会被判成健康。本页超时模拟只统计 0x01 帧的到达间隔。
+        </div>
+      </div>
+
+      <div class="sub">
+        <h3>3.7 线上长什么样:LSB 先发的 8N1</h3>
+        <p>以 DATA[0] = <code>0x29</code> 为例,<code>0x29 = 0b0010_1001</code>,UART 从最低位开始发:1、0、0、1、0、1、0、0。</p>
+        <div class="fig">
+          <svg viewBox="0 0 620 180" preserveAspectRatio="xMidYMid meet" role="img" aria-label="UART 8N1 波形:起始位 0,数据位 1 0 0 1 0 1 0 0,停止位 1">
+            <text x="12" y="18" fill="#8b9bb0" font-size="10.5" font-family="ui-monospace, Menlo, monospace">字节 0x29 = 0b0010_1001,UART 8N1(空闲高电平,LSB 先发)</text>
+            <text x="50" y="48" fill="#7b8da3" font-size="9.5" text-anchor="end">3.3 V</text>
+            <text x="50" y="88" fill="#7b8da3" font-size="9.5" text-anchor="end">0 V</text>
+            <g stroke="#1e2a38" stroke-dasharray="3 4">
+              <line x1="86" y1="34" x2="86" y2="98" />
+              <line x1="120" y1="34" x2="120" y2="98" />
+              <line x1="154" y1="34" x2="154" y2="98" />
+              <line x1="188" y1="34" x2="188" y2="98" />
+              <line x1="222" y1="34" x2="222" y2="98" />
+              <line x1="256" y1="34" x2="256" y2="98" />
+              <line x1="290" y1="34" x2="290" y2="98" />
+              <line x1="324" y1="34" x2="324" y2="98" />
+              <line x1="358" y1="34" x2="358" y2="98" />
+              <line x1="392" y1="34" x2="392" y2="98" />
+              <line x1="426" y1="34" x2="426" y2="98" />
+            </g>
+            <path d="M56 44 H86 V84 H120 V44 H154 V84 H222 V44 H256 V84 H290 V44 H324 V84 H392 V44 H452"
+                  fill="none" stroke="#5eead4" stroke-width="2.2" stroke-linejoin="round" />
+            <g fill="#8b9bb0" font-size="9" text-anchor="middle">
+              <text x="103" y="112">起始</text>
+              <text x="137" y="112">d0</text>
+              <text x="171" y="112">d1</text>
+              <text x="205" y="112">d2</text>
+              <text x="239" y="112">d3</text>
+              <text x="273" y="112">d4</text>
+              <text x="307" y="112">d5</text>
+              <text x="341" y="112">d6</text>
+              <text x="375" y="112">d7</text>
+              <text x="409" y="112">停止</text>
+            </g>
+            <g fill="#5eead4" font-size="9.5" text-anchor="middle" font-family="ui-monospace, Menlo, monospace">
+              <text x="103" y="126">0</text>
+              <text x="137" y="126">1</text>
+              <text x="171" y="126">0</text>
+              <text x="205" y="126">0</text>
+              <text x="239" y="126">1</text>
+              <text x="273" y="126">0</text>
+              <text x="307" y="126">1</text>
+              <text x="341" y="126">0</text>
+              <text x="375" y="126">0</text>
+              <text x="409" y="126">1</text>
+            </g>
+            <line x1="86" y1="140" x2="426" y2="140" stroke="#2c4257" />
+            <line x1="86" y1="135" x2="86" y2="145" stroke="#2c4257" />
+            <line x1="426" y1="135" x2="426" y2="145" stroke="#2c4257" />
+            <text x="256" y="160" text-anchor="middle" fill="#8b9bb0" font-size="10">1 字节 = 10 bit × 8.68 µs ≈ 86.8 µs(115200 8N1);10 字节整帧 ≈ 0.87 ms</text>
+          </svg>
+          <div class="fig-cap">LSB 先发是 UART 的默认约定,也是"小端"在协议里的同一种直觉:低位在前。抓包时看到的第一位是起始位(低),最后一位是停止位(高)。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 操作实验 -->
+    <div class="section sec" id="s4">
+      <div class="sec-head"><span class="no">04</span><h2>操作实验</h2><span class="ev s">simulated</span></div>
+      <p class="lead">三个实验共用同一份契约:构造 → 破坏 → 判定。全部在浏览器里计算,不会真的打开串口。</p>
+
+      <div class="box" id="exp-builder">
+        <h3>实验 1 · 帧构造器 <span class="ev s">simulated</span></h3>
+        <p class="muted small">改温度 / 湿度 / SEQ 立刻得到新帧。默认值就是验收用的示例:23.45 ℃、56.78 %、SEQ=1 → XOR 固定为 <code>0xE3</code>。</p>
+        <div class="kv">
+          <label for="b-temp">温度(℃)</label>
+          <input id="b-temp" type="number" value="23.45" step="0.01" min="-327.67" max="327.67" />
+          <label for="b-hum">湿度(%)</label>
+          <input id="b-hum" type="number" value="56.78" step="0.01" min="0" max="655.35" />
+          <label for="b-seq">SEQ(0~255)</label>
+          <input id="b-seq" type="number" value="1" step="1" min="0" max="255" />
+          <label for="b-cmd">帧类型</label>
+          <select id="b-cmd">
+            <option value="1" selected>0x01 传感器数据</option>
+            <option value="2">0x02 心跳</option>
+          </select>
+        </div>
+        <div class="btnrow">
+          <button type="button" class="btn" data-preset="example">示例 23.45 / 56.78 / SEQ=1</button>
+          <button type="button" class="btn" data-preset="negative">负温 -5.25 / 30.00 / SEQ=0</button>
+          <button type="button" class="btn" data-preset="limit">边界 327.67 / 655.35 / SEQ=255</button>
+          <button type="button" class="btn" data-preset="heartbeat">心跳帧</button>
+        </div>
+        <div class="hexout">
+          <div class="out-label">完整帧(十六进制)· <span id="b-tlen">…</span></div>
+          <div class="hexline" id="b-hex">—</div>
+          <button type="button" class="btn ghost" id="b-copy">复制十六进制</button>
+        </div>
+        <div class="bytes" id="b-strip"></div>
+        <div class="warn" id="b-warn"></div>
+        <div class="steps-wrap">
+          <div class="out-label" style="margin-top:16px">计算过程(每一步都能手算复核)</div>
+          <ol class="calc" id="b-steps"></ol>
+        </div>
+      </div>
+
+      <div class="box" id="exp-parser">
+        <h3>实验 2 · 错误注入与解析器 <span class="ev s">simulated</span></h3>
+        <p class="muted small">下面这行字节就是"接收缓冲区"。按钮会真的改字节,再按契约顺序解析;你也可以直接编辑。</p>
+        <textarea id="p-input" spellcheck="false" rows="2" aria-label="待解析帧的十六进制字节">AA 55 04 01 01 29 09 2E 16 E3</textarea>
+        <div class="btnrow">
+          <button type="button" class="btn warn" id="p-check">改校验(翻转 XOR)</button>
+          <button type="button" class="btn warn" id="p-trunc">截断(少发 2 字节)</button>
+          <button type="button" class="btn warn" id="p-head">改帧头(AA 55 → AA 54)</button>
+          <button type="button" class="btn warn" id="p-len">LEN 改 0x0C(&gt; 8)</button>
+          <button type="button" class="btn ghost" id="p-reset">恢复正确帧</button>
+        </div>
+        <div class="bytes" id="p-bytes"></div>
+        <div id="p-result" aria-live="polite"></div>
+        <p class="parse-order">
+          解析顺序:① 帧头 <span class="arr">→</span> ② LEN ≤ 8 <span class="arr">→</span> ③ 收齐 6+LEN <span class="arr">→</span> ④ XOR <span class="arr">→</span> ⑤ CMD 语义
+        </p>
+      </div>
+
+      <div class="box" id="exp-timeout">
+        <h3>实验 3 · 超时模拟(阈值 500 ms)<span class="ev s">simulated</span></h3>
+        <p class="muted small">
+          输入相邻两次发送的间隔(ms,空格或逗号分隔)。模拟假设:每次发送都能被完整正确接收,因此判定退化为
+          "相邻帧到达间隔是否超过 500 ms";若中间有不完整帧,接收端仍以最后一条<b>有效帧</b>计时,结果会与这里不同。
+        </p>
+        <textarea id="g-input" spellcheck="false" rows="2" aria-label="发送间隔毫秒列表">300 300 310 290 300 320 280 300 300 305 295 300</textarea>
+        <div class="btnrow">
+          <button type="button" class="btn" data-gap="stable">稳定 300 ms</button>
+          <button type="button" class="btn" data-gap="jitter">抖动 300±250</button>
+          <button type="button" class="btn" data-gap="period800">固定 800 ms(必超时)</button>
+          <button type="button" class="btn" data-gap="loss">连续丢 3 帧</button>
+        </div>
+        <div class="res" id="g-summary"></div>
+        <div class="verdict" id="g-verdict"></div>
+        <div class="bars"><div class="bars-plot" id="g-bars"></div></div>
+        <p class="note">纵轴:相邻帧间隔(ms);虚线:500 ms 阈值。柱高按最大间隔等比缩放,红色 = 超过阈值。</p>
+        <div class="table-wrap">
+          <table class="gap-table">
+            <thead><tr><th>#</th><th>到达时刻 t(ms)</th><th>间隔 Δt(ms)</th><th>Δt − 500</th><th>判定</th></tr></thead>
+            <tbody id="g-body"></tbody>
+          </table>
+        </div>
+        <div class="note" id="g-note"></div>
+      </div>
+
+      <div class="box">
+        <h3>参考实现 · 固件侧发送骨架 <span class="ev p">principle</span></h3>
+        <p class="muted small">
+          与构造器完全同规则:先拼 <code>AA … DATA</code>,对这段异或得到 XOR,再追加到帧尾。
+          该骨架未在实物上编译运行(属 <span class="ev h">hardware-pending</span>),编译前请按你的工程确认 <code>huart1</code> 与时钟。
+        </p>
+        <pre class="code">/* 发送一帧 0x01 传感器数据:t100 / h100 均以 0.01 为单位 */
+void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
+{
+    uint8_t  f[10];
+    uint16_t t = (uint16_t)t100;              <span class="cm">/* 负数按 int16 补码转无符号 */</span>
+
+    f[0] = 0xAA;
+    f[1] = 0x55;
+    f[2] = 4;                                 <span class="cm">/* LEN:只数 DATA 的 4 字节 */</span>
+    f[3] = seq;
+    f[4] = 0x01;                              <span class="cm">/* CMD:传感器数据 */</span>
+    f[5] = (uint8_t)(t &amp; 0xFF);               <span class="cm">/* 低字节先发(小端) */</span>
+    f[6] = (uint8_t)(t &gt;&gt; 8);
+    f[7] = (uint8_t)(h100 &amp; 0xFF);
+    f[8] = (uint8_t)(h100 &gt;&gt; 8);
+
+    uint8_t x = 0;
+    for (uint8_t i = 0; i &lt; 9; i++) {          <span class="cm">/* AA … DATA[3],不含 XOR 自身 */</span>
+        x ^= f[i];
+    }
+    f[9] = x;
+
+    HAL_UART_Transmit(&amp;huart1, f, sizeof f, 10);  <span class="cm">/* 10 B ≈ 0.87 ms @115200 8N1 */</span>
+}
+</pre>
+      </div>
+
+      <div class="callout ok">
+        <b>记录实验:</b>把每次构造的输入、完整帧、XOR、判定结果抄到一张表里(M5 的测试记录会用到)。
+        示例帧已用独立 Node 脚本核算为 <code>AA 55 04 01 01 29 09 2E 16 E3</code>,得到 XOR = <code>0xE3</code>;页面默认参数按同一规则生成,应完全一致。
+      </div>
+    </div>
+
+    <!-- 5 结果检查 -->
+    <div class="section sec" id="s5">
+      <div class="sec-head"><span class="no">05</span><h2>结果检查</h2><span class="ev s">simulated</span><span class="ev h">hardware-pending</span></div>
+      <p class="lead">勾选表示你已自查。前 5 项能在本页完成(模拟);第 6 项必须在真实串口上做完才能勾。</p>
+      <div class="checklist" id="checklist">
+        <label><input type="checkbox" /> 能默写帧结构,并解释 LEN 只数 DATA(0~8)、总长 = 6 + LEN(6~14 字节)</label>
+        <label><input type="checkbox" /> 能独立算出 23.45 ℃ / 56.78 % / SEQ=1 的完整帧与 XOR = 0xE3,并与构造器输出一致</label>
+        <label><input type="checkbox" /> 能用错误注入复现四类错误(帧头错、LEN 超限、未收全、XOR 错),并说出各自的处理动作</label>
+        <label><input type="checkbox" /> 能说明 500 ms 超时的计时起点(最后一条有效帧)与恢复条件,并读懂超时统计</label>
+        <label><input type="checkbox" /> 能解释为什么用 int16/uint16 小端 + ×100,而不是直接发 float</label>
+        <label><input type="checkbox" /> <span class="ev h">hardware-pending</span> 在真实串口(开发板或 USB-TTL)抓到一帧,逐字段核对并用"整帧异或 = 0"自检,记录波特率、工具与时间</label>
+      </div>
+      <p class="muted" id="check-status">已完成 0 / 6</p>
+      <div class="callout">
+        <b>不要把"勾了"当成"实测了"。</b>第 6 项没有抓包记录就不要勾;M5 交付时这张表要附设备型号、串口工具与截图。
+        本页没有连接任何串口,也不会替你生成硬件证据。
+      </div>
+    </div>
+
+    <!-- 6 故障排查 -->
+    <div class="section sec" id="s6">
+      <div class="sec-head"><span class="no">06</span><h2>故障排查</h2><span class="ev p">principle</span></div>
+      <p class="lead">按"物理层 → 帧结构 → 完整性 → 校验 → 语义 → 时序"的顺序查,每步都有可观察的预期结果,不要跳步猜。</p>
+      <div class="table-wrap">
+        <table class="fault">
+          <thead><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>解析器一直报"帧头错",字节流不以 <code>AA 55</code> 开头</td>
+              <td>① 两端是否都是 115200 8N1;② 是否共地;③ TX/RX 是否交叉;④ 串口助手切十六进制看原始流</td>
+              <td>原始流前两字节是 <code>AA 55</code>,空闲电平为高</td>
+              <td>仍乱码 → 查时钟源与 USB-TTL 电平(3.3 V/5 V);上电瞬间噪声 → 先丢弃若干字节再搜索帧头</td>
+            </tr>
+            <tr>
+              <td>每次报"XOR 错",接收值与计算值差一个固定值</td>
+              <td>核对发送端异或是否从 <code>AA</code> 起、是否漏算/多算字节、是否把 XOR 自身也算进去;用本页构造器同参数对照</td>
+              <td>手算链末值 = 帧末字节</td>
+              <td>发送端对而接收端错 → 检查是否按 LEN 截取,是否把下一帧首字节算进了本帧</td>
+            </tr>
+            <tr>
+              <td>帧完整但温度显示 23450 ℃ 或 0.23 ℃</td>
+              <td>查是否重复乘/除 100;是否按大端解析(高低字节颠倒);是否把原始整数当浮点直接打印</td>
+              <td><code>2345 / 100 = 23.45 ℃</code>,且 <code>0x0929</code> 的低字节 <code>0x29</code> 先出现</td>
+              <td>字节序错 → 交换 DATA[0]/DATA[1];缩放错 → 只在显示层除一次 100</td>
+            </tr>
+            <tr>
+              <td>报"未收全/帧尾缺失",缓冲区总差 1~2 字节</td>
+              <td>查 <code>read()</code> 返回值是否被当成整帧;是否处理半包/粘包;DMA 缓冲是否被下一帧覆盖</td>
+              <td>缓冲区累积到 <code>6+LEN</code> 再解析,多余字节留给下一帧</td>
+              <td>仍缺 → 查 UART 溢出标志 ORE/中断优先级;改用 DMA + 空闲中断按帧接收</td>
+            </tr>
+            <tr>
+              <td>超时统计里频繁出现 &gt; 500 ms 的间隔</td>
+              <td>查采集+发送的实际周期;是否有 <code>HAL_Delay</code>/<code>printf</code> 阻塞;高优先级任务是否抢占发送;看门狗是否复位</td>
+              <td>发送周期稳定且 &lt; 500 ms(建议 ≤ 400 ms,留 20% 余量)</td>
+              <td>周期正常仍超时 → 分段计时(采集耗时 vs 发送耗时),查 DMA 未启动、波特率不匹配导致整帧丢失</td>
+            </tr>
+            <tr>
+              <td>温湿度恒为 0.00 或 -327.68 ℃ / 655.35 %</td>
+              <td>查传感器初始化返回值;DATA 是否全 <code>0x00</code> 或全 <code>0xFF</code>;是否未采样就发送;结构体 memset 后是否忘了赋值</td>
+              <td>上电后读到合理范围,且变化趋势与 M0 的 ADC 读数一致</td>
+              <td>全 0 → 查传感器句柄与供电;全 FF → 查读失败分支是否把错误码当数据发了</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small">排查记录至少写三列:时间、波特率、当时看到的原始十六进制。没有原始字节的"我觉得是 XX 问题"不算排查结论。</p>
+    </div>
+
+    <!-- 7 小测 -->
+    <div class="section sec" id="s7">
+      <div class="sec-head"><span class="no">07</span><h2>小测</h2><span class="ev s">simulated</span></div>
+      <p class="lead">4 题,点选项立即判分并给解析。全部答完后对照正确率决定是否回看原理。</p>
+      <div id="quiz"></div>
+      <div class="quiz-foot">
+        <span class="quiz-status" id="quiz-status">答对 0 / 4</span>
+        <button type="button" class="btn ghost" id="quiz-reset">重做</button>
+      </div>
+    </div>
+
+    <!-- 8 下一步 -->
+    <div class="section sec" id="s8">
+      <div class="sec-head"><span class="no">08</span><h2>下一步</h2></div>
+      <p class="lead">M1 的"单任务、单帧、能判定"跑顺之后,才值得把它拆成多任务;否则 M2 的问题会混在协议问题里,很难分离。</p>
+      <table>
+        <tr><th>下一步</th><th>要做什么</th><th>状态</th></tr>
+        <tr>
+          <td><a href="/projects/m2/">M2 多任务 →</a></td>
+          <td>把采集、帧构造、UART 发送拆成任务与队列,验证互不阻塞;用本页的 500 ms 判定观察运行时序</td>
+          <td><span class="pill warn">页面待建(链接按路线预留)</span></td>
+        </tr>
+        <tr>
+          <td><a href="/projects/collect/">回到 M0 采集</a></td>
+          <td>复查单位、采样周期与误差:帧里发的必须是"解释过的数",不是裸 ADC 码</td>
+          <td><span class="pill ok">已上线</span></td>
+        </tr>
+        <tr>
+          <td><a href="/mcu/uart">MCU · UART</a></td>
+          <td>补电气与时序细节:波特率误差、ORE 溢出、DMA + 空闲中断收整帧</td>
+          <td><span class="pill ok">已有</span></td>
+        </tr>
+        <tr>
+          <td><a href="/projects/">项目总览</a></td>
+          <td>对照 M0–M5 验收标准,确认 M1 的交付物能接上 M2</td>
+          <td><span class="pill ok">已上线</span></td>
+        </tr>
+      </table>
+      <div class="callout ok">
+        <b>M1 通过 = </b>构造器默认帧 XOR 为 0xE3、四类错误都能复现并说出处理动作、500 ms 超时统计能解释;
+        实物那一帧由你补上并注明来源。下一步 M2 再把这条链路拆成任务——先把单任务的帧收发跑稳。
+      </div>
+    </div>
+
+    <footer class="foot">
+      <p>
+        <b>证据声明</b>:本页所有帧与判定均由浏览器内脚本按契约计算,标注 <span class="ev s">simulated</span>;
+        页面未连接真实串口,未产生任何实测数据(需实测的部分标注 <span class="ev h">hardware-pending</span>)。
+        示例帧 <code>AA 55 04 01 01 29 09 2E 16 E3</code> 已用独立 Node 脚本核算(XOR = 0xE3),与构造器默认输出一致。
+      </p>
+      <p><a href="/projects/">← 返回项目实战</a> · <a href="/route/">学习路线</a> · <a href="/projects/collect/">M0 采集</a></p>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var TIMEOUT_MS = 500;
+      var MAX_LEN = 8;
+      var GOLDEN = [0xAA, 0x55, 0x04, 0x01, 0x01, 0x29, 0x09, 0x2E, 0x16, 0xE3];
+
+      function $(id) { return document.getElementById(id); }
+      function hx(v) { return (v & 0xFF).toString(16).toUpperCase().padStart(2, '0'); }
+      function hexLine(list) { return list.map(hx).join(' '); }
+      function xorAll(list) {
+        var x = 0;
+        for (var i = 0; i < list.length; i++) { x ^= list[i]; }
+        return x & 0xFF;
+      }
+      function toInt16(u) { return u >= 0x8000 ? u - 0x10000 : u; }
+      function roleOf(i, total) {
+        if (i === 0 || i === 1) { return '帧头'; }
+        if (i === 2) { return 'LEN'; }
+        if (i === 3) { return 'SEQ'; }
+        if (i === 4) { return 'CMD'; }
+        if (i === total - 1) { return 'XOR'; }
+        return 'DATA[' + (i - 5) + ']';
+      }
+
+      /* ---------- 实验 1:帧构造器 ---------- */
+
+      var bTemp = $('b-temp');
+      var bHum = $('b-hum');
+      var bSeq = $('b-seq');
+      var bCmd = $('b-cmd');
+      var bHex = $('b-hex');
+      var bTlen = $('b-tlen');
+      var bStrip = $('b-strip');
+      var bSteps = $('b-steps');
+      var bWarn = $('b-warn');
+      var bCopy = $('b-copy');
+      var lastBuilt = GOLDEN.slice();
+
+      function buildFrame(tempC, humPct, seqNum, cmd) {
+        var warnings = [];
+        var rawT = null, rawH = null, tUnsigned = null, data = [], len = 0;
+
+        if (cmd === 0x01) {
+          var t100 = Math.round(tempC * 100);
+          if (!isFinite(t100)) { t100 = 0; warnings.push('温度不是有效数字,按 0.00 ℃ 计算。'); }
+          if (t100 > 32767) { t100 = 32767; warnings.push('温度超出 int16 上限(+327.67 ℃),已截断。'); }
+          if (t100 < -32768) { t100 = -32768; warnings.push('温度超出 int16 下限(-327.68 ℃),已截断。'); }
+
+          var h100 = Math.round(humPct * 100);
+          if (!isFinite(h100)) { h100 = 0; warnings.push('湿度不是有效数字,按 0.00 % 计算。'); }
+          if (h100 < 0) { h100 = 0; warnings.push('湿度小于 0,已按 0.00 % 计算。'); }
+          if (h100 > 65535) { h100 = 65535; warnings.push('湿度超出 uint16 上限(655.35 %),已截断。'); }
+
+          rawT = t100;
+          rawH = h100;
+          tUnsigned = t100 < 0 ? t100 + 65536 : t100;
+          data = [tUnsigned & 0xFF, (tUnsigned >> 8) & 0xFF, h100 & 0xFF, (h100 >> 8) & 0xFF];
+          len = 4;
+        }
+
+        var seq = Math.round(seqNum);
+        if (!isFinite(seq)) { seq = 0; warnings.push('SEQ 不是有效数字,按 0 计算。'); }
+        var seqByte = ((seq % 256) + 256) % 256;
+        if (seq !== seqByte) { warnings.push('SEQ 超出 0~255,已按 256 回绕为 ' + seqByte + '。'); }
+
+        var frame = [0xAA, 0x55, len, seqByte, cmd].concat(data);
+        var checksum = xorAll(frame);
+        frame.push(checksum);
+
+        return {
+          frame: frame, len: len, seq: seqByte, cmd: cmd, checksum: checksum,
+          rawT: rawT, rawH: rawH, tUnsigned: tUnsigned, data: data, warnings: warnings
+        };
+      }
+
+      function renderWarnings(el, msgs) {
+        el.textContent = '';
+        if (!msgs.length) { el.style.display = 'none'; return; }
+        el.style.display = 'block';
+        msgs.forEach(function (m) {
+          var d = document.createElement('div');
+          d.textContent = '⚠ ' + m;
+          el.appendChild(d);
+        });
+      }
+
+      function addStep(title, nodes) {
+        var li = document.createElement('li');
+        var b = document.createElement('b');
+        b.textContent = title;
+        li.appendChild(b);
+        var p = document.createElement('div');
+        nodes.forEach(function (n) { p.appendChild(n); });
+        li.appendChild(p);
+        bSteps.appendChild(li);
+      }
+      function codeNode(t) {
+        var c = document.createElement('code');
+        c.textContent = t;
+        return c;
+      }
+      function txt(t) { return document.createTextNode(t); }
+
+      function renderBuilder() {
+        var cmd = bCmd.value === '2' ? 0x02 : 0x01;
+        var isSensor = cmd === 0x01;
+        bTemp.disabled = !isSensor;
+        bHum.disabled = !isSensor;
+
+        var temp = isSensor ? parseFloat(bTemp.value) : 0;
+        var hum = isSensor ? parseFloat(bHum.value) : 0;
+        var seq = parseFloat(bSeq.value);
+        var f = buildFrame(temp, hum, seq, cmd);
+        lastBuilt = f.frame.slice();
+
+        bHex.textContent = hexLine(f.frame);
+        bTlen.textContent = 'LEN = ' + f.len + ',总长 = 6 + ' + f.len + ' = ' + f.frame.length + ' 字节';
+
+        bStrip.textContent = '';
+        f.frame.forEach(function (v, i) {
+          var total = f.frame.length;
+          var role, cls;
+          if (i === 0 || i === 1) { role = '帧头'; cls = 'hdr'; }
+          else if (i === 2) { role = 'LEN'; cls = 'len'; }
+          else if (i === 3) { role = 'SEQ'; cls = 'seq'; }
+          else if (i === 4) { role = 'CMD'; cls = 'cmd'; }
+          else if (i === total - 1) { role = 'XOR'; cls = 'xor'; }
+          else { role = 'DATA[' + (i - 5) + ']'; cls = 'data'; }
+          var cell = document.createElement('div');
+          cell.className = 'byte ' + cls;
+          var r = document.createElement('span');
+          r.className = 'role';
+          r.textContent = role;
+          var val = document.createElement('span');
+          val.className = 'val';
+          val.textContent = hx(v);
+          cell.appendChild(r);
+          cell.appendChild(val);
+          bStrip.appendChild(cell);
+        });
+
+        bSteps.textContent = '';
+
+        if (isSensor) {
+          var signedT = toInt16(f.tUnsigned);
+          var inputT = parseFloat(bTemp.value);
+          var rounded = isFinite(inputT) && Math.abs(inputT * 100 - f.rawT) > 0.0001;
+          var stepNodes = [
+            codeNode('T = ' + (f.rawT / 100).toFixed(2) + ' ℃ × 100 = ' + f.rawT),
+            txt(';'),
+            codeNode('RH = ' + (f.rawH / 100).toFixed(2) + ' % × 100 = ' + f.rawH)
+          ];
+          if (rounded) {
+            stepNodes.push(txt('(输入超过 0.01 分辨率,已四舍五入)'));
+          }
+          addStep('定标:小数 ×100 存整数', stepNodes);
+
+          if (f.rawT >= 0) {
+            addStep('转字节:int16 正数直接拆小端', [
+              codeNode(f.rawT + ' = 0x' + f.rawT.toString(16).toUpperCase().padStart(4, '0')),
+              txt(' → DATA[0] = 0x' + hx(f.data[0]) + '(低字节先发),DATA[1] = 0x' + hx(f.data[1]) + '(高字节)')
+            ]);
+          } else {
+            addStep('转字节:int16 负数先取补码,再拆小端', [
+              codeNode(f.rawT + ' → 0x10000 − ' + Math.abs(f.rawT) + ' = 0x' + f.tUnsigned.toString(16).toUpperCase()),
+              txt(' → DATA[0] = 0x' + hx(f.data[0]) + ',DATA[1] = 0x' + hx(f.data[1]) + ';接收端按 int16 读回 ' +
+                f.rawT + ' ÷ 100 = ' + (f.rawT / 100).toFixed(2) + ' ℃')
+            ]);
+          }
+
+          addStep('湿度:uint16 拆小端', [
+            codeNode(f.rawH + ' = 0x' + f.rawH.toString(16).toUpperCase().padStart(4, '0')),
+            txt(' → DATA[2] = 0x' + hx(f.data[2]) + ',DATA[3] = 0x' + hx(f.data[3]))
+          ]);
+
+          addStep('组前缀:帧头 + LEN + SEQ + CMD', [
+            codeNode('AA 55 04 ' + hx(f.seq) + ' 01'),
+            txt('(LEN = 4,SEQ = ' + f.seq + ',CMD = 0x01)')
+          ]);
+
+          addStep('拼 DATA', [codeNode(hexLine(f.frame.slice(0, 9))), txt('  ← 还差 XOR')]);
+
+          var chain = xorChain(f.frame.slice(0, 9));
+          addStep('算 XOR:从 AA 异或到 DATA 末字节', [
+            txt('逐字节链:'),
+            (function () {
+              var s = document.createElement('span');
+              s.className = 'chain';
+              s.textContent = chain.join(' → ');
+              return s;
+            })(),
+            txt('XOR = '),
+            codeNode('0x' + hx(f.checksum))
+          ]);
+
+          addStep('完整帧 + 自校验', [
+            codeNode(hexLine(f.frame)),
+            txt(';整帧(含 XOR)再异或 = 0x' + hx(xorAll(f.frame)) + ',合法帧应为 0x00。')
+          ]);
+
+          addStep('上线耗时', [
+            txt(f.frame.length + ' 字节 × 10 bit ÷ 115200 ≈ ' + (f.frame.length * 10 / 115200 * 1000).toFixed(2) +
+              ' ms,远小于 500 ms 超时阈值;所以超时只可能是"整帧没来"。')
+          ]);
+        } else {
+          addStep('心跳帧:CMD = 0x02,LEN = 0,DATA 为空', [
+            codeNode('CMD = 0x02'),
+            txt(',所以 LEN 必须是 0,总长 = 6 字节')
+          ]);
+          addStep('组帧:帧头 + LEN + SEQ + CMD', [
+            codeNode('AA 55 00 ' + hx(f.seq) + ' 02')
+          ]);
+          var hbChain = xorChain(f.frame.slice(0, 5));
+          addStep('算 XOR:5 个字节逐字节异或', [
+            txt('逐字节链:'),
+            (function () {
+              var s = document.createElement('span');
+              s.className = 'chain';
+              s.textContent = hbChain.join(' → ');
+              return s;
+            })(),
+            txt('XOR = '),
+            codeNode('0x' + hx(f.checksum))
+          ]);
+          addStep('完整帧', [
+            codeNode(hexLine(f.frame)),
+            txt(';整帧异或 = 0x' + hx(xorAll(f.frame)) + '。心跳只证明链路活着,不携带温湿度。')
+          ]);
+        }
+
+        renderWarnings(bWarn, f.warnings);
+      }
+
+      function xorChain(bytes) {
+        var parts = [];
+        var acc = bytes[0];
+        for (var i = 1; i < bytes.length; i++) {
+          var next = acc ^ bytes[i];
+          parts.push(hx(acc) + ' ^ ' + hx(bytes[i]) + ' = ' + hx(next));
+          acc = next;
+        }
+        return parts;
+      }
+
+      [bTemp, bHum, bSeq].forEach(function (el) {
+        el.addEventListener('input', renderBuilder);
+      });
+      bCmd.addEventListener('change', renderBuilder);
+
+      var PRESETS = {
+        example: { temp: '23.45', hum: '56.78', seq: '1', cmd: '1' },
+        negative: { temp: '-5.25', hum: '30.00', seq: '0', cmd: '1' },
+        limit: { temp: '327.67', hum: '655.35', seq: '255', cmd: '1' },
+        heartbeat: { temp: '0', hum: '0', seq: '2', cmd: '2' }
+      };
+      document.querySelectorAll('[data-preset]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var p = PRESETS[btn.getAttribute('data-preset')];
+          if (!p) { return; }
+          bTemp.value = p.temp;
+          bHum.value = p.hum;
+          bSeq.value = p.seq;
+          bCmd.value = p.cmd;
+          renderBuilder();
+        });
+      });
+
+      bCopy.addEventListener('click', function () {
+        var text = hexLine(lastBuilt);
+        var old = bCopy.textContent;
+        function done() {
+          bCopy.textContent = '已复制 ' + lastBuilt.length + ' 字节';
+          window.setTimeout(function () { bCopy.textContent = old; }, 1400);
+        }
+        function fallback() {
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', 'readonly');
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            done();
+          } catch (e) {
+            bCopy.textContent = '复制失败,请手动选择';
+            window.setTimeout(function () { bCopy.textContent = old; }, 1800);
+          }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, fallback);
+        } else {
+          fallback();
+        }
+      });
+
+      renderBuilder();
+
+      /* ---------- 实验 2:解析器与错误注入 ---------- */
+
+      var pInput = $('p-input');
+      var pBytes = $('p-bytes');
+      var pResult = $('p-result');
+
+      function parseHexText(raw) {
+        var cleaned = String(raw).replace(/0x/gi, '').replace(/[\s,;，、]+/g, '');
+        if (cleaned.length === 0) { return { bytes: [] }; }
+        var bad = cleaned.replace(/[0-9a-fA-F]/g, '');
+        if (bad.length) {
+          return { error: { type: '输入格式', detail: '出现了非十六进制字符:' + bad.slice(0, 8), advice: ['只填十六进制字节,空格分隔即可;或直接点上面的注入按钮。'] } };
+        }
+        if (cleaned.length % 2 !== 0) {
+          return { error: { type: '输入格式', detail: '十六进制字符数为 ' + cleaned.length + '(奇数),无法按字节切分。', advice: ['每个字节写两位,例如 AA 55 04;检查是否少写或多写了一位。'] } };
+        }
+        var bytes = [];
+        for (var i = 0; i < cleaned.length; i += 2) {
+          bytes.push(parseInt(cleaned.substr(i, 2), 16));
+        }
+        return { bytes: bytes };
+      }
+
+      function parseFrame(bytes) {
+        if (bytes.length === 0) {
+          return {
+            status: 'error', step: 3, type: '帧尾缺失/未收全', offset: 0, bad: [],
+            detail: '缓冲区为空,一个字节都没收到。',
+            advice: ['继续 read 等待数据;超过 500 ms 仍为空,按超时处理并记录日志。']
+          };
+        }
+        if (bytes.length === 1) {
+          if (bytes[0] === 0xAA) {
+            return {
+              status: 'error', step: 3, type: '帧尾缺失/未收全', offset: 0, bad: [],
+              detail: '只收到 0xAA,还缺第二个帧头字节 0x55。',
+              advice: ['保留这 1 字节,等后续数据补齐后再解析。']
+            };
+          }
+          return {
+            status: 'error', step: 1, type: '帧头错', offset: 0, bad: [0],
+            detail: '首字节为 0x' + hx(bytes[0]) + ',不是 0xAA。',
+            advice: ['丢弃这个字节,从下一个字节重新搜索 AA 55。', '检查波特率、共地、TX/RX 是否交叉。']
+          };
+        }
+        if (bytes[0] !== 0xAA || bytes[1] !== 0x55) {
+          var found = -1;
+          for (var i = 0; i + 1 < bytes.length; i++) {
+            if (bytes[i] === 0xAA && bytes[i + 1] === 0x55) { found = i; break; }
+          }
+          var advice = ['丢弃当前首字节,从下一字节重新搜索 AA 55;不要按整帧长度丢弃。',
+            '核对两端波特率(本契约按 115200 8N1)、是否共地、TX/RX 是否交叉。'];
+          if (found > 0) { advice.unshift('在偏移 ' + found + ' 处发现了 AA 55,可丢弃前 ' + found + ' 字节后重试。'); }
+          return {
+            status: 'error', step: 1, type: '帧头错', offset: bytes[0] !== 0xAA ? 0 : 1,
+            bad: [0, 1], detail: '期望 AA 55,实际 ' + hx(bytes[0]) + ' ' + hx(bytes[1]) + '。', advice: advice
+          };
+        }
+        if (bytes.length < 3) {
+          return {
+            status: 'error', step: 3, type: '帧尾缺失/未收全', offset: 2, bad: [],
+            detail: '只收到帧头,还缺 LEN 字节。',
+            advice: ['继续缓存等待;凑够 6+LEN 字节再解析。']
+          };
+        }
+        var len = bytes[2];
+        if (len > MAX_LEN) {
+          return {
+            status: 'error', step: 2, type: 'LEN 超限', offset: 2, bad: [2],
+            detail: 'LEN = ' + len + ',超过契约允许的 0~' + MAX_LEN + '。',
+            advice: ['整帧丢弃并清空缓冲,不要按 LEN 去等 ' + (6 + len) + ' 字节。',
+              '检查发送端是否把"整帧长度"写进了 LEN(应为 DATA 字节数)。',
+              '若字节流已经错位,丢弃后重新搜索 AA 55。']
+          };
+        }
+        var need = 6 + len;
+        if (bytes.length < need) {
+          return {
+            status: 'error', step: 3, type: '帧尾缺失/未收全', offset: bytes.length,
+            bad: [], need: need, missing: need - bytes.length,
+            detail: '已收 ' + bytes.length + ' 字节,LEN = ' + len + ' 时整帧需要 ' + need + ' 字节,还差 ' +
+              (need - bytes.length) + ' 字节(含末字节 XOR)。',
+            advice: ['保留缓冲区继续 read,不要现在就报 XOR 错。',
+              '检查单次 read 是否只取到半帧,以及是否处理了粘包/半包。',
+              '超过 500 ms 仍凑不齐 → 按超时处理并清空缓冲。']
+          };
+        }
+        var calc = xorAll(bytes.slice(0, need - 1));
+        var recv = bytes[need - 1];
+        if (calc !== recv) {
+          return {
+            status: 'error', step: 4, type: 'XOR 错', offset: need - 1,
+            bad: [need - 1], calc: calc, recv: recv,
+            detail: '接收末字节 = 0x' + hx(recv) + ',按前 ' + (need - 1) + ' 字节重算得 0x' + hx(calc) + '。',
+            advice: ['整帧丢弃(消费 ' + need + ' 字节),不影响后续帧。',
+              '核对发送端异或是否从 AA 开始、是否漏算/多算一个字节、是否把 XOR 自身算进去。',
+              '用本页构造器同参数对照:手算链末值应等于帧末字节。']
+          };
+        }
+
+        var seq = bytes[3];
+        var cmd = bytes[4];
+        var warnings = [];
+        var res = {
+          status: 'ok', step: 5, bytes: bytes, need: need, len: len, seq: seq,
+          cmd: cmd, checksum: recv, calc: calc, warnings: warnings
+        };
+        if (bytes.length > need) {
+          warnings.push('本帧之后还有 ' + (bytes.length - need) + ' 字节残留(粘包或噪声),本帧按 ' + need + ' 字节消费,剩余留给下一次解析。');
+        }
+        if (cmd === 0x01) {
+          if (len !== 4) {
+            warnings.push('CMD = 0x01 要求 LEN = 4,当前 LEN = ' + len + ',契约不符,数据不可用。');
+          } else {
+            var tRaw = bytes[5] | (bytes[6] << 8);
+            var hRaw = bytes[7] | (bytes[8] << 8);
+            res.tRaw = toInt16(tRaw);
+            res.hRaw = hRaw;
+            res.temp = res.tRaw / 100;
+            res.hum = hRaw / 100;
+          }
+        } else if (cmd === 0x02) {
+          if (len !== 0) {
+            warnings.push('CMD = 0x02 心跳要求 LEN = 0,当前 LEN = ' + len + ',契约不符。');
+          }
+        } else {
+          warnings.push('CMD = 0x' + hx(cmd) + ' 不在契约内(仅 0x01/0x02),不得作为有效数据使用。');
+        }
+        return res;
+      }
+
+      function byteCell(i, v, role, bad) {
+        var cell = document.createElement('div');
+        cell.className = 'byte' + (bad ? ' bad' : '');
+        var r = document.createElement('span');
+        r.className = 'role';
+        r.textContent = i + ' · ' + role;
+        var val = document.createElement('span');
+        val.className = 'val';
+        val.textContent = hx(v);
+        cell.appendChild(r);
+        cell.appendChild(val);
+        return cell;
+      }
+
+      function renderParse(res) {
+        pBytes.textContent = '';
+        var bytes = res.bytes || [];
+        var badMap = {};
+        (res.bad || []).forEach(function (i) { badMap[i] = true; });
+        bytes.slice(0, 24).forEach(function (v, i) {
+          pBytes.appendChild(byteCell(i, v, roleOf(i, bytes.length), badMap[i]));
+        });
+        if (bytes.length > 24) {
+          var more = document.createElement('div');
+          more.className = 'byte miss';
+          more.textContent = '+' + (bytes.length - 24) + ' 字节';
+          pBytes.appendChild(more);
+        }
+        if (res.need && res.need > bytes.length) {
+          var miss = document.createElement('div');
+          miss.className = 'byte miss';
+          miss.innerHTML = '<span class="val">+' + (res.need - bytes.length) + ' 未到</span>';
+          pBytes.appendChild(miss);
+        }
+
+        pResult.textContent = '';
+
+        var badge = document.createElement('div');
+        badge.className = 'status ' + (res.status === 'ok' ? 'ok' : 'bad');
+        badge.textContent = res.status === 'ok'
+          ? '解析通过 · 第 5 步语义完成 · 有效帧,可刷新 500 ms 计时'
+          : '第 ' + res.step + ' 步失败 · ' + res.type;
+        pResult.appendChild(badge);
+
+        if (res.status !== 'ok') {
+          var detail = document.createElement('p');
+          detail.className = 'err-detail';
+          detail.textContent = res.detail;
+          pResult.appendChild(detail);
+
+          if (res.offset !== undefined) {
+            var pos = document.createElement('p');
+            pos.className = 'err-detail';
+            pos.innerHTML = '<span class="k">偏移</span>字节 ' + res.offset + (res.missing ? '(等待 ' + res.missing + ' 字节)' : '');
+            pResult.appendChild(pos);
+          }
+
+          var ul = document.createElement('ul');
+          ul.className = 'advice';
+          res.advice.forEach(function (a) {
+            var li = document.createElement('li');
+            li.textContent = a;
+            ul.appendChild(li);
+          });
+          pResult.appendChild(ul);
+          return;
+        }
+
+        var grid = document.createElement('div');
+        grid.className = 'res';
+        function item(k, v, cls) {
+          var d = document.createElement('div');
+          d.className = 'res-item';
+          var kk = document.createElement('div');
+          kk.className = 'res-k';
+          kk.textContent = k;
+          var vv = document.createElement('div');
+          vv.className = 'res-v' + (cls ? ' ' + cls : '');
+          vv.textContent = v;
+          d.appendChild(kk);
+          d.appendChild(vv);
+          grid.appendChild(d);
+        }
+        item('CMD', res.cmd === 0x01 ? '0x01 传感器' : '0x02 心跳');
+        item('SEQ', String(res.seq));
+        item('LEN', String(res.len) + ' / 总长 ' + res.need + ' B');
+        item('XOR 校验', '0x' + hx(res.recv), 'teal');
+        if (res.cmd === 0x01 && res.len === 4) {
+          item('温度', res.temp.toFixed(2) + ' ℃', 'teal');
+          item('湿度', res.hum.toFixed(2) + ' %', 'teal');
+          item('温度原始值', res.tRaw + '(0x' + (res.tRaw >= 0 ? res.tRaw : res.tRaw + 65536).toString(16).toUpperCase().padStart(4, '0') + ')');
+          item('湿度原始值', res.hRaw + '(0x' + res.hRaw.toString(16).toUpperCase().padStart(4, '0') + ')');
+        }
+        item('整帧异或', '0x' + hx(xorAll(res.bytes.slice(0, res.need))), 'teal');
+        pResult.appendChild(grid);
+
+        if (res.warnings.length) {
+          var w = document.createElement('ul');
+          w.className = 'advice';
+          res.warnings.forEach(function (m) {
+            var li = document.createElement('li');
+            li.textContent = m;
+            w.appendChild(li);
+          });
+          pResult.appendChild(w);
+        }
+      }
+
+      function runParse() {
+        var parsed = parseHexText(pInput.value);
+        if (parsed.error) {
+          pBytes.textContent = '';
+          pResult.textContent = '';
+          var badge = document.createElement('div');
+          badge.className = 'status bad';
+          badge.textContent = '输入格式错误 · ' + parsed.error.detail;
+          pResult.appendChild(badge);
+          var ul = document.createElement('ul');
+          ul.className = 'advice';
+          parsed.error.advice.forEach(function (a) {
+            var li = document.createElement('li');
+            li.textContent = a;
+            ul.appendChild(li);
+          });
+          pResult.appendChild(ul);
+          return;
+        }
+        renderParse(parseFrame(parsed.bytes));
+      }
+
+      pInput.addEventListener('input', runParse);
+
+      function currentBytes() {
+        var parsed = parseHexText(pInput.value);
+        if (!parsed.error && parsed.bytes.length > 0) { return parsed.bytes.slice(); }
+        return GOLDEN.slice();
+      }
+      function setBytesAndParse(bytes) {
+        pInput.value = hexLine(bytes);
+        runParse();
+      }
+
+      $('p-check').addEventListener('click', function () {
+        var b = currentBytes();
+        b[b.length - 1] = b[b.length - 1] ^ 0x01;
+        setBytesAndParse(b);
+      });
+      $('p-trunc').addEventListener('click', function () {
+        var b = currentBytes();
+        setBytesAndParse(b.slice(0, Math.max(0, b.length - 2)));
+      });
+      $('p-head').addEventListener('click', function () {
+        var b = currentBytes();
+        if (b.length < 2) { b = GOLDEN.slice(); }
+        b[1] = 0x54;
+        setBytesAndParse(b);
+      });
+      $('p-len').addEventListener('click', function () {
+        var b = currentBytes();
+        if (b.length < 3) { b = GOLDEN.slice(); }
+        b[2] = 0x0C;
+        setBytesAndParse(b);
+      });
+      $('p-reset').addEventListener('click', function () {
+        setBytesAndParse(GOLDEN.slice());
+      });
+
+      runParse();
+
+      /* ---------- 实验 3:超时模拟 ---------- */
+
+      var gInput = $('g-input');
+      var gSummary = $('g-summary');
+      var gVerdict = $('g-verdict');
+      var gBars = $('g-bars');
+      var gBody = $('g-body');
+      var gNote = $('g-note');
+
+      var GAP_PRESETS = {
+        stable: '300 300 310 290 300 320 280 300 300 305 295 300',
+        jitter: '180 520 260 380 240 460 300 200 500 320 280 420',
+        period800: '800 800 800 800 800',
+        loss: '300 700 700 700 300'
+      };
+
+      function parseGaps(text) {
+        var parts = String(text).split(/[\s,;，、]+/).filter(Boolean);
+        var list = [];
+        var bad = [];
+        parts.forEach(function (p) {
+          var n = parseFloat(p);
+          if (!isFinite(n) || n <= 0) { bad.push(p); }
+          else { list.push(Math.round(n)); }
+        });
+        return { list: list.slice(0, 60), bad: bad, truncated: list.length > 60 };
+      }
+
+      function evalGaps(list) {
+        var rows = [];
+        var t = 0;
+        var over = 0;
+        var maxGap = 0;
+        var cur = 0;
+        var maxConsec = 0;
+        var firstOver = -1;
+
+        list.forEach(function (g, i) {
+          t += g;
+          var isOver = g > TIMEOUT_MS;
+          if (isOver) {
+            over++;
+            cur++;
+            if (firstOver < 0) { firstOver = i + 1; }
+            if (cur > maxConsec) { maxConsec = cur; }
+          } else {
+            cur = 0;
+          }
+          if (g > maxGap) { maxGap = g; }
+          rows.push({ i: i + 1, t: t, gap: g, over: isOver, delta: g - TIMEOUT_MS });
+        });
+
+        return {
+          rows: rows, over: over, rate: list.length ? over / list.length * 100 : 0,
+          maxGap: maxGap, maxConsec: maxConsec, firstOver: firstOver,
+          total: t, avg: list.length ? t / list.length : 0
+        };
+      }
+
+      function renderGap() {
+        var parsed = parseGaps(gInput.value);
+        var list = parsed.list;
+
+        gSummary.textContent = '';
+        gBody.textContent = '';
+        gBars.textContent = '';
+        gVerdict.textContent = '';
+        gVerdict.className = 'verdict';
+
+        if (!list.length) {
+          gSummary.innerHTML = '<div class="res-item"><div class="res-k">间隔数</div><div class="res-v red">0</div></div>';
+          gVerdict.textContent = '没有可判定的间隔:请输入正整数毫秒值,例如 300 300 310。';
+          gVerdict.className = 'verdict bad';
+          gNote.textContent = parsed.bad.length ? '已忽略:' + parsed.bad.slice(0, 5).join('、') : '';
+          return;
+        }
+
+        var stats = evalGaps(list);
+
+        function item(k, v, cls) {
+          var d = document.createElement('div');
+          d.className = 'res-item';
+          var kk = document.createElement('div');
+          kk.className = 'res-k';
+          kk.textContent = k;
+          var vv = document.createElement('div');
+          vv.className = 'res-v' + (cls ? ' ' + cls : '');
+          vv.textContent = v;
+          d.appendChild(kk);
+          d.appendChild(vv);
+          gSummary.appendChild(d);
+        }
+        item('发送次数', String(list.length));
+        item('总时长', Math.round(stats.total) + ' ms');
+        item('平均间隔', Math.round(stats.avg) + ' ms');
+        item('最大间隔', stats.maxGap + ' ms');
+        item('超时次数', String(stats.over), stats.over ? 'red' : 'teal');
+        item('超时率', stats.rate.toFixed(1) + ' %', stats.over ? 'red' : 'teal');
+        item('最长连续超时', String(stats.maxConsec), stats.maxConsec ? 'red' : 'teal');
+        item('首次超时', stats.firstOver > 0 ? '第 ' + stats.firstOver + ' 个间隔' : '—');
+
+        if (stats.over === 0) {
+          gVerdict.className = 'verdict ok';
+          gVerdict.textContent = '全部 ' + list.length + ' 个间隔都 ≤ 500 ms,接收端不会触发超时;最大 ' +
+            stats.maxGap + ' ms,距阈值还有 ' + (TIMEOUT_MS - stats.maxGap) + ' ms 余量。';
+        } else {
+          gVerdict.className = 'verdict bad';
+          gVerdict.textContent = '有 ' + stats.over + ' 个间隔 > 500 ms(' + stats.rate.toFixed(1) +
+            '%),接收端会在这些间隔内判定超时' +
+            (stats.firstOver > 0 ? ',首次出现在第 ' + stats.firstOver + ' 个间隔' : '') +
+            '。若这是固定发送周期,应改为 ≤ 400 ms(给阈值留 20% 余量);若是偶发丢帧,记录每次超时的前后 SEQ 与时间。';
+        }
+
+        var scale = Math.max(TIMEOUT_MS * 1.2, stats.maxGap * 1.08);
+        var thr = document.createElement('div');
+        thr.className = 'thr';
+        thr.style.bottom = (TIMEOUT_MS / scale * 100) + '%';
+        var thrLabel = document.createElement('span');
+        thrLabel.textContent = '500 ms 阈值';
+        thr.appendChild(thrLabel);
+        gBars.appendChild(thr);
+
+        list.forEach(function (g, gi) {
+          var b = document.createElement('div');
+          b.className = 'bar' + (g > TIMEOUT_MS ? ' over' : '');
+          b.style.height = Math.max(2, (g / scale) * 100) + '%';
+          b.title = '第 ' + (gi + 1) + ' 个间隔:' + g + ' ms' + (g > TIMEOUT_MS ? '(超时)' : '(正常)');
+          gBars.appendChild(b);
+        });
+
+        stats.rows.forEach(function (r) {
+          var tr = document.createElement('tr');
+          if (r.over) { tr.className = 'over'; }
+          [String(r.i), String(Math.round(r.t)), String(r.gap), (r.delta > 0 ? '+' + r.delta : String(r.delta)),
+            r.over ? '超时' : '正常'].forEach(function (val) {
+            var td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+          });
+          gBody.appendChild(tr);
+        });
+
+        var notes = [];
+        if (parsed.bad.length) { notes.push('已忽略无法解析的片段:' + parsed.bad.slice(0, 5).join('、')); }
+        if (parsed.truncated) { notes.push('间隔数超过 60,仅统计前 60 个。'); }
+        gNote.textContent = notes.join(';');
+      }
+
+      gInput.addEventListener('input', renderGap);
+      document.querySelectorAll('[data-gap]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var s = GAP_PRESETS[btn.getAttribute('data-gap')];
+          if (typeof s === 'string') { gInput.value = s; renderGap(); }
+        });
+      });
+
+      renderGap();
+
+      /* ---------- 结果检查 ---------- */
+
+      var checks = document.querySelectorAll('#checklist input[type="checkbox"]');
+      var checkStatus = $('check-status');
+      function renderChecks() {
+        var done = 0;
+        checks.forEach(function (c) { if (c.checked) { done++; } });
+        checkStatus.textContent = '已完成 ' + done + ' / ' + checks.length +
+          (done === checks.length ? '——含 1 项实物验证,请确认已附抓帧记录' : '');
+      }
+      checks.forEach(function (c) { c.addEventListener('change', renderChecks); });
+      renderChecks();
+
+      /* ---------- 小测 ---------- */
+
+      var QUESTIONS = [
+        {
+          stem: '其余字段不变,只把 SEQ 从 0x01 改成 0x02,帧尾 XOR 会变成?',
+          opts: ['0xE0', '0xE3', '0xE2', '0x01'],
+          answer: 0,
+          explain: '异或对同一字节作用两次会抵消。新 XOR = 0xE3 ^ 0x01 ^ 0x02 = 0xE3 ^ 0x03 = 0xE0。也可以用构造器改 SEQ 复核。'
+        },
+        {
+          stem: 'LEN 字段的值表示什么?',
+          opts: [
+            '整帧的总字节数',
+            'DATA 的字节数(0~8),不含帧头/SEQ/CMD/XOR',
+            'DATA 字节数 + 2',
+            '帧头之后所有字节数(含 XOR)'
+          ],
+          answer: 1,
+          explain: '契约规定 LEN 只数 DATA,范围 0~8;整帧长度 = 6 + LEN。示例帧 DATA 4 字节,所以 LEN=04,总长 10 字节。'
+        },
+        {
+          stem: '一次 read() 只收到 AA 55 04 01 01 29 共 6 字节,正确做法是?',
+          opts: [
+            '立即按 XOR 错丢弃整帧',
+            '按 LEN 补齐到 10 字节再解析;当前应报"未收全/帧尾缺失"并保留缓冲',
+            '把 LEN 改成 2 强行解析',
+            '直接当作心跳帧处理'
+          ],
+          answer: 1,
+          explain: '按 LEN=4,整帧需要 6+4=10 字节;现在只有 6 字节,属未收全。应缓存等待,超过 500 ms 仍不齐再按超时清空;此时还没有末字节,不能报 XOR 错。'
+        },
+        {
+          stem: '发送间隔固定 600 ms、阈值 500 ms,统计结果应是?',
+          opts: [
+            '不会超时,因为每帧本身完整',
+            '每两个相邻帧之间都超时一次,超时率 100%;下一帧到达后恢复计时',
+            '只有第一次超时',
+            '超时但数据仍然有效,可以忽略'
+          ],
+          answer: 1,
+          explain: '超时按"距最后一条有效帧的时间"判定,600 > 500,所以每个间隔都触发一次;收到下一帧即清除标志并重新计时。帧完整只能说明"到了",不能说明"来得及时"。'
+        }
+      ];
+
+      var quizWrap = $('quiz');
+      var quizStatus = $('quiz-status');
+      var score = 0;
+      var answered = 0;
+
+      function updateQuizStatus() {
+        quizStatus.textContent = '答对 ' + score + ' / ' + QUESTIONS.length +
+          (answered === QUESTIONS.length ? '(已全部作答)' : '');
+      }
+
+      function renderQuiz() {
+        quizWrap.textContent = '';
+        score = 0;
+        answered = 0;
+
+        QUESTIONS.forEach(function (q, qi) {
+          var card = document.createElement('div');
+          card.className = 'q';
+
+          var stem = document.createElement('div');
+          stem.className = 'stem';
+          stem.textContent = (qi + 1) + '. ' + q.stem;
+          card.appendChild(stem);
+
+          var explain = document.createElement('div');
+          explain.className = 'explain';
+
+          q.opts.forEach(function (text, oi) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt';
+            btn.textContent = String.fromCharCode(65 + oi) + '. ' + text;
+            btn.addEventListener('click', function () {
+              if (card.dataset.done === '1') { return; }
+              card.dataset.done = '1';
+              answered++;
+              var all = card.querySelectorAll('.opt');
+              if (oi === q.answer) {
+                btn.classList.add('right');
+                score++;
+              } else {
+                btn.classList.add('wrong');
+                all[q.answer].classList.add('right');
+              }
+              explain.classList.add('show');
+              explain.textContent = '解析:' + q.explain;
+              updateQuizStatus();
+            });
+            card.appendChild(btn);
+          });
+
+          card.appendChild(explain);
+          quizWrap.appendChild(card);
+        });
+
+        updateQuizStatus();
+      }
+
+      $('quiz-reset').addEventListener('click', renderQuiz);
+      renderQuiz();
+    })();
+  </script>
+</body>
+</html>

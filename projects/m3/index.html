@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="项目实战 M3 网关:Linux termios 读串口、AA 55 帧解析与 XOR 校验、CSV/SQLite 存储、CLI 与本地 HTTP 查询,含帧流回放、CSV 导出与查询过滤。" />
+  <title>M3 网关 · 串口接收、存储与查询 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --panel: #0f151d;
+      --panel-2: #131b25;
+      --line: #1e2a38;
+      --line-2: #2c4257;
+      --text: #e6edf3;
+      --muted: #8b9bb0;
+      --accent: #5eead4;
+      --accent-2: #7dd3fc;
+      --warn: #fbbf24;
+      --red: #f87171;
+      --violet: #c4b5fd;
+    }
+    html { color-scheme: dark; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; color: var(--text); }
+    .page h1 { font-size: clamp(26px, 4vw, 38px); margin: 10px 0 12px; letter-spacing: .01em; }
+    .page .lead { color: var(--muted); font-size: 15px; line-height: 1.85; max-width: 820px; }
+    .page .kicker { color: var(--accent); font-size: 12px; letter-spacing: .14em; font-family: ui-monospace, Menlo, monospace; }
+    .page a { color: var(--accent-2); text-decoration: none; }
+    .page a:hover { text-decoration: underline; }
+    p { line-height: 1.85; }
+    .muted { color: var(--muted); }
+    .small { font-size: 12.8px; }
+    .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+    .chip strong { color: var(--accent); font-weight: 600; }
+    .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 22px; }
+    .toc a { display: block; color: var(--muted); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 13px; background: rgba(15, 21, 29, .6); }
+    .toc a:hover { color: var(--text); border-color: var(--line-2); text-decoration: none; }
+    .toc a b { color: var(--accent); font-family: ui-monospace, Menlo, monospace; margin-right: 6px; }
+    .section { margin-top: 42px; scroll-margin-top: 76px; }
+    .section h2 { display: flex; align-items: center; gap: 10px; font-size: 21px; margin: 0 0 14px; line-height: 1.4; }
+    .sec-no { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #06231f; background: var(--accent); border-radius: 7px; padding: 3px 7px; flex: none; }
+    h3 { font-size: 16.5px; margin: 24px 0 8px; color: #dbe7f1; line-height: 1.5; }
+    code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.6px; color: #9fb3c8; background: rgba(125, 211, 252, .07); border: 1px solid rgba(125, 211, 252, .12); border-radius: 5px; padding: 1px 5px; }
+    .obj { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .obj li { position: relative; padding: 11px 13px 11px 38px; border: 1px solid var(--line); border-radius: 10px; background: rgba(15, 21, 29, .55); font-size: 14px; line-height: 1.75; }
+    .obj li::before { content: "✓"; position: absolute; left: 13px; top: 10px; color: var(--accent); font-weight: 700; }
+    .mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 14px; }
+    .mini-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: rgba(15, 21, 29, .55); }
+    .mini-card h3 { margin: 0 0 6px; font-size: 15px; }
+    .mini-card p, .mini-card ul { font-size: 13.5px; margin: 6px 0; line-height: 1.75; }
+    .mini-card ul { padding-left: 20px; }
+    .diagram { border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9)); padding: 14px; margin: 16px 0; }
+    .diagram svg { display: block; width: 100%; height: auto; }
+    .diagram text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; }
+    .diagram figcaption { color: var(--muted); font-size: 12.5px; margin-top: 8px; line-height: 1.7; }
+    .codecard { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; background: #0b1117; }
+    .codehead { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 9px 14px; background: #101823; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+    .codehead .fname { font-family: ui-monospace, Menlo, monospace; color: #c7d3df; }
+    .codehead .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.6px; line-height: 1.68; color: #c7d3df; background: #0b1117; tab-size: 4; }
+    pre code { font-family: inherit; font-size: inherit; color: inherit; background: none; border: 0; padding: 0; }
+    .note { border-left: 3px solid var(--warn); background: rgba(251, 191, 36, .07); padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 13.3px; color: #d9c9a3; margin: 12px 0; line-height: 1.75; }
+    .note.sim { border-left-color: var(--accent-2); background: rgba(125, 211, 252, .07); color: #b9d5e6; }
+    .note.safe { border-left-color: var(--accent); background: rgba(94, 234, 212, .06); color: #b8d9d3; }
+    .pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-family: ui-monospace, Menlo, monospace; white-space: nowrap; }
+    .pill.compiled { color: var(--accent); border-color: rgba(94, 234, 212, .3); }
+    .pill.sim { color: var(--accent-2); border-color: rgba(125, 211, 252, .3); }
+    .pill.principle { color: var(--violet); border-color: rgba(196, 181, 253, .3); }
+    .pill.pending { color: var(--warn); border-color: rgba(251, 191, 36, .3); }
+    .page table { width: 100%; border-collapse: collapse; font-size: 13.3px; margin: 10px 0; }
+    .page th, .page td { text-align: left; padding: 9px 11px; border-bottom: 1px solid #1a2430; vertical-align: top; line-height: 1.65; }
+    .page th { color: var(--muted); font-weight: 600; font-size: 12.5px; letter-spacing: .03em; }
+    .page tbody tr:hover { background: rgba(94, 234, 212, .025); }
+    .lab { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 16px 0; background: linear-gradient(160deg, rgba(19, 27, 37, .72), rgba(12, 17, 24, .72)); }
+    .lab .labhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .lab .labhead h3 { margin: 0; font-size: 15.5px; }
+    .lab > p:first-of-type { margin-top: 0; }
+    .field-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin: 12px 0; }
+    .field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--muted); }
+    input[type="text"], input[type="number"], input[type="datetime-local"], textarea {
+      background: #0b1117; color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+      padding: 7px 10px; font: inherit; font-size: 13px;
+    }
+    input:focus, textarea:focus { outline: none; border-color: var(--line-2); box-shadow: 0 0 0 2px rgba(94, 234, 212, .1); }
+    textarea { width: 100%; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.7; }
+    button { font: inherit; cursor: pointer; border-radius: 9px; border: 1px solid var(--line); padding: 8px 14px; background: #101823; color: var(--text); font-size: 13px; }
+    button:hover { border-color: var(--line-2); }
+    button.primary { background: var(--accent); color: #06231f; border-color: var(--accent); font-weight: 700; }
+    button.primary:hover { filter: brightness(1.05); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+    .msg { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+    .msg.ok { color: var(--accent); }
+    .msg.err { color: var(--red); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(108px, 1fr)); gap: 8px; margin: 12px 0; }
+    .stat { border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; background: rgba(8, 11, 16, .5); }
+    .stat b { display: block; font-family: ui-monospace, Menlo, monospace; font-size: 20px; line-height: 1.2; color: var(--accent); }
+    .stat span { font-size: 11.5px; color: var(--muted); }
+    .stat.err b { color: var(--red); }
+    .stat.warn b { color: var(--warn); }
+    .table-wrap { border: 1px solid var(--line); border-radius: 10px; overflow: auto; max-height: 380px; margin: 10px 0; }
+    .table-wrap table { margin: 0; }
+    .table-wrap th { position: sticky; top: 0; background: #101823; z-index: 1; }
+    td.mono, th.mono { font-family: ui-monospace, Menlo, monospace; font-size: 12.3px; white-space: nowrap; }
+    tr.is-err td { background: rgba(248, 113, 113, .035); }
+    td.empty { text-align: center; color: var(--muted); padding: 18px; }
+    .badge { display: inline-block; font-size: 11.5px; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line); font-family: ui-monospace, Menlo, monospace; line-height: 1.55; }
+    .badge.ok { color: var(--accent); border-color: rgba(94, 234, 212, .28); background: rgba(94, 234, 212, .06); }
+    .badge.heart { color: var(--accent-2); border-color: rgba(125, 211, 252, .28); background: rgba(125, 211, 252, .06); }
+    .badge.err { color: var(--red); border-color: rgba(248, 113, 113, .3); background: rgba(248, 113, 113, .07); }
+    .query-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 10px; align-items: end; margin: 12px 0; }
+    .csv-info { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+    .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .checklist li label { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: rgba(15, 21, 29, .5); cursor: pointer; font-size: 13.8px; line-height: 1.7; }
+    .checklist input { margin-top: 5px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+    .checklist li.done label { border-color: rgba(94, 234, 212, .35); background: rgba(94, 234, 212, .06); }
+    .check-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 14px; }
+    .progress { flex: 1; min-width: 180px; height: 9px; border-radius: 999px; background: #101823; border: 1px solid var(--line); overflow: hidden; }
+    .progress span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s ease; }
+    .trouble { border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; background: rgba(15, 21, 29, .55); overflow: hidden; }
+    .trouble summary { cursor: pointer; padding: 12px 14px; font-weight: 600; font-size: 14px; list-style: none; display: flex; gap: 10px; align-items: center; }
+    .trouble summary::-webkit-details-marker { display: none; }
+    .trouble summary::before { content: "▸"; color: var(--accent); transition: transform .15s ease; display: inline-block; }
+    .trouble[open] summary::before { transform: rotate(90deg); }
+    .trouble .body { padding: 0 14px 14px; font-size: 13.2px; }
+    .trouble dl { margin: 0; display: grid; grid-template-columns: 92px 1fr; gap: 6px 12px; }
+    .trouble dt { color: var(--accent); font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding-top: 2px; }
+    .trouble dd { margin: 0; color: #c7d3df; line-height: 1.75; }
+    .quiz-q { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 12px 0; background: rgba(15, 21, 29, .55); }
+    .quiz-q .stem { font-size: 14px; font-weight: 600; margin-bottom: 10px; line-height: 1.7; }
+    .quiz-q label.opt { display: flex; gap: 9px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; margin: 6px 0; cursor: pointer; font-size: 13.3px; color: #c7d3df; line-height: 1.65; }
+    .quiz-q label.opt:hover { border-color: var(--line-2); }
+    .quiz-q input[type="radio"] { margin-top: 4px; accent-color: var(--accent); flex: none; }
+    .quiz-q.is-correct { border-color: rgba(94, 234, 212, .45); }
+    .quiz-q.is-wrong { border-color: rgba(248, 113, 113, .45); }
+    .quiz-q.is-missing { border-color: rgba(251, 191, 36, .5); }
+    .quiz-q .explain { display: none; margin-top: 10px; padding: 9px 11px; border-radius: 8px; background: rgba(94, 234, 212, .06); border: 1px solid rgba(94, 234, 212, .16); color: #b9cfc8; font-size: 12.6px; line-height: 1.75; }
+    .quiz-q .explain.show { display: block; }
+    .quiz-result { display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); font-size: 13.5px; line-height: 1.7; }
+    .quiz-result.show { display: block; }
+    .quiz-result.ok { border-color: rgba(94, 234, 212, .4); background: rgba(94, 234, 212, .08); color: var(--accent); }
+    .quiz-result.warn { border-color: rgba(251, 191, 36, .4); background: rgba(251, 191, 36, .07); color: var(--warn); }
+    .quiz-result.bad { border-color: rgba(248, 113, 113, .4); background: rgba(248, 113, 113, .07); color: var(--red); }
+    .quiz-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .next-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin-top: 14px; }
+    .next-card { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9)); color: inherit; }
+    a.next-card:hover { border-color: var(--line-2); text-decoration: none; transform: translateY(-2px); transition: transform .2s ease; }
+    .next-card .t { font-weight: 700; font-size: 15px; color: var(--text); }
+    .next-card .d { color: var(--muted); font-size: 13px; line-height: 1.75; }
+    .next-card .go { color: var(--accent); font-size: 12.5px; font-family: ui-monospace, Menlo, monospace; margin-top: auto; padding-top: 4px; }
+    .next-card.pending { border-style: dashed; opacity: .82; }
+    .next-card.pending .go { color: var(--warn); }
+    details.source { border: 1px solid var(--line); border-radius: 12px; margin: 14px 0; background: rgba(15, 21, 29, .55); overflow: hidden; }
+    details.source summary { cursor: pointer; padding: 11px 14px; font-size: 13.5px; color: #c7d3df; list-style: none; display: flex; gap: 8px; align-items: center; }
+    details.source summary::-webkit-details-marker { display: none; }
+    details.source summary::before { content: "▸"; color: var(--accent); }
+    details.source[open] summary::before { transform: rotate(90deg); }
+    details.source pre { max-height: 520px; overflow: auto; border-top: 1px solid var(--line); }
+    .footer-note { margin-top: 38px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; line-height: 1.8; }
+    @media (max-width: 720px) {
+      .page { padding: 26px 16px 48px; }
+      .section { margin-top: 34px; }
+      .codehead { flex-direction: column; align-items: flex-start; }
+      .page table { display: block; overflow-x: auto; }
+      .checklist { grid-template-columns: minmax(0, 1fr); }
+      .trouble dl { grid-template-columns: 1fr; gap: 2px; }
+      .trouble dd { margin-bottom: 6px; }
+      .checklist li label, .quiz-q label.opt { display: block; position: relative; padding-left: 36px; }
+      .checklist input, .quiz-q input[type="radio"] { position: absolute; left: 12px; top: 11px; margin: 0; }
+      .page p, .page li, .page dd, .page td { overflow-wrap: break-word; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <header>
+      <div class="kicker">PROJECT M3 · 网关</div>
+      <h1>M3 网关:把串口帧变成可查询的记录</h1>
+      <p class="lead">
+        设备端把温湿度打包成 <code>AA 55</code> 帧,Linux 网关负责读懂它、校验它、按接收时刻落盘,
+        并让查询在数据量变大后仍然快。M0 解决“读到一个数”,M1/M2 解决“可靠地传”,M3 解决“收到之后怎么存、怎么查”。
+      </p>
+      <div class="meta-chips">
+        <span class="chip">协议 <strong>AA 55 · XOR</strong></span>
+        <span class="chip">串口 <strong>115200 8N1</strong></span>
+        <span class="chip">超时 <strong>500 ms</strong></span>
+        <span class="chip">样例 <strong>11 帧 / 97 字节</strong></span>
+        <span class="chip">证据 <strong>compiled · simulated</strong></span>
+      </div>
+      <nav class="toc" aria-label="本页目录">
+        <a href="#goal"><b>01</b>目标</a>
+        <a href="#prereq"><b>02</b>前置知识</a>
+        <a href="#principle"><b>03</b>原理与图示</a>
+        <a href="#lab"><b>04</b>操作实验</a>
+        <a href="#check"><b>05</b>结果检查</a>
+        <a href="#trouble"><b>06</b>故障排查</a>
+        <a href="#quiz"><b>07</b>小测</a>
+        <a href="#next"><b>08</b>下一步</a>
+      </nav>
+    </header>
+
+    <!-- 01 目标 -->
+    <section class="section" id="goal">
+      <h2><span class="sec-no">01</span>目标</h2>
+      <p>
+        M3 的验收不是“串口有输出”,而是<strong>一条可复现的数据链路</strong>:
+        tty 设备读字节 → 按 <code>AA 55</code> 找帧 → 校验 <code>LEN/CMD/XOR</code> → 去除坏帧 → 给合法记录打接收时间戳 →
+        写入 CSV 或 SQLite → 用 CLI 或本地 HTTP 查询。每一环都要能解释失败时会发生什么。
+      </p>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr>
+          <td>能力</td>
+          <td>在 Linux 用户态用 <code>termios</code> 配置 115200 8N1 读串口;实现帧同步、长度/命令/异或校验与 500 ms 半帧超时;把合法记录落盘并提供时间/温度查询。</td>
+        </tr>
+        <tr>
+          <td>可检查结果</td>
+          <td>能画出帧结构并手算一帧 XOR;回放 11 帧得到 <strong>7 成功 / 4 错误 / 5 条记录 / 2 个杂散字节</strong>;导出 5 行 CSV;按温度 ≥ 27 °C 过滤得到 2 条记录与正确均值/极值;写出 systemd 守护、日志轮转与数据保留策略。</td>
+        </tr>
+        <tr>
+          <td>证据标识</td>
+          <td>
+            <span class="pill principle">principle</span> 原理与示例 ·
+            <span class="pill sim">simulated</span> 页面回放数据 ·
+            <span class="pill compiled">compiled</span> gcc 13.3.0 编译并自测 ·
+            <span class="pill pending">hardware-pending</span> 真实串口与传感器未验证
+          </td>
+        </tr>
+      </table>
+      <ul class="obj">
+        <li>能解释为什么帧内没有时间戳字段,以及时间戳应该在哪一层、用哪个时钟打。</li>
+        <li>能区分“帧格式错误”“XOR 错误”“半帧超时”“帧同步丢失”,并知道每种情况该丢多少字节。</li>
+        <li>能说清 CSV 与 SQLite 在写入、查询、损坏恢复上的取舍,而不是“哪个高级用哪个”。</li>
+        <li>能给出网关进程守护、日志、保留期的最小运维方案,并指出它的失效模式。</li>
+      </ul>
+      <div class="note">
+        <strong>本页边界:</strong>回放器里的 11 帧是按协议构造的样例,不是传感器实测;C 程序只验证了编译与离线解析,
+        没有连接 <code>/dev/ttyUSB0</code>。真实硬件的 UART 电气层、波特率误差与传感器精度,需要你按 04 的步骤自行验证。
+      </div>
+    </section>
+
+    <!-- 02 前置知识 -->
+    <section class="section" id="prereq">
+      <h2><span class="sec-no">02</span>前置知识</h2>
+      <p>这一页假设你已经在 M0 见过温湿度读数,在 Linux 用户态课里写过 <code>read</code> 与 <code>termios</code>。下面三块是直接前置。</p>
+      <div class="mini-grid">
+        <div class="mini-card">
+          <h3>termios 与 tty</h3>
+          <p>串口是 <code>/dev/ttyUSB0</code>(USB 转串口)或 <code>/dev/ttyACM0</code>(CDC)。打开用 <code>O_RDWR | O_NOCTTY</code>,
+            用 <code>cfmakeraw</code> 关行规程,<code>CS8</code>、清 <code>PARENB</code>/<code>CSTOPB</code>、<code>B115200</code>,
+            <code>VMIN=0</code> 配合 <code>VTIME=5</code> 得到 500 ms 读超时。</p>
+          <p><a href="/foundations/linux-user/">复习:Linux 用户态入门 →</a></p>
+        </div>
+        <div class="mini-card">
+          <h3>UART 与字节序</h3>
+          <p>线路上先发起始位,数据位 LSB 先出,最后停止位;这是<strong>位序</strong>。协议里的“温度 int16 LE”是<strong>字节序</strong>:
+            低字节在前。两者不是一回事,混起来会把 26.50 °C 读成别的数。</p>
+          <p><a href="/mcu/">复习:MCU 与外设 →</a></p>
+        </div>
+        <div class="mini-card">
+          <h3>M0 的单位与定点</h3>
+          <p>协议把温度乘以 100 后放进 int16,湿度乘以 100 后放进 uint16,避免浮点传输。
+            解析时先还原整数,再除以 100;负温度要用有符号解释,不能按 uint16 读。</p>
+          <p><a href="/projects/collect/">复习:M0 采集 →</a></p>
+        </div>
+      </div>
+
+      <h3>开工前自查</h3>
+      <ul class="obj">
+        <li>能写出 115200 8N1 的 termios 配置,并解释 <code>VMIN=0, VTIME=5</code> 与 500 ms 的关系。</li>
+        <li>能说明 <code>read</code> 为什么可能只返回半帧,以及为什么不能假设“一次 read 等于一帧”。</li>
+        <li>能手动把 <code>F3 FD</code> 解释成 int16 小端:-525,即 -5.25 °C。</li>
+      </ul>
+
+      <h3>协议契约速查(与 M1/M2 一致)</h3>
+      <table>
+        <tr><th>字段</th><th>长度</th><th>含义与约束</th></tr>
+        <tr><td><code>AA 55</code></td><td>2</td><td>帧头,固定。只有失步后才需要在字节流里搜索它。</td></tr>
+        <tr><td><code>LEN</code></td><td>1</td><td>DATA 字节数。本页上限 32;坏 LEN 不能无限吞数据。</td></tr>
+        <tr><td><code>SEQ</code></td><td>1</td><td>0–255 回绕。用于发现丢帧,不参与业务主键。</td></tr>
+        <tr><td><code>CMD</code></td><td>1</td><td><code>0x01</code> 传感器数据;<code>0x02</code> 心跳。</td></tr>
+        <tr><td><code>DATA</code></td><td>LEN</td><td><code>0x01</code>:温度 int16 LE ×100,湿度 uint16 LE ×100(LEN=4);<code>0x02</code>:空(LEN=0)。</td></tr>
+        <tr><td><code>XOR</code></td><td>1</td><td><code>LEN ^ SEQ ^ CMD ^ DATA[0] ^ … ^ DATA[LEN-1]</code>,<strong>不含 AA 55</strong>。</td></tr>
+        <tr><td>超时</td><td>—</td><td>帧间/半帧 500 ms;超过仍不完整则丢弃半帧并重新同步。</td></tr>
+      </table>
+      <div class="codecard">
+        <div class="codehead"><span class="fname">帧长与定点换算</span><span class="tags"><span class="pill principle">principle</span></span></div>
+        <pre><code>整帧长度 = 2(帧头) + 1(LEN) + 1(SEQ) + 1(CMD) + LEN(DATA) + 1(XOR)
+         = 6 + LEN
+
+传感器帧(LEN=4,共 10 字节):
+    温度 = int16_le(DATA[0], DATA[1]) / 100.0      # 有符号,-5.25 °C 合法
+    湿度 = uint16_le(DATA[2], DATA[3]) / 100.0    # 无符号,0–655.35 %
+
+XOR = LEN ^ SEQ ^ CMD ^ DATA[0] ^ ... ^ DATA[LEN-1]
+    例:04 ^ 01 ^ 01 ^ 5A ^ 0A ^ D4 ^ 12 = 0x92</code></pre>
+      </div>
+      <p class="small muted">
+        与 M1/M2 使用同一契约:本页不另立帧格式,只实现网关侧。若你的设备端改了字段顺序、XOR 范围或超时,
+        必须同时改两端并更新本页的解析器,否则“能收到字节”不等于“能解析”。
+      </p>
+    </section>
+
+    <!-- 03 原理与图示 -->
+    <section class="section" id="principle">
+      <h2><span class="sec-no">03</span>原理与图示</h2>
+
+      <h3>3.1 数据通路:从 UART 字节到查询结果</h3>
+      <figure class="diagram">
+        <svg viewBox="0 0 900 250" role="img" aria-label="数据通路:STM32 发送 AA55 帧,经 UART 与 termios 进入 Linux 网关,解析校验后写入 CSV 或 SQLite,再由 CLI 或本地 HTTP 查询,M4 仪表盘待建">
+          <defs>
+            <marker id="ar3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#5eead4"></path>
+            </marker>
+          </defs>
+          <rect x="16" y="55" width="152" height="86" rx="12" fill="#0f151d" stroke="#1e2a38"></rect>
+          <text x="92" y="82" text-anchor="middle" fill="#e6edf3" font-size="13.5" font-weight="700">STM32 / M1–M2</text>
+          <text x="92" y="103" text-anchor="middle" fill="#8b9bb0" font-size="11">传感器 + 打包</text>
+          <text x="92" y="121" text-anchor="middle" fill="#5eead4" font-size="11" font-family="ui-monospace, Menlo, monospace">AA 55 ... XOR</text>
+
+          <line x1="168" y1="98" x2="184" y2="98" stroke="#5eead4" stroke-width="1.6" marker-end="url(#ar3)"></line>
+
+          <rect x="186" y="55" width="152" height="86" rx="12" fill="#0f151d" stroke="#1e2a38"></rect>
+          <text x="262" y="82" text-anchor="middle" fill="#e6edf3" font-size="13.5" font-weight="700">tty + termios</text>
+          <text x="262" y="103" text-anchor="middle" fill="#8b9bb0" font-size="11">115200 8N1</text>
+          <text x="262" y="121" text-anchor="middle" fill="#8b9bb0" font-size="11">VMIN=0 / VTIME=5</text>
+
+          <line x1="338" y1="98" x2="354" y2="98" stroke="#5eead4" stroke-width="1.6" marker-end="url(#ar3)"></line>
+
+          <rect x="356" y="55" width="152" height="86" rx="12" fill="#0f151d" stroke="#1e2a38"></rect>
+          <text x="432" y="82" text-anchor="middle" fill="#e6edf3" font-size="13.5" font-weight="700">帧解析</text>
+          <text x="432" y="103" text-anchor="middle" fill="#8b9bb0" font-size="11">同步 / LEN / XOR</text>
+          <text x="432" y="121" text-anchor="middle" fill="#fbbf24" font-size="11">坏帧丢弃 · 500 ms</text>
+
+          <line x1="508" y1="98" x2="524" y2="98" stroke="#5eead4" stroke-width="1.6" marker-end="url(#ar3)"></line>
+
+          <rect x="526" y="55" width="152" height="86" rx="12" fill="#0f151d" stroke="#1e2a38"></rect>
+          <text x="602" y="82" text-anchor="middle" fill="#e6edf3" font-size="13.5" font-weight="700">存储</text>
+          <text x="602" y="103" text-anchor="middle" fill="#8b9bb0" font-size="11">CSV / SQLite</text>
+          <text x="602" y="121" text-anchor="middle" fill="#8b9bb0" font-size="11">接收时间戳</text>
+
+          <line x1="678" y1="98" x2="694" y2="98" stroke="#5eead4" stroke-width="1.6" marker-end="url(#ar3)"></line>
+
+          <rect x="696" y="55" width="152" height="86" rx="12" fill="#0f151d" stroke="#1e2a38"></rect>
+          <text x="772" y="82" text-anchor="middle" fill="#e6edf3" font-size="13.5" font-weight="700">查询</text>
+          <text x="772" y="103" text-anchor="middle" fill="#8b9bb0" font-size="11">CLI / 本地 HTTP</text>
+          <text x="772" y="121" text-anchor="middle" fill="#8b9bb0" font-size="11">时间 / 阈值 / 聚合</text>
+
+          <line x1="772" y1="141" x2="772" y2="166" stroke="#7dd3fc" stroke-width="1.4" stroke-dasharray="4 4" marker-end="url(#ar3)"></line>
+
+          <rect x="696" y="168" width="152" height="46" rx="10" fill="#0f151d" stroke="#2c4257" stroke-dasharray="5 4"></rect>
+          <text x="772" y="188" text-anchor="middle" fill="#7dd3fc" font-size="12">M4 仪表盘</text>
+          <text x="772" y="204" text-anchor="middle" fill="#8b9bb0" font-size="10.5">待建 · 用本页的查询接口</text>
+
+          <text x="262" y="166" text-anchor="middle" fill="#8b9bb0" font-size="10.5">read 返回时打时间戳</text>
+          <text x="432" y="166" text-anchor="middle" fill="#8b9bb0" font-size="10.5">坏帧不进库;半帧超时丢弃</text>
+          <text x="602" y="166" text-anchor="middle" fill="#8b9bb0" font-size="10.5">时间/温度索引</text>
+        </svg>
+        <figcaption>网关把“字节流”逐层收敛成“记录”:termios 负责拿到字节,解析器负责判断哪些字节构成一帧,存储负责把合法值和时间绑在一起,查询负责在数据量变大后仍然可用。M4 只消费查询结果,不直接读串口。</figcaption>
+      </figure>
+
+      <h3>3.2 帧结构:10 字节的传感器帧与 6 字节的心跳</h3>
+      <figure class="diagram">
+        <svg viewBox="0 0 900 320" role="img" aria-label="传感器帧 10 字节:AA 55 04 01 01 5A 0A D4 12 92,其中 5A 0A 为 26.50 摄氏度, D4 12 为 48.20 百分比;心跳帧 6 字节 AA 55 00 03 02 01">
+          <text x="20" y="24" fill="#e6edf3" font-size="13" font-weight="700">传感器帧(CMD=0x01,LEN=4,共 10 字节)</text>
+          <g font-size="12" font-family="ui-monospace, Menlo, monospace" text-anchor="middle">
+            <rect x="57" y="38" width="78" height="44" rx="6" fill="#0b2b28" stroke="#2c6b62"></rect><text x="96" y="65" fill="#5eead4">AA</text>
+            <rect x="135" y="38" width="78" height="44" rx="6" fill="#0b2b28" stroke="#2c6b62"></rect><text x="174" y="65" fill="#5eead4">55</text>
+            <rect x="213" y="38" width="78" height="44" rx="6" fill="#131b25" stroke="#1e2a38"></rect><text x="252" y="65" fill="#9fb3c8">04</text>
+            <rect x="291" y="38" width="78" height="44" rx="6" fill="#131b25" stroke="#1e2a38"></rect><text x="330" y="65" fill="#9fb3c8">01</text>
+            <rect x="369" y="38" width="78" height="44" rx="6" fill="#131b25" stroke="#1e2a38"></rect><text x="408" y="65" fill="#9fb3c8">01</text>
+            <rect x="447" y="38" width="78" height="44" rx="6" fill="#101c2a" stroke="#27405a"></rect><text x="486" y="65" fill="#7dd3fc">5A</text>
+            <rect x="525" y="38" width="78" height="44" rx="6" fill="#101c2a" stroke="#27405a"></rect><text x="564" y="65" fill="#7dd3fc">0A</text>
+            <rect x="603" y="38" width="78" height="44" rx="6" fill="#101c2a" stroke="#27405a"></rect><text x="642" y="65" fill="#7dd3fc">D4</text>
+            <rect x="681" y="38" width="78" height="44" rx="6" fill="#101c2a" stroke="#27405a"></rect><text x="720" y="65" fill="#7dd3fc">12</text>
+            <rect x="759" y="38" width="78" height="44" rx="6" fill="#2a1e12" stroke="#5a4327"></rect><text x="798" y="65" fill="#fbbf24">92</text>
+          </g>
+          <g font-size="10.5" fill="#8b9bb0" text-anchor="middle">
+            <text x="135" y="100">帧头(2)</text>
+            <text x="252" y="100">LEN</text>
+            <text x="330" y="100">SEQ</text>
+            <text x="408" y="100">CMD</text>
+            <text x="525" y="100">温度 int16 LE</text>
+            <text x="681" y="100">湿度 uint16 LE</text>
+            <text x="798" y="100">XOR</text>
+          </g>
+          <text x="57" y="124" fill="#8b9bb0" font-size="11">5A 0A → 0x0A5A = 2650 → 26.50 °C　　D4 12 → 0x12D4 = 4820 → 48.20 %RH</text>
+
+          <text x="20" y="166" fill="#e6edf3" font-size="13" font-weight="700">心跳帧(CMD=0x02,LEN=0,共 6 字节)</text>
+          <g font-size="12" font-family="ui-monospace, Menlo, monospace" text-anchor="middle">
+            <rect x="57" y="180" width="78" height="40" rx="6" fill="#0b2b28" stroke="#2c6b62"></rect><text x="96" y="205" fill="#5eead4">AA</text>
+            <rect x="135" y="180" width="78" height="40" rx="6" fill="#0b2b28" stroke="#2c6b62"></rect><text x="174" y="205" fill="#5eead4">55</text>
+            <rect x="213" y="180" width="78" height="40" rx="6" fill="#131b25" stroke="#1e2a38"></rect><text x="252" y="205" fill="#9fb3c8">00</text>
+            <rect x="291" y="180" width="78" height="40" rx="6" fill="#131b25" stroke="#1e2a38"></rect><text x="330" y="205" fill="#9fb3c8">03</text>
+            <rect x="369" y="180" width="78" height="40" rx="6" fill="#131b25" stroke="#1e2a38"></rect><text x="408" y="205" fill="#9fb3c8">02</text>
+            <rect x="447" y="180" width="78" height="40" rx="6" fill="#2a1e12" stroke="#5a4327"></rect><text x="486" y="205" fill="#fbbf24">01</text>
+          </g>
+          <text x="57" y="240" fill="#8b9bb0" font-size="10.5">没有 DATA;心跳也占 SEQ,可用于判断设备活着,但本页不把它写进查询记录。</text>
+
+          <text x="20" y="276" fill="#5eead4" font-size="11.5" font-family="ui-monospace, Menlo, monospace">XOR = 04 ^ 01 ^ 01 ^ 5A ^ 0A ^ D4 ^ 12 = 92</text>
+          <text x="20" y="296" fill="#8b9bb0" font-size="10.5">DATA 里即使出现 AA 55,解析器也按 LEN 消费,不会把它当帧头;只有失步后才在字节流里搜索 AA 55。</text>
+        </svg>
+        <figcaption>帧的边界由 LEN 决定,不靠“看到下一条 AA 55”。这也是为什么 LEN 被破坏时解析器必须设上限并重新同步,否则会吞掉后面的好帧。</figcaption>
+      </figure>
+
+      <h3>3.3 解析规则:每种错误丢多少字节</h3>
+      <table>
+        <tr><th>情况</th><th>处理</th><th>默认样例中的位置</th></tr>
+        <tr><td>XOR 不匹配</td><td>整帧丢弃,错误计数 +1;不把 DATA 写入存储。</td><td>SEQ=04,期望 0x65,实际 0x64。</td></tr>
+        <tr><td>CMD 未知</td><td>按 LEN 消费整帧后丢弃;记录未知命令,便于发现版本不匹配。</td><td>SEQ=05,CMD=0x03。</td></tr>
+        <tr><td>LEN 与 CMD 不符</td><td>丢弃;仍然按 LEN 前进,避免把后续字节当 DATA。</td><td>SEQ=06,CMD=0x01 但 LEN=3。</td></tr>
+        <tr><td>截断(半帧)</td><td>500 ms 内等不到剩余字节:丢弃半帧,重新搜帧头。</td><td>最后 8 字节,应为 10 字节。</td></tr>
+        <tr><td>杂散字节</td><td>不是 <code>AA 55</code> 的字节逐个跳过并计数;不构成“帧”。</td><td>帧 10 前的 <code>00 FF</code>,共 2 字节。</td></tr>
+        <tr><td>LEN 超限</td><td>视为坏帧,只丢帧头后重同步,防止坏 LEN 吞掉整段。</td><td>本页未放,代码中有上限 32。</td></tr>
+        <tr><td>SEQ 跳变</td><td>当前帧仍入库;另记“丢帧”指标,不把 SEQ 当唯一键。</td><td>0x08 → 0x0A,跳过 0x09。</td></tr>
+      </table>
+
+      <h3>3.4 存 CSV 还是 SQLite</h3>
+      <table>
+        <tr><th>维度</th><th>CSV 追加</th><th>SQLite</th></tr>
+        <tr><td>写入</td><td>顺序追加一行,实现最简单;崩溃可能留下半行。</td><td>事务/WAL,崩溃恢复更稳;需要处理 <code>busy/locked</code>。</td></tr>
+        <tr><td>查询</td><td>全表扫描;<code>grep/awk</code> 适合临时查,不适合百万行范围查询。</td><td>B 树索引,时间范围与温度阈值查询快;可用 SQL 聚合。</td></tr>
+        <tr><td>并发</td><td>多进程追加要自己加锁,容易交错。</td><td>读并发好;写并发受锁限制,可用 WAL。</td></tr>
+        <tr><td>损坏恢复</td><td>半行/截断需要人工判断;可用逐行校验。</td><td><code>PRAGMA integrity_check</code>;WAL 可回放。</td></tr>
+        <tr><td>部署</td><td>无依赖,直接给同事/Excel 打开。</td><td>需要 <code>libsqlite3</code>;单文件数据库,备份方便。</td></tr>
+        <tr><td>本页选择</td><td>教学先用 CSV:导出与人工核对直观;查询器在内存中模拟索引。</td><td>数据量增长、需要按时间/阈值反复查询时迁移;03.6 给 CLI 与 HTTP 示例。</td></tr>
+      </table>
+      <div class="note sim">
+        本页的“查询”是对 5 条内存记录做过滤,<strong>不是</strong> SQLite 的真实执行计划。它演示语义(边界是否含等号、空阈值如何处理),
+        性能结论要看 06 的索引与 <code>EXPLAIN QUERY PLAN</code>,不能拿 5 条记录的体验推断百万行。
+      </div>
+
+      <h3>3.5 时间戳、守护、日志与保留</h3>
+      <div class="mini-grid">
+        <div class="mini-card">
+          <h3>时间戳</h3>
+          <p>帧内没有时间字段,时间戳只能由网关在 <code>read</code> 返回时打。用 <code>CLOCK_REALTIME</code> 记墙钟,
+            用 <code>CLOCK_MONOTONIC</code> 判断 500 ms 超时,避免 NTP 回拨把超时判断弄乱。</p>
+          <p>存储用 UTC(带 <code>Z</code>)或带偏移的 ISO 8601;显示时再转本地时区。批量补写要用“接收时刻”,不是“处理时刻”。</p>
+        </div>
+        <div class="mini-card">
+          <h3>进程守护</h3>
+          <p>用 systemd 管进程:<code>Restart=always</code>、<code>RestartSec=2</code>、固定 <code>User/Group</code>、
+            <code>WorkingDirectory</code> 指向数据目录。不要用 <code>nohup</code> 当守护方案。</p>
+          <p>启动前确认串口设备路径稳定:优先 <code>/dev/serial/by-id/</code>,不要硬编码 <code>ttyUSB0</code>。</p>
+        </div>
+        <div class="mini-card">
+          <h3>日志</h3>
+          <p>日志记录“启动、设备打开、错误帧计数、写盘错误、重连”,不要为每一帧写一行(量太大)。
+            错误行带 SEQ 与帧 hex,方便复现。</p>
+          <p>用 logrotate 按天轮转、压缩、保留 14 天;或直接写 journald,用 <code>journalctl -u</code> 查。</p>
+        </div>
+        <div class="mini-card">
+          <h3>数据保留</h3>
+          <p>按天分文件(<code>data/2026-11-27.csv</code>)或按时间删 SQLite 行。先归档再删除,保留期写进运维文档。</p>
+          <p>删除大量行后 <code>VACUUM</code> 成本高,安排在低峰;更稳的是按天分表/分文件,直接丢旧分区。</p>
+        </div>
+      </div>
+
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">m3-gateway.service + logrotate(principle,未在本页执行)</span>
+          <span class="tags"><span class="pill principle">principle</span></span>
+        </div>
+        <pre><code>[Unit]
+Description=M3 sensor gateway
+After=network.target
+
+[Service]
+Type=simple
+User=sensor
+Group=dialout
+WorkingDirectory=/var/lib/m3
+ExecStart=/usr/local/bin/m3_gateway /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+StandardOutput=append:/var/log/m3/gateway.log
+StandardError=append:/var/log/m3/gateway.log
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/logrotate.d/m3
+/var/log/m3/*.log {
+    daily
+    rotate 14
+    compress
+    missingok
+    notifempty
+    copytruncate
+}</code></pre>
+      </div>
+      <p class="small muted">
+        启用:<code>sudo systemctl enable --now m3-gateway</code>;查看:<code>journalctl -u m3-gateway -f</code>。
+        <code>copytruncate</code> 适合不支持 reopen 的程序;如果程序自己处理 <code>SIGHUP</code>,改用 <code>create</code> 更稳。
+      </p>
+
+      <h3>3.6 查询:CLI 与本地 HTTP</h3>
+      <p>存储跑起来后,查询接口要能回答两类问题:<strong>某时间范围的记录</strong>与<strong>温度超过阈值的记录</strong>。先给 CLI,再给只读 HTTP。</p>
+      <div class="codecard">
+        <div class="codehead"><span class="fname">SQLite schema 与 CLI 查询(principle)</span><span class="tags"><span class="pill principle">principle</span></span></div>
+        <pre><code>$ sqlite3 /var/lib/m3/sensor.db &lt;&lt;'SQL'
+CREATE TABLE IF NOT EXISTS readings (
+    id          INTEGER PRIMARY KEY,
+    ts          TEXT    NOT NULL,   -- UTC ISO8601,例如 2026-11-27T10:00:00Z
+    seq         INTEGER NOT NULL,
+    temp_c      REAL    NOT NULL,
+    humidity_pct REAL   NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_readings_ts_temp ON readings(ts, temp_c);
+SQL
+
+$ sqlite3 -header -column /var/lib/m3/sensor.db \
+  "SELECT ts, seq, temp_c, humidity_pct
+     FROM readings
+    WHERE ts &gt;= '2026-11-27T10:00:00Z'
+      AND temp_c &gt;= 27.0
+    ORDER BY ts
+    LIMIT 20;"
+
+$ sqlite3 /var/lib/m3/sensor.db \
+  "SELECT COUNT(*), AVG(temp_c), MIN(temp_c), MAX(temp_c)
+     FROM readings
+    WHERE ts &gt;= date('now','-1 day');"</code></pre>
+      </div>
+      <details class="source">
+        <summary>本地只读 HTTP 服务(标准库,约 25 行)</summary>
+        <pre><code>#!/usr/bin/env python3
+# m3_api.py — 只读查询接口;生产请加鉴权、限流与分页
+import json
+import sqlite3
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse, parse_qs
+
+DB = "/var/lib/m3/sensor.db"
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        q = parse_qs(urlparse(self.path).query)
+        tmin = float(q.get("tmin", ["-999"])[0])
+        limit = min(int(q.get("limit", ["100"])[0]), 1000)
+        con = sqlite3.connect(DB)
+        rows = con.execute(
+            "SELECT ts, seq, temp_c, humidity_pct FROM readings "
+            "WHERE temp_c &gt;= ? ORDER BY ts DESC LIMIT ?",
+            (tmin, limit),
+        ).fetchall()
+        body = json.dumps(rows, ensure_ascii=False).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+HTTPServer(("127.0.0.1", 8081), Handler).serve_forever()</code></pre>
+      </details>
+      <div class="codecard">
+        <div class="codehead"><span class="fname">curl 调用(本地回环,不是外链)</span><span class="tags"><span class="pill principle">principle</span></span></div>
+        <pre><code>$ python3 m3_api.py &amp;
+$ curl -s '127.0.0.1:8081/?tmin=27&amp;limit=2'
+[["2026-11-27T10:00:02Z", 7, 27.05, 51.0],
+ ["2026-11-27T10:00:03Z", 8, 30.0, 60.0]]</code></pre>
+      </div>
+      <p class="small muted">
+        HTTP 只绑 <code>127.0.0.1</code>,不要图方便绑 <code>0.0.0.0</code>;SQL 必须参数化(上面用了 <code>?</code>);
+        对外提供时加鉴权、限流、超时与只读数据库账号。M4 仪表盘应该只调用这个查询层,不要直接读串口。
+      </p>
+    </section>
+
+    <!-- 04 操作实验 -->
+    <section class="section" id="lab">
+      <h2><span class="sec-no">04</span>操作实验</h2>
+      <p>下面三个交互都在本页内运行,不访问网络。默认样例包含 3 类错误帧、2 个杂散字节和 1 个截断帧;先按默认跑一遍,再改坏一帧看统计怎么变。</p>
+
+      <div class="lab">
+        <div class="labhead">
+          <h3>实验 1:帧流回放与解析</h3>
+          <span class="pill sim">simulated</span>
+        </div>
+        <p class="small muted">
+          文本框接受十六进制字节,空格/逗号分隔,<code>#</code> 之后是注释;也接受连续写法(如 <code>AA5504...</code>)。
+          每行注释里可以写中文说明,注释中的数字不会被当成字节。
+        </p>
+        <div class="field-row">
+          <label class="field">接收起始时间(本地)<input id="play-start" type="datetime-local" step="1" value="2026-11-27T18:00:00" /></label>
+          <label class="field">记录间隔(秒)<input id="play-step" type="number" value="1" min="0.1" max="60" step="0.1" /></label>
+        </div>
+        <textarea id="play-input" rows="13" spellcheck="false" aria-label="十六进制帧流"># M3 网关回放样例:11 帧 / 97 字节;4 帧故意写错
+# 格式:AA 55 | LEN | SEQ | CMD | DATA[LEN] | XOR
+AA 55 00 00 02 02              # 心跳 SEQ=00
+AA 55 04 01 01 5A 0A D4 12 92  # 26.50 °C / 48.20 %
+AA 55 04 02 01 F3 FD 82 19 92  # -5.25 °C / 65.30 %
+AA 55 00 03 02 01              # 心跳 SEQ=03
+AA 55 04 04 01 91 0A EC 13 64  # XOR 错:正确值应为 65
+AA 55 00 05 03 06              # 未知 CMD=0x03
+AA 55 03 06 01 5A 0A D4 80     # CMD=0x01 但 LEN=3
+AA 55 04 07 01 91 0A EC 13 66  # 27.05 °C / 51.00 %
+AA 55 04 08 01 B8 0B 70 17 D9  # 30.00 °C / 60.00 %
+00 FF AA 55 04 0A 01 98 08 A0 0F 30  # 前置 00 FF 杂散,帧同步后成功
+AA 55 04 0B 01 88 08 A4        # 截断:缺湿度高字节与 XOR</textarea>
+        <div class="btn-row">
+          <button type="button" class="primary" id="play-btn">解析帧流</button>
+          <button type="button" id="play-sample">恢复样例</button>
+          <button type="button" id="play-clear">清空</button>
+          <span class="msg" id="play-msg" role="status" aria-live="polite"></span>
+        </div>
+        <div class="stats">
+          <div class="stat"><b id="stats-frames">0</b><span>检出帧</span></div>
+          <div class="stat"><b id="stats-ok">0</b><span>成功帧</span></div>
+          <div class="stat"><b id="stats-sensors">0</b><span>传感器记录</span></div>
+          <div class="stat err"><b id="stats-errors">0</b><span>错误帧</span></div>
+          <div class="stat warn"><b id="stats-stray">0</b><span>杂散字节</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>SEQ</th><th>CMD</th><th>温度(°C)</th><th>湿度(%RH)</th><th>校验结果</th></tr>
+            </thead>
+            <tbody id="parse-body">
+              <tr><td class="empty" colspan="6">解析后显示</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="small muted">
+          统计口径:“检出帧”包含错误帧与截断帧;“成功帧”包含心跳;“传感器记录”只统计校验通过且 CMD=0x01 的帧;
+          “杂散字节”是帧头之外被跳过的字节。默认应为 11 / 7 / 5 / 4 / 2。
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="labhead">
+          <h3>实验 2:CSV 导出</h3>
+          <span class="pill sim">simulated</span>
+        </div>
+        <p class="small muted">
+          只导出校验通过的传感器记录;心跳不写库。CSV 表头为 <code>timestamp,seq,temp_c,humidity_pct,frame_hex</code>,
+          <code>seq</code> 用十进制,时间戳带本地时区偏移;下载版本带 UTF-8 BOM,便于表格软件识别中文。
+        </p>
+        <div class="btn-row">
+          <button type="button" id="csv-copy">复制 CSV</button>
+          <button type="button" id="csv-download">下载 CSV(data: URL)</button>
+          <span class="msg" id="csv-msg" role="status" aria-live="polite"></span>
+        </div>
+        <textarea id="csv-preview" rows="7" readonly aria-label="CSV 预览"></textarea>
+        <div class="csv-info" id="csv-info"></div>
+      </div>
+
+      <div class="lab">
+        <div class="labhead">
+          <h3>实验 3:按时间范围与温度阈值查询</h3>
+          <span class="pill sim">simulated</span>
+        </div>
+        <p class="small muted">
+          过滤为“开始 ≤ 时间 ≤ 结束”且“下限 ≤ 温度 ≤ 上限”;空阈值表示不限,边界含等号。命中记录按时间升序显示,
+          均值/极值只统计命中记录。
+        </p>
+        <div class="query-grid">
+          <label class="field">开始时间<input id="q-from" type="datetime-local" step="1" /></label>
+          <label class="field">结束时间<input id="q-to" type="datetime-local" step="1" /></label>
+          <label class="field">温度下限(°C)<input id="q-tmin" type="number" step="0.01" placeholder="不限" /></label>
+          <label class="field">温度上限(°C)<input id="q-tmax" type="number" step="0.01" placeholder="不限" /></label>
+          <button type="button" id="q-reset">重置范围</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><b id="q-count">0 / 0</b><span>命中 / 总数</span></div>
+          <div class="stat"><b id="q-avg">—</b><span>温度均值</span></div>
+          <div class="stat"><b id="q-low">—</b><span>温度最低</span></div>
+          <div class="stat"><b id="q-high">—</b><span>温度最高</span></div>
+          <div class="stat"><b id="q-havg">—</b><span>湿度均值</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>接收时间</th><th>SEQ</th><th>温度(°C)</th><th>湿度(%RH)</th><th>帧 hex</th></tr>
+            </thead>
+            <tbody id="q-body">
+              <tr><td class="empty" colspan="5">解析后显示</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="msg" id="q-msg" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="lab">
+        <div class="labhead">
+          <h3>实验 4:termios 骨架与 gcc 验证</h3>
+          <span class="pill compiled">compiled · gcc 13.3.0</span>
+          <span class="pill pending">hardware-pending</span>
+        </div>
+        <p>
+          下面是网关骨架的核心:打开 tty、配置 115200 8N1、<code>VTIME=5</code> 得到 500 ms 读超时。完整程序还包含帧解析器、
+          CSV 输出和与页面相同的 97 字节自测数据。它<strong>能在本机编译并运行离线自测</strong>,但<strong>没有连接真实串口</strong>。
+        </p>
+        <div class="codecard">
+          <div class="codehead">
+            <span class="fname">m3_gateway.c · serial_open() 核心片段</span>
+            <span class="tags"><span class="pill compiled">compiled</span><span class="pill pending">hardware-pending</span></span>
+          </div>
+          <pre><code>/* 配置串口为 115200 8N1 raw,VTIME=5 即 500 ms 读超时。
+ * 返回 fd;失败返回 -1 并已 perror。 */
+static int serial_open(const char *dev)
+{
+    int fd = open(dev, O_RDWR | O_NOCTTY);
+    if (fd &lt; 0) {
+        perror(&quot;open&quot;);
+        return -1;
+    }
+
+    struct termios tio;
+    if (tcgetattr(fd, &amp;tio) &lt; 0) {
+        perror(&quot;tcgetattr&quot;);
+        close(fd);
+        return -1;
+    }
+
+    cfmakeraw(&amp;tio);                              /* 关行缓冲/回显/CR-LF 转换 */
+    tio.c_cflag &amp;= ~(PARENB | CSTOPB | CSIZE | CRTSCTS);
+    tio.c_cflag |= CS8 | CLOCAL | CREAD;          /* 8N1,忽略 Modem 线,启用接收 */
+    tio.c_iflag &amp;= ~(IXON | IXOFF | IXANY);       /* 关软件流控 */
+    tio.c_cc[VMIN] = 0;                           /* 0 字节 + VTIME:定时读 */
+    tio.c_cc[VTIME] = 5;                          /* 5 × 100 ms = 500 ms 超时 */
+    cfsetispeed(&amp;tio, B115200);
+    cfsetospeed(&amp;tio, B115200);
+
+    if (tcsetattr(fd, TCSANOW, &amp;tio) &lt; 0) {
+        perror(&quot;tcsetattr&quot;);
+        close(fd);
+        return -1;
+    }
+    tcflush(fd, TCIOFLUSH);
+    return fd;
+}
+</code></pre>
+        </div>
+        <div class="codecard">
+          <div class="codehead">
+            <span class="fname">编译与自测输出(本机实跑)</span>
+            <span class="tags"><span class="pill compiled">compiled</span><span class="pill sim">self-test 样例</span></span>
+          </div>
+          <pre><code>$ gcc -Wall -Wextra -O2 -o m3_gateway m3_gateway.c
+$ ./m3_gateway --self-test
+[01] seq=00 cmd=0x02 temp=-- hum=-- OK(heartbeat)
+[02] seq=01 cmd=0x01 temp=26.50 hum=48.20 OK
+[03] seq=02 cmd=0x01 temp=-5.25 hum=65.30 OK
+[04] seq=03 cmd=0x02 temp=-- hum=-- OK(heartbeat)
+[05] seq=04 cmd=0x01 temp=-- hum=-- ERR: xor want 0x65 got 0x64
+[06] seq=05 cmd=0x03 temp=-- hum=-- ERR: unknown cmd
+[07] seq=06 cmd=0x01 temp=-- hum=-- ERR: LEN=3 for sensor
+[08] seq=07 cmd=0x01 temp=27.05 hum=51.00 OK
+[09] seq=08 cmd=0x01 temp=30.00 hum=60.00 OK
+[10] seq=0A cmd=0x01 temp=22.00 hum=40.00 OK
+[11] seq=0B cmd=0x01 temp=-- hum=-- ERR: truncated need 10 have 8
+consumed=89 buffered=8 frames=11 ok=7 sensors=5 errors=4 stray=2
+exit=0</code></pre>
+        </div>
+        <p class="small muted">
+          编译无警告;<code>--self-test</code> 的统计与页面回放一致(11 帧 / 7 成功 / 5 条记录 / 4 错误 / 2 杂散)。
+          这只证明 termios 配置代码可编译、解析器在样例上正确,<strong>不证明</strong>真实 UART 的波特率误差、电气兼容性或传感器精度。
+          真机步骤:<code>./m3_gateway /dev/ttyUSB0</code>,先确认设备路径与权限(见 06),再接真实设备。
+        </p>
+        <details class="source">
+          <summary>完整 m3_gateway.c(可复制;约 250 行)</summary>
+          <pre><code>/* m3_gateway.c — Linux 网关骨架:termios 115200 8N1 读串口 + AA55 帧解析 + CSV 输出
+ *
+ * 编译: gcc -Wall -Wextra -O2 -o m3_gateway m3_gateway.c
+ * 自测: ./m3_gateway --self-test
+ * 真机: ./m3_gateway /dev/ttyUSB0 &gt; sensor.csv   # 需要 USB-UART 与 M3 设备
+ *
+ * 协议: AA 55 | LEN | SEQ | CMD | DATA[LEN] | XOR
+ *       XOR = LEN ^ SEQ ^ CMD ^ DATA[0..LEN-1](不含帧头 AA 55)
+ *       CMD=0x01 温度 int16LE ×100 + 湿度 uint16LE ×100(LEN=4)
+ *       CMD=0x02 心跳(LEN=0);帧间超时 500 ms
+ *
+ * 证据边界: 本程序在本机 gcc 13.3.0 编译通过,并用 --self-test 验证解析器与页面回放结果一致。
+ *           真实串口、真实 UART 电气层与传感器精度未验证(hardware-pending)。
+ */
+#define _POSIX_C_SOURCE 200809L
+#define _DEFAULT_SOURCE          /* cfmakeraw / CRTSCTS 需要 */
+
+#include &lt;errno.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;termios.h&gt;
+#include &lt;time.h&gt;
+#include &lt;unistd.h&gt;
+
+#define FRAME_MAX 32          /* LEN 的合理上限,防止坏 LEN 吞掉整段数据 */
+#define FRAME_MIN 6           /* AA 55 LEN SEQ CMD XOR */
+#define IO_TIMEOUT 500        /* 毫秒,与协议契约一致 */
+
+struct stats {
+    unsigned frames;          /* 检出的帧头数(含错误帧) */
+    unsigned ok;              /* 校验通过的帧(含心跳) */
+    unsigned sensors;         /* 入册的传感器记录 */
+    unsigned errors;          /* XOR/长度/CMD/截断错误 */
+    unsigned stray;           /* 帧头之外被跳过的字节 */
+    unsigned timeouts;        /* 半帧超时被丢弃的次数 */
+};
+
+/* 配置串口为 115200 8N1 raw,VTIME=5 即 500 ms 读超时。
+ * 返回 fd;失败返回 -1 并已 perror。 */
+static int serial_open(const char *dev)
+{
+    int fd = open(dev, O_RDWR | O_NOCTTY);
+    if (fd &lt; 0) {
+        perror(&quot;open&quot;);
+        return -1;
+    }
+
+    struct termios tio;
+    if (tcgetattr(fd, &amp;tio) &lt; 0) {
+        perror(&quot;tcgetattr&quot;);
+        close(fd);
+        return -1;
+    }
+
+    cfmakeraw(&amp;tio);                              /* 关行缓冲/回显/CR-LF 转换 */
+    tio.c_cflag &amp;= ~(PARENB | CSTOPB | CSIZE | CRTSCTS);
+    tio.c_cflag |= CS8 | CLOCAL | CREAD;          /* 8N1,忽略 Modem 线,启用接收 */
+    tio.c_iflag &amp;= ~(IXON | IXOFF | IXANY);       /* 关软件流控 */
+    tio.c_cc[VMIN] = 0;                           /* 0 字节 + VTIME:定时读 */
+    tio.c_cc[VTIME] = 5;                          /* 5 × 100 ms = 500 ms 超时 */
+    cfsetispeed(&amp;tio, B115200);
+    cfsetospeed(&amp;tio, B115200);
+
+    if (tcsetattr(fd, TCSANOW, &amp;tio) &lt; 0) {
+        perror(&quot;tcsetattr&quot;);
+        close(fd);
+        return -1;
+    }
+    tcflush(fd, TCIOFLUSH);
+    return fd;
+}
+
+/* 解析一段字节流,返回已消费的字节数。
+ * 未消费的尾部留给下一次 read 拼接(半帧)。
+ * csv != NULL 时把校验通过的传感器帧写成 CSV 行。 */
+static size_t parse_stream(const uint8_t *buf, size_t n, struct stats *st, FILE *csv)
+{
+    size_t pos = 0;
+
+    while (pos &lt; n) {
+        if (!(buf[pos] == 0xAA &amp;&amp; pos + 1 &lt; n &amp;&amp; buf[pos + 1] == 0x55)) {
+            pos++;
+            st-&gt;stray++;
+            continue;
+        }
+        if (n - pos &lt; FRAME_MIN) {
+            printf(&quot;[----] truncated: need at least %d bytes, have %zu\n&quot;,
+                   FRAME_MIN, n - pos);
+            st-&gt;frames++;
+            st-&gt;errors++;
+            return pos;                           /* 半帧留给下一次 read */
+        }
+
+        unsigned len = buf[pos + 2];
+        size_t total = (size_t)FRAME_MIN + len;
+
+        if (len &gt; FRAME_MAX) {
+            printf(&quot;[----] bad LEN=%u (&gt; %d), resync\n&quot;, len, FRAME_MAX);
+            st-&gt;errors++;
+            pos += 2;                             /* 只丢帧头,避免吞掉后续好帧 */
+            continue;
+        }
+        if (pos + total &gt; n) {
+            st-&gt;frames++;
+            printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=-- hum=-- ERR: truncated need %zu have %zu\n&quot;,
+                   st-&gt;frames, buf[pos + 3], buf[pos + 4], total, n - pos);
+            st-&gt;errors++;
+            return pos;                           /* 半帧留给下一次 read */
+        }
+
+        unsigned seq = buf[pos + 3];
+        unsigned cmd = buf[pos + 4];
+        const uint8_t *data = buf + pos + 5;
+        unsigned got = buf[pos + total - 1];
+        unsigned calc = len ^ seq ^ cmd;
+        for (unsigned i = 0; i &lt; len; i++) {
+            calc ^= data[i];
+        }
+        calc &amp;= 0xFFu;
+        st-&gt;frames++;
+
+        if (calc != got) {
+            printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=-- hum=-- ERR: xor want 0x%02X got 0x%02X\n&quot;,
+                   st-&gt;frames, seq, cmd, calc, got);
+            st-&gt;errors++;
+        } else if (cmd == 0x01 &amp;&amp; len != 4) {
+            printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=-- hum=-- ERR: LEN=%u for sensor\n&quot;,
+                   st-&gt;frames, seq, cmd, len);
+            st-&gt;errors++;
+        } else if (cmd == 0x02 &amp;&amp; len != 0) {
+            printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=-- hum=-- ERR: LEN=%u for heartbeat\n&quot;,
+                   st-&gt;frames, seq, cmd, len);
+            st-&gt;errors++;
+        } else if (cmd == 0x01) {
+            uint16_t traw = (uint16_t)(data[0] | (data[1] &lt;&lt; 8));
+            uint16_t hraw = (uint16_t)(data[2] | (data[3] &lt;&lt; 8));
+            int32_t temp = (traw &amp; 0x8000u) ? (int32_t)traw - 65536 : (int32_t)traw;
+            st-&gt;ok++;
+            st-&gt;sensors++;
+            printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=%.2f hum=%.2f OK\n&quot;,
+                   st-&gt;frames, seq, cmd, temp / 100.0, hraw / 100.0);
+
+            if (csv != NULL) {
+                time_t now = time(NULL);
+                struct tm tmv;
+                localtime_r(&amp;now, &amp;tmv);
+                fprintf(csv, &quot;%04d-%02d-%02dT%02d:%02d:%02d,seq=%u,%.2f,%.2f\n&quot;,
+                        tmv.tm_year + 1900, tmv.tm_mon + 1, tmv.tm_mday,
+                        tmv.tm_hour, tmv.tm_min, tmv.tm_sec,
+                        seq, temp / 100.0, hraw / 100.0);
+            }
+        } else if (cmd == 0x02) {
+            st-&gt;ok++;
+            printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=-- hum=-- OK(heartbeat)\n&quot;,
+                   st-&gt;frames, seq, cmd);
+        } else {
+            printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=-- hum=-- ERR: unknown cmd\n&quot;,
+                   st-&gt;frames, seq, cmd);
+            st-&gt;errors++;
+        }
+        pos += total;
+    }
+    return pos;
+}
+
+/* 自测:与页面默认回放完全相同的 97 字节(11 帧,其中 4 帧故意写错)。
+ * 输出应与页面“帧流回放”的统计一致:frames=11 ok=7 sensors=5 errors=4 stray=2。 */
+static int self_test(void)
+{
+    static const uint8_t stream[] = {
+        0xAA, 0x55, 0x00, 0x00, 0x02, 0x02, 0xAA, 0x55, 0x04, 0x01, 0x01, 0x5A,
+        0x0A, 0xD4, 0x12, 0x92, 0xAA, 0x55, 0x04, 0x02, 0x01, 0xF3, 0xFD, 0x82,
+        0x19, 0x92, 0xAA, 0x55, 0x00, 0x03, 0x02, 0x01, 0xAA, 0x55, 0x04, 0x04,
+        0x01, 0x91, 0x0A, 0xEC, 0x13, 0x64, 0xAA, 0x55, 0x00, 0x05, 0x03, 0x06,
+        0xAA, 0x55, 0x03, 0x06, 0x01, 0x5A, 0x0A, 0xD4, 0x80, 0xAA, 0x55, 0x04,
+        0x07, 0x01, 0x91, 0x0A, 0xEC, 0x13, 0x66, 0xAA, 0x55, 0x04, 0x08, 0x01,
+        0xB8, 0x0B, 0x70, 0x17, 0xD9, 0x00, 0xFF, 0xAA, 0x55, 0x04, 0x0A, 0x01,
+        0x98, 0x08, 0xA0, 0x0F, 0x30, 0xAA, 0x55, 0x04, 0x0B, 0x01, 0x88, 0x08,
+        0xA4,
+    };
+    struct stats st = {0};
+    size_t used = parse_stream(stream, sizeof stream, &amp;st, NULL);
+    printf(&quot;consumed=%zu buffered=%zu frames=%u ok=%u sensors=%u errors=%u stray=%u\n&quot;,
+           used, sizeof stream - used, st.frames, st.ok, st.sensors, st.errors, st.stray);
+    return st.frames == 11 &amp;&amp; st.ok == 7 &amp;&amp; st.sensors == 5 &amp;&amp;
+           st.errors == 4 &amp;&amp; st.stray == 2 ? 0 : 1;
+}
+
+int main(int argc, char **argv)
+{
+    if (argc == 2 &amp;&amp; strcmp(argv[1], &quot;--self-test&quot;) == 0) {
+        return self_test();
+    }
+    if (argc != 2) {
+        fprintf(stderr, &quot;usage: %s --self-test | /dev/ttyUSB0\n&quot;, argv[0]);
+        return 2;
+    }
+
+    int fd = serial_open(argv[1]);
+    if (fd &lt; 0) {
+        return 1;
+    }
+
+    struct stats st = {0};
+    uint8_t buf[512];
+    size_t used = 0;
+
+    /* 主循环:read 到多少解析多少,半帧留在缓冲区;read 返回 0 表示 500 ms 超时。 */
+    for (;;) {
+        ssize_t r = read(fd, buf + used, sizeof buf - used);
+        if (r &gt; 0) {
+            used += (size_t)r;
+            size_t consumed = parse_stream(buf, used, &amp;st, stdout);
+            if (consumed &gt; 0 &amp;&amp; consumed &lt; used) {
+                memmove(buf, buf + consumed, used - consumed);
+            }
+            used -= consumed;
+            if (used &gt;= sizeof buf) {
+                fprintf(stderr, &quot;buffer full without frame sync, reset\n&quot;);
+                used = 0;
+            }
+        } else if (r == 0) {
+            if (used &gt; 0) {
+                st.timeouts++;
+                fprintf(stderr, &quot;timeout %d ms with %zu bytes buffered, dropped\n&quot;,
+                        IO_TIMEOUT, used);
+                used = 0;
+            }
+        } else if (errno == EINTR) {
+            continue;
+        } else {
+            perror(&quot;read&quot;);
+            break;
+        }
+    }
+
+    fprintf(stderr, &quot;frames=%u ok=%u sensors=%u errors=%u stray=%u timeouts=%u\n&quot;,
+            st.frames, st.ok, st.sensors, st.errors, st.stray, st.timeouts);
+    close(fd);
+    return 0;
+}
+</code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- 05 结果检查 -->
+    <section class="section" id="check">
+      <h2><span class="sec-no">05</span>结果检查</h2>
+      <p>逐条勾选。勾选状态只保存在当前页面,刷新后重置;这不是“看完了”的清单,而是“能独立复现”的清单。</p>
+      <ul class="checklist" id="checklist">
+        <li><label><input type="checkbox" /> 能画出 10 字节传感器帧与 6 字节心跳帧,并手算默认帧的 XOR 为 <code>0x92</code>;能解释为什么 XOR 不含 <code>AA 55</code>。</label></li>
+        <li><label><input type="checkbox" /> 回放默认样例得到 11 帧 / 7 成功 / 5 条记录 / 4 错误 / 2 杂散字节,并能逐条指出 XOR 错、未知 CMD、LEN 错、截断帧的原因。</label></li>
+        <li><label><input type="checkbox" /> CSV 有 5 条传感器记录,包含负温度 -5.25 °C;下载文件带 UTF-8 BOM,时间戳带时区偏移,能被表格软件打开。</label></li>
+        <li><label><input type="checkbox" /> 温度下限设为 27 时命中 2 条(27.05 与 30.00),均值为 28.53,最低 27.05,最高 30.00;能说明边界含等号。</label></li>
+        <li><label><input type="checkbox" /> 能解释 500 ms 超时与 <code>VTIME=5</code> 的区别,并说明半帧超时后应该丢多少字节、如何重新同步。</label></li>
+        <li><label><input type="checkbox" /> 能写出 systemd 守护、logrotate 与数据保留策略,并说明时间戳为何用 <code>CLOCK_REALTIME</code>、超时为何用 <code>CLOCK_MONOTONIC</code>。</label></li>
+      </ul>
+      <div class="check-toolbar">
+        <div class="progress" aria-hidden="true"><span id="check-bar"></span></div>
+        <span class="small muted" id="check-count" aria-live="polite">已完成 0 / 6</span>
+        <button type="button" id="check-reset">重置勾选</button>
+      </div>
+    </section>
+
+    <!-- 06 故障排查 -->
+    <section class="section" id="trouble">
+      <h2><span class="sec-no">06</span>故障排查</h2>
+      <p>每条按“现象 → 检查步骤 → 预期结果 → 下一分支”组织。先复现、再定位;不要一上来就改协议或加 <code>sudo</code>。</p>
+
+      <details class="trouble" open>
+        <summary>1. 收到乱码或 XOR 错:帧头找到了,数据却对不上</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd>能读到字节,但解析表大量 <code>XOR 错</code>;或温度/湿度明显不合理(如 -300 °C、6000 %RH);或帧头 <code>AA 55</code> 都很难出现。</dd>
+            <dt>检查步骤</dt><dd>先用 <code>stty -F 设备 -a</code> 核对 <code>speed 115200</code> 与 <code>cs8 -parenb -cstopb</code>;确认设备端与网关端都按 8N1、无流控;用固定测试帧(如默认样例)从设备端原样发送;检查解析器的 XOR 范围是否与设备端一致(是否误含 <code>AA 55</code>);检查 int16 是否按有符号解释、字节序是否为小端。</dd>
+            <dt>预期结果</dt><dd><code>stty</code> 显示 115200 8N1;固定测试帧的 XOR 与页面/自测一致;温度在 -40–80 °C、湿度在 0–100 %RH 的合理范围内。</dd>
+            <dt>下一分支</dt><dd>若字节本身乱:先统一波特率/8N1,再查晶振误差、TX/RX 接反、地线与电平。若字节正确但 XOR 错:只改协议实现并同时更新两端,不要“在网关端猜一个容错阈值”。</dd>
+          </dl>
+          <div class="codecard">
+            <div class="codehead"><span class="fname">核对串口设置(检查命令,未在真实设备执行)</span><span class="tags"><span class="pill principle">principle</span></span></div>
+            <pre><code>$ stty -F /dev/ttyUSB0 -a | head -3
+speed 115200 baud; rows 0; columns 0; line = 0;
+...
+$ ls -l /dev/serial/by-id/
+lrwxrwxrwx 1 root root 13 Nov 27 18:00 usb-1a86_USB_Serial-if00-port0 -&gt; ../../ttyUSB0</code></pre>
+          </div>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>2. 时间戳漂移:记录时间比实际晚、跳变或重复</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd>连续记录的间隔忽大忽小;NTP 校时后出现时间倒退;队列积压时整批记录的时间戳都偏晚;跨时区导出后时间对不上。</dd>
+            <dt>检查步骤</dt><dd>确认时间戳是 <code>read</code> 返回时打的,还是写盘时打的;检查是否用 <code>CLOCK_REALTIME</code> 做超时判断;检查系统 NTP/chrony 状态(<code>timedatectl</code>);检查存储是 UTC 还是本地时间、是否带偏移;检查批量补写是否用了“处理时刻”。</dd>
+            <dt>预期结果</dt><dd>时间戳单调递增(允许 NTP 微调,但要有告警);500 ms 超时不受校时影响;数据库中的时间带明确时区;导出后能还原到同一时刻。</dd>
+            <dt>下一分支</dt><dd>墙钟用 <code>CLOCK_REALTIME</code>,超时/周期用 <code>CLOCK_MONOTONIC</code>;接收时刻入队,写盘沿用入队时间;存 UTC 或带偏移;对“记录间隔 &gt; 2×采样周期”加告警;不要把设备端没有的时间字段凭空补出来。</dd>
+          </dl>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>3. 写盘失败:进程还在跑,数据却停了</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd>日志出现 <code>No space left on device</code>、<code>Read-only file system</code>、<code>Permission denied</code>;CSV 最后一行不完整;SQLite 报 <code>database is locked</code>;重启后缺一段数据。</dd>
+            <dt>检查步骤</dt><dd><code>df -h</code> 与 <code>df -i</code> 看空间和 inode;<code>mount | grep ' / '</code> 看是否只读;<code>ls -ld 数据目录</code> 与 <code>id</code> 看权限;<code>dmesg | tail</code> 看文件系统/磁盘错误;SQLite 用 <code>PRAGMA journal_mode</code> 与 <code>PRAGMA integrity_check</code> 检查;确认写 CSV 时是否 <code>fflush + fsync</code>。</dd>
+            <dt>预期结果</dt><dd>数据目录可写且空间充足;CSV 每行完整(半行可被下一行覆盖或标记);SQLite 能通过完整性检查;写失败会进入错误日志并触发重试/告警,而不是静默丢数据。</dd>
+            <dt>下一分支</dt><dd>空间:清理/扩容/缩短保留期;只读:查挂载与磁盘健康,不要反复重启掩盖;权限:用专用用户与组,不要 <code>chmod 777</code>;CSV 半行:先写临时文件再原子改名,或改为 SQLite 事务;SQLite 锁:WAL、缩短事务、避免多写者。</dd>
+          </dl>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>4. 查询延迟:数据变多后,筛选从“瞬间”变成“几十秒”</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd>按时间范围 + 温度阈值查询越来越慢;CSV 方案要扫全文件;SQLite 查询出现全表扫描;网页/接口超时。</dd>
+            <dt>检查步骤</dt><dd>SQLite 用 <code>EXPLAIN QUERY PLAN</code> 看是否走索引;检查 <code>(ts, temp_c)</code> 复合索引是否存在、条件是否让索引失效(函数包住列、隐式类型转换);CSV 方案统计文件行数与单次查询扫描量;检查是否一次返回全量数据、是否缺分页。</dd>
+            <dt>预期结果</dt><dd><code>EXPLAIN QUERY PLAN</code> 出现 <code>USING INDEX idx_readings_ts_temp</code>;查询只扫描命中范围;接口有 <code>limit</code> 与分页;大数据量聚合走预计算或降采样。</dd>
+            <dt>下一分支</dt><dd>建 <code>(ts, temp_c)</code> 索引并避免在列上套函数;按时间分页;对长历史做按小时/天聚合表;CSV 仅用于导出,不作为在线查询主存储;仍慢时再考虑分区或迁移时序库,不要先上复杂架构。</dd>
+          </dl>
+          <div class="codecard">
+            <div class="codehead"><span class="fname">检查执行计划(principle)</span><span class="tags"><span class="pill principle">principle</span></span></div>
+            <pre><code>$ sqlite3 /var/lib/m3/sensor.db \
+  "EXPLAIN QUERY PLAN
+   SELECT ts, temp_c FROM readings
+    WHERE ts &gt;= '2026-11-27T10:00:00Z' AND temp_c &gt;= 27
+    ORDER BY ts LIMIT 20;"
+QUERY PLAN
+SEARCH readings USING INDEX idx_readings_ts_temp (ts&gt;?)</code></pre>
+          </div>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>5. 串口打不开、设备名漂移或一直读到 0 字节</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd><code>open: No such file or directory</code>、<code>Permission denied</code>;昨天是 <code>ttyUSB0</code>,今天变 <code>ttyUSB1</code>;程序阻塞或 <code>read</code> 一直返回 0。</dd>
+            <dt>检查步骤</dt><dd><code>ls -l /dev/ttyUSB* /dev/ttyACM*</code> 看节点;<code>dmesg | tail -n 20</code> 看插拔识别;<code>ls -l /dev/serial/by-id/</code> 找稳定路径;<code>id</code> 看是否在 <code>dialout</code> 组;确认没有别的进程占用(<code>fuser -v 设备</code>);检查 <code>VMIN/VTIME</code> 与对端是否真的在发数据。</dd>
+            <dt>预期结果</dt><dd>设备节点存在且可读写;当前用户在 <code>dialout</code> 组;程序使用 <code>by-id</code> 稳定路径;有数据时 <code>read</code> 返回实际字节数,无数据时 500 ms 后返回 0 而不是永远阻塞。</dd>
+            <dt>下一分支</dt><dd>权限:<code>sudo usermod -aG dialout $USER</code> 后重新登录(组变更不影响已登录会话);设备名:用 <code>by-id</code> 或 udev 规则;占用:先停掉抢口的进程;一直 0:查 TX/RX、地线、对端供电与波特率。若 500 ms 超时后仍有半帧,按第 1 条重新同步。</dd>
+          </dl>
+        </div>
+      </details>
+    </section>
+
+    <!-- 07 小测 -->
+    <section class="section" id="quiz">
+      <h2><span class="sec-no">07</span>小测</h2>
+      <p>5 题,单选。点“提交答案”后页面内判分并显示解析;可点“重做”清零。题目只检查本页的概念与判断,不考记忆无关数字。</p>
+      <div id="quiz-box">
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">1. 帧 <code>AA 55 04 01 01 5A 0A D4 12 92</code> 解析出的温度与湿度是?</div>
+          <label class="opt"><input type="radio" name="q1" value="a" /> A. 26.50 °C / 48.20 %RH</label>
+          <label class="opt"><input type="radio" name="q1" value="b" /> B. 48.20 °C / 26.50 %RH</label>
+          <label class="opt"><input type="radio" name="q1" value="c" /> C. 90.00 °C / 18.00 %RH</label>
+          <label class="opt"><input type="radio" name="q1" value="d" /> D. 26.50 °C / 48.20 %RH,但湿度按 int16 解释</label>
+          <div class="explain"><strong>正确答案:A。</strong>温度 <code>5A 0A</code> 小端为 <code>0x0A5A = 2650</code>,除以 100 得 26.50 °C;湿度 <code>D4 12</code> 为 <code>0x12D4 = 4820</code>,除以 100 得 48.20 %RH。温度用 int16(可为负),湿度用 uint16(无负值)。</div>
+        </div>
+
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">2. 本协议的 XOR 覆盖哪些字节?</div>
+          <label class="opt"><input type="radio" name="q2" value="a" /> A. LEN、SEQ、CMD 与 DATA[0..LEN-1],不含帧头 AA 55</label>
+          <label class="opt"><input type="radio" name="q2" value="b" /> B. 从 AA 到 DATA 的全部字节,包含帧头</label>
+          <label class="opt"><input type="radio" name="q2" value="c" /> C. 只有 DATA</label>
+          <label class="opt"><input type="radio" name="q2" value="d" /> D. 只有 CMD 与 DATA</label>
+          <div class="explain"><strong>正确答案:A。</strong>契约固定为 <code>LEN ^ SEQ ^ CMD ^ DATA…</code>,不含 <code>AA 55</code>。两端必须完全一致;若一端含帧头,等价于结果再异或 <code>0xFF</code>,所有帧都会“校验错”。</div>
+        </div>
+
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">3. 已找到帧头,LEN=4,但缓冲区只有 8 字节(还差 2 字节)。正确做法是?</div>
+          <label class="opt"><input type="radio" name="q3" value="a" /> A. 先保留这段半帧,等下一次 read 补齐;500 ms 内仍不完整则丢弃并重新同步</label>
+          <label class="opt"><input type="radio" name="q3" value="b" /> B. 立即把 8 字节当完整帧解析</label>
+          <label class="opt"><input type="radio" name="q3" value="c" /> C. 丢掉帧头,从下一个字节继续找 AA 55</label>
+          <label class="opt"><input type="radio" name="q3" value="d" /> D. 用 0 补齐缺失字节再校验</label>
+          <div class="explain"><strong>正确答案:A。</strong>一次 <code>read</code> 不保证等于一帧;要维护跨 read 的缓冲。补齐前不能校验(缺字节);用 0 补齐会制造假帧;马上丢帧头会丢掉可能只差 1–2 字节的好帧。超过 500 ms 仍不完整才丢弃半帧。</div>
+        </div>
+
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">4. “500 ms 超时”在本页语境下最准确的理解是?</div>
+          <label class="opt"><input type="radio" name="q4" value="a" /> A. 从帧头/最后字节起 500 ms 内未补齐一帧,就丢弃半帧并重新同步;它不是 read 的 VTIME 本身</label>
+          <label class="opt"><input type="radio" name="q4" value="b" /> B. 设备必须每 500 ms 发一帧,否则一定是设备掉线</label>
+          <label class="opt"><input type="radio" name="q4" value="c" /> C. 500 ms 是波特率的容差范围</label>
+          <label class="opt"><input type="radio" name="q4" value="d" /> D. 超时后必须重启网关进程</label>
+          <div class="explain"><strong>正确答案:A。</strong><code>VTIME=5</code> 只是让 <code>read</code> 最多等 500 ms;协议超时需要自己用单调时钟判断“半帧是否超时”。设备可能间歇上报,不能把“500 ms 没帧”直接判掉线;超时后应丢半帧、重同步,而不是重启进程。</div>
+        </div>
+
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">5. 数据涨到百万行,按“时间范围 + 温度阈值”查询变慢,最有效的第一步是?</div>
+          <label class="opt"><input type="radio" name="q5" value="a" /> A. 给 <code>(ts, temp_c)</code> 建索引,并用 <code>EXPLAIN QUERY PLAN</code> 验证走索引</label>
+          <label class="opt"><input type="radio" name="q5" value="b" /> B. 把 CSV 换成 Excel 再筛选</label>
+          <label class="opt"><input type="radio" name="q5" value="c" /> C. 加大串口 read 缓冲区</label>
+          <label class="opt"><input type="radio" name="q5" value="d" /> D. 把波特率提高到 921600</label>
+          <div class="explain"><strong>正确答案:A。</strong>查询慢的根因通常是扫描行数,不是串口吞吐。建 <code>(ts, temp_c)</code> 索引、避免在列上套函数、分页,并用执行计划确认;提高波特率只影响采集侧,不会让历史查询变快。</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="primary" id="quiz-submit">提交答案</button>
+          <button type="button" id="quiz-reset">重做</button>
+        </div>
+        <div class="quiz-result" id="quiz-result" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- 08 下一步 -->
+    <section class="section" id="next">
+      <h2><span class="sec-no">08</span>下一步</h2>
+      <p>你已经把“串口字节”走到“可查询记录”。接下来要么回到 M0 补采集侧的单位与误差,要么等 M4 把查询结果画成仪表盘。</p>
+      <div class="next-grid">
+        <a class="next-card" href="/projects/collect/">
+          <div class="t">M0 采集:回看单位与误差</div>
+          <div class="d">如果温度/湿度换算还不稳,回到 M0 重新核对 ×100 定点、int16 符号与采样周期。M3 的解析器默认这些约定已经成立。</div>
+          <div class="go">进入 /projects/collect/ →</div>
+        </a>
+        <div class="next-card pending">
+          <div class="t">M4 展示:网页仪表盘 <span class="pill pending">待建</span></div>
+          <div class="d">M4 需要实时值、历史曲线与设备状态,数据源就是本页的查询层与表结构。它尚未建设,本页不提供假链接,也不把规划写成已完成。</div>
+          <div class="go">状态:待建 · 规划中</div>
+        </div>
+        <a class="next-card" href="/foundations/linux-user/">
+          <div class="t">复习 Linux 用户态</div>
+          <div class="d">termios、read 的部分读、进程与信号。M3 的真实串口调试几乎都会回到这些基础。</div>
+          <div class="go">打开 /foundations/linux-user/ →</div>
+        </a>
+        <a class="next-card" href="/route/">
+          <div class="t">学习路线:确认阶段位置</div>
+          <div class="d">M3 属于“联网与交付”阶段。回路线检查后续课程与前置依赖,避免跳过网络、驱动基础直接做仪表盘。</div>
+          <div class="go">打开 /route/ →</div>
+        </a>
+      </div>
+      <div class="footer-note">
+        本页依据课程 schema v1 的 8 段结构组织:目标 → 前置知识 → 原理与图示 → 操作实验 → 结果检查 → 故障排查 → 小测 → 下一步。
+        示例帧由 Node 脚本按契约逐字节计算 XOR,并与本机 gcc 13.3.0 编译的 <code>m3_gateway --self-test</code> 交叉验证;
+        回放数据为构造样例,真实串口与传感器为 <code>hardware-pending</code>。手册以本机 <code>man 3 termios</code>、
+        <code>man 7 tty</code> 与 SQLite 官方文档为准;若命令输出与你的环境不同,以你的机器为准。
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var $ = function (id) { return document.getElementById(id); };
+      var DASH = '—';
+
+      var playInput = $('play-input');
+      var playStart = $('play-start');
+      var playStep = $('play-step');
+      var playMsg = $('play-msg');
+      var parseBody = $('parse-body');
+      var SAMPLE = playInput ? playInput.value : '';
+
+      var state = {
+        rows: [],
+        records: [],
+        stats: { frames: 0, ok: 0, sensors: 0, errors: 0, stray: 0 },
+        csv: '',
+        step: 1
+      };
+
+      function pad2(n) {
+        var s = String(n);
+        return s.length < 2 ? '0' + s : s;
+      }
+      function hex2(n) { return pad2((n & 0xFF).toString(16).toUpperCase()); }
+      function hexByte(n) { return hex2(n); }
+      function seqHex(n) { return pad2((n & 0xFF).toString(16).toUpperCase()); }
+
+      function setMsg(el, text, kind) {
+        if (!el) { return; }
+        el.textContent = text || '';
+        el.className = 'msg' + (kind ? ' ' + kind : '');
+      }
+
+      function parseBytes(text) {
+        var bytes = [];
+        var lines = String(text).split(/\r?\n/);
+        for (var li = 0; li < lines.length; li++) {
+          var code = lines[li].split('#')[0].trim();
+          if (!code) { continue; }
+          var parts = code.split(/[\s,;\u3000]+/);
+          for (var pi = 0; pi < parts.length; pi++) {
+            var raw = parts[pi];
+            if (!raw) { continue; }
+            var tok = raw.replace(/^0x/i, '');
+            if (!/^[0-9a-fA-F]+$/.test(tok)) {
+              throw new Error('第 ' + (li + 1) + ' 行:无法识别的十六进制片段“' + raw + '”');
+            }
+            if (tok.length % 2 !== 0) {
+              throw new Error('第 ' + (li + 1) + ' 行:片段“' + raw + '”长度为奇数,无法拆成字节');
+            }
+            for (var k = 0; k < tok.length; k += 2) {
+              bytes.push(parseInt(tok.substr(k, 2), 16));
+            }
+          }
+        }
+        return bytes;
+      }
+
+      function readBase() {
+        var v = playStart ? playStart.value : '';
+        if (!v) { return new Date(2026, 10, 27, 18, 0, 0); }
+        var d = new Date(v);
+        if (isNaN(d.getTime())) { throw new Error('接收起始时间无效'); }
+        return d;
+      }
+
+      function readStep() {
+        var v = playStep ? parseFloat(playStep.value) : 1;
+        if (!isFinite(v) || v < 0.1 || v > 60) {
+          throw new Error('记录间隔需在 0.1–60 秒之间');
+        }
+        return v;
+      }
+
+      function parseStream(bytes) {
+        var rows = [];
+        var st = { frames: 0, ok: 0, sensors: 0, errors: 0, stray: 0 };
+        var pos = 0;
+
+        while (pos < bytes.length) {
+          if (!(bytes[pos] === 0xAA && bytes[pos + 1] === 0x55)) {
+            pos++;
+            st.stray++;
+            continue;
+          }
+
+          if (bytes.length - pos < 6) {
+            st.frames++;
+            st.errors++;
+            rows.push({
+              seq: DASH, cmd: DASH, seqNum: null, temp: null, hum: null,
+              ok: false, kind: 'error', result: '截断:不足最小帧长 6',
+              frameHex: bytes.slice(pos).map(hexByte).join(' ')
+            });
+            break;
+          }
+
+          var len = bytes[pos + 2];
+          var total = 6 + len;
+          var seq = bytes[pos + 3];
+          var cmd = bytes[pos + 4];
+
+          if (len > 32) {
+            st.frames++;
+            st.errors++;
+            rows.push({
+              seq: seqHex(seq), cmd: '0x' + hex2(cmd), seqNum: seq, temp: null, hum: null,
+              ok: false, kind: 'error', result: 'LEN 非法:' + len + ' > 32',
+              frameHex: bytes.slice(pos, Math.min(pos + total, bytes.length)).map(hexByte).join(' ')
+            });
+            pos += 2;
+            continue;
+          }
+
+          if (pos + total > bytes.length) {
+            st.frames++;
+            st.errors++;
+            rows.push({
+              seq: seqHex(seq), cmd: '0x' + hex2(cmd), seqNum: seq, temp: null, hum: null,
+              ok: false, kind: 'error',
+              result: '截断:需 ' + total + ' 字节,实际 ' + (bytes.length - pos),
+              frameHex: bytes.slice(pos).map(hexByte).join(' ')
+            });
+            break;
+          }
+
+          var data = bytes.slice(pos + 5, pos + 5 + len);
+          var got = bytes[pos + total - 1];
+          var calc = len ^ seq ^ cmd;
+          for (var i = 0; i < data.length; i++) { calc ^= data[i]; }
+          calc &= 0xFF;
+
+          var row = {
+            seq: seqHex(seq), cmd: '0x' + hex2(cmd), seqNum: seq,
+            temp: null, hum: null, ok: false, kind: 'error', result: '',
+            frameHex: bytes.slice(pos, pos + total).map(hexByte).join(' ')
+          };
+
+          if (calc !== got) {
+            row.result = 'XOR 错:期望 0x' + hex2(calc) + ',实际 0x' + hex2(got);
+            st.errors++;
+          } else if (cmd === 0x01 && len !== 4) {
+            row.result = 'LEN 错:CMD 0x01 需 LEN=4,实际 ' + len;
+            st.errors++;
+          } else if (cmd === 0x02 && len !== 0) {
+            row.result = 'LEN 错:CMD 0x02 需 LEN=0,实际 ' + len;
+            st.errors++;
+          } else if (cmd === 0x01) {
+            var traw = data[0] | (data[1] << 8);
+            var temp = (traw & 0x8000) ? traw - 0x10000 : traw;
+            var hum = data[2] | (data[3] << 8);
+            row.temp = temp / 100;
+            row.hum = hum / 100;
+            row.tempRaw = temp;
+            row.humRaw = hum;
+            row.ok = true;
+            row.kind = 'sensor';
+            row.result = 'OK';
+            st.ok++;
+            st.sensors++;
+          } else if (cmd === 0x02) {
+            row.ok = true;
+            row.kind = 'heartbeat';
+            row.result = 'OK(心跳)';
+            st.ok++;
+          } else {
+            row.result = '未知 CMD 0x' + hex2(cmd);
+            st.errors++;
+          }
+
+          st.frames++;
+          rows.push(row);
+          pos += total;
+        }
+
+        return { rows: rows, stats: st };
+      }
+
+      function buildRecords(rows, base, step) {
+        var out = [];
+        rows.forEach(function (r) {
+          if (r.kind === 'sensor') {
+            out.push({
+              ts: new Date(base.getTime() + out.length * step * 1000),
+              seq: r.seqNum,
+              seqHex: r.seq,
+              temp: r.temp,
+              tempRaw: r.tempRaw,
+              hum: r.hum,
+              humRaw: r.humRaw,
+              frameHex: r.frameHex
+            });
+          }
+        });
+        return out;
+      }
+
+      function renderStats(st) {
+        $('stats-frames').textContent = st.frames;
+        $('stats-ok').textContent = st.ok;
+        $('stats-sensors').textContent = st.sensors;
+        $('stats-errors').textContent = st.errors;
+        $('stats-stray').textContent = st.stray;
+      }
+
+      function renderRows(rows) {
+        parseBody.textContent = '';
+        if (!rows.length) {
+          var empty = document.createElement('tr');
+          var td0 = document.createElement('td');
+          td0.className = 'empty';
+          td0.colSpan = 6;
+          td0.textContent = '暂无解析结果';
+          empty.appendChild(td0);
+          parseBody.appendChild(empty);
+          return;
+        }
+        rows.forEach(function (r, idx) {
+          var tr = document.createElement('tr');
+          if (!r.ok) { tr.className = 'is-err'; }
+
+          var no = document.createElement('td');
+          no.className = 'mono';
+          no.textContent = pad2(idx + 1);
+          tr.appendChild(no);
+
+          var seq = document.createElement('td');
+          seq.className = 'mono';
+          seq.textContent = r.seq;
+          tr.appendChild(seq);
+
+          var cmd = document.createElement('td');
+          cmd.className = 'mono';
+          cmd.textContent = r.cmd;
+          tr.appendChild(cmd);
+
+          var temp = document.createElement('td');
+          temp.className = 'mono';
+          temp.textContent = (r.temp === null) ? DASH : r.temp.toFixed(2);
+          tr.appendChild(temp);
+
+          var hum = document.createElement('td');
+          hum.className = 'mono';
+          hum.textContent = (r.hum === null) ? DASH : r.hum.toFixed(2);
+          tr.appendChild(hum);
+
+          var res = document.createElement('td');
+          var badge = document.createElement('span');
+          badge.className = 'badge ' + (r.ok ? (r.kind === 'heartbeat' ? 'heart' : 'ok') : 'err');
+          badge.textContent = r.result;
+          res.appendChild(badge);
+          tr.appendChild(res);
+
+          parseBody.appendChild(tr);
+        });
+      }
+
+      function csvEscape(v) {
+        var s = String(v);
+        return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }
+
+      function formatLocal(d) {
+        return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) +
+          'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+      }
+
+      function tzOffset(d) {
+        var m = -d.getTimezoneOffset();
+        var sign = m >= 0 ? '+' : '-';
+        m = Math.abs(m);
+        return sign + pad2(Math.floor(m / 60)) + ':' + pad2(m % 60);
+      }
+
+      function formatTimestamp(d) {
+        return formatLocal(d) + tzOffset(d);
+      }
+
+      function dateStamp(d) {
+        return String(d.getFullYear()) + pad2(d.getMonth() + 1) + pad2(d.getDate());
+      }
+
+      function buildCsv(records) {
+        var lines = ['timestamp,seq,temp_c,humidity_pct,frame_hex'];
+        records.forEach(function (r) {
+          lines.push([
+            formatTimestamp(r.ts),
+            r.seq,
+            r.temp.toFixed(2),
+            r.hum.toFixed(2),
+            r.frameHex
+          ].map(csvEscape).join(','));
+        });
+        return lines.join('\r\n') + '\r\n';
+      }
+
+      function updateCsvButtons() {
+        var has = state.records.length > 0;
+        var copy = $('csv-copy');
+        var dl = $('csv-download');
+        if (copy) { copy.disabled = !has; }
+        if (dl) { dl.disabled = !has; }
+      }
+
+      function renderCsv() {
+        state.csv = buildCsv(state.records);
+        var preview = $('csv-preview');
+        if (preview) { preview.value = state.csv; }
+        var info = $('csv-info');
+        if (info) {
+          info.textContent = state.records.length
+            ? (state.records.length + ' 条传感器记录 · ' + state.csv.length + ' 字符 · 下载版本带 UTF-8 BOM')
+            : '没有可导出的传感器记录';
+        }
+        updateCsvButtons();
+        setMsg($('csv-msg'), '', '');
+      }
+
+      function inputValue(d) {
+        return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) +
+          'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+      }
+
+      function filterRecords() {
+        var fromV = $('q-from').value;
+        var toV = $('q-to').value;
+        var tminV = $('q-tmin').value.trim();
+        var tmaxV = $('q-tmax').value.trim();
+
+        var from = fromV ? new Date(fromV) : null;
+        var to = toV ? new Date(toV) : null;
+        if (from && isNaN(from.getTime())) { throw new Error('开始时间无效'); }
+        if (to && isNaN(to.getTime())) { throw new Error('结束时间无效'); }
+        if (from && to && from.getTime() > to.getTime()) { throw new Error('开始时间晚于结束时间'); }
+
+        var tmin = tminV === '' ? null : parseFloat(tminV);
+        var tmax = tmaxV === '' ? null : parseFloat(tmaxV);
+        if (tmin !== null && !isFinite(tmin)) { throw new Error('温度下限不是有效数字'); }
+        if (tmax !== null && !isFinite(tmax)) { throw new Error('温度上限不是有效数字'); }
+
+        return state.records.filter(function (r) {
+          if (from && r.ts.getTime() < from.getTime()) { return false; }
+          if (to && r.ts.getTime() > to.getTime()) { return false; }
+          if (tmin !== null && r.temp < tmin) { return false; }
+          if (tmax !== null && r.temp > tmax) { return false; }
+          return true;
+        });
+      }
+
+      function renderQuery(hits) {
+        var body = $('q-body');
+        body.textContent = '';
+
+        if (!hits.length) {
+          var empty = document.createElement('tr');
+          var td0 = document.createElement('td');
+          td0.className = 'empty';
+          td0.colSpan = 5;
+          td0.textContent = state.records.length ? '没有记录满足条件' : '先解析帧流';
+          empty.appendChild(td0);
+          body.appendChild(empty);
+        } else {
+          hits.forEach(function (r) {
+            var tr = document.createElement('tr');
+            var tds = [
+              formatLocal(r.ts),
+              r.seqHex,
+              r.temp.toFixed(2),
+              r.hum.toFixed(2),
+              r.frameHex
+            ];
+            tds.forEach(function (text, i) {
+              var td = document.createElement('td');
+              if (i > 0) { td.className = 'mono'; }
+              td.textContent = text;
+              tr.appendChild(td);
+            });
+            body.appendChild(tr);
+          });
+        }
+
+        $('q-count').textContent = hits.length + ' / ' + state.records.length;
+
+        if (!hits.length) {
+          $('q-avg').textContent = DASH;
+          $('q-low').textContent = DASH;
+          $('q-high').textContent = DASH;
+          $('q-havg').textContent = DASH;
+          return;
+        }
+
+        var sumT = 0, sumH = 0, low = hits[0].tempRaw, high = hits[0].tempRaw;
+        hits.forEach(function (r) {
+          sumT += r.tempRaw;
+          sumH += r.humRaw;
+          if (r.tempRaw < low) { low = r.tempRaw; }
+          if (r.tempRaw > high) { high = r.tempRaw; }
+        });
+        $('q-avg').textContent = (Math.round(sumT / hits.length) / 100).toFixed(2);
+        $('q-low').textContent = (low / 100).toFixed(2);
+        $('q-high').textContent = (high / 100).toFixed(2);
+        $('q-havg').textContent = (Math.round(sumH / hits.length) / 100).toFixed(2);
+      }
+
+      function refreshQuery() {
+        try {
+          var hits = filterRecords();
+          renderQuery(hits);
+          setMsg($('q-msg'), '', '');
+        } catch (e) {
+          renderQuery([]);
+          setMsg($('q-msg'), e.message, 'err');
+        }
+      }
+
+      function setQueryRange() {
+        var from = $('q-from');
+        var to = $('q-to');
+        if (!state.records.length) {
+          from.value = '';
+          to.value = '';
+          $('q-tmin').value = '';
+          $('q-tmax').value = '';
+          renderQuery([]);
+          return;
+        }
+        from.value = inputValue(state.records[0].ts);
+        var last = state.records[state.records.length - 1].ts;
+        var step = state.step || 1;
+        to.value = inputValue(new Date(last.getTime() + step * 1000));
+        $('q-tmin').value = '';
+        $('q-tmax').value = '';
+        renderQuery(filterRecords());
+        setMsg($('q-msg'), '', '');
+      }
+
+      function clearResults(message, kind) {
+        state.rows = [];
+        state.records = [];
+        state.stats = { frames: 0, ok: 0, sensors: 0, errors: 0, stray: 0 };
+        state.csv = '';
+        renderStats(state.stats);
+        renderRows([]);
+        renderCsv();
+        setQueryRange();
+        setMsg(playMsg, message || '', kind || '');
+      }
+
+      function parse() {
+        var base, step, bytes;
+        try {
+          base = readBase();
+          step = readStep();
+          bytes = parseBytes(playInput.value);
+        } catch (e) {
+          clearResults(e.message, 'err');
+          setMsg($('play-msg'), e.message, 'err');
+          return;
+        }
+
+        if (!bytes.length) {
+          clearResults('没有可解析的字节:请粘贴至少一帧十六进制数据', 'err');
+          setMsg($('play-msg'), '没有可解析的字节:请粘贴至少一帧十六进制数据', 'err');
+          return;
+        }
+
+        var res = parseStream(bytes);
+        state.stats = res.stats;
+        state.rows = res.rows;
+        state.step = step;
+        state.records = buildRecords(res.rows, base, step);
+
+        renderStats(res.stats);
+        renderRows(res.rows);
+        renderCsv();
+        setQueryRange();
+
+        setMsg(playMsg,
+          '解析完成:' + bytes.length + ' 字节 → ' + res.stats.frames + ' 帧(成功 ' +
+          res.stats.ok + ',错误 ' + res.stats.errors + ',杂散 ' + res.stats.stray + ' 字节)',
+          'ok');
+      }
+
+      function downloadCsv() {
+        if (!state.records.length) {
+          setMsg($('csv-msg'), '没有可导出的传感器记录', 'err');
+          return;
+        }
+        var csv = '\ufeff' + state.csv;
+        var url = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'm3_sensor_' + dateStamp(state.records[0].ts) + '.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setMsg($('csv-msg'),
+          '已生成 data: URL(' + state.records.length + ' 条记录,UTF-8 BOM),浏览器应开始下载',
+          'ok');
+      }
+
+      function copyCsv() {
+        if (!state.records.length) {
+          setMsg($('csv-msg'), '没有可复制的传感器记录', 'err');
+          return;
+        }
+        var text = state.csv;
+        var fallback = function () {
+          var ta = $('csv-preview');
+          ta.focus();
+          ta.select();
+          var ok = false;
+          try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+          if (ok) {
+            setMsg($('csv-msg'), '已复制 ' + state.records.length + ' 条记录(回退方式)', 'ok');
+          } else {
+            setMsg($('csv-msg'), '浏览器拒绝了剪贴板访问:请手动全选预览框复制', 'err');
+          }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            setMsg($('csv-msg'), '已复制 ' + state.records.length + ' 条记录', 'ok');
+          }, fallback);
+        } else {
+          fallback();
+        }
+      }
+
+      /* ---------- 事件绑定:实验 1-3 ---------- */
+      if (playInput) {
+        var playBtn = $('play-btn');
+        if (playBtn) { playBtn.addEventListener('click', parse); }
+
+        var sampleBtn = $('play-sample');
+        if (sampleBtn) {
+          sampleBtn.addEventListener('click', function () {
+            playInput.value = SAMPLE;
+            parse();
+          });
+        }
+
+        var clearBtn = $('play-clear');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', function () {
+            playInput.value = '';
+            clearResults('已清空:文本框为空,统计已归零', '');
+          });
+        }
+
+        if (playStart) { playStart.addEventListener('change', parse); }
+        if (playStep) { playStep.addEventListener('change', parse); }
+
+        var copyBtn = $('csv-copy');
+        if (copyBtn) { copyBtn.addEventListener('click', copyCsv); }
+        var dlBtn = $('csv-download');
+        if (dlBtn) { dlBtn.addEventListener('click', downloadCsv); }
+
+        ['q-from', 'q-to', 'q-tmin', 'q-tmax'].forEach(function (id) {
+          var el = $(id);
+          if (el) {
+            el.addEventListener('change', refreshQuery);
+            el.addEventListener('input', refreshQuery);
+          }
+        });
+
+        var qReset = $('q-reset');
+        if (qReset) { qReset.addEventListener('click', setQueryRange); }
+
+        parse();
+      }
+
+      /* ---------- 05 结果检查 ---------- */
+      var checklist = $('checklist');
+      if (checklist) {
+        var boxes = Array.prototype.slice.call(checklist.querySelectorAll('input[type="checkbox"]'));
+        var countEl = $('check-count');
+        var barEl = $('check-bar');
+        var resetCheck = $('check-reset');
+
+        var refreshChecklist = function () {
+          var done = 0;
+          boxes.forEach(function (box) {
+            if (box.checked) { done += 1; }
+            var li = box.parentNode ? box.parentNode.parentNode : null;
+            if (li && li.tagName === 'LI') { li.classList.toggle('done', box.checked); }
+          });
+          if (countEl) {
+            countEl.textContent = '已完成 ' + done + ' / ' + boxes.length +
+              (done === boxes.length ? ' ✓ 结果检查通过' : '');
+          }
+          if (barEl) {
+            barEl.style.width = boxes.length ? (done * 100 / boxes.length) + '%' : '0%';
+          }
+        };
+
+        boxes.forEach(function (box) { box.addEventListener('change', refreshChecklist); });
+        if (resetCheck) {
+          resetCheck.addEventListener('click', function () {
+            boxes.forEach(function (box) { box.checked = false; });
+            refreshChecklist();
+          });
+        }
+        refreshChecklist();
+      }
+
+      /* ---------- 07 小测 ---------- */
+      var quiz = $('quiz-box');
+      if (quiz) {
+        var questions = Array.prototype.slice.call(quiz.querySelectorAll('.quiz-q'));
+        var resultEl = $('quiz-result');
+        var submitQuiz = $('quiz-submit');
+        var resetQuiz = $('quiz-reset');
+
+        var pickedValue = function (q) {
+          var input = q.querySelector('input[type="radio"]:checked');
+          return input ? input.value : '';
+        };
+
+        var clearQuestion = function (q) {
+          q.classList.remove('is-correct', 'is-wrong', 'is-missing');
+          var exp = q.querySelector('.explain');
+          if (exp) { exp.classList.remove('show'); }
+        };
+
+        var gradeQuiz = function () {
+          var score = 0;
+          var missing = 0;
+          questions.forEach(function (q) {
+            var answer = q.getAttribute('data-answer');
+            var picked = pickedValue(q);
+            clearQuestion(q);
+            if (!picked) {
+              missing += 1;
+              q.classList.add('is-missing');
+              return;
+            }
+            if (picked === answer) {
+              score += 1;
+              q.classList.add('is-correct');
+            } else {
+              q.classList.add('is-wrong');
+            }
+            var exp = q.querySelector('.explain');
+            if (exp) { exp.classList.add('show'); }
+          });
+          if (!resultEl) { return; }
+          resultEl.classList.add('show');
+          resultEl.classList.remove('ok', 'warn', 'bad');
+          if (missing > 0) {
+            resultEl.classList.add('warn');
+            resultEl.textContent = '还有 ' + missing + ' 题没有选择。已选题目中答对 ' +
+              score + ' / ' + questions.length + '。';
+          } else if (score === questions.length) {
+            resultEl.classList.add('ok');
+            resultEl.textContent = '全部正确:' + score + ' / ' + questions.length +
+              '。可以进入下一步,或回到 04 用真实设备验证。';
+          } else if (score >= Math.ceil(questions.length * 0.6)) {
+            resultEl.classList.add('warn');
+            resultEl.textContent = '答对 ' + score + ' / ' + questions.length +
+              '。看每题解析,再回到对应小节复习。';
+          } else {
+            resultEl.classList.add('bad');
+            resultEl.textContent = '答对 ' + score + ' / ' + questions.length +
+              '。建议重读 03 原理与 04 实验后再测一次。';
+          }
+        };
+
+        if (submitQuiz) { submitQuiz.addEventListener('click', gradeQuiz); }
+        if (resetQuiz) {
+          resetQuiz.addEventListener('click', function () {
+            questions.forEach(function (q) {
+              var checked = q.querySelector('input[type="radio"]:checked');
+              if (checked) { checked.checked = false; }
+              clearQuestion(q);
+            });
+            if (resultEl) {
+              resultEl.classList.remove('show', 'ok', 'warn', 'bad');
+              resultEl.textContent = '';
+            }
+          });
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
