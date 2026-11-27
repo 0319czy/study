@@ -51,3 +51,27 @@ html {
 body {
   color: var(--tok-text);
 }
+
+/* 深色可读性修复:避免文字与背景接近 */
+html[data-theme="dark"] #platform-nav,
+html[data-theme="dark"] #platform-nav a,
+html[data-theme="dark"] #platform-nav .brand,
+html[data-theme="dark"] #platform-nav .navsearch,
+html[data-theme="dark"] #platform-nav .theme-toggle,
+html[data-theme="dark"] #platform-nav .nav-toggle { color: #16211d !important; }
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] button[class*="btn-primary"] { color: #06231f !important; }
+html[data-theme="dark"] .eyebrow { color: #99f6e4 !important; }
+html[data-theme="dark"] .why-number { color: #99f6e4 !important; }
+html[data-theme="dark"] svg text { fill: #c7d3df !important; }
+html[data-theme="dark"] [class*="text-purple-"],
+html[data-theme="dark"] [class*="text-blue-"],
+html[data-theme="dark"] [class*="text-amber-"] { color: #fbbf24 !important; }
+
+/* 深色修复补充 */
+html[data-theme="dark"] .eyebrow,
+html[data-theme="dark"] .eyebrow * { color: #99f6e4 !important; }
+html[data-theme="dark"] a.btn-primary,
+html[data-theme="dark"] a[class*="btn-primary"] { color: #06231f !important; }
+html[data-theme="dark"] .site-header { background: #111815 !important; }
+html[data-theme="dark"] { --header-bg: #111815; }

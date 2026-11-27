@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SLUGS = ['linux', 'mcu', 'analog', 'ml', 'ros', 'rtos'];
 const LINK = '<link rel="stylesheet" href="/shared/site-nav-light.css" data-platform-nav-style="1" />';
+const DARK_FIX = '<style data-dark-fix="1">html[data-theme="dark"] svg text{fill:#e6edf3 !important}html[data-theme="dark"] button[class*="rounded-md"],html[data-theme="dark"] a[class*="btn-primary"],html[data-theme="dark"] button[class*="bg-brand"]{color:#06231f !important}html[data-theme="dark"] [class*="text-purple-"],html[data-theme="dark"] [class*="text-blue-"],html[data-theme="dark"] [class*="text-amber-"]{color:#fbbf24 !important}html[data-theme="dark"] .eyebrow,html[data-theme="dark"] .eyebrow *{color:#99f6e4 !important}html[data-theme="dark"] .site-header{background:#111815 !important}html[data-theme="dark"] .why-number{color:#99f6e4 !important}</style>';
 const ROS_INIT = '<script data-ros-init="1">try{if(!localStorage.getItem(\'ros-learn-theme\'))localStorage.setItem(\'ros-learn-theme\',\'dark\');}catch(e){}</script>';
 const TOKENS = '<link rel="stylesheet" href="/shared/six-tokens.css" data-six-tokens="1" />';
 const NAV = `<nav id="platform-nav" aria-label="平台导航">
@@ -61,7 +62,7 @@ for (const file of files) {
   next = next.replace(/<nav id="platform-nav"[\s\S]*?<\/nav>\s*/gi, '');
   next = next.replace(/<script data-theme-script="1"[\s\S]*?<\/script>\s*/gi, '');
   // 令牌映射放在 </head> 前(晚于站点自身 CSS);导航在 <body> 后;主题脚本在 </body> 前
-  next = next.replace(/<\/head>/i, TOKENS + '\n</head>');
+  next = next.replace(/<\/head>/i, TOKENS + '\n' + DARK_FIX + '\n</head>');
   next = next.replace(/(<body[^>]*>)/i, '$1\n' + (file.indexOf('/ros/') >= 0 ? ROS_INIT + '\n' : '') + LINK + '\n' + NAV + '\n');
   next = next.replace(/<\/body>/i, '<script data-theme-script="1">(function(){var KEY=\'1kni4r-theme-v1\';function apply(t){var d=t===\'dark\';document.documentElement.classList.toggle(\'dark\',d);document.documentElement.dataset.theme=d?\'dark\':\'light\';if(location.pathname.indexOf(\'/ros\')===0){try{localStorage.setItem(\'ros-learn-theme\',d?\'dark\':\'light\');}catch(e){}}var b=document.getElementById(\'theme-toggle\');if(b){b.textContent=d?\'浅色\':\'深色\';}}var s=null;try{s=localStorage.getItem(KEY);}catch(e){}apply(s===\'light\'?\'light\':\'dark\');var btn=document.getElementById(\'theme-toggle\');if(btn){btn.addEventListener(\'click\',function(){var cur=document.documentElement.dataset.theme===\'dark\'?\'dark\':\'light\';var n=cur===\'dark\'?\'light\':\'dark\';try{localStorage.setItem(KEY,n);}catch(e){}apply(n);});}})();</script>\n</body>');
   if (next !== html) {
