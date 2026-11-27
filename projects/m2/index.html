@@ -178,7 +178,7 @@
       <table>
         <tr><th style="width:170px">前置</th><th>你需要会的东西</th><th style="width:190px">去哪补</th></tr>
         <tr><td>M0 采集</td><td>ADC 码值 → 电压 → 物理量;10ms 采样周期;温度 ×100、湿度 ×100 的定点表示。</td><td><a href="/projects/collect/">M0 采集页</a></td></tr>
-        <tr><td>M1 通信</td><td>帧格式 AA 55 | LEN | SEQ | CMD | DATA | XOR;校验失败与 500ms 超时的判定。</td><td><a href="/projects/m1/">M1 通信页</a>(第一批后续)</td></tr>
+        <tr><td>M1 通信</td><td>帧格式 AA 55 | LEN | SEQ | CMD | DATA | XOR;校验失败与 500ms 超时的判定。</td><td><a href="/projects/m1/">M1 通信页</a></td></tr>
         <tr><td>C 语言</td><td>结构体、指针、<code>volatile</code>、位运算;能看懂函数指针与宏。</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
         <tr><td>FreeRTOS 基础</td><td>任务状态(Running / Ready / Blocked / Suspended)、tick、抢占、队列 API、<code>vTaskDelayUntil</code>。</td><td><a href="/rtos/">RTOS 实验室</a></td></tr>
       </table>
@@ -200,7 +200,7 @@
         <tr><td>MCU</td><td>STM32F103C8T6</td><td>与 M0 同一块板;72MHz,Cortex-M3</td></tr>
         <tr><td>RTOS</td><td>FreeRTOS 10.x</td><td><code>configUSE_PREEMPTION = 1</code>、<code>configUSE_TIME_SLICING = 1</code>、heap_4</td></tr>
         <tr><td>tick</td><td>1000Hz</td><td>1ms 分辨率;10/20/500ms 均为整 tick</td></tr>
-        <tr><td>串口</td><td>USART1,115200 8N1</td><td>与 M1 一致;一帧 ≤ 16 字节</td></tr>
+        <tr><td>串口</td><td>USART1,115200 8N1</td><td>与 M1 一致;一帧 6 + LEN ≤ 14 字节</td></tr>
         <tr><td>IWDG</td><td>超时 500ms</td><td>注意:与协议"500ms 心跳超时"数值相同但是两件事</td></tr>
       </table>
       <div class="note warn">
@@ -283,7 +283,7 @@
 
       <h3><span class="n">3.3</span> 帧格式:与 M1 同一契约</h3>
       <p class="muted" style="font-size:13px;line-height:1.8">
-        帧头 <code>AA 55</code>,<code>LEN</code> 为 DATA 字节数,<code>XOR</code> 覆盖 LEN ~ DATA(不含帧头)。
+        帧头 <code>AA 55</code>,<code>LEN</code> 只数 DATA 字节;<code>XOR</code> 从 <code>AA</code> 一直异或到 DATA 末字节(不含 XOR 自身)。
         温度是 <code>int16</code> 小端、×100;湿度是 <code>uint16</code> 小端、×100;心跳帧 CMD=0x02 且 LEN=0。
       </p>
       <div class="frame" aria-hidden="true">
@@ -296,17 +296,20 @@
         <div class="by xor"><b>XOR</b><span>校验</span></div>
       </div>
       <table class="mini">
-        <tr><th>CMD</th><th>含义</th><th>LEN</th><th>DATA 布局</th><th>示例(SEQ=0x07)</th></tr>
-        <tr><td>0x01</td><td>传感器数据</td><td>4</td><td>温度 int16 LE ×100,湿度 uint16 LE ×100</td><td><code>AA 55 04 07 01 29 09 2E 16 1A</code>(23.45℃ / 56.78%)</td></tr>
-        <tr><td>0x02</td><td>心跳</td><td>0</td><td>无</td><td><code>AA 55 00 08 02 0A</code></td></tr>
+        <tr><th>CMD</th><th>含义</th><th>LEN</th><th>DATA 布局</th><th>示例(SEQ=0x01)</th></tr>
+        <tr><td>0x01</td><td>传感器数据</td><td>4</td><td>温度 int16 LE ×100,湿度 uint16 LE ×100</td><td><code>AA 55 04 01 01 29 09 2E 16 E3</code>(23.45℃ / 56.78%)</td></tr>
+        <tr><td>0x02</td><td>心跳</td><td>0</td><td>无</td><td><code>AA 55 00 08 02 F5</code></td></tr>
       </table>
+      <p class="muted" style="font-size:12.5px">
+        自检:把 XOR 字节也一起异或,合法帧的结果必为 <code>0x00</code>。XOR 覆盖范围与 <a href="/projects/m1/">M1</a> 完全一致(含帧头)。
+      </p>
 
       <div class="panel" style="margin-top:14px">
         <h4>帧生成器 <em>· 改数值,看 DATA 与 XOR 怎么变(simulated)</em></h4>
         <div class="grid3" style="gap:10px">
           <div class="ctl"><label>温度℃</label><input id="f-temp" type="number" value="23.45" step="0.01" style="background:#0f151d;color:#e6edf3;border:1px solid #1e2a38;border-radius:7px;padding:4px 6px;font-size:12.5px;width:100%" /><span class="val">×100</span></div>
           <div class="ctl"><label>湿度%</label><input id="f-humi" type="number" value="56.78" step="0.01" style="background:#0f151d;color:#e6edf3;border:1px solid #1e2a38;border-radius:7px;padding:4px 6px;font-size:12.5px;width:100%" /><span class="val">×100</span></div>
-          <div class="ctl"><label>SEQ</label><input id="f-seq" type="number" value="7" min="0" max="255" step="1" style="background:#0f151d;color:#e6edf3;border:1px solid #1e2a38;border-radius:7px;padding:4px 6px;font-size:12.5px;width:100%" /><span class="val">0–255</span></div>
+          <div class="ctl"><label>SEQ</label><input id="f-seq" type="number" value="1" min="0" max="255" step="1" style="background:#0f151d;color:#e6edf3;border:1px solid #1e2a38;border-radius:7px;padding:4px 6px;font-size:12.5px;width:100%" /><span class="val">0–255</span></div>
         </div>
         <div class="out" id="f-out">—</div>
       </div>
@@ -519,7 +522,7 @@ void m2_start(void)
 
         <div class="btnrow">
           <button class="btn" type="button" data-preset="base">基线:10/20/500,0 超期</button>
-          <button class="btn" type="button" data-preset="prio">同负载,优先级配错</button>
+          <button class="btn" type="button" data-preset="prio">采集 6ms,优先级配错</button>
           <button class="btn" type="button" data-preset="over">通信耗时 16ms(过载)</button>
           <label class="hint" style="display:inline-flex;align-items:center;gap:6px">视图
             <select id="a-view" style="width:auto">
@@ -726,20 +729,20 @@ void m2_start(void)
 
     <section class="section" id="s8">
       <h2><span class="n">8/8</span> 下一步</h2>
-      <p class="lead">M2 完成后,设备端已经能稳定产出数据;接下来把数据接到 Linux 网关,或用 M1 把协议细节补齐。</p>
+      <p class="lead">M2 完成后,设备端已经能稳定产出数据;接下来把数据接到 Linux 网关(M3),协议细节有疑问时回 M1 对齐。</p>
       <table>
         <tr><th style="width:150px">下一步</th><th>内容</th><th style="width:170px">为什么现在做</th><th style="width:130px">状态</th></tr>
         <tr>
           <td><a href="/projects/m3/">M3 网关</a></td>
           <td>Linux 端读取串口、按 AA 55 帧格式解析、校验 XOR、按 SEQ 检测丢帧、写入 SQLite</td>
           <td>本页产出的帧与周期就是网关的输入;队列丢帧会在这里变成可见的数据缺口</td>
-          <td><span class="pill warn">待建(第一批后续)</span></td>
+          <td><span class="pill ok">已上线</span></td>
         </tr>
         <tr>
           <td><a href="/projects/m1/">M1 通信</a></td>
-          <td>补齐帧定义、错误帧、500ms 超时与重连策略</td>
+          <td>帧定义、错误帧、500ms 超时与重连策略(本页的输入契约)</td>
           <td>如果对 LEN/XOR/超时还有疑问,先回 M1 对齐契约再回来调通信任务</td>
-          <td><span class="pill warn">待建(第一批后续)</span></td>
+          <td><span class="pill ok">已上线</span></td>
         </tr>
         <tr>
           <td><a href="/rtos/">RTOS 实验室</a></td>
@@ -799,7 +802,7 @@ void m2_start(void)
           var tU = tRaw < 0 ? tRaw + 65536 : tRaw;
           var data = [tU & 0xFF, (tU >> 8) & 0xFF, hRaw & 0xFF, (hRaw >> 8) & 0xFF];
           var bytes = [0xAA, 0x55, 4, seq, 1].concat(data);
-          var xor = 4 ^ seq ^ 1;
+          var xor = 0xAA ^ 0x55 ^ 4 ^ seq ^ 1;
           for (var i = 0; i < data.length; i++) xor ^= data[i];
           bytes.push(xor);
 
@@ -809,7 +812,7 @@ void m2_start(void)
             ',小端写入 DATA[0..1] = ' + hex2(data[0]) + ' ' + hex2(data[1]) + '\n' +
             '湿度 ' + humi.toFixed(2) + '% → ' + hRaw + ' = 0x' + hex2((hRaw >> 8) & 0xFF) + hex2(hRaw & 0xFF) +
             ',小端写入 DATA[2..3] = ' + hex2(data[2]) + ' ' + hex2(data[3]) + '\n' +
-            'XOR = ' + [4, seq, 1].concat(data).map(hex2).join(' ^ ') + ' = ' + hex2(xor) +
+            'XOR = ' + [0xAA, 0x55, 4, seq, 1].concat(data).map(hex2).join(' ^ ') + ' = ' + hex2(xor) +
             (temp < -327.68 || temp > 327.67 ? '\n提示:温度超出 int16 范围,已截断。' : '');
         }
         [tempEl, humiEl, seqEl].forEach(function (el) {
