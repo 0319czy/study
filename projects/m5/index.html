@@ -118,6 +118,11 @@
         </div>
         <div class="progressbar"><i id="bar"></i></div>
         <p class="muted" id="check-status">已完成 0 / 10</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px">
+          <button type="button" id="export-summary" style="background:#5eead4;color:#06231f;border:none;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer">导出模拟交付摘要(JSON)</button>
+          <span class="muted" id="export-msg" style="font-size:12.5px"></span>
+        </div>
+        <p class="muted" id="m4-info" style="font-size:12.5px;margin-top:8px">未收到 M4 摘要(可选:在 M4 点“用本次结果打开 M5”带入)</p>
       </div>
       <p class="muted">自检未满 10 项不要宣称"交付完成";缺一项就写进"待办",不要用"基本完成"糊过去。</p>
     </div>
@@ -212,6 +217,108 @@
         wrap.appendChild(explain);
         quiz.appendChild(wrap);
       });
+      // M4 → M5:读取摘要 + 导出模拟交付 JSON + 写入学习档案(去重)
+      var exportBtn = document.getElementById('export-summary');
+      var exportMsg = document.getElementById('export-msg');
+      var m4Info = document.getElementById('m4-info');
+      var M4_KEY = '1kni4r-m4-handoff-v1';
+      var ARCHIVE_KEY = '1kni4r-learning-v1';
+      var HANDOFF = null;
+
+      function readM4() {
+        var raw = null;
+        try { raw = sessionStorage.getItem(M4_KEY); } catch (e) { return; }
+        if (!raw) { return; }
+        try {
+          var p = JSON.parse(raw);
+          if (!p || p.version !== 'm4-handoff-v1') { throw new Error('摘要版本不符'); }
+          HANDOFF = p;
+          if (m4Info) {
+            m4Info.textContent = 'M4 摘要:记录 ' + p.records + ' 条 · 最后 ' + p.lastTemp + '℃ / ' + p.lastHum + '%RH · 告警 ' + p.alarms + ' · 自检 ' + p.checksDone + '/' + p.checksTotal + ' · 夹具 ' + p.fixture;
+          }
+        } catch (e) {
+          if (m4Info) { m4Info.textContent = 'M4 摘要读取失败:' + e.message; }
+        }
+      }
+
+      function addArchiveEvent(summary) {
+        var d = null;
+        try { d = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || 'null'); } catch (e) { d = null; }
+        if (!d) { d = { version: 1, updatedAt: 0, events: [], notes: [], wrong: [], migratedFrom: {} }; }
+        d.events = d.events || [];
+        var key = 'sensor-monitor|M5|' + summary.fixture + '|simulated';
+        var existing = null;
+        for (var i = 0; i < d.events.length; i++) {
+          var ev = d.events[i];
+          if (ev && ev.meta && ev.meta.dedupeKey === key) { existing = ev; break; }
+        }
+        var meta = {
+          dedupeKey: key,
+          projectId: 'sensor-monitor',
+          stage: 'M5',
+          fixture: summary.fixture,
+          simulation: true,
+          records: summary.m4 ? summary.m4.records : null,
+          lastTemp: summary.m4 ? summary.m4.lastTemp : null,
+          lastHum: summary.m4 ? summary.m4.lastHum : null,
+          checksDone: summary.checksDone,
+          checksTotal: summary.checksTotal,
+          checkPassed: summary.checkPassed,
+          missingUpstream: summary.missingUpstream,
+          evidenceStatus: 'hardware-pending'
+        };
+        if (existing) {
+          existing.meta = meta;
+          existing.at = Date.now();
+          existing.title = 'M5 模拟交付验收';
+        } else {
+          d.events.push({
+            id: 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            type: 'project',
+            title: 'M5 模拟交付验收',
+            site: 'platform',
+            at: Date.now(),
+            meta: meta
+          });
+        }
+        d.updatedAt = Date.now();
+        try { localStorage.setItem(ARCHIVE_KEY, JSON.stringify(d)); return true; } catch (e) { return false; }
+      }
+
+      readM4();
+
+      if (exportBtn) {
+        exportBtn.addEventListener('click', function () {
+          var checks = document.querySelectorAll('#checklist input');
+          var done = 0;
+          checks.forEach(function (c) { if (c.checked) done++; });
+          var m4 = HANDOFF;
+          var summary = {
+            projectId: 'sensor-monitor',
+            mode: 'simulated',
+            stage: 'M5',
+            fixture: m4 ? m4.fixture : 'm3-sample-v1',
+            generatedAt: new Date().toISOString(),
+            m4: m4 || null,
+            checksDone: done,
+            checksTotal: checks.length,
+            checkPassed: done === checks.length,
+            missingUpstream: !m4,
+            evidenceStatus: 'hardware-pending'
+          };
+          var archived = addArchiveEvent(summary);
+          var blob = JSON.stringify(summary, null, 2);
+          var a = document.createElement('a');
+          a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(blob);
+          a.download = 'm5-delivery-' + new Date().toISOString().slice(0, 10) + '.json';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          if (exportMsg) {
+            exportMsg.textContent = (m4 ? '已导出模拟交付摘要(' + done + '/' + checks.length + ' 项自检)' : '已导出,但缺少 M4 摘要(上游待完成)') + (archived ? ';已写入学习档案(去重)' : ';档案写入失败,可用下载文件备份');
+          }
+        });
+      }
     })();
   </script>
 </body>

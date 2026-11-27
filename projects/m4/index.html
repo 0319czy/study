@@ -122,6 +122,11 @@
           <button type="button" id="load-csv" style="background:#0f151d;color:#e6edf3;border:1px solid #1e2a38;border-radius:8px;padding:8px 14px;cursor:pointer">解析并渲染</button>
           <span class="muted" id="csv-status" style="font-size:12.5px">等待粘贴</span>
         </div>
+        <p class="muted" id="data-source-info" style="margin-top:8px;font-size:12.5px">数据来源:内置样例(60 点,simulated)</p>
+        <div class="kv" style="margin-top:8px">
+          <button type="button" id="to-m5" style="background:#5eead4;color:#06231f;border:none;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer">用本次结果打开 M5</button>
+          <span class="muted" id="to-m5-msg" style="font-size:12.5px"></span>
+        </div>
         <p class="muted" style="margin-top:10px;font-size:12.5px">模拟数据由页面内模型生成(simulated);曲线、告警和状态判定逻辑与真实网关一致。</p>
       </div>
       <p class="muted" style="margin-top:8px">自检:把阈值调到 20℃,告警次数应明显上升;调到 35℃,告警应为 0。若状态灯没有变化,检查刷新定时器是否被清理。</p>
@@ -356,6 +361,77 @@
         quiz.appendChild(wrap);
       });
 
+      // M3 → M4:同标签页交接(读取即消费;失败保留内置样例)
+      var dataSourceInfo = document.getElementById('data-source-info');
+      var toM5Btn = document.getElementById('to-m5');
+      var toM5Msg = document.getElementById('to-m5-msg');
+      var HANDOFF_KEY = '1kni4r-m3-handoff-v1';
+      var M4_KEY = '1kni4r-m4-handoff-v1';
+      var handoffInfo = null;
+
+      function setSourceInfo(text) {
+        if (dataSourceInfo) { dataSourceInfo.textContent = text; }
+      }
+
+      function readHandoff() {
+        var raw = null;
+        try { raw = sessionStorage.getItem(HANDOFF_KEY); } catch (e) { return; }
+        if (!raw) { return; }
+        try {
+          var payload = JSON.parse(raw);
+          if (!payload || payload.version !== 'm3-handoff-v1' || !Array.isArray(payload.records) || !payload.records.length) {
+            throw new Error('交接数据结构不符');
+          }
+          var parsed = [];
+          for (var i = 0; i < payload.records.length; i++) {
+            var r = payload.records[i];
+            var temp = Number(r.temp_c);
+            var hum = Number(r.humidity_pct);
+            if (!isFinite(temp) || !isFinite(hum)) { throw new Error('第 ' + (i + 1) + ' 条温湿度无效'); }
+            parsed.push({ t: i, temp: temp, hum: hum, offline: false, warn: temp > threshold() });
+          }
+          data = parsed;
+          handoffInfo = payload;
+          setSourceInfo('数据来源:M3 交接(' + parsed.length + ' 条,夹具 ' + (payload.fixture || 'm3-sample-v1') + ')');
+          try { sessionStorage.removeItem(HANDOFF_KEY); } catch (e) {}
+          if (toM5Msg) { toM5Msg.textContent = '已从 M3 接收 ' + parsed.length + ' 条记录'; }
+        } catch (e) {
+          setSourceInfo('M3 交接失败:' + e.message + ';可改用 CSV 导入');
+          try { sessionStorage.removeItem(HANDOFF_KEY); } catch (e2) {}
+        }
+      }
+
+      if (toM5Btn) {
+        toM5Btn.addEventListener('click', function () {
+          if (!data.length) { toM5Msg.textContent = '没有数据可交接:先选择数据源并渲染'; return; }
+          var l = data[data.length - 1];
+          var checks = document.querySelectorAll('#checklist input');
+          var done = 0;
+          checks.forEach(function (c) { if (c.checked) done++; });
+          var payload = {
+            version: 'm4-handoff-v1',
+            source: 'm4',
+            fixture: 'm3-sample-v1',
+            generatedAt: new Date().toISOString(),
+            records: data.length,
+            lastTemp: Math.round(l.temp * 100) / 100,
+            lastHum: Math.round(l.hum * 100) / 100,
+            alarms: computeAlarms(data),
+            checksDone: done,
+            checksTotal: checks.length,
+            checkPassed: done === checks.length
+          };
+          try {
+            sessionStorage.setItem(M4_KEY, JSON.stringify(payload));
+            toM5Msg.textContent = '已准备摘要(' + payload.records + ' 条,自检 ' + done + '/' + checks.length + '),正在打开 M5…';
+            setTimeout(function () { location.href = '/projects/m5/'; }, 300);
+          } catch (e) {
+            toM5Msg.textContent = '无法写入 sessionStorage:' + e.message + ';可手动记录参数';
+          }
+        });
+      }
+
+      readHandoff();
       render();
       restartTimer();
     })();

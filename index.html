@@ -419,8 +419,8 @@
         badge.textContent = '已开始学习';
         badge.classList.add('active');
         var done = (p.completed || []).length;
-        body.innerHTML = '继续上次任务:<b>' + t[1] + '</b>' + (s ? ' · 当前阶段 ' + s[1] : '') +
-          '<br>已完成 ' + done + ' 个任务' +
+        body.innerHTML = '继续学习位置:<b>' + t[1] + '</b>' + (s ? ' · 当前阶段 ' + s[1] : '') +
+          '<br>历史自标记 ' + done + ' 条(不代表验收通过;模拟交付验收在 M5 单独记录)' +
           (p.updatedAt ? ' · 最近更新 ' + new Date(p.updatedAt).toLocaleString('zh-CN') : '') +
           '<br><a href="' + t[2] + '">继续 →</a>';
       }
@@ -429,8 +429,8 @@
         p.stage = stageSel.value;
         p.task = taskSel.value;
         p.updatedAt = Date.now();
-        p.completed = p.completed || [];
-        if (p.completed.indexOf(p.task) === -1) p.completed.push(p.task);
+        // 只保存继续位置;不再把任务写入 completed(验收记录由 M5 单独写入学习档案)
+        if (!Array.isArray(p.completed)) { p.completed = []; }
         try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}
         render();
       });
