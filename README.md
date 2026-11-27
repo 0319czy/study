@@ -56,6 +56,13 @@ DNS 指向 GitHub Pages 官方地址(apex 域名):
 
 ## 说明
 
+- **已上线**:<https://1kni4r.top/>(强制 HTTPS,HTTP 自动 301)。证书由 GitHub Pages 自动签发与续期
+  (Let's Encrypt,`CN=1kni4r.top`,当前证书有效期至 2027-02-25)。
+- 仓库:`0319czy/study`;Pages:分支 `main`、根目录、legacy build;自定义域名 `1kni4r.top`。
 - 纯静态站点,无后端、无数据库、无外链资源;全部由 GitHub Pages 托管。
+- DNS 注意:DNSPod 免费套餐对同一子域名有「负载均衡」条数限制,4 条 A/AAAA 按
+  「默认 2 条 + 电信 1 条 + 联通 1 条」分布,`scripts/dns-tencent.py` 已按此实现(幂等)。
 - 域名未做 ICP 备案,因此托管在海外(GitHub Pages),中国大陆部分网络访问速度可能一般;
   若日后备案,可把同一份产物平移到腾讯云 EdgeOne Pages,目录结构无需改动。
+- 更新站点流程:重建某站(`vite build --base=/<slug>/`)→ 同步到 `<slug>/` →
+  `node scripts/finalize.mjs` → `git push`(或直接跑 `node scripts/deploy-github.mjs`)。

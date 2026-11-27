@@ -33,25 +33,36 @@ const DOMAIN = arg('--domain', '1kni4r.top');
 const API = 'https://api.github.com';
 
 async function api(method, path, body) {
-  const res = await fetch(API + path, {
-    method,
-    headers: {
-      accept: 'application/vnd.github+json',
-      authorization: `Bearer ${TOKEN}`,
-      'user-agent': '1kni4r-site-deploy',
-      'x-github-api-version': '2022-11-28',
-      ...(body ? { 'content-type': 'application/json' } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const text = await res.text();
-  let json = null;
-  try {
-    json = text ? JSON.parse(text) : null;
-  } catch {
-    json = { raw: text };
+  // 本机网络经代理访问 GitHub API 偶发 TLS 断开(UND_ERR_SOCKET),做 3 次退避重试
+  let lastErr;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(API + path, {
+        method,
+        headers: {
+          accept: 'application/vnd.github+json',
+          authorization: `Bearer ${TOKEN}`,
+          'user-agent': '1kni4r-site-deploy',
+          'x-github-api-version': '2022-11-28',
+          ...(body ? { 'content-type': 'application/json' } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const text = await res.text();
+      let json = null;
+      try {
+        json = text ? JSON.parse(text) : null;
+      } catch {
+        json = { raw: text };
+      }
+      return { status: res.status, json };
+    } catch (err) {
+      lastErr = err;
+      console.error(`api ${method} ${path} 第 ${attempt} 次失败: ${err.message}`);
+      if (attempt < 3) await new Promise((r) => setTimeout(r, 2000 * attempt));
+    }
   }
-  return { status: res.status, json };
+  throw lastErr;
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
