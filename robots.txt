@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://1kni4r.top/sitemap.xml

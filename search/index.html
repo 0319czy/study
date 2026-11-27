@@ -137,9 +137,27 @@
         fetch(INDEX_URL, { cache: 'no-cache' })
           .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
           .then(function (data) {
-            items = (data.items || []).filter(function (it) { return it && it.route && it.title; });
-            statusEl.textContent = '索引已加载:' + items.length + ' 条(覆盖 6 个站)';
-            render();
+            // 兼容两种格式:旧版全量 {items:[...]} 与新版分片 manifest {sites:[{url}]}
+            if (Array.isArray(data.items)) {
+              items = data.items.filter(function (it) { return it && it.route && it.title; });
+              statusEl.textContent = '索引已加载:' + items.length + ' 条(覆盖 6 个站)';
+              render();
+              return null;
+            }
+            if (!Array.isArray(data.sites) || !data.sites.length) throw new Error('索引格式不支持');
+            statusEl.textContent = '正在加载分片(' + data.sites.length + ' 个站点)…';
+            return Promise.all(data.sites.map(function (s) {
+              return fetch(s.url, { cache: 'no-cache' }).then(function (r) {
+                if (!r.ok) throw new Error('分片 ' + s.url + ' HTTP ' + r.status);
+                return r.json();
+              });
+            })).then(function (shards) {
+              var merged = [];
+              shards.forEach(function (sh) { if (sh && Array.isArray(sh.items)) merged = merged.concat(sh.items); });
+              items = merged.filter(function (it) { return it && it.route && it.title; });
+              statusEl.textContent = '索引已加载:' + items.length + ' 条(覆盖 ' + data.sites.length + ' 个站点,分片加载)';
+              render();
+            });
           })
           .catch(function (e) {
             statusEl.textContent = '索引加载失败(' + e.message + ')。请先运行 scripts/build-search-index.mjs 生成 data/search-index.json。';

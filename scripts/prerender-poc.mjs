@@ -82,11 +82,99 @@ main().catch((error) => {
   process.exitCode = 1;
 });
 
+// ---------------------------------------------------------------------------
+// 批量预渲染:--all 从 docs/inventory.json 读取路由清单,逐条渲染落盘
+// ---------------------------------------------------------------------------
+async function renderAll(opts) {
+  const invPath = join(ROOT, 'docs', 'inventory.json');
+  const inv = JSON.parse(await readFile(invPath, 'utf8'));
+  const routes = [];
+  const seen = new Set();
+  for (const site of inv.sites || []) {
+    for (const it of site.items || []) {
+      if (!it || !it.route) continue;
+      let route;
+      try {
+        route = normalizeRoute(String(it.route).split('#')[0]);
+      } catch {
+        continue;
+      }
+      if (!route || route === '/') continue;
+      if (route.split('/').filter(Boolean).length < 2) continue;
+      if (seen.has(route)) continue;
+      seen.add(route);
+      routes.push(route);
+    }
+  }
+  // 补充六站常见导航页(盘点条目里通常没有 paths/map/glossary 等页面)
+  const EXTRA = [
+    '/linux/paths', '/linux/map', '/linux/glossary', '/linux/quiz', '/linux/cases', '/linux/about',
+    '/mcu/paths', '/mcu/map', '/mcu/quiz', '/mcu/glossary', '/mcu/cases', '/mcu/about',
+    '/analog/paths', '/analog/symbols', '/analog/map', '/analog/glossary', '/analog/quiz', '/analog/cases', '/analog/about',
+    '/ml/paths', '/ml/map', '/ml/metrics', '/ml/glossary', '/ml/quiz', '/ml/cases', '/ml/about',
+    '/rtos/paths', '/rtos/glossary', '/rtos/quiz',
+  ];
+  for (const route of EXTRA) {
+    if (seen.has(route)) continue;
+    seen.add(route);
+    routes.push(route);
+  }
+  routes.sort();
+  console.log('[prerender-all] 路由总数: ' + routes.length);
+
+  const server = await startPreviewServer(opts.port);
+  const base = 'http://127.0.0.1:' + server.port;
+  const chrome = await findChrome(opts.chrome);
+  console.log('[prerender-all] 临时服务: ' + base + '  Chrome: ' + chrome);
+
+  const stats = { ok: 0, skip: 0, fail: 0 };
+  const failures = [];
+  try {
+    for (const route of routes) {
+      try {
+        const ctx = await resolveContext({ ...opts, route, allowEmptyExpect: true });
+        if (existsSync(ctx.outPath) && !opts.force) {
+          stats.skip += 1;
+          continue;
+        }
+        server.blockRoute(route);
+        const render = await renderRoute(chrome, base + route, { route, settleMax: opts.settle, timeout: opts.timeoutMs });
+        const snapshot = sanitizeSnapshot(render.dom, ctx);
+        const analysis = analyzeSnapshot(snapshot, ctx);
+        if (analysis.problems.length) throw new Error(analysis.problems.join('; '));
+        await writeIfChanged(ctx.outPath, snapshot);
+        stats.ok += 1;
+        console.log('[prerender-all] ✓ ' + route + ' (' + analysis.textChars + ' 字符)');
+      } catch (e) {
+        stats.fail += 1;
+        failures.push(route + ' -> ' + e.message);
+        console.log('[prerender-all] ✗ ' + route + ': ' + e.message);
+      } finally {
+        server.unblockRoute();
+      }
+    }
+  } finally {
+    await server.close();
+  }
+
+  console.log('[prerender-all] 完成:写入 ' + stats.ok + ',跳过(已存在) ' + stats.skip + ',失败 ' + stats.fail);
+  if (failures.length) {
+    console.log('[prerender-all] 失败清单:');
+    for (const f of failures) console.log('  - ' + f);
+    process.exitCode = 1;
+  }
+}
+
 async function main() {
   const startedAt = Date.now();
   const opts = parseArgs(process.argv.slice(2));
   if (opts.help) {
     console.log(USAGE_LINES.join('\n'));
+    return;
+  }
+
+  if (opts.all) {
+    await renderAll(opts);
     return;
   }
 
@@ -175,6 +263,8 @@ function parseArgs(argv) {
     noVerify: false,
     noRenderVerify: false,
     force: false,
+    all: false,
+    allowEmptyExpect: false,
     slug: '',
     route: '',
     out: '',
@@ -226,6 +316,8 @@ function parseArgs(argv) {
       opts.noRenderVerify = true;
     } else if (arg === '--force') {
       opts.force = true;
+    } else if (arg === '--all') {
+      opts.all = true;
     } else {
       throw new Error('未知参数 ' + arg + '(--help 查看用法)');
     }
@@ -262,7 +354,7 @@ async function resolveContext(opts) {
   }
 
   const expect = opts.expect.length ? opts.expect : DEFAULT_EXPECT[route] || [];
-  if (!expect.length) throw new Error('路由 ' + route + ' 没有内置断言关键字,请用 --expect 指定');
+  if (!expect.length && !opts.allowEmptyExpect) throw new Error('路由 ' + route + ' 没有内置断言关键字,请用 --expect 指定');
 
   return { slug, route, outPath, expect, control: opts.control };
 }

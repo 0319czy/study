@@ -1,0 +1,1654 @@
+{
+  "generatedAt": "2026-11-27T12:50:39.871Z",
+  "site": "analog",
+  "count": 183,
+  "items": [
+    {
+      "id": "analog:module:semiconductor",
+      "title": "半导体基础",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/semiconductor",
+      "keywords": "半导体基础 semiconductor module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:diode",
+      "title": "PN 结与二极管",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/diode",
+      "keywords": "pn 结与二极管 diode module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:bjt",
+      "title": "双极型晶体管 BJT",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/bjt",
+      "keywords": "双极型晶体管 bjt bjt module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:mosfet",
+      "title": "场效应管 MOSFET",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/mosfet",
+      "keywords": "场效应管 mosfet mosfet module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:amplifier",
+      "title": "放大电路基础",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/amplifier",
+      "keywords": "放大电路基础 amplifier module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:configurations",
+      "title": "三种组态",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/configurations",
+      "keywords": "三种组态 configurations module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:multistage",
+      "title": "多级与差分放大",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/multistage",
+      "keywords": "多级与差分放大 multistage module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:current-source",
+      "title": "电流源",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/current-source",
+      "keywords": "电流源 current-source module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:frequency",
+      "title": "频率响应",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/frequency",
+      "keywords": "频率响应 frequency module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:feedback",
+      "title": "反馈",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/feedback",
+      "keywords": "反馈 feedback module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:opamp",
+      "title": "运算放大器",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/opamp",
+      "keywords": "运算放大器 opamp module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:opamp-apps",
+      "title": "运放应用电路",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/opamp-apps",
+      "keywords": "运放应用电路 opamp-apps module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:filters",
+      "title": "有源滤波",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/filters",
+      "keywords": "有源滤波 filters module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:power-amp",
+      "title": "功率放大",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/power-amp",
+      "keywords": "功率放大 power-amp module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:supply",
+      "title": "直流电源",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/supply",
+      "keywords": "直流电源 supply module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:oscillators",
+      "title": "振荡器",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/oscillators",
+      "keywords": "振荡器 oscillators module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:noise",
+      "title": "噪声与接地",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/noise",
+      "keywords": "噪声与接地 noise module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:module:measurement",
+      "title": "仿真与测量",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "module",
+      "route": "/analog/learn/measurement",
+      "keywords": "仿真与测量 measurement module 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:pn-junction",
+      "title": "PN 结的形成与载流子",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/semiconductor",
+      "keywords": "pn 结的形成与载流子 pn-junction lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:diode-iv",
+      "title": "二极管伏安特性",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/diode",
+      "keywords": "二极管伏安特性 diode-iv lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:rectifier",
+      "title": "半波整流波形",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/diode",
+      "keywords": "半波整流波形 rectifier lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:ripple-filter",
+      "title": "电容滤波与纹波",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/diode",
+      "keywords": "电容滤波与纹波 ripple-filter lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:bjt-current",
+      "title": "BJT 电流放大",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/bjt",
+      "keywords": "bjt 电流放大 bjt-current lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:load-line",
+      "title": "BJT 负载线与工作点",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/bjt",
+      "keywords": "bjt 负载线与工作点 load-line lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:ce-distortion",
+      "title": "共射放大与失真",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/amplifier",
+      "keywords": "共射放大与失真 ce-distortion lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:emitter-follower",
+      "title": "射极跟随器",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/configurations",
+      "keywords": "射极跟随器 emitter-follower lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:diff-pair",
+      "title": "差分放大：共模与差模",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/multistage",
+      "keywords": "差分放大：共模与差模 diff-pair lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:current-mirror",
+      "title": "镜像电流源",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/current-source",
+      "keywords": "镜像电流源 current-mirror lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:bode",
+      "title": "频率响应与波特图",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/frequency",
+      "keywords": "频率响应与波特图 bode lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:feedback-block",
+      "title": "负反馈框图",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/feedback",
+      "keywords": "负反馈框图 feedback-block lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:virtual-short",
+      "title": "运放虚短与虚断",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/opamp",
+      "keywords": "运放虚短与虚断 virtual-short lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:comparator-hysteresis",
+      "title": "比较器与迟滞",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/opamp",
+      "keywords": "比较器与迟滞 comparator-hysteresis lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:inverting-noninverting",
+      "title": "反相 / 同相放大",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/opamp-apps",
+      "keywords": "反相 / 同相放大 inverting-noninverting lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:opamp-summing",
+      "title": "加法器与减法器",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/opamp-apps",
+      "keywords": "加法器与减法器 opamp-summing lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:active-lowpass",
+      "title": "有源低通滤波",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/filters",
+      "keywords": "有源低通滤波 active-lowpass lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:crossover",
+      "title": "乙类交越失真",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/power-amp",
+      "keywords": "乙类交越失真 crossover lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:supply-chain",
+      "title": "整流 → 滤波 → 稳压",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/supply",
+      "keywords": "整流 → 滤波 → 稳压 supply-chain lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:wien-bridge",
+      "title": "文氏桥起振",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/oscillators",
+      "keywords": "文氏桥起振 wien-bridge lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:temperature-bias",
+      "title": "温度对工作点的影响",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/bjt",
+      "keywords": "温度对工作点的影响 temperature-bias lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:mosfet-switch",
+      "title": "MOSFET 开关",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/mosfet",
+      "keywords": "mosfet 开关 mosfet-switch lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:noise-spectrum",
+      "title": "噪声频谱与去耦",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/noise",
+      "keywords": "噪声频谱与去耦 noise-spectrum lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:lab:probe-loading",
+      "title": "探头负载效应",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "lab",
+      "route": "/analog/learn/measurement",
+      "keywords": "探头负载效应 probe-loading lab 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:case:led-current",
+      "title": "LED 限流：用一只电阻把电流定住",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "case",
+      "route": "/analog/cases",
+      "keywords": "led 限流：用一只电阻把电流定住 led-current case 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:case:ce-design",
+      "title": "共射放大：从指标反推偏置电阻",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "case",
+      "route": "/analog/cases",
+      "keywords": "共射放大：从指标反推偏置电阻 ce-design case 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:case:follower-buffer",
+      "title": "运放跟随器：隔离高阻源与低阻负载",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "case",
+      "route": "/analog/cases",
+      "keywords": "运放跟随器：隔离高阻源与低阻负载 follower-buffer case 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:case:comparator-alarm",
+      "title": "比较器报警：加迟滞避免阈值抖动",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "case",
+      "route": "/analog/cases",
+      "keywords": "比较器报警：加迟滞避免阈值抖动 comparator-alarm case 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:case:ldo-thermal",
+      "title": "LDO 供电：先算热，再谈纹波",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "case",
+      "route": "/analog/cases",
+      "keywords": "ldo 供电：先算热，再谈纹波 ldo-thermal case 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:case:rectifier-supply",
+      "title": "整流滤波：9 V 变压器能不能带 7805？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "case",
+      "route": "/analog/cases",
+      "keywords": "整流滤波：9 v 变压器能不能带 7805？ rectifier-supply case 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-1",
+      "title": "本征半导体 / Intrinsic Semiconductor",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "本征半导体 / intrinsic semiconductor analog-term-1 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-2",
+      "title": "掺杂 / Doping",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "掺杂 / doping analog-term-2 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-3",
+      "title": "多子 / 少子 / Majority / Minority Carrier",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "多子 / 少子 / majority / minority carrier analog-term-3 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-4",
+      "title": "PN 结 / PN Junction",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "pn 结 / pn junction analog-term-4 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-5",
+      "title": "耗尽层 / Depletion Region",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "耗尽层 / depletion region analog-term-5 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-6",
+      "title": "内建电势 / Built-in Potential",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "内建电势 / built-in potential analog-term-6 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-7",
+      "title": "势垒电容 / Junction Capacitance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "势垒电容 / junction capacitance analog-term-7 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-8",
+      "title": "扩散电容 / Diffusion Capacitance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "扩散电容 / diffusion capacitance analog-term-8 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-9",
+      "title": "二极管 / Diode",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "二极管 / diode analog-term-9 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-10",
+      "title": "稳压管 / Zener Diode",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "稳压管 / zener diode analog-term-10 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-11",
+      "title": "BJT / Bipolar Junction Transistor",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "bjt / bipolar junction transistor analog-term-11 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-12",
+      "title": "hFE / β / DC Current Gain",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "hfe / β / dc current gain analog-term-12 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-13",
+      "title": "α / Common-base Current Gain",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "α / common-base current gain analog-term-13 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-14",
+      "title": "截止区 / Cutoff Region",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "截止区 / cutoff region analog-term-14 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-15",
+      "title": "放大区 / Active Region",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "放大区 / active region analog-term-15 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-16",
+      "title": "饱和区 / Saturation Region",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "饱和区 / saturation region analog-term-16 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-17",
+      "title": "MOSFET / Metal-Oxide-Semiconductor FET",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "mosfet / metal-oxide-semiconductor fet analog-term-17 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-18",
+      "title": "阈值电压 / Threshold Voltage",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "阈值电压 / threshold voltage analog-term-18 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-19",
+      "title": "跨导 / Transconductance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "跨导 / transconductance analog-term-19 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-20",
+      "title": "增强型 / 耗尽型 / Enhancement / Depletion",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "增强型 / 耗尽型 / enhancement / depletion analog-term-20 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-21",
+      "title": "体二极管 / Body Diode",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "体二极管 / body diode analog-term-21 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-22",
+      "title": "密勒电容 / Miller Capacitance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "密勒电容 / miller capacitance analog-term-22 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-23",
+      "title": "封装热阻 / Thermal Resistance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "封装热阻 / thermal resistance analog-term-23 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-24",
+      "title": "静态工作点 / Quiescent Point",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "静态工作点 / quiescent point analog-term-24 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-25",
+      "title": "直流通路 / DC Path",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "直流通路 / dc path analog-term-25 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-26",
+      "title": "交流通路 / AC Path",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "交流通路 / ac path analog-term-26 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-27",
+      "title": "负载线 / Load Line",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "负载线 / load line analog-term-27 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-28",
+      "title": "小信号模型 / Small-signal Model",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "小信号模型 / small-signal model analog-term-28 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-29",
+      "title": "r_be / Base-emitter Resistance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "r_be / base-emitter resistance analog-term-29 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-30",
+      "title": "电压增益 / Voltage Gain",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "电压增益 / voltage gain analog-term-30 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-31",
+      "title": "输入电阻 / Input Resistance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "输入电阻 / input resistance analog-term-31 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-32",
+      "title": "输出电阻 / Output Resistance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "输出电阻 / output resistance analog-term-32 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-33",
+      "title": "共射 / 共集 / 共基 / CE / CC / CB",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "共射 / 共集 / 共基 / ce / cc / cb analog-term-33 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-34",
+      "title": "差分对 / Differential Pair",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "差分对 / differential pair analog-term-34 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-35",
+      "title": "差模 / 共模 / Differential / Common Mode",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "差模 / 共模 / differential / common mode analog-term-35 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-36",
+      "title": "CMRR / Common-mode Rejection Ratio",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "cmrr / common-mode rejection ratio analog-term-36 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-37",
+      "title": "有源负载 / Active Load",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "有源负载 / active load analog-term-37 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-38",
+      "title": "电流镜 / Current Mirror",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "电流镜 / current mirror analog-term-38 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-39",
+      "title": "级联 / Cascade",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "级联 / cascade analog-term-39 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-40",
+      "title": "虚短 / Virtual Short",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "虚短 / virtual short analog-term-40 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-41",
+      "title": "虚断 / Virtual Open",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "虚断 / virtual open analog-term-41 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-42",
+      "title": "失调电压 / Input Offset Voltage",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "失调电压 / input offset voltage analog-term-42 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-43",
+      "title": "轨到轨 / Rail-to-Rail",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "轨到轨 / rail-to-rail analog-term-43 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-44",
+      "title": "下限频率 / Lower Cutoff Frequency",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "下限频率 / lower cutoff frequency analog-term-44 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-45",
+      "title": "上限频率 / Upper Cutoff Frequency",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "上限频率 / upper cutoff frequency analog-term-45 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-46",
+      "title": "波特图 / Bode Plot",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "波特图 / bode plot analog-term-46 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-47",
+      "title": "极点 / 零点 / Pole / Zero",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "极点 / 零点 / pole / zero analog-term-47 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-48",
+      "title": "GBW / Gain-Bandwidth Product",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "gbw / gain-bandwidth product analog-term-48 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-49",
+      "title": "相位裕度 / Phase Margin",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "相位裕度 / phase margin analog-term-49 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-50",
+      "title": "压摆率 / Slew Rate",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "压摆率 / slew rate analog-term-50 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-51",
+      "title": "全功率带宽 / Full-power Bandwidth",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "全功率带宽 / full-power bandwidth analog-term-51 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-52",
+      "title": "负反馈 / Negative Feedback",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "负反馈 / negative feedback analog-term-52 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-53",
+      "title": "正反馈 / Positive Feedback",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "正反馈 / positive feedback analog-term-53 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-54",
+      "title": "环路增益 / Loop Gain",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "环路增益 / loop gain analog-term-54 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-55",
+      "title": "反馈深度 / Feedback Depth",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "反馈深度 / feedback depth analog-term-55 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-56",
+      "title": "串联 / 并联反馈 / Series / Shunt Feedback",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "串联 / 并联反馈 / series / shunt feedback analog-term-56 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-57",
+      "title": "电压 / 电流取样 / Voltage / Current Sensing",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "电压 / 电流取样 / voltage / current sensing analog-term-57 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-58",
+      "title": "巴克豪森准则 / Barkhausen Criterion",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "巴克豪森准则 / barkhausen criterion analog-term-58 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-59",
+      "title": "自激 / Self-oscillation",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "自激 / self-oscillation analog-term-59 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-60",
+      "title": "整流 / Rectification",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "整流 / rectification analog-term-60 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-61",
+      "title": "滤波 / Filtering",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "滤波 / filtering analog-term-61 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-62",
+      "title": "纹波 / Ripple",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "纹波 / ripple analog-term-62 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-63",
+      "title": "稳压 / Voltage Regulation",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "稳压 / voltage regulation analog-term-63 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-64",
+      "title": "压差 / Dropout Voltage",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "压差 / dropout voltage analog-term-64 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-65",
+      "title": "LDO / Low-dropout Regulator",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "ldo / low-dropout regulator analog-term-65 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-66",
+      "title": "Buck / Boost / Step-down / Step-up Converter",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "buck / boost / step-down / step-up converter analog-term-66 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-67",
+      "title": "效率 / Efficiency",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "效率 / efficiency analog-term-67 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-68",
+      "title": "去耦 / Decoupling",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "去耦 / decoupling analog-term-68 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-69",
+      "title": "输入阻抗 / Input Impedance",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "输入阻抗 / input impedance analog-term-69 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-70",
+      "title": "探头负载 / Probe Loading",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "探头负载 / probe loading analog-term-70 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-71",
+      "title": "探头补偿 / Probe Compensation",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "探头补偿 / probe compensation analog-term-71 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-72",
+      "title": "共模抑制 / Common-mode Rejection",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "共模抑制 / common-mode rejection analog-term-72 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-73",
+      "title": "地环路 / Ground Loop",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "地环路 / ground loop analog-term-73 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-74",
+      "title": "星形接地 / Star Ground",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "星形接地 / star ground analog-term-74 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-75",
+      "title": "屏蔽 / Shielding",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "屏蔽 / shielding analog-term-75 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-76",
+      "title": "热噪声 / Thermal Noise",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "热噪声 / thermal noise analog-term-76 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-77",
+      "title": "1/f 噪声 / Flicker Noise",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "1/f 噪声 / flicker noise analog-term-77 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-78",
+      "title": "噪声谱密度 / Noise Spectral Density",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "噪声谱密度 / noise spectral density analog-term-78 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-79",
+      "title": "SNR / Signal-to-noise Ratio",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "snr / signal-to-noise ratio analog-term-79 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:glossary:analog-term-80",
+      "title": "示波器带宽 / Oscilloscope Bandwidth",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "glossary",
+      "route": "/analog/glossary",
+      "keywords": "示波器带宽 / oscilloscope bandwidth analog-term-80 glossary 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:sc-1",
+      "title": "本征硅在热平衡下，电子浓度 n 与空穴浓度 p 的关系是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "本征硅在热平衡下，电子浓度 n 与空穴浓度 p 的关系是？ sc-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:sc-2",
+      "title": "关于漂移与扩散，下列说法正确的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "关于漂移与扩散，下列说法正确的是？ sc-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:sc-3",
+      "title": "平衡 PN 结的内建电场方向是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "平衡 pn 结的内建电场方向是？ sc-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:di-1",
+      "title": "5 V 电源经 1 kΩ 电阻接一只硅二极管（恒压模型 V_D = 0.7 V），回路电流约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "5 v 电源经 1 kω 电阻接一只硅二极管（恒压模型 v_d = 0.7 v），回路电流约为？ di-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:di-2",
+      "title": "12 V 输入、5.1 V 稳压管，负载电流 1 mA，希望稳压管最小电流 5 mA，串联限流电阻约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "12 v 输入、5.1 v 稳压管，负载电流 1 ma，希望稳压管最小电流 5 ma，串联限流电阻约为？ di-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:di-3",
+      "title": "半波整流，输入峰值 10 V，二极管恒压降 0.7 V，输出平均电压约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "半波整流，输入峰值 10 v，二极管恒压降 0.7 v，输出平均电压约为？ di-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:di-4",
+      "title": "在整流后加电容滤波，增大滤波电容 C 会带来哪些变化？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "在整流后加电容滤波，增大滤波电容 c 会带来哪些变化？ di-4 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:bjt-1",
+      "title": "NPN 三极管工作在放大区时，两个 PN 结的偏置是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "npn 三极管工作在放大区时，两个 pn 结的偏置是？ bjt-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:bjt-2",
+      "title": "VCC = 12 V、Rc = 2 kΩ、β = 100、I_B = 20 µA，且工作在放大区，I_C 与 V_CE 约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "vcc = 12 v、rc = 2 kω、β = 100、i_b = 20 µa，且工作在放大区，i_c 与 v_ce 约为？ bjt-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:bjt-3",
+      "title": "固定偏置共射电路温度升高时，可能出现哪些变化？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "固定偏置共射电路温度升高时，可能出现哪些变化？ bjt-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:mos-1",
+      "title": "N 沟道增强型 MOSFET，阈值电压 V_TH = 3 V，栅源电压 V_GS = 2 V，漏源电压足够大，器件处于？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "n 沟道增强型 mosfet，阈值电压 v_th = 3 v，栅源电压 v_gs = 2 v，漏源电压足够大，器件处于？ mos-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:mos-2",
+      "title": "MOSFET 作为低边开关时，栅极驱动电压不足会导致？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "mosfet 作为低边开关时，栅极驱动电压不足会导致？ mos-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:mos-3",
+      "title": "与 BJT 相比，MOSFET 的特点包括？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "与 bjt 相比，mosfet 的特点包括？ mos-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:amp-1",
+      "title": "画直流通路时，耦合电容应如何处理？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "画直流通路时，耦合电容应如何处理？ amp-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:amp-2",
+      "title": "共射放大电路在中频段，输出电压与输入电压的相位关系通常是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "共射放大电路在中频段，输出电压与输入电压的相位关系通常是？ amp-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:amp-3",
+      "title": "共射放大电路 Q 点过低（靠近截止区），输入幅度稍大时最先出现？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "共射放大电路 q 点过低（靠近截止区），输入幅度稍大时最先出现？ amp-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:cfg-1",
+      "title": "需要电压增益接近 1、输入电阻高、输出电阻低，应选哪种组态？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "需要电压增益接近 1、输入电阻高、输出电阻低，应选哪种组态？ cfg-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:cfg-2",
+      "title": "共基极电路最突出的特点通常是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "共基极电路最突出的特点通常是？ cfg-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:cfg-3",
+      "title": "关于三种组态，下列说法正确的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "关于三种组态，下列说法正确的是？ cfg-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:ms-1",
+      "title": "理想对称差分对，尾电流源为理想恒流源，两输入端加相同的共模信号，差模输出约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "理想对称差分对，尾电流源为理想恒流源，两输入端加相同的共模信号，差模输出约为？ ms-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:ms-2",
+      "title": "共模抑制比 CMRR 的定义与意义是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "共模抑制比 cmrr 的定义与意义是？ ms-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:ms-3",
+      "title": "多级放大与有源负载/共源共基结构，能带来哪些好处？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "多级放大与有源负载/共源共基结构，能带来哪些好处？ ms-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:cs-1",
+      "title": "VCC=12 V、VBE=0.7 V、Rref=10 kΩ 的基本电流镜，参考电流约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "vcc=12 v、vbe=0.7 v、rref=10 kω 的基本电流镜，参考电流约为？ cs-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:cs-2",
+      "title": "电流镜中的“合规电压”指的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "电流镜中的“合规电压”指的是？ cs-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:cs-3",
+      "title": "实际电流镜的输出电流与参考电流有误差，原因可能包括？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "实际电流镜的输出电流与参考电流有误差，原因可能包括？ cs-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fr-1",
+      "title": "共射放大器下限频率 fL 主要由什么决定？增大耦合电容会怎样？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "共射放大器下限频率 fl 主要由什么决定？增大耦合电容会怎样？ fr-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fr-2",
+      "title": "密勒效应使放大器输入端看到的等效电容近似为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "密勒效应使放大器输入端看到的等效电容近似为？ fr-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fr-3",
+      "title": "单主极点放大器，中频增益 100、上限频率 100 kHz，增益带宽积约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "单主极点放大器，中频增益 100、上限频率 100 khz，增益带宽积约为？ fr-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fb-1",
+      "title": "负反馈放大器，开环增益 A=1000、反馈系数 F=0.01，闭环增益约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "负反馈放大器，开环增益 a=1000、反馈系数 f=0.01，闭环增益约为？ fb-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fb-2",
+      "title": "负反馈系统发生自激振荡的经典条件是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "负反馈系统发生自激振荡的经典条件是？ fb-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fb-3",
+      "title": "负反馈对放大器的影响，正确的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "负反馈对放大器的影响，正确的是？ fb-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:op-1",
+      "title": "运放“虚短”成立的条件是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "运放“虚短”成立的条件是？ op-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:op-2",
+      "title": "“虚断”指的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "“虚断”指的是？ op-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:op-3",
+      "title": "比较器与线性运放的主要区别是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "比较器与线性运放的主要区别是？ op-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:oa-1",
+      "title": "反相放大器 R1=10 kΩ、R2=100 kΩ，电压增益约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "反相放大器 r1=10 kω、r2=100 kω，电压增益约为？ oa-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:oa-2",
+      "title": "同相放大器 R1=10 kΩ、R2=90 kΩ，电压增益约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "同相放大器 r1=10 kω、r2=90 kω，电压增益约为？ oa-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:oa-3",
+      "title": "下列属于运放线性应用的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "下列属于运放线性应用的是？ oa-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fl-1",
+      "title": "一阶有源低通滤波器在截止频率之后，幅频曲线大约以多少斜率下降？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "一阶有源低通滤波器在截止频率之后，幅频曲线大约以多少斜率下降？ fl-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fl-2",
+      "title": "一阶 RC 有源低通，增大反馈电容 C 会怎样？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "一阶 rc 有源低通，增大反馈电容 c 会怎样？ fl-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:fl-3",
+      "title": "关于二阶 Sallen-Key 低通，正确的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "关于二阶 sallen-key 低通，正确的是？ fl-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:pa-1",
+      "title": "乙类互补功放的主要缺点是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "乙类互补功放的主要缺点是？ pa-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:pa-2",
+      "title": "甲乙类功放通过什么改善交越失真？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "甲乙类功放通过什么改善交越失真？ pa-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:pa-3",
+      "title": "关于 OTL/OCL 功放，正确的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "关于 otl/ocl 功放，正确的是？ pa-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:sup-1",
+      "title": "50 Hz 市电经全波整流后，滤波电容上的纹波频率约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "50 hz 市电经全波整流后，滤波电容上的纹波频率约为？ sup-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:sup-2",
+      "title": "7805 线性稳压器要稳定输出 5 V，输入电压至少应高于多少？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "7805 线性稳压器要稳定输出 5 v，输入电压至少应高于多少？ sup-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:sup-3",
+      "title": "关于线性稳压与开关电源（Buck），正确的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "关于线性稳压与开关电源（buck），正确的是？ sup-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:osc-1",
+      "title": "巴克豪森起振条件是什么？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "巴克豪森起振条件是什么？ osc-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:osc-2",
+      "title": "等值 R、C 的文氏桥振荡器，振荡频率与起振增益约为？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "等值 r、c 的文氏桥振荡器，振荡频率与起振增益约为？ osc-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:osc-3",
+      "title": "关于振荡器的起振与稳幅，正确的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "关于振荡器的起振与稳幅，正确的是？ osc-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:nz-1",
+      "title": "电阻热噪声的电压谱密度与电阻的关系是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "电阻热噪声的电压谱密度与电阻的关系是？ nz-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:nz-2",
+      "title": "1/f 噪声（闪烁噪声）的主要特点是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "1/f 噪声（闪烁噪声）的主要特点是？ nz-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:nz-3",
+      "title": "降低噪声与干扰的常见做法包括？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "降低噪声与干扰的常见做法包括？ nz-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:msr-1",
+      "title": "测量高阻节点时，为什么优先用 10× 探头？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "测量高阻节点时，为什么优先用 10× 探头？ msr-1 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:msr-2",
+      "title": "测量 10 MHz 正弦信号，示波器带宽通常至少应选？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "测量 10 mhz 正弦信号，示波器带宽通常至少应选？ msr-2 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    },
+    {
+      "id": "analog:quiz:msr-3",
+      "title": "下列测量/仿真注意事项，正确的是？",
+      "site": "analog",
+      "siteName": "知电 · 模拟电子技术交互实验手册",
+      "type": "quiz",
+      "route": "/analog/quiz",
+      "keywords": "下列测量/仿真注意事项，正确的是？ msr-3 quiz 知电 · 模拟电子技术交互实验手册 analog "
+    }
+  ]
+}

@@ -1,0 +1,1645 @@
+{
+  "generatedAt": "2026-11-27T12:50:39.871Z",
+  "site": "mcu",
+  "count": 182,
+  "items": [
+    {
+      "id": "mcu:lesson:foundations",
+      "title": "MCU 基础",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/foundations",
+      "keywords": "mcu 基础 foundations lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:core",
+      "title": "内核与存储器",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/core",
+      "keywords": "内核与存储器 core lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:clock",
+      "title": "时钟与复位",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/clock",
+      "keywords": "时钟与复位 clock lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:gpio",
+      "title": "GPIO",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/gpio",
+      "keywords": "gpio gpio lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:interrupt",
+      "title": "中断与 NVIC",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/interrupt",
+      "keywords": "中断与 nvic interrupt lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:dma",
+      "title": "DMA",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/dma",
+      "keywords": "dma dma lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:timer",
+      "title": "定时器 / PWM",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/timer",
+      "keywords": "定时器 / pwm timer lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:adc",
+      "title": "ADC / DAC",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/adc",
+      "keywords": "adc / dac adc lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:lowpower",
+      "title": "低功耗与看门狗",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/lowpower",
+      "keywords": "低功耗与看门狗 lowpower lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:protocols",
+      "title": "通讯协议总览",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/protocols",
+      "keywords": "通讯协议总览 protocols lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:uart",
+      "title": "UART",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/uart",
+      "keywords": "uart uart lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:i2c",
+      "title": "I²C",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/i2c",
+      "keywords": "i²c i2c lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:spi",
+      "title": "SPI",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/spi",
+      "keywords": "spi spi lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:can",
+      "title": "CAN / CAN FD",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/can",
+      "keywords": "can / can fd can lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:usb",
+      "title": "USB",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/usb",
+      "keywords": "usb usb lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:ethernet",
+      "title": "以太网",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/ethernet",
+      "keywords": "以太网 ethernet lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:wireless",
+      "title": "无线协议简介",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/wireless",
+      "keywords": "无线协议简介 wireless lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:board-bus",
+      "title": "板级总线与接口",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/board-bus",
+      "keywords": "板级总线与接口 board-bus lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lesson:debug",
+      "title": "调试与测量",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lesson",
+      "route": "/mcu/debug",
+      "keywords": "调试与测量 debug lesson mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:gpio-output",
+      "title": "GPIO 推挽 vs 开漏",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/gpio",
+      "keywords": "gpio 推挽 vs 开漏 gpio-output lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:uart-frame",
+      "title": "UART 一帧的诞生",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/uart",
+      "keywords": "uart 一帧的诞生 uart-frame lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:i2c-transfer",
+      "title": "I²C 一次读寄存器",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/i2c",
+      "keywords": "i²c 一次读寄存器 i2c-transfer lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:spi-mode",
+      "title": "SPI 四种模式时序",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/spi",
+      "keywords": "spi 四种模式时序 spi-mode lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:can-arbitration",
+      "title": "CAN 仲裁：谁先说话",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/can",
+      "keywords": "can 仲裁：谁先说话 can-arbitration lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:nvic-interrupt",
+      "title": "中断响应与 NVIC 优先级",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/interrupt",
+      "keywords": "中断响应与 nvic 优先级 nvic-interrupt lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:dma-transfer",
+      "title": "DMA 搬运工干活",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/dma",
+      "keywords": "dma 搬运工干活 dma-transfer lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:timer-pwm",
+      "title": "定时器与 PWM 占空比",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/timer",
+      "keywords": "定时器与 pwm 占空比 timer-pwm lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:adc-sampling",
+      "title": "ADC 采样与量化",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/adc",
+      "keywords": "adc 采样与量化 adc-sampling lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:clock-tree",
+      "title": "时钟树：从晶振到 CPU",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/clock",
+      "keywords": "时钟树：从晶振到 cpu clock-tree lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:lowpower-wake",
+      "title": "低功耗模式与唤醒",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/lowpower",
+      "keywords": "低功耗模式与唤醒 lowpower-wake lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:lab:watchdog-feed",
+      "title": "看门狗喂狗",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "lab",
+      "route": "/mcu/lowpower",
+      "keywords": "看门狗喂狗 watchdog-feed lab mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:case:gpio-key-led",
+      "title": "按键中断点灯",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "case",
+      "route": "/mcu/cases/gpio-key-led",
+      "keywords": "按键中断点灯 gpio-key-led case mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:case:uart-echo",
+      "title": "UART 收发回显",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "case",
+      "route": "/mcu/cases/uart-echo",
+      "keywords": "uart 收发回显 uart-echo case mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:case:i2c-sensor",
+      "title": "I²C 读取温湿度",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "case",
+      "route": "/mcu/cases/i2c-sensor",
+      "keywords": "i²c 读取温湿度 i2c-sensor case mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:case:pwm-dimmer",
+      "title": "PWM 调光",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "case",
+      "route": "/mcu/cases/pwm-dimmer",
+      "keywords": "pwm 调光 pwm-dimmer case mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:case:spi-screen",
+      "title": "SPI 驱动屏幕",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "case",
+      "route": "/mcu/cases/spi-screen",
+      "keywords": "spi 驱动屏幕 spi-screen case mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:case:adc-sampler",
+      "title": "ADC + DMA 采样",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "case",
+      "route": "/mcu/cases/adc-sampler",
+      "keywords": "adc + dma 采样 adc-sampler case mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:case:can-node",
+      "title": "CAN 节点收发",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "case",
+      "route": "/mcu/cases/can-node",
+      "keywords": "can 节点收发 can-node case mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:case:dma-uart",
+      "title": "DMA 串口搬运",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "case",
+      "route": "/mcu/cases/dma-uart",
+      "keywords": "dma 串口搬运 dma-uart case mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-1",
+      "title": "微控制器 / MCU (Microcontroller Unit)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "微控制器 / mcu (microcontroller unit) mcu-term-1 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-2",
+      "title": "内核 / Core (CPU Core)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "内核 / core (cpu core) mcu-term-2 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-3",
+      "title": "指令集 / ISA (Instruction Set Architecture)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "指令集 / isa (instruction set architecture) mcu-term-3 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-4",
+      "title": "系统时钟 / SYSCLK (System Clock)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "系统时钟 / sysclk (system clock) mcu-term-4 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-5",
+      "title": "时钟树 / Clock Tree",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "时钟树 / clock tree mcu-term-5 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-6",
+      "title": "Flash / Flash Memory",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "flash / flash memory mcu-term-6 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-7",
+      "title": "静态随机存储器 / SRAM (Static RAM)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "静态随机存储器 / sram (static ram) mcu-term-7 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-8",
+      "title": "启动流程 / Boot Sequence",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "启动流程 / boot sequence mcu-term-8 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-9",
+      "title": "复位 / Reset",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "复位 / reset mcu-term-9 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-10",
+      "title": "中断向量表 / Vector Table",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "中断向量表 / vector table mcu-term-10 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-11",
+      "title": "栈 / Stack",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "栈 / stack mcu-term-11 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-12",
+      "title": "低功耗模式 / Low Power Mode",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "低功耗模式 / low power mode mcu-term-12 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-13",
+      "title": "通用输入输出 / GPIO (General-Purpose Input/Output)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "通用输入输出 / gpio (general-purpose input/output) mcu-term-13 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-14",
+      "title": "中断 / Interrupt",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "中断 / interrupt mcu-term-14 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-15",
+      "title": "嵌套向量中断控制器 / NVIC (Nested Vectored Interrupt Controller)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "嵌套向量中断控制器 / nvic (nested vectored interrupt controller) mcu-term-15 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-16",
+      "title": "中断服务函数 / ISR (Interrupt Service Routine)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "中断服务函数 / isr (interrupt service routine) mcu-term-16 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-17",
+      "title": "抢占优先级 / Preemption Priority",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "抢占优先级 / preemption priority mcu-term-17 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-18",
+      "title": "子优先级 / Subpriority",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "子优先级 / subpriority mcu-term-18 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-19",
+      "title": "优先级分组 / Priority Grouping (PRIGROUP)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "优先级分组 / priority grouping (prigroup) mcu-term-19 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-20",
+      "title": "外部中断 / EXTI (External Interrupt)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "外部中断 / exti (external interrupt) mcu-term-20 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-21",
+      "title": "直接存储器访问 / DMA (Direct Memory Access)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "直接存储器访问 / dma (direct memory access) mcu-term-21 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-22",
+      "title": "定时器 / Timer",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "定时器 / timer mcu-term-22 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-23",
+      "title": "脉宽调制 / PWM (Pulse Width Modulation)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "脉宽调制 / pwm (pulse width modulation) mcu-term-23 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-24",
+      "title": "模数转换器 / ADC (Analog-to-Digital Converter)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "模数转换器 / adc (analog-to-digital converter) mcu-term-24 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-25",
+      "title": "数模转换器 / DAC (Digital-to-Analog Converter)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "数模转换器 / dac (digital-to-analog converter) mcu-term-25 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-26",
+      "title": "看门狗 / Watchdog (WDT)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "看门狗 / watchdog (wdt) mcu-term-26 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-27",
+      "title": "复用功能 / Alternate Function (AF)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "复用功能 / alternate function (af) mcu-term-27 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-28",
+      "title": "SysTick / SysTick",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "systick / systick mcu-term-28 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-29",
+      "title": "协议 / Protocol",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "协议 / protocol mcu-term-29 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-30",
+      "title": "通用异步收发器 / UART (Universal Asynchronous Receiver/Transmitter)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "通用异步收发器 / uart (universal asynchronous receiver/transmitter) mcu-term-30 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-31",
+      "title": "通用同步/异步收发器 / USART (Universal Synchronous/Asynchronous Receiver/Transmitter)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "通用同步/异步收发器 / usart (universal synchronous/asynchronous receiver/transmitter) mcu-term-31 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-32",
+      "title": "波特率 / Baud Rate",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "波特率 / baud rate mcu-term-32 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-33",
+      "title": "异步 / Asynchronous",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "异步 / asynchronous mcu-term-33 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-34",
+      "title": "同步 / Synchronous",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "同步 / synchronous mcu-term-34 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-35",
+      "title": "全双工 / Full Duplex",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "全双工 / full duplex mcu-term-35 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-36",
+      "title": "半双工 / Half Duplex",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "半双工 / half duplex mcu-term-36 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-37",
+      "title": "集成电路总线 / I²C (Inter-Integrated Circuit)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "集成电路总线 / i²c (inter-integrated circuit) mcu-term-37 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-38",
+      "title": "串行外设接口 / SPI (Serial Peripheral Interface)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "串行外设接口 / spi (serial peripheral interface) mcu-term-38 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-39",
+      "title": "MISO / MISO (Master In Slave Out)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "miso / miso (master in slave out) mcu-term-39 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-40",
+      "title": "MOSI / MOSI (Master Out Slave In)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "mosi / mosi (master out slave in) mcu-term-40 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-41",
+      "title": "时钟极性 / CPOL (Clock Polarity)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "时钟极性 / cpol (clock polarity) mcu-term-41 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-42",
+      "title": "时钟相位 / CPHA (Clock Phase)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "时钟相位 / cpha (clock phase) mcu-term-42 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-43",
+      "title": "片选 / CS (Chip Select)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "片选 / cs (chip select) mcu-term-43 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-44",
+      "title": "控制器局域网 / CAN (Controller Area Network)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "控制器局域网 / can (controller area network) mcu-term-44 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-45",
+      "title": "显性位 / Dominant Bit",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "显性位 / dominant bit mcu-term-45 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-46",
+      "title": "隐性位 / Recessive Bit",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "隐性位 / recessive bit mcu-term-46 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-47",
+      "title": "仲裁 / Arbitration",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "仲裁 / arbitration mcu-term-47 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-48",
+      "title": "Modbus / Modbus",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "modbus / modbus mcu-term-48 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-49",
+      "title": "CRC / CRC (Cyclic Redundancy Check)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "crc / crc (cyclic redundancy check) mcu-term-49 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-50",
+      "title": "应答 / ACK (Acknowledge)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "应答 / ack (acknowledge) mcu-term-50 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-51",
+      "title": "NACK / NACK (Not Acknowledge)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "nack / nack (not acknowledge) mcu-term-51 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-52",
+      "title": "位填充 / Bit Stuffing",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "位填充 / bit stuffing mcu-term-52 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-53",
+      "title": "最低有效位 / LSB (Least Significant Bit)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "最低有效位 / lsb (least significant bit) mcu-term-53 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-54",
+      "title": "最高有效位 / MSB (Most Significant Bit)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "最高有效位 / msb (most significant bit) mcu-term-54 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-55",
+      "title": "通用串行总线 / USB (Universal Serial Bus)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "通用串行总线 / usb (universal serial bus) mcu-term-55 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-56",
+      "title": "MAC 与 PHY / MAC / PHY",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "mac 与 phy / mac / phy mcu-term-56 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-57",
+      "title": "帧 / Frame",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "帧 / frame mcu-term-57 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-58",
+      "title": "TTL 电平 / TTL Level",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "ttl 电平 / ttl level mcu-term-58 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-59",
+      "title": "RS232 / RS232",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "rs232 / rs232 mcu-term-59 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-60",
+      "title": "RS485 / RS485",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "rs485 / rs485 mcu-term-60 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-61",
+      "title": "单端信号 / Single-Ended Signal",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "单端信号 / single-ended signal mcu-term-61 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-62",
+      "title": "差分信号 / Differential Signal",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "差分信号 / differential signal mcu-term-62 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-63",
+      "title": "共模电压 / Common-Mode Voltage",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "共模电压 / common-mode voltage mcu-term-63 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-64",
+      "title": "终端电阻 / Termination Resistor",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "终端电阻 / termination resistor mcu-term-64 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-65",
+      "title": "上拉电阻 / Pull-up Resistor",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "上拉电阻 / pull-up resistor mcu-term-65 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-66",
+      "title": "下拉电阻 / Pull-down Resistor",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "下拉电阻 / pull-down resistor mcu-term-66 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-67",
+      "title": "推挽 / Push-Pull",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "推挽 / push-pull mcu-term-67 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-68",
+      "title": "开漏 / Open-Drain",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "开漏 / open-drain mcu-term-68 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-69",
+      "title": "线与 / Wired-AND",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "线与 / wired-and mcu-term-69 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-70",
+      "title": "高阻态 / Hi-Z (High Impedance)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "高阻态 / hi-z (high impedance) mcu-term-70 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-71",
+      "title": "去耦电容 / Decoupling Capacitor",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "去耦电容 / decoupling capacitor mcu-term-71 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-72",
+      "title": "电平转换 / Level Shifter",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "电平转换 / level shifter mcu-term-72 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-73",
+      "title": "上升沿与下降沿 / Rising Edge / Falling Edge",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "上升沿与下降沿 / rising edge / falling edge mcu-term-73 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-74",
+      "title": "串行线调试 / SWD (Serial Wire Debug)",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "串行线调试 / swd (serial wire debug) mcu-term-74 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-75",
+      "title": "JTAG / JTAG",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "jtag / jtag mcu-term-75 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-76",
+      "title": "调试器 / Debugger",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "调试器 / debugger mcu-term-76 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-77",
+      "title": "断点 / Breakpoint",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "断点 / breakpoint mcu-term-77 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-78",
+      "title": "单步 / Step",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "单步 / step mcu-term-78 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-79",
+      "title": "逻辑分析仪 / Logic Analyzer",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "逻辑分析仪 / logic analyzer mcu-term-79 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-80",
+      "title": "示波器 / Oscilloscope",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "示波器 / oscilloscope mcu-term-80 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-81",
+      "title": "万用表 / Multimeter",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "万用表 / multimeter mcu-term-81 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-82",
+      "title": "串口助手 / Serial Terminal",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "串口助手 / serial terminal mcu-term-82 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-83",
+      "title": "烧录 / Flash Programming",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "烧录 / flash programming mcu-term-83 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-84",
+      "title": "交叉编译工具链 / Toolchain",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "交叉编译工具链 / toolchain mcu-term-84 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-85",
+      "title": "单线跟踪输出 / SWO / ITM",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "单线跟踪输出 / swo / itm mcu-term-85 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:glossary:mcu-term-86",
+      "title": "CubeMX 配置工具 / STM32CubeMX",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "glossary",
+      "route": "/mcu/glossary",
+      "keywords": "cubemx 配置工具 / stm32cubemx mcu-term-86 glossary mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:foundations-q1",
+      "title": "下面哪句话对 **MCU** 的描述最准确？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "下面哪句话对 **mcu** 的描述最准确？ foundations-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:foundations-q2",
+      "title": "关于 Cortex‑M 相比 Cortex‑A 的典型差异，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 cortex‑m 相比 cortex‑a 的典型差异，下列哪些说法正确？（多选） foundations-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:foundations-q3",
+      "title": "判断：所谓\"哈佛结构\"，指指令与数据使用分开的总线或地址空间，因此可以同时取指令和取数据。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：所谓\"哈佛结构\"，指指令与数据使用分开的总线或地址空间，因此可以同时取指令和取数据。 foundations-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:core-q1",
+      "title": "Cortex‑M4 复位之后，CPU 默认使用哪个栈指针；进入中断（Handler 模式）时硬件又强制用哪个？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "cortex‑m4 复位之后，cpu 默认使用哪个栈指针；进入中断（handler 模式）时硬件又强制用哪个？ core-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:core-q2",
+      "title": "关于 `.data` 与 `.bss` 两个段，下列说法哪些正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 `.data` 与 `.bss` 两个段，下列说法哪些正确？（多选） core-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:core-q3",
+      "title": "判断：Bootloader 跳转到 APP 时，只要跳转成功、APP 的 `main()` 能跑起来，就可以不修改 `SCB->VTOR`。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：bootloader 跳转到 app 时，只要跳转成功、app 的 `main()` 能跑起来，就可以不修改 `scb->vtor`。 core-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:clock-q1",
+      "title": "STM32F407 上使用 **HSE 8 MHz（示意）**，PLL 配置为 `PLLM=8`、`PLLN=336`、`PLLP=2`，则…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "stm32f407 上使用 **hse 8 mhz（示意）**，pll 配置为 `pllm=8`、`plln=336`、`pllp=2`，则… clock-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:clock-q2",
+      "title": "关于 STM32F407 的时钟树与复位，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 stm32f407 的时钟树与复位，下列哪些说法正确？（多选） clock-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:clock-q3",
+      "title": "判断：只要把 `RCC->PLLCFGR` 里的 PLLM / PLLN / PLLP 配好，SYSCLK 就会立刻变成新的频率。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：只要把 `rcc->pllcfgr` 里的 pllm / plln / pllp 配好，sysclk 就会立刻变成新的频率。 clock-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:gpio-q1",
+      "title": "把 **PA5** 配成“交给 SPI1 的复用功能”，`GPIOA->MODER` 里属于 PA5 的那 2 位应该写什么？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "把 **pa5** 配成“交给 spi1 的复用功能”，`gpioa->moder` 里属于 pa5 的那 2 位应该写什么？ gpio-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:gpio-q2",
+      "title": "关于**推挽**与**开漏**输出，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于**推挽**与**开漏**输出，下列哪些说法正确？（多选） gpio-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:gpio-q3",
+      "title": "判断：只要引脚标注了 **FT（5V 容忍）**，把它配成推挽输出就能输出 5 V 高电平。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：只要引脚标注了 **ft（5v 容忍）**，把它配成推挽输出就能输出 5 v 高电平。 gpio-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:interrupt-q1",
+      "title": "按键接在 **PA0** 上，已配成下降沿触发并使能了 `EXTI0_IRQn`。按下按键后，从触发到进入 `EXTI0_IRQHandle…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "按键接在 **pa0** 上，已配成下降沿触发并使能了 `exti0_irqn`。按下按键后，从触发到进入 `exti0_irqhandle… interrupt-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:interrupt-q2",
+      "title": "关于 NVIC 的抢占优先级、子优先级与 `SCB->AIRCR` 的 PRIGROUP，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 nvic 的抢占优先级、子优先级与 `scb->aircr` 的 prigroup，下列哪些说法正确？（多选） interrupt-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:interrupt-q3",
+      "title": "判断：在按键的 ISR（或 `HAL_GPIO_EXTI_Callback`）里直接调用 `HAL_Delay(10)` 做消抖是推荐做法，…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：在按键的 isr（或 `hal_gpio_exti_callback`）里直接调用 `hal_delay(10)` 做消抖是推荐做法，… interrupt-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:dma-q1",
+      "title": "要用 DMA 把 **USART1 收到的字节**连续搬进内存缓冲 `g_rxBuf`，下面哪一组配置是对的？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "要用 dma 把 **usart1 收到的字节**连续搬进内存缓冲 `g_rxbuf`，下面哪一组配置是对的？ dma-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:dma-q2",
+      "title": "关于 DMA 的单次（Normal）/ 循环（Circular）模式，以及半传输（HT）、传输完成（TC）中断，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 dma 的单次（normal）/ 循环（circular）模式，以及半传输（ht）、传输完成（tc）中断，下列哪些说法正确？（多选） dma-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:dma-q3",
+      "title": "判断：既然用了 `HAL_UART_Transmit_DMA`，说明 CPU 不参与搬运，那么把一个函数内部的局部数组传给它也没问题——函数…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：既然用了 `hal_uart_transmit_dma`，说明 cpu 不参与搬运，那么把一个函数内部的局部数组传给它也没问题——函数… dma-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:timer-q1",
+      "title": "某定时器的计数时钟 `TIMclk = 84 MHz`（示意），配置 `PSC = 83`、`ARR = 999`，向上计数。它输出的 PW…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "某定时器的计数时钟 `timclk = 84 mhz`（示意），配置 `psc = 83`、`arr = 999`，向上计数。它输出的 pw… timer-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:timer-q2",
+      "title": "关于定时器的计数与预装载机制，下列说法正确的有哪些？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于定时器的计数与预装载机制，下列说法正确的有哪些？（多选） timer-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:timer-q3",
+      "title": "判断：PWM 模式 1、高电平有效，且 `CCR1` 预装载（OC1PE）已使能时，把 `TIM2->CCR1` 改成新值，新占空比会在下一…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：pwm 模式 1、高电平有效，且 `ccr1` 预装载（oc1pe）已使能时，把 `tim2->ccr1` 改成新值，新占空比会在下一… timer-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:adc-q1",
+      "title": "某 **12 位** ADC 的 `VREF+ = 3.3 V`、模拟地 0 V，它一个 **LSB** 大约是多少？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "某 **12 位** adc 的 `vref+ = 3.3 v`、模拟地 0 v，它一个 **lsb** 大约是多少？ adc-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:adc-q2",
+      "title": "关于 ADC 的**采样**与**多通道**，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 adc 的**采样**与**多通道**，下列哪些说法正确？（多选） adc-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:adc-q3",
+      "title": "判断：要测一节 **12 V** 电池的电压，只要把正极串一个 `1 kΩ` 电阻接到 ADC 引脚上，既限了流又不会读错。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：要测一节 **12 v** 电池的电压，只要把正极串一个 `1 kω` 电阻接到 adc 引脚上，既限了流又不会读错。 adc-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:lowpower-q1",
+      "title": "F407 上先用 `HAL_PWR_EnterSTOPMode(PWR_MAINREGULATOR_ON, PWR_STOPENTRY_WF…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "f407 上先用 `hal_pwr_enterstopmode(pwr_mainregulator_on, pwr_stopentry_wf… lowpower-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:lowpower-q2",
+      "title": "关于低功耗模式的唤醒源与唤醒行为，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于低功耗模式的唤醒源与唤醒行为，下列哪些说法正确？（多选） lowpower-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:lowpower-q3",
+      "title": "判断：把 `HAL_IWDG_Refresh()` 放在 1 ms 的定时器中断回调里周期调用，是让看门狗监控主程序是否卡死的好办法。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：把 `hal_iwdg_refresh()` 放在 1 ms 的定时器中断回调里周期调用，是让看门狗监控主程序是否卡死的好办法。 lowpower-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:protocols-q1",
+      "title": "一块新传感器的模块只引出 `SCL` / `SDA` 两根信号线，同一块板子上还要再挂 3 颗器件。下面哪个判断最准确？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "一块新传感器的模块只引出 `scl` / `sda` 两根信号线，同一块板子上还要再挂 3 颗器件。下面哪个判断最准确？ protocols-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:protocols-q2",
+      "title": "关于协议分层与几种传输方式，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于协议分层与几种传输方式，下列哪些说法正确？（多选） protocols-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:protocols-q3",
+      "title": "判断：Modbus 是一种电气标准，它规定了 RS485 的电平、线数与终端电阻取值。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：modbus 是一种电气标准，它规定了 rs485 的电平、线数与终端电阻取值。 protocols-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:uart-q1",
+      "title": "关于 UART 一帧的结构和它的“异步”特性，下面哪一句是对的？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 uart 一帧的结构和它的“异步”特性，下面哪一句是对的？ uart-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:uart-q2",
+      "title": "双方都把波特率填成 115200，通信仍然偶发乱码。下列哪些做法有助于把问题收敛到“时间基准”上？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "双方都把波特率填成 115200，通信仍然偶发乱码。下列哪些做法有助于把问题收敛到“时间基准”上？（多选） uart-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:uart-q3",
+      "title": "判断：RS485 是一种串口通信协议，和 UART 属于同一层的两种协议，所以把 UART 的 TTL 引脚直接接到 RS485 的 A/B…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：rs485 是一种串口通信协议，和 uart 属于同一层的两种协议，所以把 uart 的 ttl 引脚直接接到 rs485 的 a/b… uart-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:i2c-q1",
+      "title": "按 **I²C 规范**的定义，下面哪一句同时正确描述了 START 与 STOP？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "按 **i²c 规范**的定义，下面哪一句同时正确描述了 start 与 stop？ i2c-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:i2c-q2",
+      "title": "I²C 的两根线为什么**必须用开漏 + 上拉**，而不能用推挽？下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "i²c 的两根线为什么**必须用开漏 + 上拉**，而不能用推挽？下列哪些说法正确？（多选） i2c-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:i2c-q3",
+      "title": "判断：主机读传感器时，最后一个字节由主机回 **NACK**，这说明从机出错或数据没收到。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：主机读传感器时，最后一个字节由主机回 **nack**，这说明从机出错或数据没收到。 i2c-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:spi-q1",
+      "title": "某器件的时序图写着：SCK 空闲为高电平，数据在**第二个边沿**（上升沿）被采样。它对应哪种 SPI 模式？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "某器件的时序图写着：sck 空闲为高电平，数据在**第二个边沿**（上升沿）被采样。它对应哪种 spi 模式？ spi-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:spi-q2",
+      "title": "关于 SPI 的全双工与多从机接法，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 spi 的全双工与多从机接法，下列哪些说法正确？（多选） spi-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:spi-q3",
+      "title": "判断：SPI 没有 ACK 机制，主机把字节发出去后无法仅凭总线本身知道从机是否收到；而 I²C 的接收方会在每个字节后回 ACK 或 NA…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：spi 没有 ack 机制，主机把字节发出去后无法仅凭总线本身知道从机是否收到；而 i²c 的接收方会在每个字节后回 ack 或 na… spi-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:can-q1",
+      "title": "两个节点在同一时刻检测到总线空闲，各自要发送一帧标准数据帧，ID 分别是 **0x120** 和 **0x121**，其余字段（DLC、数据…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "两个节点在同一时刻检测到总线空闲，各自要发送一帧标准数据帧，id 分别是 **0x120** 和 **0x121**，其余字段（dlc、数据… can-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:can-q2",
+      "title": "关于 CAN 的物理层与帧格式，下列哪些说法是正确的？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 can 的物理层与帧格式，下列哪些说法是正确的？（多选） can-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:can-q3",
+      "title": "判断：一个节点进入**总线关闭（Bus-Off）**状态后，仍然可以继续正常收发，只是会比别人多发一些错误帧。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：一个节点进入**总线关闭（bus-off）**状态后，仍然可以继续正常收发，只是会比别人多发一些错误帧。 can-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:usb-q1",
+      "title": "关于 USB 的主机/设备模型与端点方向，下面哪一句是对的？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 usb 的主机/设备模型与端点方向，下面哪一句是对的？ usb-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:usb-q2",
+      "title": "一块自制的 STM32 板子插到 PC 上，设备管理器显示“未知 USB 设备”，程序本身运行正常。下列哪些排查动作是对的？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "一块自制的 stm32 板子插到 pc 上，设备管理器显示“未知 usb 设备”，程序本身运行正常。下列哪些排查动作是对的？（多选） usb-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:usb-q3",
+      "title": "判断：USB 的同步（Isochronous）传输既有固定的带宽保证，又会在出错时自动重传，所以适合传输文件。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：usb 的同步（isochronous）传输既有固定的带宽保证，又会在出错时自动重传，所以适合传输文件。 usb-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:ethernet-q1",
+      "title": "某设备要发一段 10 字节的 UDP 载荷（加上 20 字节 IP 头与 8 字节 UDP 头，数据字段一共 38 字节）。按以太网规则，这…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "某设备要发一段 10 字节的 udp 载荷（加上 20 字节 ip 头与 8 字节 udp 头，数据字段一共 38 字节）。按以太网规则，这… ethernet-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:ethernet-q2",
+      "title": "一块 STM32F407 板子上电后 ping 不通。下列哪些做法能帮你判断问题出在**物理/链路层**还是**上层（ARP/IP/应用）*…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "一块 stm32f407 板子上电后 ping 不通。下列哪些做法能帮你判断问题出在**物理/链路层**还是**上层（arp/ip/应用）*… ethernet-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:ethernet-q3",
+      "title": "判断：交换式以太网里每个端口都是点对点、全双工收发各用一对线，不会发生冲突，所以此时 MAC 的冲突检测不需要工作；把“必须开启 CSMA/…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：交换式以太网里每个端口都是点对点、全双工收发各用一对线，不会发生冲突，所以此时 mac 的冲突检测不需要工作；把“必须开启 csma/… ethernet-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:wireless-q1",
+      "title": "一个电池供电的农田土壤湿度节点，离网关约 2 km，每 10 分钟上报一次、每次只有几十字节，要求一节电池撑几年。下面哪种方案最合适？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "一个电池供电的农田土壤湿度节点，离网关约 2 km，每 10 分钟上报一次、每次只有几十字节，要求一节电池撑几年。下面哪种方案最合适？ wireless-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:wireless-q2",
+      "title": "关于 BLE 的广播/连接，以及 Zigbee/Thread 与 LoRaWAN 的拓扑，下列说法正确的是？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 ble 的广播/连接，以及 zigbee/thread 与 lorawan 的拓扑，下列说法正确的是？（多选） wireless-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:wireless-q3",
+      "title": "判断：只要把无线发射的峰值电流降下来，节点用一节电池就能撑好几年。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：只要把无线发射的峰值电流降下来，节点用一节电池就能撑好几年。 wireless-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:board-bus-q1",
+      "title": "关于 Modbus RTU 与 RS485 的关系，下面哪一句是准确的？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 modbus rtu 与 rs485 的关系，下面哪一句是准确的？ board-bus-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:board-bus-q2",
+      "title": "关于 1‑Wire、RS485 与 I²S 的说法，下列哪些正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 1‑wire、rs485 与 i²s 的说法，下列哪些正确？（多选） board-bus-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:board-bus-q3",
+      "title": "判断：RS485 二线制是半双工，发送前要把 DE 拉高，等最后一个字节发送完成（TC）后再拉低，否则可能截断数据。",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：rs485 二线制是半双工，发送前要把 de 拉高，等最后一个字节发送完成（tc）后再拉低，否则可能截断数据。 board-bus-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:debug-q1",
+      "title": "板子上只留了 SWDIO / SWCLK / GND 三根调试线。关于这个调试口与 SWO，下面哪个说法正确？",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "板子上只留了 swdio / swclk / gnd 三根调试线。关于这个调试口与 swo，下面哪个说法正确？ debug-q1 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:debug-q2",
+      "title": "关于 printf 重定向与非阻塞日志，下列哪些说法正确？（多选）",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "关于 printf 重定向与非阻塞日志，下列哪些说法正确？（多选） debug-q2 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    },
+    {
+      "id": "mcu:quiz:debug-q3",
+      "title": "判断：程序进了 HardFault 之后，只要在异常处理函数里直接复位让它继续跑起来就行，不必保存现场——因为复位后故障状态寄存器会保留上次…",
+      "site": "mcu",
+      "siteName": "MCU Playground · 单片机与外设通讯教学站",
+      "type": "quiz",
+      "route": "/mcu/quiz",
+      "keywords": "判断：程序进了 hardfault 之后，只要在异常处理函数里直接复位让它继续跑起来就行，不必保存现场——因为复位后故障状态寄存器会保留上次… debug-q3 quiz mcu playground · 单片机与外设通讯教学站 mcu "
+    }
+  ]
+}

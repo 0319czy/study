@@ -1,0 +1,1258 @@
+{
+  "generatedAt": "2026-11-27T12:50:39.871Z",
+  "site": "ros",
+  "count": 139,
+  "items": [
+    {
+      "id": "ros:page:basics",
+      "title": "ROS 基础",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/basics",
+      "keywords": "ros 基础 basics page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:communication",
+      "title": "通信机制",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/communication",
+      "keywords": "通信机制 communication page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:tools",
+      "title": "工具链",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/tools",
+      "keywords": "工具链 tools page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:tf2",
+      "title": "TF2 坐标变换",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/tf2",
+      "keywords": "tf2 坐标变换 tf2 page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:urdf",
+      "title": "URDF 建模",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/urdf",
+      "keywords": "urdf 建模 urdf page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:simulation",
+      "title": "仿真",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/simulation",
+      "keywords": "仿真 simulation page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:slam",
+      "title": "SLAM 建图",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/slam",
+      "keywords": "slam 建图 slam page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:nav2",
+      "title": "导航 Nav2",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/nav2",
+      "keywords": "导航 nav2 nav2 page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:moveit",
+      "title": "MoveIt2 机械臂",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/moveit",
+      "keywords": "moveit2 机械臂 moveit page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:micro-ros",
+      "title": "micro-ROS",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/micro-ros",
+      "keywords": "micro-ros micro-ros page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:page:debug",
+      "title": "调试与安全",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "page",
+      "route": "/ros/debug",
+      "keywords": "调试与安全 debug page ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:basics/launch",
+      "title": "Launch 启动流程",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/basics",
+      "keywords": "launch 启动流程 basics/launch lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:basics/param",
+      "title": "参数配置：运行时改行为",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/basics",
+      "keywords": "参数配置：运行时改行为 basics/param lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:communication/pub-sub",
+      "title": "发布 / 订阅",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/communication",
+      "keywords": "发布 / 订阅 communication/pub-sub lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:communication/service",
+      "title": "服务请求 / 响应",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/communication",
+      "keywords": "服务请求 / 响应 communication/service lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:communication/action",
+      "title": "动作：目标 / 反馈 / 结果",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/communication",
+      "keywords": "动作：目标 / 反馈 / 结果 communication/action lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:communication/qos-dds",
+      "title": "QoS / DDS 匹配",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/communication",
+      "keywords": "qos / dds 匹配 communication/qos-dds lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:tools/compute-graph",
+      "title": "计算图模拟器",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/tools",
+      "keywords": "计算图模拟器 tools/compute-graph lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:tf2/tf-tree",
+      "title": "TF 坐标树",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/tf2",
+      "keywords": "tf 坐标树 tf2/tf-tree lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:urdf/urdf-joint",
+      "title": "URDF 关节运动",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/urdf",
+      "keywords": "urdf 关节运动 urdf/urdf-joint lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:simulation/sim-loop",
+      "title": "仿真闭环",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/simulation",
+      "keywords": "仿真闭环 simulation/sim-loop lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:slam/slam",
+      "title": "SLAM 建图",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/slam",
+      "keywords": "slam 建图 slam/slam lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:nav2/nav2",
+      "title": "Nav2 路径规划",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/nav2",
+      "keywords": "nav2 路径规划 nav2/nav2 lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:moveit/moveit-plan",
+      "title": "机械臂运动规划",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/moveit",
+      "keywords": "机械臂运动规划 moveit/moveit-plan lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:micro-ros/pub-sub",
+      "title": "嵌入式节点的发布订阅",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/micro-ros",
+      "keywords": "嵌入式节点的发布订阅 micro-ros/pub-sub lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:lab:debug/qos-dds",
+      "title": "QoS 不匹配排查",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "lab",
+      "route": "/ros/debug",
+      "keywords": "qos 不匹配排查 debug/qos-dds lab ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:basics-q1",
+      "title": "你在 ~/ros2_ws 里 colcon build 成功，但新终端里 ros2 run my_pkg talker 提示找不到包。最可能…",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "你在 ~/ros2_ws 里 colcon build 成功，但新终端里 ros2 run my_pkg talker 提示找不到包。最可能… basics-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:basics-q2",
+      "title": "下面哪些是 ROS 2 工作空间里由 colcon 自动生成的目录？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "下面哪些是 ros 2 工作空间里由 colcon 自动生成的目录？（多选） basics-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:basics-q3",
+      "title": "判断：ROS 2 必须先启动 roscore 才能运行节点。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：ros 2 必须先启动 roscore 才能运行节点。 basics-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:comm-q1",
+      "title": "激光雷达驱动发布 /scan 用 best_effort，你的订阅者用默认 reliable，结果会怎样？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "激光雷达驱动发布 /scan 用 best_effort，你的订阅者用默认 reliable，结果会怎样？ comm-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:comm-q2",
+      "title": "关于动作（Action），下面哪些说法正确？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "关于动作（action），下面哪些说法正确？（多选） comm-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:comm-q3",
+      "title": "判断：一个有 3 个订阅者的话题，发布者需要为每个订阅者各发一次消息，还要知道对方的地址。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：一个有 3 个订阅者的话题，发布者需要为每个订阅者各发一次消息，还要知道对方的地址。 comm-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:comm-q4",
+      "title": "你需要让机器人「导航到目标点并显示剩余距离」，应该选哪种通信方式？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "你需要让机器人「导航到目标点并显示剩余距离」，应该选哪种通信方式？ comm-q4 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:tools-q1",
+      "title": "你想确认 /scan 话题是否真的在按 10Hz 发布，应该用哪条命令？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "你想确认 /scan 话题是否真的在按 10hz 发布，应该用哪条命令？ tools-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:tools-q2",
+      "title": "下面哪些属于排查数据为什么没到的有效手段？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "下面哪些属于排查数据为什么没到的有效手段？（多选） tools-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:tools-q3",
+      "title": "判断：用 ros2 bag play 回放时，只要录到了数据，所有节点就能自动跟随回放的时间。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：用 ros2 bag play 回放时，只要录到了数据，所有节点就能自动跟随回放的时间。 tools-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:tf-q1",
+      "title": "激光点云固定在 laser_link，要在地图 map 里显示，需要哪条链路？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "激光点云固定在 laser_link，要在地图 map 里显示，需要哪条链路？ tf-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:tf-q2",
+      "title": "下面哪些属于「TF 树不合法」的情况？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "下面哪些属于「tf 树不合法」的情况？（多选） tf-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:tf-q3",
+      "title": "判断：查 TF 变换时可以随便用当前时间 now，只要最后能查到就行。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：查 tf 变换时可以随便用当前时间 now，只要最后能查到就行。 tf-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:urdf-q1",
+      "title": "要让驱动轮可以无限旋转，应该用哪种 joint 类型？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "要让驱动轮可以无限旋转，应该用哪种 joint 类型？ urdf-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:urdf-q2",
+      "title": "关于 URDF 里的三个标签，哪些说法正确？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "关于 urdf 里的三个标签，哪些说法正确？（多选） urdf-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:urdf-q3",
+      "title": "判断：URDF 里的 origin 旋转单位是角度（degree）。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：urdf 里的 origin 旋转单位是角度（degree）。 urdf-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:sim-q1",
+      "title": "仿真里所有节点的时间都不对，TF 查询一直超时。最可能的原因是？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "仿真里所有节点的时间都不对，tf 查询一直超时。最可能的原因是？ sim-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:sim-q2",
+      "title": "仿真与真机相比，通常会缺少哪些现实因素？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "仿真与真机相比，通常会缺少哪些现实因素？（多选） sim-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:sim-q3",
+      "title": "判断：新版 Gazebo（Gazebo Sim）的原生话题可以直接被 ROS 2 节点订阅，不需要桥接。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：新版 gazebo（gazebo sim）的原生话题可以直接被 ros 2 节点订阅，不需要桥接。 sim-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:slam-q1",
+      "title": "为什么不能「先用里程计建好图，再单独定位」？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "为什么不能「先用里程计建好图，再单独定位」？ slam-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:slam-q2",
+      "title": "关于栅格地图（OccupancyGrid），哪些说法正确？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "关于栅格地图（occupancygrid），哪些说法正确？（多选） slam-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:slam-q3",
+      "title": "判断：回环检测只会让地图更漂亮，对定位精度没有实际影响。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：回环检测只会让地图更漂亮，对定位精度没有实际影响。 slam-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:nav2-q1",
+      "title": "Nav2 中负责「按全局路径产生速度指令并实时避障」的是？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "nav2 中负责「按全局路径产生速度指令并实时避障」的是？ nav2-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:nav2-q2",
+      "title": "关于代价地图的膨胀层（inflation），哪些说法正确？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "关于代价地图的膨胀层（inflation），哪些说法正确？（多选） nav2-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:nav2-q3",
+      "title": "判断：Nav2 的行为树只是把流程图写成 XML，运行逻辑和状态机完全一样，没有实际好处。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：nav2 的行为树只是把流程图写成 xml，运行逻辑和状态机完全一样，没有实际好处。 nav2-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:moveit-q1",
+      "title": "机械臂「抓取桌上的杯子」，最适合的描述是？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "机械臂「抓取桌上的杯子」，最适合的描述是？ moveit-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:moveit-q2",
+      "title": "关于 SRDF，哪些说法正确？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "关于 srdf，哪些说法正确？（多选） moveit-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:moveit-q3",
+      "title": "判断：笛卡尔空间规划一定能成功，因为它直接指定了末端位姿。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：笛卡尔空间规划一定能成功，因为它直接指定了末端位姿。 moveit-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:micro-q1",
+      "title": "micro-ROS 里 agent 的作用是？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "micro-ros 里 agent 的作用是？ micro-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:micro-q2",
+      "title": "在 MCU 上使用 micro-ROS，应该遵守哪些原则？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "在 mcu 上使用 micro-ros，应该遵守哪些原则？（多选） micro-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:micro-q3",
+      "title": "判断：MCU 端的消息频率越高越好，因为数据更实时。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：mcu 端的消息频率越高越好，因为数据更实时。 micro-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:debug-q1",
+      "title": "ros2 topic echo 有数据、rqt_graph 也连着，但你的订阅者回调从不触发。最可能的原因？",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "ros2 topic echo 有数据、rqt_graph 也连着，但你的订阅者回调从不触发。最可能的原因？ debug-q1 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:debug-q2",
+      "title": "真机部署时，下面哪些属于必须的安全边界？（多选）",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "真机部署时，下面哪些属于必须的安全边界？（多选） debug-q2 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:quiz:debug-q3",
+      "title": "判断：节点崩溃后直接重启继续跑，是最高效的调试方式。",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "quiz",
+      "route": "/ros/quiz",
+      "keywords": "判断：节点崩溃后直接重启继续跑，是最高效的调试方式。 debug-q3 quiz ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:case:turtlesim",
+      "title": "案例一：turtlesim 入门",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "case",
+      "route": "/ros/cases",
+      "keywords": "案例一：turtlesim 入门 turtlesim case ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:case:diff-drive",
+      "title": "案例二：差速小车仿真",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "case",
+      "route": "/ros/cases",
+      "keywords": "案例二：差速小车仿真 diff-drive case ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:case:mapping",
+      "title": "案例三：激光建图",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "case",
+      "route": "/ros/cases",
+      "keywords": "案例三：激光建图 mapping case ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:case:navigate",
+      "title": "案例四：导航到目标点",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "case",
+      "route": "/ros/cases",
+      "keywords": "案例四：导航到目标点 navigate case ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:case:grasp",
+      "title": "案例五：机械臂抓取流程",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "case",
+      "route": "/ros/cases",
+      "keywords": "案例五：机械臂抓取流程 grasp case ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-1",
+      "title": "Node / 节点",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "node / 节点 ros-term-1 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-2",
+      "title": "Package / 包",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "package / 包 ros-term-2 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-3",
+      "title": "Workspace / 工作空间",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "workspace / 工作空间 ros-term-3 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-4",
+      "title": "colcon / 构建工具",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "colcon / 构建工具 ros-term-4 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-5",
+      "title": "ament / 构建系统",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ament / 构建系统 ros-term-5 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-6",
+      "title": "Overlay / 覆盖层",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "overlay / 覆盖层 ros-term-6 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-7",
+      "title": "Launch File / launch 文件",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "launch file / launch 文件 ros-term-7 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-8",
+      "title": "Message / 消息",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "message / 消息 ros-term-8 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-9",
+      "title": "Interface / 接口",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "interface / 接口 ros-term-9 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-10",
+      "title": "Namespace / 命名空间",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "namespace / 命名空间 ros-term-10 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-11",
+      "title": "Remapping / 重映射",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "remapping / 重映射 ros-term-11 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-12",
+      "title": "rosdep / 依赖安装工具",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "rosdep / 依赖安装工具 ros-term-12 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-13",
+      "title": "Topic / 话题",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "topic / 话题 ros-term-13 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-14",
+      "title": "Publisher / 发布者",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "publisher / 发布者 ros-term-14 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-15",
+      "title": "Subscriber / 订阅者",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "subscriber / 订阅者 ros-term-15 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-16",
+      "title": "Service / 服务",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "service / 服务 ros-term-16 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-17",
+      "title": "Action / 动作",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "action / 动作 ros-term-17 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-18",
+      "title": "Parameter / 参数",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "parameter / 参数 ros-term-18 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-19",
+      "title": "QoS / 服务质量",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "qos / 服务质量 ros-term-19 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-20",
+      "title": "Reliability / 可靠性",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "reliability / 可靠性 ros-term-20 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-21",
+      "title": "Durability / 持久性",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "durability / 持久性 ros-term-21 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-22",
+      "title": "Depth / 队列深度",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "depth / 队列深度 ros-term-22 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-23",
+      "title": "DDS / 数据分发服务",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "dds / 数据分发服务 ros-term-23 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-24",
+      "title": "Middleware / 中间件实现",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "middleware / 中间件实现 ros-term-24 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-25",
+      "title": "Executor / 执行器",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "executor / 执行器 ros-term-25 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-26",
+      "title": "Callback Group / 回调组",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "callback group / 回调组 ros-term-26 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-27",
+      "title": "Lifecycle Node / 生命周期节点",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "lifecycle node / 生命周期节点 ros-term-27 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-28",
+      "title": "ROS_DOMAIN_ID / 域 ID",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ros_domain_id / 域 id ros-term-28 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-29",
+      "title": "RViz2 / 三维可视化",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "rviz2 / 三维可视化 ros-term-29 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-30",
+      "title": "rqt / 图形工具集",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "rqt / 图形工具集 ros-term-30 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-31",
+      "title": "rosbag2 / 数据包录制",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "rosbag2 / 数据包录制 ros-term-31 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-32",
+      "title": "ros2 doctor / 环境体检",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ros2 doctor / 环境体检 ros-term-32 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-33",
+      "title": "Fixed Frame / 固定坐标系",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "fixed frame / 固定坐标系 ros-term-33 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-34",
+      "title": "ros2 topic hz / 频率测量",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ros2 topic hz / 频率测量 ros-term-34 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-35",
+      "title": "ros2 topic info -v / QoS 对比",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ros2 topic info -v / qos 对比 ros-term-35 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-36",
+      "title": "Frame / 坐标系",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "frame / 坐标系 ros-term-36 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-37",
+      "title": "Transform / 变换",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "transform / 变换 ros-term-37 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-38",
+      "title": "TF Tree / TF 树",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "tf tree / tf 树 ros-term-38 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-39",
+      "title": "static_transform_publisher / 静态广播",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "static_transform_publisher / 静态广播 ros-term-39 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-40",
+      "title": "Quaternion / 四元数",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "quaternion / 四元数 ros-term-40 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-41",
+      "title": "tf2_echo / 变换查询",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "tf2_echo / 变换查询 ros-term-41 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-42",
+      "title": "view_frames / TF 树导出",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "view_frames / tf 树导出 ros-term-42 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-43",
+      "title": "Gazebo / 物理仿真器",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "gazebo / 物理仿真器 ros-term-43 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-44",
+      "title": "SDF / 仿真描述格式",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "sdf / 仿真描述格式 ros-term-44 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-45",
+      "title": "Sensor Plugin / 传感器插件",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "sensor plugin / 传感器插件 ros-term-45 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-46",
+      "title": "/clock / 仿真时钟",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "/clock / 仿真时钟 ros-term-46 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-47",
+      "title": "use_sim_time / 使用仿真时间",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "use_sim_time / 使用仿真时间 ros-term-47 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-48",
+      "title": "ros_gz_bridge / 消息桥接",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ros_gz_bridge / 消息桥接 ros-term-48 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-49",
+      "title": "Costmap / 代价地图",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "costmap / 代价地图 ros-term-49 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-50",
+      "title": "Inflation / 膨胀层",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "inflation / 膨胀层 ros-term-50 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-51",
+      "title": "AMCL / 粒子滤波定位",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "amcl / 粒子滤波定位 ros-term-51 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-52",
+      "title": "Global Planner / 全局规划器",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "global planner / 全局规划器 ros-term-52 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-53",
+      "title": "Local Controller / 局部控制器",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "local controller / 局部控制器 ros-term-53 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-54",
+      "title": "Behavior Tree / 行为树",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "behavior tree / 行为树 ros-term-54 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-55",
+      "title": "OccupancyGrid / 栅格地图",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "occupancygrid / 栅格地图 ros-term-55 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-56",
+      "title": "NavigateToPose / 导航动作",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "navigatetopose / 导航动作 ros-term-56 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-57",
+      "title": "Planning Group / 规划组",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "planning group / 规划组 ros-term-57 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-58",
+      "title": "SRDF / 语义描述",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "srdf / 语义描述 ros-term-58 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-59",
+      "title": "IK / FK / 逆/正运动学",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ik / fk / 逆/正运动学 ros-term-59 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-60",
+      "title": "OMPL / 采样规划库",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ompl / 采样规划库 ros-term-60 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-61",
+      "title": "Collision Checking / 碰撞检测",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "collision checking / 碰撞检测 ros-term-61 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-62",
+      "title": "ACM / 允许碰撞矩阵",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "acm / 允许碰撞矩阵 ros-term-62 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-63",
+      "title": "Trajectory / 轨迹",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "trajectory / 轨迹 ros-term-63 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-64",
+      "title": "ros2_control / 控制的框架",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "ros2_control / 控制的框架 ros-term-64 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-65",
+      "title": "micro-ROS / 单片机上的 ROS 2",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "micro-ros / 单片机上的 ros 2 ros-term-65 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-66",
+      "title": "micro-ROS Agent / 协议翻译",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "micro-ros agent / 协议翻译 ros-term-66 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-67",
+      "title": "rclc / C 语言客户端",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "rclc / c 语言客户端 ros-term-67 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-68",
+      "title": "XRCE-DDS / 轻量 DDS 协议",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "xrce-dds / 轻量 dds 协议 ros-term-68 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-69",
+      "title": "MCU / 微控制器",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "mcu / 微控制器 ros-term-69 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-70",
+      "title": "Log Level / 日志级别",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "log level / 日志级别 ros-term-70 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-71",
+      "title": "Core Dump / 核心转储",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "core dump / 核心转储 ros-term-71 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-72",
+      "title": "Watchdog / 看门狗",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "watchdog / 看门狗 ros-term-72 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-73",
+      "title": "SROS2 / ROS 2 安全",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "sros2 / ros 2 安全 ros-term-73 glossary ros 学习实验室 ros "
+    },
+    {
+      "id": "ros:glossary:ros-term-74",
+      "title": "E-Stop / 急停",
+      "site": "ros",
+      "siteName": "ROS 学习实验室",
+      "type": "glossary",
+      "route": "/ros/glossary",
+      "keywords": "e-stop / 急停 ros-term-74 glossary ros 学习实验室 ros "
+    }
+  ]
+}

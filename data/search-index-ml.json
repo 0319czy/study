@@ -1,0 +1,1357 @@
+{
+  "generatedAt": "2026-11-27T12:50:39.871Z",
+  "site": "ml",
+  "count": 150,
+  "items": [
+    {
+      "id": "ml:lesson:linear-regression",
+      "title": "线性回归",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/linear-regression",
+      "keywords": "线性回归 linear-regression lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:logistic-regression",
+      "title": "逻辑回归",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/logistic-regression",
+      "keywords": "逻辑回归 logistic-regression lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:knn",
+      "title": "K 近邻",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/knn",
+      "keywords": "k 近邻 knn lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:decision-tree",
+      "title": "决策树",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/decision-tree",
+      "keywords": "决策树 decision-tree lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:random-forest",
+      "title": "随机森林",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/random-forest",
+      "keywords": "随机森林 random-forest lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:naive-bayes",
+      "title": "朴素贝叶斯",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/naive-bayes",
+      "keywords": "朴素贝叶斯 naive-bayes lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:svm",
+      "title": "支持向量机",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/svm",
+      "keywords": "支持向量机 svm lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:kmeans",
+      "title": "KMeans 聚类",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/kmeans",
+      "keywords": "kmeans 聚类 kmeans lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:pca",
+      "title": "主成分分析",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/pca",
+      "keywords": "主成分分析 pca lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:neural-network",
+      "title": "神经网络基础",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/neural-network",
+      "keywords": "神经网络基础 neural-network lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:cnn",
+      "title": "卷积神经网络简介",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/cnn",
+      "keywords": "卷积神经网络简介 cnn lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:rnn",
+      "title": "循环神经网络简介",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/rnn",
+      "keywords": "循环神经网络简介 rnn lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:transformer",
+      "title": "Transformer 简介",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/transformer",
+      "keywords": "transformer 简介 transformer lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:regularization",
+      "title": "过拟合与正则化",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/regularization",
+      "keywords": "过拟合与正则化 regularization lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:cross-validation",
+      "title": "交叉验证",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/cross-validation",
+      "keywords": "交叉验证 cross-validation lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:evaluation",
+      "title": "评估指标",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/evaluation",
+      "keywords": "评估指标 evaluation lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:feature-engineering",
+      "title": "特征工程",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/feature-engineering",
+      "keywords": "特征工程 feature-engineering lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:deployment",
+      "title": "模型部署",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/deployment",
+      "keywords": "模型部署 deployment lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lesson:ethics",
+      "title": "机器学习伦理",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lesson",
+      "route": "/ml/algorithms/ethics",
+      "keywords": "机器学习伦理 ethics lesson 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:gradient-descent",
+      "title": "梯度下降",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/gradient-descent",
+      "keywords": "梯度下降 gradient-descent lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:linear-fit",
+      "title": "线性回归拟合",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/linear-fit",
+      "keywords": "线性回归拟合 linear-fit lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:classification-boundary",
+      "title": "分类边界",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/classification-boundary",
+      "keywords": "分类边界 classification-boundary lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:knn-voting",
+      "title": "KNN 投票",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/knn-voting",
+      "keywords": "knn 投票 knn-voting lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:tree-split",
+      "title": "决策树分裂",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/tree-split",
+      "keywords": "决策树分裂 tree-split lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:kmeans",
+      "title": "KMeans 迭代",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/kmeans",
+      "keywords": "kmeans 迭代 kmeans lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:forward-pass",
+      "title": "神经网络前向传播",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/forward-pass",
+      "keywords": "神经网络前向传播 forward-pass lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:convolution",
+      "title": "卷积滑动",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/convolution",
+      "keywords": "卷积滑动 convolution lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:overfitting",
+      "title": "过拟合曲线",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/overfitting",
+      "keywords": "过拟合曲线 overfitting lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:lab:confusion-matrix",
+      "title": "混淆矩阵",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "lab",
+      "route": "/ml/lab/confusion-matrix",
+      "keywords": "混淆矩阵 confusion-matrix lab 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:case:house-price",
+      "title": "房价预测",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "case",
+      "route": "/ml/cases",
+      "keywords": "房价预测 house-price case 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:case:spam-filter",
+      "title": "垃圾邮件分类",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "case",
+      "route": "/ml/cases",
+      "keywords": "垃圾邮件分类 spam-filter case 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:case:customer-cluster",
+      "title": "客户聚类",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "case",
+      "route": "/ml/cases",
+      "keywords": "客户聚类 customer-cluster case 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:case:digit-recognition",
+      "title": "手写数字识别（简介）",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "case",
+      "route": "/ml/cases",
+      "keywords": "手写数字识别（简介） digit-recognition case 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:machine-learning",
+      "title": "机器学习 / Machine Learning",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "机器学习 / machine learning machine-learning glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:supervised-learning",
+      "title": "监督学习 / Supervised Learning",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "监督学习 / supervised learning supervised-learning glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:unsupervised-learning",
+      "title": "无监督学习 / Unsupervised Learning",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "无监督学习 / unsupervised learning unsupervised-learning glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:deep-learning",
+      "title": "深度学习 / Deep Learning",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "深度学习 / deep learning deep-learning glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:feature",
+      "title": "特征 / Feature",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "特征 / feature feature glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:label",
+      "title": "标签 / Label",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "标签 / label label glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:model",
+      "title": "模型 / Model",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "模型 / model model glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:parameter",
+      "title": "参数 / Parameter",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "参数 / parameter parameter glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:hyperparameter",
+      "title": "超参数 / Hyperparameter",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "超参数 / hyperparameter hyperparameter glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:loss-function",
+      "title": "损失函数 / Loss Function",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "损失函数 / loss function loss-function glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:gradient",
+      "title": "梯度 / Gradient",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "梯度 / gradient gradient glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:generalization",
+      "title": "泛化 / Generalization",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "泛化 / generalization generalization glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:overfitting",
+      "title": "过拟合 / Overfitting",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "过拟合 / overfitting overfitting glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:underfitting",
+      "title": "欠拟合 / Underfitting",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "欠拟合 / underfitting underfitting glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:bias-variance",
+      "title": "偏差与方差 / Bias and Variance",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "偏差与方差 / bias and variance bias-variance glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:clustering",
+      "title": "聚类 / Clustering",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "聚类 / clustering clustering glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:dimensionality-reduction",
+      "title": "降维 / Dimensionality Reduction",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "降维 / dimensionality reduction dimensionality-reduction glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:decision-boundary",
+      "title": "决策边界 / Decision Boundary",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "决策边界 / decision boundary decision-boundary glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:attention",
+      "title": "注意力机制 / Attention Mechanism",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "注意力机制 / attention mechanism attention glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:convolution",
+      "title": "卷积 / Convolution",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "卷积 / convolution convolution glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:sequence-modeling",
+      "title": "序列建模 / Sequence Modeling",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "序列建模 / sequence modeling sequence-modeling glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:accuracy",
+      "title": "准确率 / Accuracy",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "准确率 / accuracy accuracy glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:precision",
+      "title": "精确率 / Precision",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "精确率 / precision precision glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:recall",
+      "title": "召回率 / Recall",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "召回率 / recall recall glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:f1-score",
+      "title": "F1 分数 / F1 Score",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "f1 分数 / f1 score f1-score glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:roc-curve",
+      "title": "ROC 曲线 / Receiver Operating Characteristic Curve",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "roc 曲线 / receiver operating characteristic curve roc-curve glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:auc",
+      "title": "AUC / Area Under the ROC Curve",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "auc / area under the roc curve auc glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:confusion-matrix",
+      "title": "混淆矩阵 / Confusion Matrix",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "混淆矩阵 / confusion matrix confusion-matrix glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:mean-squared-error",
+      "title": "均方误差 / Mean Squared Error",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "均方误差 / mean squared error mean-squared-error glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:mean-absolute-error",
+      "title": "平均绝对误差 / Mean Absolute Error",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "平均绝对误差 / mean absolute error mean-absolute-error glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:r-squared",
+      "title": "决定系数 / Coefficient of Determination",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "决定系数 / coefficient of determination r-squared glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:cross-entropy",
+      "title": "交叉熵 / Cross-Entropy",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "交叉熵 / cross-entropy cross-entropy glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:true-positive-rate",
+      "title": "真阳性率 / True Positive Rate",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "真阳性率 / true positive rate true-positive-rate glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:false-positive-rate",
+      "title": "假阳性率 / False Positive Rate",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "假阳性率 / false positive rate false-positive-rate glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:macro-average",
+      "title": "宏平均 / Macro Average",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "宏平均 / macro average macro-average glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:linear-regression",
+      "title": "线性回归 / Linear Regression",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "线性回归 / linear regression linear-regression glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:logistic-regression",
+      "title": "逻辑回归 / Logistic Regression",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "逻辑回归 / logistic regression logistic-regression glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:k-nearest-neighbors",
+      "title": "K 近邻 / K-Nearest Neighbors",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "k 近邻 / k-nearest neighbors k-nearest-neighbors glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:decision-tree",
+      "title": "决策树 / Decision Tree",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "决策树 / decision tree decision-tree glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:random-forest",
+      "title": "随机森林 / Random Forest",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "随机森林 / random forest random-forest glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:naive-bayes",
+      "title": "朴素贝叶斯 / Naive Bayes",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "朴素贝叶斯 / naive bayes naive-bayes glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:support-vector-machine",
+      "title": "支持向量机 / Support Vector Machine",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "支持向量机 / support vector machine support-vector-machine glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:k-means",
+      "title": "KMeans 聚类 / K-Means Clustering",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "kmeans 聚类 / k-means clustering k-means glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:pca",
+      "title": "主成分分析 / Principal Component Analysis",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "主成分分析 / principal component analysis pca glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:neural-network",
+      "title": "神经网络 / Neural Network",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "神经网络 / neural network neural-network glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:cnn",
+      "title": "卷积神经网络 / Convolutional Neural Network",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "卷积神经网络 / convolutional neural network cnn glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:rnn",
+      "title": "循环神经网络 / Recurrent Neural Network",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "循环神经网络 / recurrent neural network rnn glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:transformer",
+      "title": "Transformer / Transformer",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "transformer / transformer transformer glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:gradient-descent",
+      "title": "梯度下降 / Gradient Descent",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "梯度下降 / gradient descent gradient-descent glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:regularization",
+      "title": "正则化 / Regularization",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "正则化 / regularization regularization glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:cross-validation",
+      "title": "交叉验证 / Cross-Validation",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "交叉验证 / cross-validation cross-validation glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:feature-engineering",
+      "title": "特征工程 / Feature Engineering",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "特征工程 / feature engineering feature-engineering glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:training-set",
+      "title": "训练集 / Training Set",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "训练集 / training set training-set glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:validation-set",
+      "title": "验证集 / Validation Set",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "验证集 / validation set validation-set glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:test-set",
+      "title": "测试集 / Test Set",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "测试集 / test set test-set glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:data-leakage",
+      "title": "数据泄漏 / Data Leakage",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "数据泄漏 / data leakage data-leakage glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:feature-scaling",
+      "title": "特征缩放 / Feature Scaling",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "特征缩放 / feature scaling feature-scaling glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:standardization",
+      "title": "标准化 / Standardization",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "标准化 / standardization standardization glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:normalization",
+      "title": "归一化 / Normalization",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "归一化 / normalization normalization glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:missing-value",
+      "title": "缺失值 / Missing Value",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "缺失值 / missing value missing-value glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:categorical-feature",
+      "title": "类别特征 / Categorical Feature",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "类别特征 / categorical feature categorical-feature glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:one-hot-encoding",
+      "title": "独热编码 / One-Hot Encoding",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "独热编码 / one-hot encoding one-hot-encoding glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:sample",
+      "title": "样本 / Sample",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "样本 / sample sample glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:noise",
+      "title": "噪声 / Noise",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "噪声 / noise noise glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:stratified-sampling",
+      "title": "分层抽样 / Stratified Sampling",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "分层抽样 / stratified sampling stratified-sampling glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:imbalanced-data",
+      "title": "类别不平衡 / Class Imbalance",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "类别不平衡 / class imbalance imbalanced-data glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:baseline",
+      "title": "基线 / Baseline",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "基线 / baseline baseline glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:model-deployment",
+      "title": "模型部署 / Model Deployment",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "模型部署 / model deployment model-deployment glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:monitoring",
+      "title": "监控 / Monitoring",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "监控 / monitoring monitoring glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:distribution-shift",
+      "title": "分布漂移 / Distribution Shift",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "分布漂移 / distribution shift distribution-shift glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:interpretability",
+      "title": "可解释性 / Interpretability",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "可解释性 / interpretability interpretability glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:fairness",
+      "title": "公平性 / Fairness",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "公平性 / fairness fairness glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:annotation",
+      "title": "标注 / Annotation",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "标注 / annotation annotation glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:experiment-tracking",
+      "title": "实验记录 / Experiment Tracking",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "实验记录 / experiment tracking experiment-tracking glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:inference",
+      "title": "推理 / Inference",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "推理 / inference inference glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:glossary:reproducibility",
+      "title": "复现性 / Reproducibility",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "glossary",
+      "route": "/ml/glossary",
+      "keywords": "复现性 / reproducibility reproducibility glossary 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:linear-regression-1",
+      "title": "预测房价金额属于哪类任务？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "预测房价金额属于哪类任务？ linear-regression-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:linear-regression-2",
+      "title": "只要训练误差为零，预测新房价就一定准确。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "只要训练误差为零，预测新房价就一定准确。 linear-regression-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:logistic-regression-1",
+      "title": "把分类阈值提高会怎样？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "把分类阈值提高会怎样？ logistic-regression-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:logistic-regression-2",
+      "title": "逻辑回归的输出概率一定已经校准。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "逻辑回归的输出概率一定已经校准。 logistic-regression-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:knn-1",
+      "title": "面积与楼层的数值尺度差异很大时应优先考虑什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "面积与楼层的数值尺度差异很大时应优先考虑什么？ knn-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:knn-2",
+      "title": "KNN 也可以用于回归。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "knn 也可以用于回归。 knn-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:decision-tree-1",
+      "title": "选择分类分裂时应比较什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "选择分类分裂时应比较什么？ decision-tree-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:decision-tree-2",
+      "title": "把决策树一直分裂到每个叶子一个样本通常能避免过拟合。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "把决策树一直分裂到每个叶子一个样本通常能避免过拟合。 decision-tree-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:random-forest-1",
+      "title": "随机森林为什么在分裂时随机选特征？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "随机森林为什么在分裂时随机选特征？ random-forest-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:random-forest-2",
+      "title": "随机森林只能做分类。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "随机森林只能做分类。 random-forest-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:naive-bayes-1",
+      "title": "朴素贝叶斯的“朴素”主要指什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "朴素贝叶斯的“朴素”主要指什么？ naive-bayes-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:naive-bayes-2",
+      "title": "文本中一个词训练时没出现过，就应让该类别概率直接为零。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "文本中一个词训练时没出现过，就应让该类别概率直接为零。 naive-bayes-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:svm-1",
+      "title": "在线性软间隔 SVM 中增大 C 会怎样？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "在线性软间隔 svm 中增大 c 会怎样？ svm-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:svm-2",
+      "title": "SVM 的决策函数值天然就是校准后的概率。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "svm 的决策函数值天然就是校准后的概率。 svm-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:kmeans-1",
+      "title": "KMeans 更新中心时计算什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "kmeans 更新中心时计算什么？ kmeans-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:kmeans-2",
+      "title": "KMeans 的簇编号 0 天然代表低价值客户。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "kmeans 的簇编号 0 天然代表低价值客户。 kmeans-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:pca-1",
+      "title": "标准 PCA 选择方向时主要依据什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "标准 pca 选择方向时主要依据什么？ pca-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:pca-2",
+      "title": "PCA 降维总能提高分类准确率。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "pca 降维总能提高分类准确率。 pca-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:neural-network-1",
+      "title": "前向传播主要完成什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "前向传播主要完成什么？ neural-network-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:neural-network-2",
+      "title": "把许多线性层串起来而不加非线性激活，就一定能表达任意非线性。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "把许多线性层串起来而不加非线性激活，就一定能表达任意非线性。 neural-network-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:neural-network-3",
+      "title": "哪些步骤属于常见的监督训练循环？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "哪些步骤属于常见的监督训练循环？ neural-network-3 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:cnn-1",
+      "title": "CNN 的参数共享指什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "cnn 的参数共享指什么？ cnn-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:cnn-2",
+      "title": "卷积核只能由人手工指定，不能训练。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "卷积核只能由人手工指定，不能训练。 cnn-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:rnn-1",
+      "title": "普通 RNN 的当前隐藏状态依赖什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "普通 rnn 的当前隐藏状态依赖什么？ rnn-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:rnn-2",
+      "title": "普通 RNN 读取序列时可以完全忽略顺序。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "普通 rnn 读取序列时可以完全忽略顺序。 rnn-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:transformer-1",
+      "title": "注意力中的 V 主要提供什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "注意力中的 v 主要提供什么？ transformer-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:transformer-2",
+      "title": "因为 Transformer 训练可并行，自回归生成就能一次独立生成所有后续词。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "因为 transformer 训练可并行，自回归生成就能一次独立生成所有后续词。 transformer-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:regularization-1",
+      "title": "模型训练误差很低、验证误差很高，常提示什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "模型训练误差很低、验证误差很高，常提示什么？ regularization-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:regularization-2",
+      "title": "正则化强度越大，泛化性能就一定越好。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "正则化强度越大，泛化性能就一定越好。 regularization-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:cross-validation-1",
+      "title": "交叉验证时标准化器应该在哪拟合？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "交叉验证时标准化器应该在哪拟合？ cross-validation-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:cross-validation-2",
+      "title": "时间序列总能使用随机打乱的普通 K 折。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "时间序列总能使用随机打乱的普通 k 折。 cross-validation-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:evaluation-1",
+      "title": "精确率的分母是什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "精确率的分母是什么？ evaluation-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:evaluation-2",
+      "title": "一个全部预测为负的分类器可能拥有很高准确率。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "一个全部预测为负的分类器可能拥有很高准确率。 evaluation-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:evaluation-3",
+      "title": "哪些结论正确？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "哪些结论正确？ evaluation-3 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:feature-engineering-1",
+      "title": "哪个特征可能造成目标泄漏？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "哪个特征可能造成目标泄漏？ feature-engineering-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:feature-engineering-2",
+      "title": "验证集可以使用自己单独拟合的标准化参数。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "验证集可以使用自己单独拟合的标准化参数。 feature-engineering-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:deployment-1",
+      "title": "交付模型时还应保存什么？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "交付模型时还应保存什么？ deployment-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:deployment-2",
+      "title": "模型上线后就无需继续检查输入分布。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "模型上线后就无需继续检查输入分布。 deployment-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:ethics-1",
+      "title": "删除敏感属性后模型就必然公平吗？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "删除敏感属性后模型就必然公平吗？ ethics-1 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:ethics-2",
+      "title": "总体准确率相同，不能保证各群体的漏报率相同。",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "总体准确率相同，不能保证各群体的漏报率相同。 ethics-2 quiz 知机 · 机器学习实验手册 ml "
+    },
+    {
+      "id": "ml:quiz:ethics-3",
+      "title": "负责任的模型使用通常包括哪些做法？",
+      "site": "ml",
+      "siteName": "知机 · 机器学习实验手册",
+      "type": "quiz",
+      "route": "/ml/quiz",
+      "keywords": "负责任的模型使用通常包括哪些做法？ ethics-3 quiz 知机 · 机器学习实验手册 ml "
+    }
+  ]
+}

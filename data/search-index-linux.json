@@ -1,0 +1,1213 @@
+{
+  "generatedAt": "2026-11-27T12:50:39.871Z",
+  "site": "linux",
+  "count": 134,
+  "items": [
+    {
+      "id": "linux:lesson:foundations",
+      "title": "内核与驱动基础",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/foundations",
+      "keywords": "内核与驱动基础 foundations lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:kernel-modules",
+      "title": "内核模块",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/kernel-modules",
+      "keywords": "内核模块 kernel-modules lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:char-devices",
+      "title": "字符设备",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/char-devices",
+      "keywords": "字符设备 char-devices lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:file-io-ioctl",
+      "title": "文件操作与 ioctl",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/file-io-ioctl",
+      "keywords": "文件操作与 ioctl file-io-ioctl lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:concurrency",
+      "title": "并发与同步",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/concurrency",
+      "keywords": "并发与同步 concurrency lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:interrupts",
+      "title": "中断处理",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/interrupts",
+      "keywords": "中断处理 interrupts lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:time-delay",
+      "title": "内核时间与延迟",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/time-delay",
+      "keywords": "内核时间与延迟 time-delay lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:device-model-sysfs",
+      "title": "设备模型与 sysfs",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/device-model-sysfs",
+      "keywords": "设备模型与 sysfs device-model-sysfs lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:device-tree",
+      "title": "设备树",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/device-tree",
+      "keywords": "设备树 device-tree lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:platform-driver",
+      "title": "平台驱动",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/platform-driver",
+      "keywords": "平台驱动 platform-driver lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:gpio-pinctrl",
+      "title": "GPIO 与 pinctrl",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/gpio-pinctrl",
+      "keywords": "gpio 与 pinctrl gpio-pinctrl lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:i2c",
+      "title": "I2C 驱动",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/i2c",
+      "keywords": "i2c 驱动 i2c lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:spi",
+      "title": "SPI 驱动",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/spi",
+      "keywords": "spi 驱动 spi lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:usb",
+      "title": "USB 驱动简介",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/usb",
+      "keywords": "usb 驱动简介 usb lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:dma",
+      "title": "DMA",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/dma",
+      "keywords": "dma dma lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:blocking-io",
+      "title": "阻塞与非阻塞 IO",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/blocking-io",
+      "keywords": "阻塞与非阻塞 io blocking-io lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:mmap",
+      "title": "mmap 与内存映射",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/mmap",
+      "keywords": "mmap 与内存映射 mmap lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:debugging",
+      "title": "调试与日志",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/debugging",
+      "keywords": "调试与日志 debugging lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:performance-rt",
+      "title": "性能与实时性",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/performance-rt",
+      "keywords": "性能与实时性 performance-rt lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:security",
+      "title": "安全与稳定性",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/security",
+      "keywords": "安全与稳定性 security lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lesson:porting",
+      "title": "移植与升级",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lesson",
+      "route": "/linux/learn/porting",
+      "keywords": "移植与升级 porting lesson 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:read-journey",
+      "title": "一次 read() 的旅程",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "一次 read() 的旅程 read-journey lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:driver-load",
+      "title": "从 .ko 到 /dev",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "从 .ko 到 /dev driver-load lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:user-kernel-switch",
+      "title": "用户态 / 内核态切换",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "用户态 / 内核态切换 user-kernel-switch lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:char-device-lifecycle",
+      "title": "字符设备注册与 open/read/write",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "字符设备注册与 open/read/write char-device-lifecycle lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:device-tree-probe",
+      "title": "设备树解析与 probe 匹配",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "设备树解析与 probe 匹配 device-tree-probe lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:irq-top-bottom",
+      "title": "中断上下半部",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "中断上下半部 irq-top-bottom lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:spin-vs-mutex",
+      "title": "自旋锁 vs 互斥锁",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "自旋锁 vs 互斥锁 spin-vs-mutex lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:waitqueue-wakeup",
+      "title": "等待队列唤醒",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "等待队列唤醒 waitqueue-wakeup lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:dma-transfer",
+      "title": "DMA 搬运",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "dma 搬运 dma-transfer lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:sysfs-attribute",
+      "title": "sysfs 属性读写",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "sysfs 属性读写 sysfs-attribute lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:i2c-timing",
+      "title": "I2C 传输时序",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "i2c 传输时序 i2c-timing lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:spi-timing",
+      "title": "SPI 传输时序",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "spi 传输时序 spi-timing lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:platform-match",
+      "title": "platform 驱动匹配",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "platform 驱动匹配 platform-match lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:module-deps",
+      "title": "内核模块依赖",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "内核模块依赖 module-deps lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:mmap-mapping",
+      "title": "mmap 内存映射",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "mmap 内存映射 mmap-mapping lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:lab:poll-select",
+      "title": "poll / select 多路等待",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "lab",
+      "route": "/linux/labs",
+      "keywords": "poll / select 多路等待 poll-select lab 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:case:led-char-device",
+      "title": "LED 字符设备",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "case",
+      "route": "/linux/cases",
+      "keywords": "led 字符设备 led-char-device case 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:case:gpio-key-irq",
+      "title": "GPIO 按键中断",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "case",
+      "route": "/linux/cases",
+      "keywords": "gpio 按键中断 gpio-key-irq case 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:case:i2c-th02",
+      "title": "I2C 温湿度读取",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "case",
+      "route": "/linux/cases",
+      "keywords": "i2c 温湿度读取 i2c-th02 case 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:case:spi-panel",
+      "title": "SPI 屏幕驱动",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "case",
+      "route": "/linux/cases",
+      "keywords": "spi 屏幕驱动 spi-panel case 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:case:platform-dt",
+      "title": "平台驱动 + 设备树",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "case",
+      "route": "/linux/cases",
+      "keywords": "平台驱动 + 设备树 platform-dt case 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:case:waitqueue-read",
+      "title": "等待队列阻塞读",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "case",
+      "route": "/linux/cases",
+      "keywords": "等待队列阻塞读 waitqueue-read case 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:case:dma-serial",
+      "title": "DMA 串口搬运",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "case",
+      "route": "/linux/cases",
+      "keywords": "dma 串口搬运 dma-serial case 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:vfs",
+      "title": "虚拟文件系统 / Virtual File System",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "虚拟文件系统 / virtual file system vfs glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:system-call",
+      "title": "系统调用 / System Call",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "系统调用 / system call system-call glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:user-space",
+      "title": "用户态 / User Space",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "用户态 / user space user-space glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:kernel-space",
+      "title": "内核态 / Kernel Space",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "内核态 / kernel space kernel-space glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:driver",
+      "title": "设备驱动 / Device Driver",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "设备驱动 / device driver driver glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:cdev",
+      "title": "字符设备结构 / Character Device",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "字符设备结构 / character device cdev glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:file-operations",
+      "title": "文件操作表 / file_operations",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "文件操作表 / file_operations file-operations glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:device-node",
+      "title": "设备节点 / Device Node",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "设备节点 / device node device-node glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:udev",
+      "title": "用户态设备管理器 / udev",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "用户态设备管理器 / udev udev glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:probe",
+      "title": "探测回调 / probe",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "探测回调 / probe probe glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:device-tree",
+      "title": "设备树 / Device Tree",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "设备树 / device tree device-tree glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:compatible",
+      "title": "兼容性字符串 / compatible",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "兼容性字符串 / compatible compatible glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:sysfs",
+      "title": "系统文件系统 / sysfs",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "系统文件系统 / sysfs sysfs glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:kobject",
+      "title": "内核对象 / kobject",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "内核对象 / kobject kobject glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:uevent",
+      "title": "用户态事件 / uevent",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "用户态事件 / uevent uevent glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:upper-half",
+      "title": "中断上半部 / Top Half",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "中断上半部 / top half upper-half glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:bottom-half",
+      "title": "中断下半部 / Bottom Half",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "中断下半部 / bottom half bottom-half glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:interrupt",
+      "title": "中断 / Interrupt",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "中断 / interrupt interrupt glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:spinlock",
+      "title": "自旋锁 / Spinlock",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "自旋锁 / spinlock spinlock glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:mutex",
+      "title": "互斥锁 / Mutex",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "互斥锁 / mutex mutex glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:race-condition",
+      "title": "竞态条件 / Race Condition",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "竞态条件 / race condition race-condition glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:dma",
+      "title": "直接内存访问 / Direct Memory Access",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "直接内存访问 / direct memory access dma glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:dma-mapping",
+      "title": "DMA 映射 / DMA Mapping",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "dma 映射 / dma mapping dma-mapping glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:iommu",
+      "title": "输入输出内存管理单元 / IOMMU",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "输入输出内存管理单元 / iommu iommu glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:wait-queue",
+      "title": "等待队列 / Wait Queue",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "等待队列 / wait queue wait-queue glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:blocking-io",
+      "title": "阻塞 IO / Blocking I/O",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "阻塞 io / blocking i/o blocking-io glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:glossary:poll",
+      "title": "多路就绪等待 / poll",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "glossary",
+      "route": "/linux/glossary",
+      "keywords": "多路就绪等待 / poll poll glossary 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:foundations-q1",
+      "title": "用户态程序想读取一个字符设备，下面哪个路径最符合 Linux 的分层设计？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "用户态程序想读取一个字符设备，下面哪个路径最符合 linux 的分层设计？ foundations-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:foundations-q2",
+      "title": "下面哪些代码/回调通常运行在内核态？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "下面哪些代码/回调通常运行在内核态？（多选） foundations-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:foundations-q3",
+      "title": "insmod 返回成功，就说明设备节点已经创建、probe 已经执行、设备一定可用。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "insmod 返回成功，就说明设备节点已经创建、probe 已经执行、设备一定可用。 foundations-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:modules-q1",
+      "title": "module_init 注册的初始化函数，返回什么表示加载成功？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "module_init 注册的初始化函数，返回什么表示加载成功？ modules-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:modules-q2",
+      "title": "关于 MODULE_LICENSE(\"GPL\")，哪些说法更准确？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "关于 module_license(\"gpl\")，哪些说法更准确？（多选） modules-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:modules-q3",
+      "title": "insmod 和 modprobe 一样，都会自动读取 modules.dep 并先加载依赖模块。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "insmod 和 modprobe 一样，都会自动读取 modules.dep 并先加载依赖模块。 modules-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:char-q1",
+      "title": "主设备号和次设备号的分工，下面哪项最准确？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "主设备号和次设备号的分工，下面哪项最准确？ char-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:char-q2",
+      "title": "要让 /dev 下出现一个可用的字符设备节点，通常涉及哪些步骤？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "要让 /dev 下出现一个可用的字符设备节点，通常涉及哪些步骤？（多选） char-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:char-q3",
+      "title": "release 回调在文件对象的最后一个引用被释放时调用，因此它不等同于“每次用户调用 close 的瞬间”。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "release 回调在文件对象的最后一个引用被释放时调用，因此它不等同于“每次用户调用 close 的瞬间”。 char-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:ioctl-q1",
+      "title": "设计一个新的 ioctl 命令时，下面哪种做法最稳妥？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "设计一个新的 ioctl 命令时，下面哪种做法最稳妥？ ioctl-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:ioctl-q2",
+      "title": "一个健壮的 unlocked_ioctl 实现通常会做哪些事？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "一个健壮的 unlocked_ioctl 实现通常会做哪些事？（多选） ioctl-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:ioctl-q3",
+      "title": "unlocked_ioctl 里的 “unlocked” 表示驱动不需要再考虑并发保护。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "unlocked_ioctl 里的 “unlocked” 表示驱动不需要再考虑并发保护。 ioctl-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:concurrency-q1",
+      "title": "下面哪种场景更适合使用互斥锁而不是自旋锁？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "下面哪种场景更适合使用互斥锁而不是自旋锁？ concurrency-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:concurrency-q2",
+      "title": "关于自旋锁，哪些说法正确？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "关于自旋锁，哪些说法正确？（多选） concurrency-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:concurrency-q3",
+      "title": "用 atomic_t 保护一个计数器后，围绕这个计数器的“读取—判断—再修改”整段逻辑也自动原子了。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "用 atomic_t 保护一个计数器后，围绕这个计数器的“读取—判断—再修改”整段逻辑也自动原子了。 concurrency-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:irq-q1",
+      "title": "为什么硬中断上半部不能调用 msleep？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "为什么硬中断上半部不能调用 msleep？ irq-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:irq-q2",
+      "title": "关于下半部机制，哪些说法正确？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "关于下半部机制，哪些说法正确？（多选） irq-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:irq-q3",
+      "title": "共享中断的处理函数即使发现不是自己的设备触发，也应返回 IRQ_HANDLED。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "共享中断的处理函数即使发现不是自己的设备触发，也应返回 irq_handled。 irq-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:time-q1",
+      "title": "把 500 毫秒换算成 jiffies，下面哪种写法更稳妥？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "把 500 毫秒换算成 jiffies，下面哪种写法更稳妥？ time-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:time-q2",
+      "title": "关于延时函数，哪些说法正确？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "关于延时函数，哪些说法正确？（多选） time-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:time-q3",
+      "title": "timer_list 的回调运行在进程上下文，因此可以在里面调用 msleep。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "timer_list 的回调运行在进程上下文，因此可以在里面调用 msleep。 time-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:sysfs-q1",
+      "title": "sysfs 的 show 回调写缓冲区时，下面哪种做法更合适？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "sysfs 的 show 回调写缓冲区时，下面哪种做法更合适？ sysfs-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:sysfs-q2",
+      "title": "一个安全的 sysfs store 回调通常会做哪些事？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "一个安全的 sysfs store 回调通常会做哪些事？（多选） sysfs-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:sysfs-q3",
+      "title": "sysfs 适合传输几十 MB 的二进制数据。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "sysfs 适合传输几十 mb 的二进制数据。 sysfs-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:dt-q1",
+      "title": "compatible 在设备树与驱动匹配中起什么作用？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "compatible 在设备树与驱动匹配中起什么作用？ dt-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:dt-q2",
+      "title": "驱动没有 probe，可能有哪些原因？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "驱动没有 probe，可能有哪些原因？（多选） dt-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:dt-q3",
+      "title": "设备树节点存在，就一定代表对应驱动已经 probe 成功。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "设备树节点存在，就一定代表对应驱动已经 probe 成功。 dt-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:platform-q1",
+      "title": "platform 驱动与设备树设备匹配时，最关键的字符串是什么？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "platform 驱动与设备树设备匹配时，最关键的字符串是什么？ platform-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:platform-q2",
+      "title": "probe 中常见的工作有哪些？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "probe 中常见的工作有哪些？（多选） platform-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:platform-q3",
+      "title": "probe 返回 -EPROBE_DEFER 表示驱动永久失败，不应该再重试。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "probe 返回 -eprobe_defer 表示驱动永久失败，不应该再重试。 platform-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:gpio-q1",
+      "title": "使用 gpiod 时，active-low 极性通常应该在哪里描述？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "使用 gpiod 时，active-low 极性通常应该在哪里描述？ gpio-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:gpio-q2",
+      "title": "GPIO 不工作时，应该检查哪些项？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "gpio 不工作时，应该检查哪些项？（多选） gpio-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:gpio-q3",
+      "title": "gpiod_set_value 在所有 GPIO 控制器上都可以在原子上下文安全调用。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "gpiod_set_value 在所有 gpio 控制器上都可以在原子上下文安全调用。 gpio-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:i2c-q1",
+      "title": "设备树中 I2C 从设备的 reg = <0x48> 通常表示什么？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "设备树中 i2c 从设备的 reg = <0x48> 通常表示什么？ i2c-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:i2c-q2",
+      "title": "I2C 传输失败时，哪些排查方向合理？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "i2c 传输失败时，哪些排查方向合理？（多选） i2c-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:i2c-q3",
+      "title": "I2C 地址收到 ACK，就说明后续读到的寄存器值一定正确。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "i2c 地址收到 ack，就说明后续读到的寄存器值一定正确。 i2c-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:spi-q1",
+      "title": "SPI 设备树中的 reg = <0> 通常表示什么？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "spi 设备树中的 reg = <0> 通常表示什么？ spi-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:spi-q2",
+      "title": "SPI 读回数据异常时，哪些排查方向合理？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "spi 读回数据异常时，哪些排查方向合理？（多选） spi-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:spi-q3",
+      "title": "SPI 是主从全双工总线，发送数据的同时也可以接收数据。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "spi 是主从全双工总线，发送数据的同时也可以接收数据。 spi-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:usb-q1",
+      "title": "USB 主机侧驱动通常绑定的是哪一层？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "usb 主机侧驱动通常绑定的是哪一层？ usb-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:usb-q2",
+      "title": "USB 调试时，哪些工具/信息源常用？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "usb 调试时，哪些工具/信息源常用？（多选） usb-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:usb-q3",
+      "title": "USB 驱动可以在 URB 完成回调里安全地调用 msleep。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "usb 驱动可以在 urb 完成回调里安全地调用 msleep。 usb-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:dma-q1",
+      "title": "dma_alloc_coherent 返回的指针和 dma_handle 分别是什么？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "dma_alloc_coherent 返回的指针和 dma_handle 分别是什么？ dma-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:dma-q2",
+      "title": "使用流式 DMA 时，哪些步骤是必要的？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "使用流式 dma 时，哪些步骤是必要的？（多选） dma-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:dma-q3",
+      "title": "一致性 DMA 缓冲在 CPU 与设备之间自动保持一致，所以驱动完全不需要考虑并发访问和生命周期。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "一致性 dma 缓冲在 cpu 与设备之间自动保持一致，所以驱动完全不需要考虑并发访问和生命周期。 dma-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:block-q1",
+      "title": "非阻塞 read 在数据未就绪时，驱动通常应该返回什么？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "非阻塞 read 在数据未就绪时，驱动通常应该返回什么？ block-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:block-q2",
+      "title": "实现阻塞读时，哪些做法是合理的？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "实现阻塞读时，哪些做法是合理的？（多选） block-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:block-q3",
+      "title": "poll 回调里忘记调用 poll_wait，用户态仍然能在事件到来时自动被唤醒。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "poll 回调里忘记调用 poll_wait，用户态仍然能在事件到来时自动被唤醒。 block-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:mmap-q1",
+      "title": "mmap 映射成功后，用户态访问这块内存还会经过驱动的 read/write 回调吗？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "mmap 映射成功后，用户态访问这块内存还会经过驱动的 read/write 回调吗？ mmap-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:mmap-q2",
+      "title": "实现 mmap 时，哪些检查是必要的？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "实现 mmap 时，哪些检查是必要的？（多选） mmap-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:mmap-q3",
+      "title": "mmap 映射建立后，驱动可以立即释放对应的 DMA 缓冲，用户仍能安全访问。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "mmap 映射建立后，驱动可以立即释放对应的 dma 缓冲，用户仍能安全访问。 mmap-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:debug-q1",
+      "title": "想在不改代码的情况下开启某个文件的 pr_debug，优先使用什么？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "想在不改代码的情况下开启某个文件的 pr_debug，优先使用什么？ debug-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:debug-q2",
+      "title": "分析 Oops 时，哪些信息最关键？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "分析 oops 时，哪些信息最关键？（多选） debug-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:debug-q3",
+      "title": "在中断处理函数里大量 printk 不影响系统时序，可以放心用来定位问题。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "在中断处理函数里大量 printk 不影响系统时序，可以放心用来定位问题。 debug-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:perf-q1",
+      "title": "评估实时性时，最应该关注哪个指标？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "评估实时性时，最应该关注哪个指标？ perf-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:perf-q2",
+      "title": "哪些因素可能放大中断/调度延迟？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "哪些因素可能放大中断/调度延迟？（多选） perf-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:perf-q3",
+      "title": "启用 PREEMPT_RT 后，所有应用都自动获得确定性的最坏延迟保证。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "启用 preempt_rt 后，所有应用都自动获得确定性的最坏延迟保证。 perf-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:sec-q1",
+      "title": "用户通过 ioctl 传入一个长度字段，驱动第一步应该做什么？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "用户通过 ioctl 传入一个长度字段，驱动第一步应该做什么？ sec-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:sec-q2",
+      "title": "哪些做法有助于避免 UAF？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "哪些做法有助于避免 uaf？（多选） sec-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:sec-q3",
+      "title": "把整个内核结构体直接 copy_to_user 给用户是安全的，即使其中包含未初始化 padding。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "把整个内核结构体直接 copy_to_user 给用户是安全的，即使其中包含未初始化 padding。 sec-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:port-q1",
+      "title": "移植内核模块时，最可靠的 API 依据是什么？",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "移植内核模块时，最可靠的 api 依据是什么？ port-q1 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:port-q2",
+      "title": "一次移植验收应包含哪些内容？（多选）",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "一次移植验收应包含哪些内容？（多选） port-q2 quiz 驱动实验室 · linux 内核驱动 linux "
+    },
+    {
+      "id": "linux:quiz:port-q3",
+      "title": "内核内部 API 与用户态系统调用 ABI 一样，保证跨版本稳定。",
+      "site": "linux",
+      "siteName": "驱动实验室 · Linux 内核驱动",
+      "type": "quiz",
+      "route": "/linux/quiz",
+      "keywords": "内核内部 api 与用户态系统调用 abi 一样，保证跨版本稳定。 port-q3 quiz 驱动实验室 · linux 内核驱动 linux "
+    }
+  ]
+}

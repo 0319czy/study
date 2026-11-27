@@ -1,0 +1,1348 @@
+{
+  "generatedAt": "2026-11-27T12:50:39.871Z",
+  "site": "rtos",
+  "count": 149,
+  "items": [
+    {
+      "id": "rtos:lesson:basics",
+      "title": "RTOS 基础：从超级循环到实时内核",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/basics",
+      "keywords": "rtos 基础：从超级循环到实时内核 basics lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lesson:tasks",
+      "title": "任务与调度",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/tasks",
+      "keywords": "任务与调度 tasks lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lesson:sync",
+      "title": "同步与通信",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/sync",
+      "keywords": "同步与通信 sync lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lesson:interrupts",
+      "title": "中断与时间管理",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/interrupts",
+      "keywords": "中断与时间管理 interrupts lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lesson:memory",
+      "title": "内存管理",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/memory",
+      "keywords": "内存管理 memory lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lesson:startup",
+      "title": "启动与移植",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/startup",
+      "keywords": "启动与移植 startup lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lesson:debug",
+      "title": "调试与性能",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/debug",
+      "keywords": "调试与性能 debug lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lesson:lowpower",
+      "title": "低功耗与看门狗",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/lowpower",
+      "keywords": "低功耗与看门狗 lowpower lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lesson:security",
+      "title": "安全与认证",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lesson",
+      "route": "/rtos/learn/security",
+      "keywords": "安全与认证 security lesson rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:superloop",
+      "title": "前后台 vs RTOS",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/basics",
+      "keywords": "前后台 vs rtos superloop lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:task-state",
+      "title": "任务状态机",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/tasks",
+      "keywords": "任务状态机 task-state lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:scheduler",
+      "title": "调度甘特图",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/tasks",
+      "keywords": "调度甘特图 scheduler lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:priority-inversion",
+      "title": "优先级反转",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/sync",
+      "keywords": "优先级反转 priority-inversion lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:semaphore",
+      "title": "信号量停车场",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/sync",
+      "keywords": "信号量停车场 semaphore lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:queue",
+      "title": "生产者消费者队列",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/sync",
+      "keywords": "生产者消费者队列 queue lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:event-group",
+      "title": "事件组组合等待",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/sync",
+      "keywords": "事件组组合等待 event-group lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:interrupt",
+      "title": "中断延迟与切换",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/interrupts",
+      "keywords": "中断延迟与切换 interrupt lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:timer",
+      "title": "软件定时器",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/interrupts",
+      "keywords": "软件定时器 timer lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:memory",
+      "title": "内存碎片实验室",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/memory",
+      "keywords": "内存碎片实验室 memory lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:watchdog",
+      "title": "看门狗与喂狗",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/lowpower",
+      "keywords": "看门狗与喂狗 watchdog lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:low-power",
+      "title": "Tickless 低功耗",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/lowpower",
+      "keywords": "tickless 低功耗 low-power lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:boot",
+      "title": "启动流程时间线",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/startup",
+      "keywords": "启动流程时间线 boot lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:stack",
+      "title": "栈水位与溢出",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/debug",
+      "keywords": "栈水位与溢出 stack lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:lab:security-boundary",
+      "title": "安全边界访问",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "lab",
+      "route": "/rtos/learn/security",
+      "keywords": "安全边界访问 security-boundary lab rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:basics-1",
+      "title": "下面哪一项最准确地描述了 RTOS 的核心价值？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "下面哪一项最准确地描述了 rtos 的核心价值？ basics-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:basics-2",
+      "title": "判断：只要使用了 RTOS，系统就一定是硬实时系统。",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "判断：只要使用了 rtos，系统就一定是硬实时系统。 basics-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:basics-3",
+      "title": "相比前后台超级循环，RTOS 带来了哪些能力？（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "相比前后台超级循环，rtos 带来了哪些能力？（多选） basics-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:tasks-1",
+      "title": "一个任务调用 vTaskSuspend(NULL) 之后，下面哪种说法是正确的？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "一个任务调用 vtasksuspend(null) 之后，下面哪种说法是正确的？ tasks-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:tasks-2",
+      "title": "下列哪些操作会让一个正在运行的任务离开“运行”状态？（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "下列哪些操作会让一个正在运行的任务离开“运行”状态？（多选） tasks-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:tasks-3",
+      "title": "希望两个同优先级任务能“你一个 tick、我一个 tick”地轮流运行，主要应该打开哪个配置？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "希望两个同优先级任务能“你一个 tick、我一个 tick”地轮流运行，主要应该打开哪个配置？ tasks-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:sync-1",
+      "title": "与二值信号量相比，互斥量最关键的区别是什么？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "与二值信号量相比，互斥量最关键的区别是什么？ sync-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:sync-2",
+      "title": "关于 FreeRTOS 队列，下面哪些说法是正确的？（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "关于 freertos 队列，下面哪些说法是正确的？（多选） sync-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:sync-3",
+      "title": "一个任务要等“传感器就绪”和“网络已连接”两个事件都发生后才继续，最合适的写法是？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "一个任务要等“传感器就绪”和“网络已连接”两个事件都发生后才继续，最合适的写法是？ sync-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:interrupts-1",
+      "title": "在 FreeRTOS 的中断服务程序里，下面哪种做法是正确且安全的？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "在 freertos 的中断服务程序里，下面哪种做法是正确且安全的？ interrupts-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:interrupts-2",
+      "title": "关于 xHigherPriorityTaskWoken 与 portYIELD_FROM_ISR，下列说法正确的是（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "关于 xhigherprioritytaskwoken 与 portyield_from_isr，下列说法正确的是（多选） interrupts-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:interrupts-3",
+      "title": "关于 FreeRTOS 软件定时器，下面哪个描述是准确的？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "关于 freertos 软件定时器，下面哪个描述是准确的？ interrupts-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:memory-1",
+      "title": "关于 FreeRTOS 的 heap_1 到 heap_5，下列说法正确的是（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "关于 freertos 的 heap_1 到 heap_5，下列说法正确的是（多选） memory-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:memory-2",
+      "title": "uxTaskGetStackHighWaterMark 返回值的准确含义是什么？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "uxtaskgetstackhighwatermark 返回值的准确含义是什么？ memory-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:memory-3",
+      "title": "configCHECK_FOR_STACK_OVERFLOW 设为 2 相比设为 1，主要区别是什么？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "configcheck_for_stack_overflow 设为 2 相比设为 1，主要区别是什么？ memory-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:startup-1",
+      "title": "Cortex-M 上电复位后，硬件最先从哪里取出 Reset_Handler 的地址？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "cortex-m 上电复位后，硬件最先从哪里取出 reset_handler 的地址？ startup-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:startup-2",
+      "title": "把 FreeRTOS 移植到一颗新的 Cortex-M 芯片，通常必须做哪些事？（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "把 freertos 移植到一颗新的 cortex-m 芯片，通常必须做哪些事？（多选） startup-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:startup-3",
+      "title": "判断：vTaskStartScheduler() 成功启动调度器后，main 函数中它后面的代码仍会正常执行。",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "判断：vtaskstartscheduler() 成功启动调度器后，main 函数中它后面的代码仍会正常执行。 startup-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:debug-1",
+      "title": "查询某个任务运行以来剩余的最小栈空间，应该用哪个 API？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "查询某个任务运行以来剩余的最小栈空间，应该用哪个 api？ debug-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:debug-2",
+      "title": "要使用 vTaskGetRunTimeStats 获取各任务的 CPU 占比，通常需要哪些配置？（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "要使用 vtaskgetruntimestats 获取各任务的 cpu 占比，通常需要哪些配置？（多选） debug-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:debug-3",
+      "title": "判断：只要发生 HardFault，就一定是 FreeRTOS 内核的 Bug 导致的。",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "判断：只要发生 hardfault，就一定是 freertos 内核的 bug 导致的。 debug-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:lowpower-1",
+      "title": "关于 Tickless Idle，下面哪个描述是准确的？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "关于 tickless idle，下面哪个描述是准确的？ lowpower-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:lowpower-2",
+      "title": "下面哪些属于合理的喂狗与卡死检测策略？（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "下面哪些属于合理的喂狗与卡死检测策略？（多选） lowpower-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:lowpower-3",
+      "title": "判断：FreeRTOS 的软件定时器可以完全替代硬件看门狗，因为它由内核统一管理，比裸机定时器更可靠。",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "判断：freertos 的软件定时器可以完全替代硬件看门狗，因为它由内核统一管理，比裸机定时器更可靠。 lowpower-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:security-1",
+      "title": "关于 configASSERT，下面哪种用法最合适？",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "关于 configassert，下面哪种用法最合适？ security-1 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:security-2",
+      "title": "对来自通信接口的数据，合理的防御措施包括哪些？（多选）",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "对来自通信接口的数据，合理的防御措施包括哪些？（多选） security-2 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:quiz:security-3",
+      "title": "判断：只要产品使用了通过认证的 RTOS 版本，产品本身就不需要再做安全或功能安全认证。",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "quiz",
+      "route": "/rtos/quiz",
+      "keywords": "判断：只要产品使用了通过认证的 rtos 版本，产品本身就不需要再做安全或功能安全认证。 security-3 quiz rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:case:led-multitask",
+      "title": "LED 多任务闪烁",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "case",
+      "route": "/rtos/cases/led-multitask",
+      "keywords": "led 多任务闪烁 led-multitask case rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:case:producer-consumer",
+      "title": "生产者消费者队列",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "case",
+      "route": "/rtos/cases/producer-consumer",
+      "keywords": "生产者消费者队列 producer-consumer case rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:case:button-notification",
+      "title": "按键中断 + 任务通知",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "case",
+      "route": "/rtos/cases/button-notification",
+      "keywords": "按键中断 + 任务通知 button-notification case rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:case:priority-inversion",
+      "title": "优先级反转演示",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "case",
+      "route": "/rtos/cases/priority-inversion",
+      "keywords": "优先级反转演示 priority-inversion case rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:case:watchdog-recovery",
+      "title": "看门狗复位流程",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "case",
+      "route": "/rtos/cases/watchdog-recovery",
+      "keywords": "看门狗复位流程 watchdog-recovery case rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:rtos",
+      "title": "实时操作系统 / Real-Time Operating System",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "实时操作系统 / real-time operating system rtos glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:task",
+      "title": "任务 / Task",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "任务 / task task glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:scheduler",
+      "title": "调度器 / Scheduler",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "调度器 / scheduler scheduler glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:preemption",
+      "title": "抢占 / Preemption",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "抢占 / preemption preemption glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:cooperative",
+      "title": "协作式调度 / Cooperative Scheduling",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "协作式调度 / cooperative scheduling cooperative glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:priority",
+      "title": "优先级 / Priority",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "优先级 / priority priority glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:time-slice",
+      "title": "时间片 / Time Slice / Time Quantum",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "时间片 / time slice / time quantum time-slice glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:round-robin",
+      "title": "轮转调度 / Round Robin",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "轮转调度 / round robin round-robin glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:context-switch",
+      "title": "上下文切换 / Context Switch",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "上下文切换 / context switch context-switch glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:ready-state",
+      "title": "就绪态 / Ready State",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "就绪态 / ready state ready-state glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:running-state",
+      "title": "运行态 / Running State",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "运行态 / running state running-state glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:blocked-state",
+      "title": "阻塞态 / Blocked State",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "阻塞态 / blocked state blocked-state glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:suspended-state",
+      "title": "挂起态 / Suspended State",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "挂起态 / suspended state suspended-state glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:idle-task",
+      "title": "空闲任务 / Idle Task",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "空闲任务 / idle task idle-task glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:starvation",
+      "title": "任务饥饿 / Starvation",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "任务饥饿 / starvation starvation glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:priority-inversion",
+      "title": "优先级反转 / Priority Inversion",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "优先级反转 / priority inversion priority-inversion glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:priority-inheritance",
+      "title": "优先级继承 / Priority Inheritance",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "优先级继承 / priority inheritance priority-inheritance glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:deadline",
+      "title": "截止时间 / Deadline",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "截止时间 / deadline deadline glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:response-time",
+      "title": "响应时间 / Response Time",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "响应时间 / response time response-time glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:jitter",
+      "title": "抖动 / Jitter",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "抖动 / jitter jitter glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:determinism",
+      "title": "确定性 / Determinism",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "确定性 / determinism determinism glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:tick",
+      "title": "系统节拍 / Tick",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "系统节拍 / tick tick glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:tickless",
+      "title": "无节拍空闲 / Tickless Idle",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "无节拍空闲 / tickless idle tickless glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:tcb",
+      "title": "任务控制块 / Task Control Block",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "任务控制块 / task control block tcb glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:hook",
+      "title": "钩子函数 / Hook Function",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "钩子函数 / hook function hook glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:gantt",
+      "title": "甘特图 / Gantt Chart",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "甘特图 / gantt chart gantt glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:semaphore",
+      "title": "信号量 / Semaphore",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "信号量 / semaphore semaphore glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:binary-semaphore",
+      "title": "二值信号量 / Binary Semaphore",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "二值信号量 / binary semaphore binary-semaphore glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:counting-semaphore",
+      "title": "计数信号量 / Counting Semaphore",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "计数信号量 / counting semaphore counting-semaphore glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:mutex",
+      "title": "互斥量 / Mutex",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "互斥量 / mutex mutex glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:recursive-mutex",
+      "title": "递归互斥量 / Recursive Mutex",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "递归互斥量 / recursive mutex recursive-mutex glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:queue",
+      "title": "队列 / Queue",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "队列 / queue queue glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:event-group",
+      "title": "事件组 / Event Group",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "事件组 / event group event-group glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:task-notification",
+      "title": "任务通知 / Task Notification",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "任务通知 / task notification task-notification glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:stream-buffer",
+      "title": "流缓冲区 / Stream Buffer",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "流缓冲区 / stream buffer stream-buffer glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:message-buffer",
+      "title": "消息缓冲区 / Message Buffer",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "消息缓冲区 / message buffer message-buffer glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:producer-consumer",
+      "title": "生产者消费者 / Producer–Consumer",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "生产者消费者 / producer–consumer producer-consumer glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:deadlock",
+      "title": "死锁 / Deadlock",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "死锁 / deadlock deadlock glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:race-condition",
+      "title": "竞态条件 / Race Condition",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "竞态条件 / race condition race-condition glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:critical-section",
+      "title": "临界区 / Critical Section",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "临界区 / critical section critical-section glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:atomic",
+      "title": "原子操作 / Atomic Operation",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "原子操作 / atomic operation atomic glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:isr",
+      "title": "中断服务程序 / Interrupt Service Routine",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "中断服务程序 / interrupt service routine isr glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:interrupt-latency",
+      "title": "中断延迟 / Interrupt Latency",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "中断延迟 / interrupt latency interrupt-latency glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:deferred-processing",
+      "title": "延迟处理 / Deferred Processing",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "延迟处理 / deferred processing deferred-processing glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:from-isr",
+      "title": "中断安全 API / FromISR API",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "中断安全 api / fromisr api from-isr glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:higher-priority-task-woken",
+      "title": "更高优先级任务被唤醒 / xHigherPriorityTaskWoken",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "更高优先级任务被唤醒 / xhigherprioritytaskwoken higher-priority-task-woken glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:nvic",
+      "title": "嵌套向量中断控制器 / Nested Vectored Interrupt Controller",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "嵌套向量中断控制器 / nested vectored interrupt controller nvic glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:systick",
+      "title": "系统节拍定时器 / SysTick Timer",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "系统节拍定时器 / systick timer systick glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:pendsv",
+      "title": "可挂起系统调用 / PendSV",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "可挂起系统调用 / pendsv pendsv glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:svc",
+      "title": "系统服务调用 / Supervisor Call",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "系统服务调用 / supervisor call svc glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:software-timer",
+      "title": "软件定时器 / Software Timer",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "软件定时器 / software timer software-timer glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:timer-daemon",
+      "title": "定时器守护任务 / Timer Daemon Task",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "定时器守护任务 / timer daemon task timer-daemon glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:watchdog",
+      "title": "看门狗 / Watchdog Timer",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "看门狗 / watchdog timer watchdog glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:interrupt-priority",
+      "title": "中断优先级 / Interrupt Priority",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "中断优先级 / interrupt priority interrupt-priority glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:heap",
+      "title": "堆 / Heap",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "堆 / heap heap glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:stack",
+      "title": "栈 / Stack",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "栈 / stack stack glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:stack-overflow",
+      "title": "栈溢出 / Stack Overflow",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "栈溢出 / stack overflow stack-overflow glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:heap-fragmentation",
+      "title": "内存碎片 / Heap Fragmentation",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "内存碎片 / heap fragmentation heap-fragmentation glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:memory-pool",
+      "title": "内存池 / Memory Pool",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "内存池 / memory pool memory-pool glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:static-allocation",
+      "title": "静态分配 / Static Allocation",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "静态分配 / static allocation static-allocation glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:dynamic-allocation",
+      "title": "动态分配 / Dynamic Allocation",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "动态分配 / dynamic allocation dynamic-allocation glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:high-water-mark",
+      "title": "栈高水位 / Stack High Water Mark",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "栈高水位 / stack high water mark high-water-mark glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:mpu",
+      "title": "内存保护单元 / Memory Protection Unit",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "内存保护单元 / memory protection unit mpu glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:heap-schemes",
+      "title": "FreeRTOS 堆方案 / heap_1 ~ heap_5",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "freertos 堆方案 / heap_1 ~ heap_5 heap-schemes glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:kernel",
+      "title": "内核 / Kernel",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "内核 / kernel kernel glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:port",
+      "title": "移植层 / Port",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "移植层 / port port glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:bsp",
+      "title": "板级支持包 / Board Support Package",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "板级支持包 / board support package bsp glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:hal",
+      "title": "硬件抽象层 / Hardware Abstraction Layer",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "硬件抽象层 / hardware abstraction layer hal glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:freertos-config",
+      "title": "FreeRTOS 配置文件 / FreeRTOSConfig.h",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "freertos 配置文件 / freertosconfig.h freertos-config glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:kconfig",
+      "title": "Kconfig 配置系统 / Kconfig",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "kconfig 配置系统 / kconfig kconfig glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:devicetree",
+      "title": "设备树 / Devicetree",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "设备树 / devicetree devicetree glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:cmsis",
+      "title": "CMSIS / Cortex Microcontroller Software Interface Standard",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "cmsis / cortex microcontroller software interface standard cmsis glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:smp",
+      "title": "对称多处理 / Symmetric Multiprocessing",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "对称多处理 / symmetric multiprocessing smp glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:amp",
+      "title": "非对称多处理 / Asymmetric Multiprocessing",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "非对称多处理 / asymmetric multiprocessing amp glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:trace",
+      "title": "跟踪 / Tracing",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "跟踪 / tracing trace glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:runtime-stats",
+      "title": "运行时统计 / Run-Time Statistics",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "运行时统计 / run-time statistics runtime-stats glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:hardfault",
+      "title": "硬件错误异常 / HardFault",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "硬件错误异常 / hardfault hardfault glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:assert",
+      "title": "断言 / Assertion",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "断言 / assertion assert glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:breakpoint",
+      "title": "断点 / Breakpoint",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "断点 / breakpoint breakpoint glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:watchpoint",
+      "title": "数据观察点 / Watchpoint",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "数据观察点 / watchpoint watchpoint glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:misra-c",
+      "title": "MISRA C / MISRA C",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "misra c / misra c misra-c glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:functional-safety",
+      "title": "功能安全 / Functional Safety",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "功能安全 / functional safety functional-safety glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:iec-61508",
+      "title": "IEC 61508 / IEC 61508",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "iec 61508 / iec 61508 iec-61508 glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:iso-26262",
+      "title": "ISO 26262 / ISO 26262",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "iso 26262 / iso 26262 iso-26262 glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:do-178c",
+      "title": "DO-178C / DO-178C",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "do-178c / do-178c do-178c glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:psa-certified",
+      "title": "PSA 认证 / PSA Certified",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "psa 认证 / psa certified psa-certified glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:sesip",
+      "title": "SESIP / Security Evaluation Standard for IoT Platforms",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "sesip / security evaluation standard for iot platforms sesip glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:trustzone",
+      "title": "TrustZone / Arm TrustZone",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "trustzone / arm trustzone trustzone glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:secure-boot",
+      "title": "安全启动 / Secure Boot",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "安全启动 / secure boot secure-boot glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:asil",
+      "title": "汽车安全完整性等级 / Automotive Safety Integrity Level",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "汽车安全完整性等级 / automotive safety integrity level asil glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:sil",
+      "title": "安全完整性等级 / Safety Integrity Level",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "安全完整性等级 / safety integrity level sil glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:attack-surface",
+      "title": "攻击面 / Attack Surface",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "攻击面 / attack surface attack-surface glossary rtos lab · 看得见的实时操作系统 rtos "
+    },
+    {
+      "id": "rtos:glossary:lts",
+      "title": "长期支持版本 / Long Term Support",
+      "site": "rtos",
+      "siteName": "RTOS Lab · 看得见的实时操作系统",
+      "type": "glossary",
+      "route": "/rtos/glossary",
+      "keywords": "长期支持版本 / long term support lts glossary rtos lab · 看得见的实时操作系统 rtos "
+    }
+  ]
+}

@@ -89,21 +89,36 @@ for (const site of sites) {
   }
 }
 
-const data = {
-  generatedAt: new Date().toISOString(),
-  source: 'docs/inventory.json',
-  count: items.length,
-  items,
-};
-
-if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
-writeFileSync(OUT, JSON.stringify(data, null, 2) + '\n');
-
 const bySite = {};
 const byType = {};
 for (const it of items) {
   bySite[it.site] = (bySite[it.site] || 0) + 1;
   byType[it.type] = (byType[it.type] || 0) + 1;
+}
+
+const generatedAt = new Date().toISOString();
+if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
+const manifest = {
+  generatedAt,
+  source: 'docs/inventory.json',
+  count: items.length,
+  shards: true,
+  sites: sites.map((s) => ({
+    slug: s.slug,
+    name: s.name || s.slug,
+    count: bySite[s.slug] || 0,
+    url: '/data/search-index-' + s.slug + '.json',
+  })),
+};
+writeFileSync(OUT, JSON.stringify(manifest, null, 2) + '\n');
+for (const meta of manifest.sites) {
+  const shard = {
+    generatedAt,
+    site: meta.slug,
+    count: meta.count,
+    items: items.filter((it) => it.site === meta.slug),
+  };
+  writeFileSync(join(OUT_DIR, 'search-index-' + meta.slug + '.json'), JSON.stringify(shard, null, 2) + '\n');
 }
 console.log(`✓ 搜索索引已生成:${OUT}`);
 console.log(`  条目总数:${items.length}`);
