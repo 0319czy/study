@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SLUGS = ['linux', 'mcu', 'analog', 'ml', 'ros', 'rtos'];
 const LINK = '<link rel="stylesheet" href="/shared/site-nav-light.css" data-platform-nav-style="1" />';
+const ROS_INIT = '<script data-ros-init="1">try{if(!localStorage.getItem(\'ros-learn-theme\'))localStorage.setItem(\'ros-learn-theme\',\'dark\');}catch(e){}</script>';
 const TOKENS = '<link rel="stylesheet" href="/shared/six-tokens.css" data-six-tokens="1" />';
 const NAV = `<nav id="platform-nav" aria-label="平台导航">
   <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
@@ -61,8 +62,8 @@ for (const file of files) {
   next = next.replace(/<script data-theme-script="1"[\s\S]*?<\/script>\s*/gi, '');
   // 令牌映射放在 </head> 前(晚于站点自身 CSS);导航在 <body> 后;主题脚本在 </body> 前
   next = next.replace(/<\/head>/i, TOKENS + '\n</head>');
-  next = next.replace(/(<body[^>]*>)/i, '$1\n' + LINK + '\n' + NAV + '\n');
-  next = next.replace(/<\/body>/i, '<script data-theme-script="1">(function(){var KEY=\'1kni4r-theme-v1\';function apply(t){var d=t===\'dark\';document.documentElement.classList.toggle(\'dark\',d);document.documentElement.dataset.theme=d?\'dark\':\'light\';var b=document.getElementById(\'theme-toggle\');if(b){b.textContent=d?\'浅色\':\'深色\';}}var s=null;try{s=localStorage.getItem(KEY);}catch(e){}apply(s===\'dark\'?\'dark\':\'light\');var btn=document.getElementById(\'theme-toggle\');if(btn){btn.addEventListener(\'click\',function(){var cur=document.documentElement.dataset.theme===\'dark\'?\'dark\':\'light\';var n=cur===\'dark\'?\'light\':\'dark\';try{localStorage.setItem(KEY,n);}catch(e){}apply(n);});}})();</script>\n</body>');
+  next = next.replace(/(<body[^>]*>)/i, '$1\n' + (file.indexOf('/ros/') >= 0 ? ROS_INIT + '\n' : '') + LINK + '\n' + NAV + '\n');
+  next = next.replace(/<\/body>/i, '<script data-theme-script="1">(function(){var KEY=\'1kni4r-theme-v1\';function apply(t){var d=t===\'dark\';document.documentElement.classList.toggle(\'dark\',d);document.documentElement.dataset.theme=d?\'dark\':\'light\';if(location.pathname.indexOf(\'/ros\')===0){try{localStorage.setItem(\'ros-learn-theme\',d?\'dark\':\'light\');}catch(e){}}var b=document.getElementById(\'theme-toggle\');if(b){b.textContent=d?\'浅色\':\'深色\';}}var s=null;try{s=localStorage.getItem(KEY);}catch(e){}apply(s===\'light\'?\'light\':\'dark\');var btn=document.getElementById(\'theme-toggle\');if(btn){btn.addEventListener(\'click\',function(){var cur=document.documentElement.dataset.theme===\'dark\'?\'dark\':\'light\';var n=cur===\'dark\'?\'light\':\'dark\';try{localStorage.setItem(KEY,n);}catch(e){}apply(n);});}})();</script>\n</body>');
   if (next !== html) {
     await writeFile(file, next, 'utf8');
     changed++;

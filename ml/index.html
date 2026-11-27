@@ -32,6 +32,6 @@
 </nav>
 
 <div id="root"></div>
-  <script data-theme-script="1">(function(){var KEY='1kni4r-theme-v1';function apply(t){var d=t==='dark';document.documentElement.classList.toggle('dark',d);document.documentElement.dataset.theme=d?'dark':'light';var b=document.getElementById('theme-toggle');if(b){b.textContent=d?'浅色':'深色';}}var s=null;try{s=localStorage.getItem(KEY);}catch(e){}apply(s==='dark'?'dark':'light');var btn=document.getElementById('theme-toggle');if(btn){btn.addEventListener('click',function(){var cur=document.documentElement.dataset.theme==='dark'?'dark':'light';var n=cur==='dark'?'light':'dark';try{localStorage.setItem(KEY,n);}catch(e){}apply(n);});}})();</script>
+  <script data-theme-script="1">(function(){var KEY='1kni4r-theme-v1';function apply(t){var d=t==='dark';document.documentElement.classList.toggle('dark',d);document.documentElement.dataset.theme=d?'dark':'light';if(location.pathname.indexOf('/ros')===0){try{localStorage.setItem('ros-learn-theme',d?'dark':'light');}catch(e){}}var b=document.getElementById('theme-toggle');if(b){b.textContent=d?'浅色':'深色';}}var s=null;try{s=localStorage.getItem(KEY);}catch(e){}apply(s==='light'?'light':'dark');var btn=document.getElementById('theme-toggle');if(btn){btn.addEventListener('click',function(){var cur=document.documentElement.dataset.theme==='dark'?'dark':'light';var n=cur==='dark'?'light':'dark';try{localStorage.setItem(KEY,n);}catch(e){}apply(n);});}})();</script>
 </body>
 </html>

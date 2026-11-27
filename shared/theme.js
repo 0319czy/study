@@ -16,7 +16,7 @@
       var s = localStorage.getItem(KEY);
       if (s === 'dark' || s === 'light') return s;
     } catch (e) {}
-    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'dark';
   }
   function init() { apply(current()); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

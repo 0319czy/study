@@ -17,7 +17,7 @@
     pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
   </style>
 <link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
 </head>
 <body>
   <nav class="topnav">
@@ -31,7 +31,7 @@
       <a href="/tools/">工具与资料</a>
     </div>
     <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
 
@@ -60,6 +60,7 @@
       <p>负反馈把输出测回来与参考比较,用误差驱动执行器;闭环降低对模型误差与扰动的敏感度,但会引入稳定性与噪声放大问题。指标:上升时间(10%→90%)、超调、调节时间(±2%)、稳态误差。</p>
     </div>
     <div class="section">
+      <p class="muted">变量与单位:参考 r、输出 y、误差 e = r−y(单位随对象);时间 s。假设线性时不变、传感器无噪声。</p>
       <h2>4. 操作实验</h2>
       <ol><li>在同一对象上先只给固定输入(开环),再加负载阶跃,记录输出偏差。</li><li>切到闭环,重复负载阶跃;对比同一扰动下的偏差。</li><li>把参考值做阶跃,记录上升时间、超调、调节时间。</li></ol>
       <p><a href="/control/labs/">打开交互实验(labs)</a></p>

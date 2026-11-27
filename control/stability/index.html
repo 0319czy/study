@@ -17,7 +17,7 @@
     pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
   </style>
 <link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
 </head>
 <body>
   <nav class="topnav">
@@ -31,7 +31,7 @@
       <a href="/tools/">工具与资料</a>
     </div>
     <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
 
@@ -59,6 +59,7 @@
       <p>连续系统稳定:闭环极点实部全为负。Routh 判据看特征方程系数表;Bode 看幅值裕度(相位 −180° 处)与相位裕度(幅值 0dB 处)。裕度不足 → 振荡/超调。</p>
     </div>
     <div class="section">
+      <p class="muted">变量与单位:ω rad/s、相位 °、增益 dB;裕度用无量纲。假设 LTI、延迟可近似。</p>
       <h2>4. 操作实验</h2>
       <ol><li>对同一对象画极点图与阶跃响应。</li><li>改变增益,观察极点右移与振荡。</li><li>读 Bode 的幅值/相位裕度。</li></ol>
       <p><a href="/control/labs/">打开交互实验(labs)</a></p>

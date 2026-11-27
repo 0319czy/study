@@ -20,7 +20,7 @@
     .lab-note { color:#5c6a63; font-size:12.5px; }
   </style>
 <link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
 </head>
 <body>
   <nav class="topnav">
@@ -34,7 +34,7 @@
       <a href="/tools/">工具与资料</a>
     </div>
     <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
   <main class="page">
@@ -83,6 +83,32 @@
       </div>
       <p class="lab-note" id="pen-note">小角度线性化:默认小扰动回到误差带;角度过大时提示超出线性化范围。</p>
       <p class="lab-num" id="pen-num">t=0.00s · θ=0.00° · x=0.000 · u=0.00 · FPS=--</p>
+    </div>
+    <div class="section" id="motor">
+      <h2>实验 3 · 电机转速(反馈/建模)</h2>
+      <div class="lab-ctl">
+        <label>参考转速 <input id="m-ref" type="range" min="0" max="10" step="0.1" value="6" /><span class="lab-num" id="m-ref-v">6.0</span></label>
+        <label>Kp <input id="m-kp" type="range" min="0" max="20" step="0.5" value="8" /><span class="lab-num" id="m-kp-v">8.0</span></label>
+        <label>Ki <input id="m-ki" type="range" min="0" max="40" step="1" value="12" /><span class="lab-num" id="m-ki-v">12</span></label>
+        <button id="m-play" class="on" type="button">暂停</button>
+        <button id="m-load" type="button">加负载</button>
+        <button id="m-reset" type="button">复位</button>
+      </div>
+      <canvas id="m-anim" class="lab-canvas" width="640" height="200" aria-label="电机转子动画"></canvas>
+      <canvas id="m-wave" class="wave" width="560" height="200" aria-label="转速与参考波形"></canvas>
+      <p class="lab-num" id="m-num">t=0.00s · ω=0.00 · ref=0.00 · FPS=--</p>
+    </div>
+    <div class="section" id="observer">
+      <h2>实验 4 · 隐藏速度(观测器)</h2>
+      <div class="lab-ctl">
+        <label>观测器增益 L1 <input id="o-l" type="range" min="0.5" max="10" step="0.5" value="3" /><span class="lab-num" id="o-l-v">3.0</span></label>
+        <button id="o-play" class="on" type="button">暂停</button>
+        <button id="o-kick" type="button">扰动</button>
+        <button id="o-reset" type="button">复位</button>
+      </div>
+      <canvas id="o-anim" class="lab-canvas" width="640" height="180" aria-label="真实与估计位置动画"></canvas>
+      <canvas id="o-wave" class="wave" width="560" height="180" aria-label="真实/估计位置与误差波形"></canvas>
+      <p class="lab-num" id="o-num">t=0.00s · 真实=0.000 · 估计=0.000 · 误差=0.000</p>
     </div>
   </main>
   <script>
@@ -225,6 +251,68 @@
         g.fillText('摆角 θ', 10, 18); g.fillStyle = '#c2410c'; g.fillText('小车位置 x', 10, 36);
       }
 
+
+      // ---------- 电机(一阶 + PI) ----------
+      var motor = { t: 0, w: 0, ref: 6, kp: 8, ki: 12, integ: 0, load: 0, running: true, hist: [], fps: 0 };
+      function motorReset() { motor.t = 0; motor.w = 0; motor.integ = 0; motor.load = 0; motor.hist = []; }
+      function motorStep(dt) {
+        var e = motor.ref - motor.w;
+        motor.integ += e * dt;
+        var u = motor.kp * e + motor.ki * motor.integ;
+        u = clamp(u, -60, 60);
+        var tau = 0.2;
+        motor.w += ((u - motor.load) - motor.w) / tau * dt;
+        motor.t += dt;
+        motor.hist.push({ t: motor.t, w: motor.w, ref: motor.ref }); if (motor.hist.length > 900) motor.hist.shift();
+      }
+      function drawMotor() {
+        var c = $('m-anim'), g = c.getContext('2d'), W = c.width, H = c.height;
+        g.clearRect(0, 0, W, H);
+        var cx = W / 2, cy = H / 2, r = 55;
+        g.strokeStyle = '#9aa89f'; g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
+        var a = motor.w * 1.2;
+        g.strokeStyle = '#0f766e'; g.lineWidth = 6; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); g.stroke();
+        g.fillStyle = '#c2410c'; g.beginPath(); g.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 7, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif'; g.fillText('ω=' + motor.w.toFixed(2), 12, 20);
+      }
+      function drawMotorWave() {
+        var c = $('m-wave'), g = c.getContext('2d'), W = c.width, H = c.height;
+        g.clearRect(0, 0, W, H); g.strokeStyle = '#d8ded6'; g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
+        if (!motor.hist.length) return;
+        var t0 = motor.hist[0].t, t1 = motor.hist[motor.hist.length - 1].t, span = Math.max(0.5, t1 - t0);
+        function line(key, color) { g.strokeStyle = color; g.lineWidth = 2; g.beginPath(); for (var i = 0; i < motor.hist.length; i++) { var h = motor.hist[i]; var px = (h.t - t0) / span * (W - 20) + 10, py = H / 2 - h[key] * 12; if (i === 0) g.moveTo(px, py); else g.lineTo(px, py); } g.stroke(); }
+        line('ref', '#c2410c'); line('w', '#0f766e');
+      }
+
+      // ---------- 观测器(双积分,只测位置) ----------
+      var obs = { t: 0, x: 0.2, v: 0, xh: 0, vh: 0, l: 3, running: true, hist: [] };
+      function obsReset() { obs.t = 0; obs.x = 0.2; obs.v = 0; obs.xh = 0; obs.vh = 0; obs.hist = []; }
+      function obsStep(dt) {
+        var e = obs.x - obs.xh;
+        obs.xh += obs.vh * dt + obs.l * e * dt;
+        obs.vh += (obs.l * obs.l * 0.25) * e * dt;
+        obs.x += obs.v * dt;
+        obs.t += dt;
+        obs.hist.push({ t: obs.t, x: obs.x, xh: obs.xh, e: obs.x - obs.xh }); if (obs.hist.length > 900) obs.hist.shift();
+      }
+      function drawObs() {
+        var c = $('o-anim'), g = c.getContext('2d'), W = c.width, H = c.height;
+        g.clearRect(0, 0, W, H);
+        g.strokeStyle = '#d8ded6'; g.beginPath(); g.moveTo(0, H - 30); g.lineTo(W, H - 30); g.stroke();
+        var y = H - 30;
+        function dot(x, color, label) { var px = W / 2 + x * 200; g.fillStyle = color; g.beginPath(); g.arc(px, y - 6, 9, 0, Math.PI * 2); g.fill(); g.font = '12px sans-serif'; g.fillText(label, px - 18, y - 26); }
+        dot(obs.x, '#0f766e', '真实'); dot(obs.xh, '#c2410c', '估计');
+        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif'; g.fillText('只测位置,观测器估计速度', 12, 20);
+      }
+      function drawObsWave() {
+        var c = $('o-wave'), g = c.getContext('2d'), W = c.width, H = c.height;
+        g.clearRect(0, 0, W, H); g.strokeStyle = '#d8ded6'; g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
+        if (!obs.hist.length) return;
+        var t0 = obs.hist[0].t, t1 = obs.hist[obs.hist.length - 1].t, span = Math.max(0.5, t1 - t0);
+        function line(key, color, sc) { g.strokeStyle = color; g.lineWidth = 2; g.beginPath(); for (var i = 0; i < obs.hist.length; i++) { var h = obs.hist[i]; var px = (h.t - t0) / span * (W - 20) + 10, py = H / 2 - h[key] * sc; if (i === 0) g.moveTo(px, py); else g.lineTo(px, py); } g.stroke(); }
+        line('x', '#0f766e', 120); line('xh', '#c2410c', 120); line('e', '#b91c1c', 300);
+      }
+
       // ---------- 共用主循环 ----------
       var last = performance.now(), fpsAcc = [], fpsLast = last;
       function loop(now) {
@@ -232,7 +320,9 @@
         var sub = 4, dt = dtReal / sub;
         if (car.running) { for (var i = 0; i < sub; i++) carStep(dt); }
         if (pen.running) { for (var j = 0; j < sub; j++) penStep(dt); }
-        carDraw(); carWaveDraw(); penDraw(); penWaveDraw();
+        if (motor.running) { for (var k = 0; k < sub; k++) motorStep(dt); }
+        if (obs.running) { for (var q = 0; q < sub; q++) obsStep(dt); }
+        carDraw(); carWaveDraw(); penDraw(); penWaveDraw(); drawMotor(); drawMotorWave(); drawObs(); drawObsWave();
         // FPS(滚动平均)
         fpsAcc.push(1 / Math.max(0.001, dtReal));
         if (fpsAcc.length > 30) fpsAcc.shift();
@@ -242,6 +332,8 @@
         $('car-num').textContent = 't=' + fmt(car.t, 2) + 's · e=' + fmt(e, 3) + ' · steer=' + fmt(steer, 3) + ' · FPS=' + fmt(fps, 1);
         var u = pen.hist.length ? pen.hist[pen.hist.length - 1].u : 0;
         $('pen-num').textContent = 't=' + fmt(pen.t, 2) + 's · θ=' + fmt(pen.th * 180 / Math.PI, 2) + '° · x=' + fmt(pen.x, 3) + ' · u=' + fmt(u, 2) + ' · FPS=' + fmt(fps, 1);
+        $('m-num').textContent = 't=' + fmt(motor.t, 2) + 's · ω=' + fmt(motor.w, 2) + ' · ref=' + fmt(motor.ref, 1) + ' · FPS=' + fmt(fps, 1);
+        $('o-num').textContent = 't=' + fmt(obs.t, 2) + 's · 真实=' + fmt(obs.x, 3) + ' · 估计=' + fmt(obs.xh, 3) + ' · 误差=' + fmt(obs.x - obs.xh, 3);
         requestAnimationFrame(loop);
       }
 
@@ -276,6 +368,18 @@
       $('pen-reset').addEventListener('click', penReset);
       $('pen-kick').addEventListener('click', function () { pen.thd += 0.6; });
       $('qr').addEventListener('change', function () { pen.qr = parseInt(this.value, 10) || 0; penReset(); });
+      // 电机/观测器控件
+      function bindRange2(id, obj, key, outId) { var el = $(id); if (!el) return; el.addEventListener('input', function () { obj[key] = parseFloat(el.value); if ($(outId)) $(outId).textContent = fmt(el.value, 2); }); }
+      bindRange2('m-ref', motor, 'ref', 'm-ref-v');
+      bindRange2('m-kp', motor, 'kp', 'm-kp-v');
+      bindRange2('m-ki', motor, 'ki', 'm-ki-v');
+      bindRange2('o-l', obs, 'l', 'o-l-v');
+      toggleBtn('m-play', motor); toggleBtn('o-play', obs);
+      $('m-load').addEventListener('click', function () { motor.load = 8; setTimeout(function () { motor.load = 0; }, 2000); });
+      $('m-reset').addEventListener('click', motorReset);
+      $('o-kick').addEventListener('click', function () { obs.v += 0.8; });
+      $('o-reset').addEventListener('click', obsReset);
+      motorReset(); obsReset();
       carReset(); penReset();
       requestAnimationFrame(loop);
     })();

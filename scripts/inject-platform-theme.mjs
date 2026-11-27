@@ -36,8 +36,8 @@ const PAGES = [
   'edge-ai/index.html', 'edge-ai/quantize/index.html', 'edge-ai/budget/index.html',
 ];
 const LINK = '<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />';
-const INIT = '<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>';
-const BTN = '<button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>';
+const INIT = '<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>';
+const BTN = '<button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>';
 const NAVBTN = '<button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>';
 const SCRIPT = '<script src="/shared/theme.js" data-platform-theme-js="1"></script>';
 

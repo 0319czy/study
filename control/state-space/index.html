@@ -17,7 +17,7 @@
     pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
   </style>
 <link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
 </head>
 <body>
   <nav class="topnav">
@@ -31,7 +31,7 @@
       <a href="/tools/">工具与资料</a>
     </div>
     <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
 
@@ -60,6 +60,7 @@
       <p>x′ = A x + B u,y = C x + D u。平衡点处线性化;特征值决定稳定性;可控性矩阵 [B AB …] 满秩可控;可观性矩阵 [C;CA;…] 满秩可观。测量量不等于状态。</p>
     </div>
     <div class="section">
+      <p class="muted">变量与单位:x 为状态向量、A/B/C/D 随物理量;特征值 rad/s。假设平衡点处 LTI。</p>
       <h2>4. 操作实验</h2>
       <ol><li>对位置/速度模型写 A/B/C/D。</li><li>比较只测位置 vs 测位置+速度的可观性。</li><li>从初始状态观察输出能否区分。</li></ol>
     </div>

@@ -17,7 +17,7 @@
     pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
   </style>
 <link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
-<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
 </head>
 <body>
   <nav class="topnav">
@@ -31,7 +31,7 @@
       <a href="/tools/">工具与资料</a>
     </div>
     <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
-    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="true">浅色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
 
@@ -60,6 +60,7 @@
       <p>采样把连续系统变成离散序列;零阶保持近似。z 域稳定:极点在单位圆内。采样周期越大、延迟越大,相位滞后越多,稳定裕度越小;控制周期与执行周期抖动也要算进延迟。</p>
     </div>
     <div class="section">
+      <p class="muted">变量与单位:Ts s、z 无量纲(复)、延迟 s。假设采样同步、ZOH。</p>
       <h2>4. 操作实验</h2>
       <ol><li>对同一对象用两组采样周期仿真。</li><li>加入一个控制周期延迟,观察超调/振荡。</li><li>把连续增益离散化,检查 z 极点。</li></ol>
       <p><a href="/control/labs/">打开交互实验(labs)</a></p>
