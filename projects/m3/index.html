@@ -570,7 +570,11 @@ class Handler(BaseHTTPRequestHandler):
             "WHERE temp_c &gt;= ? ORDER BY ts DESC LIMIT ?",
             (tmin, limit),
         ).fetchall()
-        body = json.dumps(rows, ensure_ascii=False).encode("utf-8")
+        items = [
+            {"timestamp": r[0], "seq": r[1], "temp_c": r[2], "humidity_pct": r[3]}
+            for r in rows
+        ]
+        body = json.dumps({"items": items}, ensure_ascii=False).encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
@@ -632,7 +636,12 @@ AA 55 04 0B 01 88 08 A4        # 截断:缺湿度高字节与 XOR</textarea>
         <div class="field-row" style="margin-top:10px">
           <label class="field">真实 API 地址(可选,需网关)<input id="api-url" type="text" placeholder="http://192.168.1.10:8000/api/latest?limit=60" /></label>
           <button type="button" id="api-load">从 API 拉取</button>
+          <span class="msg" id="data-source" role="status" aria-live="polite"></span>
           <span class="msg" id="api-msg" role="status" aria-live="polite"></span>
+        </div>
+        <div class="field-row" style="margin-top:10px">
+          <button type="button" id="handoff-m4">用本次记录打开 M4</button>
+          <span class="msg" id="handoff-msg" role="status" aria-live="polite"></span>
         </div>
         <div class="stats">
           <div class="stat"><b id="stats-frames">0</b><span>检出帧</span></div>
@@ -1926,38 +1935,135 @@ SEARCH readings USING INDEX idx_readings_ts_temp (ts&gt;?)</code></pre>
           });
         }
       }
-    })();
-  // 真实 API 接入(可选):从网关查询接口拉最新记录,填入回放框
-  (function () {
-    var urlEl = document.getElementById('api-url');
-    var msg = document.getElementById('api-msg');
-    var btn = document.getElementById('api-load');
-    if (!urlEl || !btn || !msg) return;
-    btn.addEventListener('click', function () {
-      var url = urlEl.value.trim();
-      if (!url) { msg.textContent = '请填写 API 地址'; return; }
-      msg.textContent = '正在请求…';
-      fetch(url).then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      }).then(function (data) {
-        var list = Array.isArray(data) ? data : (data.items || data.records || []);
-        if (!Array.isArray(list) || !list.length) throw new Error('返回数据不是数组');
-        var lines = list.map(function (x) {
-          var ts = x.timestamp || x.time || '';
-          var seq = x.seq != null ? x.seq : '';
-          var t = x.temp_c != null ? x.temp_c : (x.temperature != null ? x.temperature : '');
-          var h = x.humidity_pct != null ? x.humidity_pct : (x.humidity != null ? x.humidity : '');
-          return [ts, seq, t, h, x.frame_hex || 'api'].join(',');
+      /* ---------- 真实 API 接入(可选):结构化记录直接进入结果表,共用 CSV/查询 ---------- */
+      var apiUrlEl = document.getElementById('api-url');
+      var apiMsgEl = document.getElementById('api-msg');
+      var dataSourceEl = document.getElementById('data-source');
+      var apiBtn = document.getElementById('api-load');
+      if (apiBtn) {
+        var toDate = function (v) {
+          if (v === null || v === undefined || v === '') { return null; }
+          var d = new Date(String(v));
+          return isNaN(d.getTime()) ? null : d;
+        };
+        var toApiRecord = function (x, i) {
+          var ts, seq, temp, hum, frame;
+          if (Array.isArray(x)) {
+            if (x.length < 4) { throw new Error('第 ' + (i + 1) + ' 条数组少于 4 列'); }
+            ts = toDate(x[0]); seq = x[1]; temp = x[2]; hum = x[3]; frame = x[4];
+          } else if (x && typeof x === 'object') {
+            ts = toDate(x.timestamp !== undefined ? x.timestamp
+                        : (x.time !== undefined ? x.time : x.ts));
+            seq = x.seq;
+            temp = x.temp_c !== undefined ? x.temp_c
+                 : (x.temperature !== undefined ? x.temperature : x.temp);
+            hum = x.humidity_pct !== undefined ? x.humidity_pct
+                : (x.humidity !== undefined ? x.humidity : x.hum);
+            frame = x.frame_hex;
+          } else {
+            throw new Error('第 ' + (i + 1) + ' 条不是对象或数组');
+          }
+          if (!ts) { throw new Error('第 ' + (i + 1) + ' 条时间戳无效(需可解析时间)'); }
+          if (!(typeof seq === 'number' && isFinite(seq) && Math.round(seq) === seq && seq >= 0 && seq <= 255)) {
+            throw new Error('第 ' + (i + 1) + ' 条 seq 需为 0–255 整数');
+          }
+          if (!(typeof temp === 'number' && isFinite(temp))) { throw new Error('第 ' + (i + 1) + ' 条温度无效'); }
+          if (!(typeof hum === 'number' && isFinite(hum) && hum >= 0 && hum <= 100)) { throw new Error('第 ' + (i + 1) + ' 条湿度需为 0–100'); }
+          return {
+            ts: ts, seq: seq, seqHex: seqHex(seq),
+            temp: temp, tempRaw: Math.round(temp * 100),
+            hum: hum, humRaw: Math.round(hum * 100),
+            frameHex: frame || '(API 记录)'
+          };
+        };
+        var applyApiRecords = function (records) {
+          state.records = records;
+          state.rows = records.map(function (r) {
+            return {
+              seq: r.seqHex, cmd: '0x01(API)', seqNum: r.seq,
+              temp: r.temp, hum: r.hum, tempRaw: r.tempRaw, humRaw: r.humRaw,
+              ok: true, kind: 'sensor', result: 'API 记录', frameHex: r.frameHex
+            };
+          });
+          state.csv = buildCsv(records);
+          renderRows(state.rows);
+          renderCsv();
+          setQueryRange();
+          if (dataSourceEl) {
+            dataSourceEl.textContent = '数据来源:API(' + records.length + ' 条);上方串口统计仍为回放结果';
+          }
+        };
+        apiBtn.addEventListener('click', function () {
+          var url = apiUrlEl.value.trim();
+          if (!url) { setMsg(apiMsgEl, '请填写 API 地址', 'err'); return; }
+          setMsg(apiMsgEl, '正在请求…', '');
+          var done = false;
+          var timer = setTimeout(function () {
+            if (done) { return; }
+            done = true;
+            setMsg(apiMsgEl, '请求超时(8 秒):检查网关地址、网络与同源/CORS 限制', 'err');
+          }, 8000);
+          fetch(url, { headers: { accept: 'application/json' } })
+            .then(function (r) {
+              if (!r.ok) { throw new Error('HTTP ' + r.status); }
+              return r.json();
+            })
+            .then(function (data) {
+              if (done) { return; }
+              done = true;
+              clearTimeout(timer);
+              var list = Array.isArray(data) ? data : (data && Array.isArray(data.items) ? data.items : (data && Array.isArray(data.records) ? data.records : null));
+              if (!list) { throw new Error('返回数据不是数组,也没有 items/records 数组'); }
+              if (!list.length) { throw new Error('返回数据为空'); }
+              var records = list.map(toApiRecord);
+              applyApiRecords(records);
+              setMsg(apiMsgEl, '已载入 ' + records.length + ' 条 API 记录:进入结果表/CSV/查询(未计入串口校验)', 'ok');
+            })
+            .catch(function (e) {
+              if (done) { return; }
+              done = true;
+              clearTimeout(timer);
+              setMsg(apiMsgEl, 'API 载入失败:' + e.message + '(保留上一次成功记录;需真实网关且同源或允许 CORS)', 'err');
+            });
         });
-        document.getElementById('play-input').value = lines.join('\n');
-        msg.textContent = '已获取 ' + lines.length + ' 条,填入回放框;点"解析帧流"查看(simulated,需真实网关)';
-      }).catch(function (e) {
-        msg.textContent = 'API 请求失败:' + e.message + '(纯静态站无后端,需真实网关;CORS 可能受限)';
-      });
-    });
-  })();
+      }
 
+      /* ---------- M3 → M4:同标签页交接(版本化 sessionStorage) ---------- */
+      var handoffBtn = document.getElementById('handoff-m4');
+      if (handoffBtn) {
+        handoffBtn.addEventListener('click', function () {
+          var msgEl = document.getElementById('handoff-msg');
+          if (!state.records.length) {
+            setMsg(msgEl, '没有可交接的记录:先解析帧流或载入 API 记录', 'err');
+            return;
+          }
+          var payload = {
+            version: 'm3-handoff-v1',
+            source: 'm3',
+            fixture: 'm3-sample-v1',
+            generatedAt: new Date().toISOString(),
+            stats: { records: state.records.length },
+            records: state.records.map(function (r) {
+              return {
+                timestamp: formatTimestamp(r.ts),
+                seq: r.seq,
+                temp_c: r.temp,
+                humidity_pct: r.hum,
+                frame_hex: r.frameHex
+              };
+            })
+          };
+          try {
+            sessionStorage.setItem('1kni4r-m3-handoff-v1', JSON.stringify(payload));
+            setMsg(msgEl, '已准备 ' + payload.records.length + ' 条记录,正在打开 M4…', 'ok');
+            setTimeout(function () { location.href = '/projects/m4/'; }, 300);
+          } catch (e) {
+            setMsg(msgEl, '无法写入 sessionStorage:' + e.message + ';请改用 CSV 下载/复制', 'err');
+          }
+        });
+      }
+
+    })();
   </script>
 </body>
 </html>
