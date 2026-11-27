@@ -391,15 +391,26 @@
         ['advanced', '07 方向进阶']
       ];
       var TASKS = [
-        ['c', 'C 与工程工具', '/foundations/c/'],
-        ['circuits', '数字电路入门', '/foundations/circuits/'],
-        ['linux-user', 'Linux 用户态入门', '/foundations/linux-user/'],
-        ['m0', 'M0 采集', '/projects/collect/'],
-        ['m1', 'M1 通信', '/projects/m1/'],
-        ['m2', 'M2 多任务', '/projects/m2/'],
-        ['m3', 'M3 网关', '/projects/m3/'],
-        ['m4', 'M4 展示', '/projects/m4/'],
-        ['m5', 'M5 交付', '/projects/m5/']
+        ['c', 'C 与工程工具(子站)', '/c/start/', 'foundations'],
+        ['c-advanced', 'C 进阶:指针/内存/调试', '/c/memory-debug/', 'foundations'],
+        ['circuits', '数字电路入门(子站)', '/digital/start/', 'foundations'],
+        ['digital-practice', '数字电路实战:采样/去抖', '/digital/sampling-debounce/', 'foundations'],
+        ['mcu-gpio', 'MCU GPIO 与寄存器', '/mcu/gpio', 'mcu'],
+        ['mcu-uart', 'MCU UART 与协议', '/mcu/uart', 'mcu'],
+        ['rtos-basics', 'RTOS 基础与任务', '/rtos/learn/basics', 'rtos'],
+        ['linux-user', 'Linux 用户态入门(子站)', '/linux-user/start/', 'embedded-linux'],
+        ['linux-serial', '串口与 PTY 实践', '/linux-user/serial-pty/', 'embedded-linux'],
+        ['linux-build', 'Linux 系统构建(子站)', '/linux-build/start/', 'embedded-linux'],
+        ['driver-dt', '设备树与平台驱动', '/linux/learn/device-tree', 'driver'],
+        ['m0', 'M0 采集', '/projects/collect/', 'connectivity'],
+        ['m1', 'M1 通信', '/projects/m1/', 'connectivity'],
+        ['m2', 'M2 多任务', '/projects/m2/', 'connectivity'],
+        ['m3', 'M3 网关', '/projects/m3/', 'connectivity'],
+        ['m4', 'M4 展示', '/projects/m4/', 'connectivity'],
+        ['m5', 'M5 交付', '/projects/m5/', 'connectivity'],
+        ['control', '控制理论(子站)', '/control/', 'advanced'],
+        ['pcb', 'PCB 设计(子站)', '/pcb/', 'advanced'],
+        ['edge-ai', '边缘 AI(子站)', '/edge-ai/', 'advanced']
       ];
       var badge = document.getElementById('progress-badge');
       var body = document.getElementById('progress-body');
@@ -408,34 +419,58 @@
       var saveBtn = document.getElementById('save-progress');
       if (!badge || !body || !stageSel || !taskSel || !saveBtn) return;
 
+      function find(list, id) {
+        for (var i = 0; i < list.length; i++) if (list[i][0] === id) return list[i];
+        return null;
+      }
+      function stageOf(taskId) { var t = find(TASKS, taskId); return t ? t[3] : null; }
+      function tasksOf(stageId) { return TASKS.filter(function (t) { return t[3] === stageId; }); }
+      function renderTaskOptions(stageId, selected) {
+        taskSel.innerHTML = '';
+        var list = tasksOf(stageId);
+        if (!list.length) list = TASKS;
+        list.forEach(function (t) {
+          var o = document.createElement('option');
+          o.value = t[0]; o.textContent = t[1];
+          taskSel.appendChild(o);
+        });
+        if (selected && find(list, selected)) taskSel.value = selected;
+        else if (list.length) taskSel.value = list[0][0];
+      }
+      function load() {
+        try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; }
+      }
       STAGES.forEach(function (s) {
         var o = document.createElement('option');
         o.value = s[0]; o.textContent = s[1];
         stageSel.appendChild(o);
       });
-      TASKS.forEach(function (t) {
-        var o = document.createElement('option');
-        o.value = t[0]; o.textContent = t[1];
-        taskSel.appendChild(o);
+      var saved = load();
+      var initStage = 'foundations';
+      if (saved && stageOf(saved.task)) initStage = stageOf(saved.task);
+      else if (saved && find(STAGES, saved.stage)) initStage = saved.stage;
+      stageSel.value = initStage;
+      renderTaskOptions(initStage, saved ? saved.task : null);
+      stageSel.addEventListener('change', function () {
+        renderTaskOptions(stageSel.value, null);
       });
-
-      function load() {
-        try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; }
-      }
-      function find(list, id) {
-        for (var i = 0; i < list.length; i++) if (list[i][0] === id) return list[i];
-        return null;
-      }
+      taskSel.addEventListener('change', function () {
+        var st = stageOf(taskSel.value);
+        if (st && st !== stageSel.value) {
+          stageSel.value = st;
+          renderTaskOptions(st, taskSel.value);
+        }
+      });
       function render() {
         var p = load();
         if (!p) {
           badge.textContent = '新用户';
           badge.classList.remove('active');
-          body.innerHTML = '还没有学习记录。建议从 <a href="/foundations/">工程基础三门最小课</a> 开始(先 C 与工程工具,再数字电路,然后 Linux 用户态),完成后在下面记录进度,下次打开就能"继续上次任务"。';
+          body.innerHTML = '还没有学习记录。建议从 <a href="/c/start/">C 与工程工具</a> 或 <a href="/digital/start/">数字电路</a> 开始,完成后在下面记录进度,下次打开就能"继续学习"。';
           return;
         }
         var t = find(TASKS, p.task) || TASKS[0];
-        var s = find(STAGES, p.stage);
+        var s = find(STAGES, p.stage) || find(STAGES, t[3]);
         badge.textContent = '已开始学习';
         badge.classList.add('active');
         var done = (p.completed || []).length;
@@ -457,7 +492,6 @@
         p.stage = stageSel.value;
         p.task = taskSel.value;
         p.updatedAt = Date.now();
-        // 只保存继续位置;不再把任务写入 completed(验收记录由 M5 单独写入学习档案)
         if (!Array.isArray(p.completed)) { p.completed = []; }
         try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}
         render();
