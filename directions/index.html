@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="方向进阶:Linux 系统构建、ROS 2、PCB 设计、边缘 AI 四个方向的项目与验证材料。" />
+  <title>方向进阶 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .dir { border: 1px solid #1e2a38; border-radius: 14px; padding: 20px; margin-bottom: 14px; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .dir .head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .dir .no { font-family: ui-monospace, Menlo, monospace; color: #5eead4; font-weight: 700; }
+    .dir h3 { margin: 0; font-size: 17px; }
+    .dir .desc { color: #8b9bb0; font-size: 13.5px; line-height: 1.75; margin: 8px 0 10px; }
+    .dir .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .dir .meta span { font-size: 12px; color: #8b9bb0; border: 1px solid #1e2a38; border-radius: 999px; padding: 2px 9px; font-family: ui-monospace, Menlo, monospace; }
+    .dir .links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dir .links a { font-size: 12.5px; color: #7dd3fc; text-decoration: none; border: 1px solid #1e2a38; border-radius: 7px; padding: 4px 9px; }
+    .dir .links a.primary { color: #06231f; background: #5eead4; border-color: #5eead4; font-weight: 700; }
+    .muted { color: #8b9bb0; }
+    .pill { display: inline-block; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; border: 1px solid #1e2a38; color: #8b9bb0; }
+    .pill.ok { color: #5eead4; border-color: rgba(94,234,212,.25); }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">DIRECTIONS · 阶段 07</div>
+    <h1>方向进阶:四个方向,按项目需要选</h1>
+    <p class="lead">
+      完成采集监控项目后,按兴趣或项目需要选方向。每个方向都有:一个可执行项目、验证材料清单和交付要求;
+      内容按 8 段组织,证据标识真实(principle / compiled / hardware-pending)。
+    </p>
+
+    <div class="section">
+      <div class="dir">
+        <div class="head"><span class="no">01</span><h3>嵌入式 Linux 系统构建</h3><span class="pill ok">已上线</span></div>
+        <div class="desc">交叉编译工具链、Buildroot 配置、内核与根文件系统、镜像烧录、启动日志分析。项目:构建最小 rootfs + 交叉编译设备程序 + 烧录跑通。</div>
+        <div class="meta"><span>前置:Linux 用户态</span><span>证据:compiled + hardware-pending</span><span>交付:镜像 + 构建脚本 + 启动日志</span></div>
+        <div class="links">
+          <a class="primary" href="/directions/linux-build/">进入方向 →</a>
+          <a href="/foundations/linux-user/">补 Linux 用户态</a>
+        </div>
+      </div>
+
+      <div class="dir">
+        <div class="head"><span class="no">02</span><h3>ROS 2 机器人应用</h3><span class="pill ok">已上线</span></div>
+        <div class="desc">节点、话题、服务、TF、导航。项目:让一个节点发布传感器数据、另一个节点订阅并做 TF 变换,用 RViz/命令行验证。</div>
+        <div class="meta"><span>前置:C 与 Linux</span><span>证据:compiled + hardware-pending</span><span>交付:包源码 + launch + 运行记录</span></div>
+        <div class="links">
+          <a class="primary" href="/directions/ros/">进入方向 →</a>
+          <a href="/ros/">ROS 实验室</a>
+        </div>
+      </div>
+
+      <div class="dir">
+        <div class="head"><span class="no">03</span><h3>电路与 PCB 设计</h3><span class="pill ok">已上线</span></div>
+        <div class="desc">原理图、封装、布局、布线、DRC、打样与焊接验证。项目:从原理图到打样的完整流程,DRC 零违规,焊接后上电检查。</div>
+        <div class="meta"><span>前置:数字电路</span><span>证据:principle + hardware-pending</span><span>交付:工程文件 + DRC 报告 + 实物照片</span></div>
+        <div class="links">
+          <a class="primary" href="/directions/pcb/">进入方向 →</a>
+          <a href="/foundations/circuits/">补数字电路</a>
+        </div>
+      </div>
+
+      <div class="dir">
+        <div class="head"><span class="no">04</span><h3>边缘 AI 模型部署</h3><span class="pill ok">已上线</span></div>
+        <div class="desc">模型量化(FP32→INT8)、内存/延迟/精度权衡、推理框架选型、部署到 MCU 或 Linux 板卡。项目:把一个小模型量化部署,给出精度/延迟/内存三张对照表。</div>
+        <div class="meta"><span>前置:机器学习 + MCU</span><span>证据:compiled + hardware-pending</span><span>交付:模型 + 推理程序 + 三张对照表</span></div>
+        <div class="links">
+          <a class="primary" href="/directions/edge-ai/">进入方向 →</a>
+          <a href="/ml/">补机器学习</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>怎么选</h2>
+      <table>
+        <tr><th>你的目标</th><th>建议方向</th><th>理由</th></tr>
+        <tr><td>做设备产品、要自己出板</td><td>01 Linux 系统构建 + 03 PCB</td><td>从系统到硬件的完整闭环</td></tr>
+        <tr><td>做机器人/移动平台</td><td>02 ROS 2</td><td>节点/TF/导航是机器人基础</td></tr>
+        <tr><td>做视觉/语音/传感器智能</td><td>04 边缘 AI + 01 Linux</td><td>模型上设备需要系统与推理环境</td></tr>
+        <tr><td>只想补一个短板</td><td>任选一个</td><td>每方向都有前置链接,可先补基础</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>方向验收(统一标准)</h2>
+      <table>
+        <tr><th>验收项</th><th>通过标准</th></tr>
+        <tr><td>项目可复现</td><td>按文档从零跑通,步骤无跳步</td></tr>
+        <tr><td>证据真实</td><td>每条结论有 principle/compiled/hardware 标识与版本</td></tr>
+        <tr><td>材料齐全</td><td>源码/脚本、接线或布局、运行步骤、测试记录、故障排查表</td></tr>
+        <tr><td>有下一步</td><td>指向更深的课程或下一个方向项目</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <p><a href="/route/">← 返回学习路线</a> · <a href="/projects/">项目实战 →</a> · <a href="/archive/">学习档案 →</a></p>
+    </div>
+  </main>
+</body>
+</html>

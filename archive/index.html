@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="学习档案:跨站进度、错题、笔记、项目成果的本地统一记录,支持迁移六站旧记录与 JSON 导入导出。" />
+  <title>学习档案 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .box { border: 1px solid #1e2a38; border-radius: 14px; padding: 18px; margin-bottom: 14px; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .box h3 { margin: 0 0 10px; font-size: 16px; }
+    .cards4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .metric { border: 1px solid #1e2a38; border-radius: 12px; padding: 14px; background: #0b1117; }
+    .metric .k { color: #8b9bb0; font-size: 12px; }
+    .metric .v { font-size: 26px; font-weight: 800; color: #5eead4; font-family: ui-monospace, Menlo, monospace; margin-top: 4px; }
+    .kv { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 10px 0; }
+    .kv label { color: #8b9bb0; font-size: 13px; }
+    .kv input, .kv select, .kv textarea { background: #0f151d; color: #e6edf3; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+    .kv textarea { width: 100%; min-height: 80px; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
+    .btn { background: #5eead4; color: #06231f; border: none; border-radius: 9px; padding: 9px 16px; font-weight: 700; font-size: 13px; cursor: pointer; }
+    .btn2 { background: transparent; color: #7dd3fc; border: 1px solid #1e2a38; border-radius: 9px; padding: 9px 14px; font-size: 13px; cursor: pointer; }
+    .btn2:hover { border-color: #2c4257; }
+    table.list { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.list th, table.list td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #1a2430; vertical-align: top; }
+    table.list th { color: #8b9bb0; font-size: 12px; }
+    .tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid #1e2a38; color: #8b9bb0; font-family: ui-monospace, Menlo, monospace; }
+    .tag.read { color: #7dd3fc; border-color: rgba(125,211,252,.3); }
+    .tag.quiz { color: #c084fc; border-color: rgba(192,132,252,.3); }
+    .tag.lab { color: #fbbf24; border-color: rgba(251,191,36,.3); }
+    .tag.project { color: #5eead4; border-color: rgba(94,234,212,.3); }
+    .tag.migrated { color: #8b9bb0; }
+    .muted { color: #8b9bb0; }
+    .empty { color: #8b9bb0; font-size: 13.5px; padding: 14px 0; }
+    .note-item { border: 1px solid #1e2a38; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; background: #0b1117; }
+    .note-item .h { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+    .note-item .t { font-weight: 700; font-size: 14px; }
+    .note-item .b { color: #c7d3df; font-size: 13px; line-height: 1.7; margin-top: 6px; white-space: pre-wrap; }
+    .note-item .m { color: #8b9bb0; font-size: 11.5px; font-family: ui-monospace, Menlo, monospace; }
+    .note-item .del { color: #f87171; font-size: 12px; cursor: pointer; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+    .filters button { font-size: 12.5px; color: #8b9bb0; background: transparent; border: 1px solid #1e2a38; border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+    .filters button.on { color: #5eead4; border-color: rgba(94,234,212,.35); background: rgba(94,234,212,.08); }
+    input[type="file"] { color: #8b9bb0; font-size: 12.5px; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">LEARNING ARCHIVE</div>
+    <h1>学习档案</h1>
+    <p class="lead">
+      跨六站与平台页的统一学习记录:已读、测验、实验、项目成果、错题和笔记。全部存在本机浏览器,
+      支持从六站旧记录迁移,以及 JSON 导入导出(换设备或备份)。
+    </p>
+
+    <div class="section">
+      <div class="cards4">
+        <div class="metric"><div class="k">学习事件</div><div class="v" id="s-events">0</div></div>
+        <div class="metric"><div class="k">测验正确率</div><div class="v" id="s-quiz">--</div></div>
+        <div class="metric"><div class="k">错题</div><div class="v" id="s-wrong">0</div></div>
+        <div class="metric"><div class="k">笔记</div><div class="v" id="s-notes">0</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="box">
+        <h3>1. 迁移六站旧记录</h3>
+        <p class="muted" style="font-size:13px">扫描本域下六站与工作台的 localStorage 旧键(如 <code>drv-progress-v1</code>、<code>ros-learn-theme</code>、<code>rtos-progress-v1</code>、<code>ml-read-algorithms</code>、<code>ml-practiced-labs</code>、<code>ml-quiz-v1</code>),备份原文并生成学习事件。</p>
+        <div class="kv">
+          <button class="btn" id="migrate">扫描并导入旧记录</button>
+          <button class="btn2" id="clear">清空学习档案</button>
+        </div>
+        <p class="muted" id="migrate-status" style="font-size:12.5px">尚未扫描</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="box">
+        <h3>2. 学习记录</h3>
+        <div class="filters" id="filters">
+          <button class="on" data-t="all">全部</button>
+          <button data-t="read">已读</button>
+          <button data-t="quiz">测验</button>
+          <button data-t="lab">实验</button>
+          <button data-t="project">项目</button>
+          <button data-t="migrated">迁移</button>
+        </div>
+        <div id="events"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="box">
+        <h3>3. 错题本</h3>
+        <div class="kv">
+          <input id="q-title" placeholder="题目" style="flex:2;min-width:200px" />
+          <input id="q-answer" placeholder="正确答案" style="flex:1;min-width:120px" />
+          <select id="q-site"><option value="linux">驱动</option><option value="mcu">MCU</option><option value="analog">模电</option><option value="ml">机器学习</option><option value="ros">ROS</option><option value="rtos">RTOS</option><option value="platform">平台</option></select>
+          <button class="btn" id="add-wrong">加入错题</button>
+        </div>
+        <div class="kv"><textarea id="q-explain" placeholder="错因/解析(可选)"></textarea></div>
+        <div id="wrong-list"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="box">
+        <h3>4. 笔记</h3>
+        <div class="kv">
+          <input id="n-title" placeholder="笔记标题" style="flex:2;min-width:200px" />
+          <input id="n-tags" placeholder="标签(逗号分隔,可选)" style="flex:1;min-width:160px" />
+          <button class="btn" id="add-note">保存笔记</button>
+        </div>
+        <div class="kv"><textarea id="n-body" placeholder="笔记内容(支持多行)"></textarea></div>
+        <div id="notes-list"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="box">
+        <h3>5. 导入 / 导出</h3>
+        <div class="kv">
+          <button class="btn2" id="export">导出 JSON</button>
+          <label class="muted" style="font-size:12.5px">导入:<input type="file" id="import" accept="application/json" /></label>
+        </div>
+        <p class="muted" style="font-size:12.5px">导出文件包含学习事件、错题、笔记与迁移备份;导入采用合并策略(按 id 去重)。</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <p class="muted">数据契约:<code>1kni4r-learning-v1</code>(localStorage)。工作台的 <code>1kni4r-progress-v1</code> 也会被扫描迁移为学习事件。</p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var KEY = '1kni4r-learning-v1';
+      var LEGACY_KEYS = [
+        '1kni4r-progress-v1',
+        'drv-progress-v1', 'drv-theme',
+        'ros-learn-theme',
+        'rtos-progress-v1', 'rtos-theme',
+        'ml-read-algorithms', 'ml-practiced-labs', 'ml-quiz-v1'
+      ];
+      var EVENT_TYPES = ['read', 'quiz', 'lab', 'project', 'migrated'];
+      var filter = 'all';
+
+      function load() {
+        try {
+          var d = JSON.parse(localStorage.getItem(KEY) || 'null');
+          if (!d) return { version: 1, updatedAt: 0, events: [], notes: [], wrong: [], migratedFrom: {} };
+          d.events = d.events || [];
+          d.notes = d.notes || [];
+          d.wrong = d.wrong || [];
+          d.migratedFrom = d.migratedFrom || {};
+          return d;
+        } catch (e) {
+          return { version: 1, updatedAt: 0, events: [], notes: [], wrong: [], migratedFrom: {} };
+        }
+      }
+      function save(d) {
+        d.updatedAt = Date.now();
+        try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+        render();
+      }
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+      function uid() { return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+      function fmt(ts) {
+        if (!ts) return '—';
+        try { return new Date(ts).toLocaleString('zh-CN'); } catch (e) { return '—'; }
+      }
+      function siteOf(key) {
+        if (/^drv-/.test(key)) return 'linux';
+        if (/^ml-/.test(key)) return 'ml';
+        if (/^ros-/.test(key)) return 'ros';
+        if (/^rtos-/.test(key)) return 'rtos';
+        return 'platform';
+      }
+      function countEvents(d) {
+        var byType = {};
+        d.events.forEach(function (e) { byType[e.type] = (byType[e.type] || 0) + 1; });
+        return byType;
+      }
+      function quizRate(d) {
+        var total = 0, score = 0;
+        d.events.forEach(function (e) {
+          if (e.type === 'quiz' && e.meta) {
+            total += Number(e.meta.total) || 0;
+            score += Number(e.meta.score) || 0;
+          }
+        });
+        return total ? Math.round(score / total * 100) + '%' : '--';
+      }
+      function render() {
+        var d = load();
+        document.getElementById('s-events').textContent = d.events.length;
+        document.getElementById('s-quiz').textContent = quizRate(d);
+        document.getElementById('s-wrong').textContent = d.wrong.length;
+        document.getElementById('s-notes').textContent = d.notes.length;
+        document.getElementById('migrate-status').textContent = d.migratedFrom && Object.keys(d.migratedFrom).length
+          ? '已迁移 ' + Object.keys(d.migratedFrom).length + ' 个旧键(原文已备份在导出 JSON 中)'
+          : '尚未扫描';
+
+        var list = d.events.slice().sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
+        if (filter !== 'all') list = list.filter(function (e) { return e.type === filter; });
+        var el = document.getElementById('events');
+        if (!list.length) {
+          el.innerHTML = '<div class="empty">还没有学习记录。先扫描旧记录,或完成课程后在页面记录进度。</div>';
+        } else {
+          el.innerHTML = '<table class="list"><tr><th>时间</th><th>类型</th><th>站点</th><th>内容</th></tr>' +
+            list.map(function (e) {
+              var title = e.title || '';
+              if (e.type === 'quiz' && e.meta) title += '(答对 ' + e.meta.score + '/' + e.meta.total + ')';
+              return '<tr><td class="muted">' + fmt(e.at) + '</td><td><span class="tag ' + esc(e.type) + '">' + esc(e.type) + '</span></td><td>' + esc(e.site) + '</td><td>' + esc(title) + '</td></tr>';
+            }).join('') + '</table>';
+        }
+
+        var wl = document.getElementById('wrong-list');
+        if (!d.wrong.length) {
+          wl.innerHTML = '<div class="empty">错题本是空的。把测验里做错的题手动加进来,复习时按站筛选。</div>';
+        } else {
+          wl.innerHTML = '<table class="list"><tr><th>题目</th><th>正确答案</th><th>站点</th><th>错因</th><th></th></tr>' +
+            d.wrong.map(function (w) {
+              return '<tr><td>' + esc(w.title) + '</td><td>' + esc(w.answer) + '</td><td>' + esc(w.site) + '</td><td class="muted">' + esc(w.explain || '') + '</td><td><span class="del" data-id="' + esc(w.id) + '">删除</span></td></tr>';
+            }).join('') + '</table>';
+          wl.querySelectorAll('.del').forEach(function (x) {
+            x.addEventListener('click', function () {
+              var dd = load();
+              dd.wrong = dd.wrong.filter(function (w) { return w.id !== x.getAttribute('data-id'); });
+              save(dd);
+            });
+          });
+        }
+
+        var nl = document.getElementById('notes-list');
+        if (!d.notes.length) {
+          nl.innerHTML = '<div class="empty">还没有笔记。学习时随手记:现象、结论、命令、踩坑。</div>';
+        } else {
+          nl.innerHTML = d.notes.slice().reverse().map(function (n) {
+            return '<div class="note-item"><div class="h"><span class="t">' + esc(n.title) + '</span><span class="del" data-id="' + esc(n.id) + '">删除</span></div><div class="b">' + esc(n.body) + '</div><div class="m">' + fmt(n.at) + (n.tags && n.tags.length ? ' · ' + n.tags.join(',') : '') + '</div></div>';
+          }).join('');
+          nl.querySelectorAll('.del').forEach(function (x) {
+            x.addEventListener('click', function () {
+              var dd = load();
+              dd.notes = dd.notes.filter(function (n) { return n.id !== x.getAttribute('data-id'); });
+              save(dd);
+            });
+          });
+        }
+      }
+
+      // 迁移:扫描旧键
+      document.getElementById('migrate').addEventListener('click', function () {
+        var d = load();
+        var found = [];
+        LEGACY_KEYS.forEach(function (k) {
+          var raw = null;
+          try { raw = localStorage.getItem(k); } catch (e) {}
+          if (raw === null) return;
+          found.push(k);
+          d.migratedFrom[k] = raw;
+          if (!d.events.some(function (e) { return e.type === 'migrated' && e.meta && e.meta.key === k; })) {
+            d.events.push({
+              id: uid(), type: 'migrated', title: '导入旧记录:' + k, site: siteOf(k),
+              at: Date.now(), meta: { key: k, bytes: raw.length }
+            });
+          }
+        });
+        // 从已知键推断事件(尽力而为,不伪造)
+        try {
+          var prog = JSON.parse(localStorage.getItem('1kni4r-progress-v1') || 'null');
+          if (prog && prog.task) {
+            var title = '工作台进度:' + prog.task + (prog.stage ? ' / ' + prog.stage : '');
+            if (!d.events.some(function (e) { return e.type === 'project' && e.title === title; })) {
+              d.events.push({ id: uid(), type: 'project', title: title, site: 'platform', at: Date.now(), meta: { source: '1kni4r-progress-v1' } });
+            }
+          }
+        } catch (e) {}
+        save(d);
+        document.getElementById('migrate-status').textContent = found.length
+          ? '扫描完成:发现并导入 ' + found.length + ' 个旧键(' + found.join(', ') + ')'
+          : '没有发现六站旧记录(可能还没在六站学习过,或浏览器已清空)';
+      });
+
+      document.getElementById('clear').addEventListener('click', function () {
+        if (!confirm('清空学习档案?将删除本页所有学习事件、错题与笔记(不删除六站原始记录)。')) return;
+        try { localStorage.removeItem(KEY); } catch (e) {}
+        render();
+      });
+
+      document.getElementById('add-wrong').addEventListener('click', function () {
+        var title = document.getElementById('q-title').value.trim();
+        if (!title) return;
+        var d = load();
+        d.wrong.push({
+          id: uid(), title: title,
+          answer: document.getElementById('q-answer').value.trim() || '—',
+          explain: document.getElementById('q-explain').value.trim(),
+          site: document.getElementById('q-site').value, at: Date.now()
+        });
+        document.getElementById('q-title').value = '';
+        document.getElementById('q-answer').value = '';
+        document.getElementById('q-explain').value = '';
+        save(d);
+      });
+
+      document.getElementById('add-note').addEventListener('click', function () {
+        var title = document.getElementById('n-title').value.trim();
+        var body = document.getElementById('n-body').value.trim();
+        if (!title && !body) return;
+        var d = load();
+        d.notes.push({
+          id: uid(), title: title || '(无标题)', body: body,
+          tags: document.getElementById('n-tags').value.split(',').map(function (s) { return s.trim(); }).filter(Boolean),
+          at: Date.now()
+        });
+        document.getElementById('n-title').value = '';
+        document.getElementById('n-body').value = '';
+        document.getElementById('n-tags').value = '';
+        save(d);
+      });
+
+      document.getElementById('export').addEventListener('click', function () {
+        var d = load();
+        var blob = JSON.stringify(d, null, 2);
+        var a = document.createElement('a');
+        a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(blob);
+        a.download = '1kni4r-learning-' + new Date().toISOString().slice(0, 10) + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
+
+      document.getElementById('import').addEventListener('change', function (ev) {
+        var file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            var incoming = JSON.parse(reader.result);
+            var d = load();
+            function merge(arr, key) {
+              var seen = {};
+              d[key] = d[key] || [];
+              d[key].forEach(function (x) { seen[x.id] = true; });
+              (incoming[key] || []).forEach(function (x) {
+                if (x && x.id && !seen[x.id]) { d[key].push(x); seen[x.id] = true; }
+              });
+            }
+            merge(incoming.events, 'events');
+            merge(incoming.wrong, 'wrong');
+            merge(incoming.notes, 'notes');
+            if (incoming.migratedFrom) {
+              Object.keys(incoming.migratedFrom).forEach(function (k) { d.migratedFrom[k] = incoming.migratedFrom[k]; });
+            }
+            save(d);
+            document.getElementById('migrate-status').textContent = '导入完成:事件 ' + (incoming.events || []).length + ' 条、错题 ' + (incoming.wrong || []).length + ' 条、笔记 ' + (incoming.notes || []).length + ' 条(已按 id 去重)';
+          } catch (e) {
+            document.getElementById('migrate-status').textContent = '导入失败:不是有效的 JSON 文件';
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById('filters').addEventListener('click', function (e) {
+        var btn = e.target.closest('button[data-t]');
+        if (!btn) return;
+        filter = btn.getAttribute('data-t');
+        Array.prototype.forEach.call(document.querySelectorAll('#filters button'), function (b) { b.classList.toggle('on', b === btn); });
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

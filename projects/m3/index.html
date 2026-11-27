@@ -303,7 +303,7 @@
         <tr><td><code>SEQ</code></td><td>1</td><td>0–255 回绕。用于发现丢帧,不参与业务主键。</td></tr>
         <tr><td><code>CMD</code></td><td>1</td><td><code>0x01</code> 传感器数据;<code>0x02</code> 心跳。</td></tr>
         <tr><td><code>DATA</code></td><td>LEN</td><td><code>0x01</code>:温度 int16 LE ×100,湿度 uint16 LE ×100(LEN=4);<code>0x02</code>:空(LEN=0)。</td></tr>
-        <tr><td><code>XOR</code></td><td>1</td><td><code>LEN ^ SEQ ^ CMD ^ DATA[0] ^ … ^ DATA[LEN-1]</code>,<strong>不含 AA 55</strong>。</td></tr>
+        <tr><td><code>XOR</code></td><td>1</td><td><code>AA ^ 55 ^ LEN ^ SEQ ^ CMD ^ DATA[0] ^ … ^ DATA[LEN-1]</code>,<strong>含帧头 AA 55</strong>。</td></tr>
         <tr><td>超时</td><td>—</td><td>帧间/半帧 500 ms;超过仍不完整则丢弃半帧并重新同步。</td></tr>
       </table>
       <div class="codecard">
@@ -315,8 +315,8 @@
     温度 = int16_le(DATA[0], DATA[1]) / 100.0      # 有符号,-5.25 °C 合法
     湿度 = uint16_le(DATA[2], DATA[3]) / 100.0    # 无符号,0–655.35 %
 
-XOR = LEN ^ SEQ ^ CMD ^ DATA[0] ^ ... ^ DATA[LEN-1]
-    例:04 ^ 01 ^ 01 ^ 5A ^ 0A ^ D4 ^ 12 = 0x92</code></pre>
+XOR = AA ^ 55 ^ LEN ^ SEQ ^ CMD ^ DATA[0] ^ ... ^ DATA[LEN-1]
+    例:AA ^ 55 ^ 04 ^ 01 ^ 01 ^ 5A ^ 0A ^ D4 ^ 12 = 0x6D</code></pre>
       </div>
       <p class="small muted">
         与 M1/M2 使用同一契约:本页不另立帧格式,只实现网关侧。若你的设备端改了字段顺序、XOR 范围或超时,
@@ -420,7 +420,7 @@ XOR = LEN ^ SEQ ^ CMD ^ DATA[0] ^ ... ^ DATA[LEN-1]
           </g>
           <text x="57" y="240" fill="#8b9bb0" font-size="10.5">没有 DATA;心跳也占 SEQ,可用于判断设备活着,但本页不把它写进查询记录。</text>
 
-          <text x="20" y="276" fill="#5eead4" font-size="11.5" font-family="ui-monospace, Menlo, monospace">XOR = 04 ^ 01 ^ 01 ^ 5A ^ 0A ^ D4 ^ 12 = 92</text>
+          <text x="20" y="276" fill="#5eead4" font-size="11.5" font-family="ui-monospace, Menlo, monospace">XOR = AA ^ 55 ^ 04 ^ 01 ^ 01 ^ 5A ^ 0A ^ D4 ^ 12 = 6D</text>
           <text x="20" y="296" fill="#8b9bb0" font-size="10.5">DATA 里即使出现 AA 55,解析器也按 LEN 消费,不会把它当帧头;只有失步后才在字节流里搜索 AA 55。</text>
         </svg>
         <figcaption>帧的边界由 LEN 决定,不靠“看到下一条 AA 55”。这也是为什么 LEN 被破坏时解析器必须设上限并重新同步,否则会吞掉后面的好帧。</figcaption>
@@ -429,7 +429,7 @@ XOR = LEN ^ SEQ ^ CMD ^ DATA[0] ^ ... ^ DATA[LEN-1]
       <h3>3.3 解析规则:每种错误丢多少字节</h3>
       <table>
         <tr><th>情况</th><th>处理</th><th>默认样例中的位置</th></tr>
-        <tr><td>XOR 不匹配</td><td>整帧丢弃,错误计数 +1;不把 DATA 写入存储。</td><td>SEQ=04,期望 0x65,实际 0x64。</td></tr>
+        <tr><td>XOR 不匹配</td><td>整帧丢弃,错误计数 +1;不把 DATA 写入存储。</td><td>SEQ=04,期望 0x9A,实际 0x64。</td></tr>
         <tr><td>CMD 未知</td><td>按 LEN 消费整帧后丢弃;记录未知命令,便于发现版本不匹配。</td><td>SEQ=05,CMD=0x03。</td></tr>
         <tr><td>LEN 与 CMD 不符</td><td>丢弃;仍然按 LEN 前进,避免把后续字节当 DATA。</td><td>SEQ=06,CMD=0x01 但 LEN=3。</td></tr>
         <tr><td>截断(半帧)</td><td>500 ms 内等不到剩余字节:丢弃半帧,重新搜帧头。</td><td>最后 8 字节,应为 10 字节。</td></tr>
@@ -612,16 +612,16 @@ $ curl -s '127.0.0.1:8081/?tmin=27&amp;limit=2'
         </div>
         <textarea id="play-input" rows="13" spellcheck="false" wrap="off" aria-label="十六进制帧流"># M3 网关回放样例:11 帧 / 97 字节;4 帧故意写错
 # 格式:AA 55 | LEN | SEQ | CMD | DATA[LEN] | XOR
-AA 55 00 00 02 02              # 心跳 SEQ=00
-AA 55 04 01 01 5A 0A D4 12 92  # 26.50 °C / 48.20 %
-AA 55 04 02 01 F3 FD 82 19 92  # -5.25 °C / 65.30 %
-AA 55 00 03 02 01              # 心跳 SEQ=03
-AA 55 04 04 01 91 0A EC 13 64  # XOR 错:正确值应为 65
-AA 55 00 05 03 06              # 未知 CMD=0x03
-AA 55 03 06 01 5A 0A D4 80     # CMD=0x01 但 LEN=3
-AA 55 04 07 01 91 0A EC 13 66  # 27.05 °C / 51.00 %
-AA 55 04 08 01 B8 0B 70 17 D9  # 30.00 °C / 60.00 %
-00 FF AA 55 04 0A 01 98 08 A0 0F 30  # 前置 00 FF 杂散,帧同步后成功
+AA 55 00 00 02 FD              # 心跳 SEQ=00
+AA 55 04 01 01 5A 0A D4 12 6D  # 26.50 °C / 48.20 %
+AA 55 04 02 01 F3 FD 82 19 6D  # -5.25 °C / 65.30 %
+AA 55 00 03 02 FE              # 心跳 SEQ=03
+AA 55 04 04 01 91 0A EC 13 64  # XOR 错:正确值应为 9A
+AA 55 00 05 03 F9              # 未知 CMD=0x03
+AA 55 03 06 01 5A 0A D4 7F     # CMD=0x01 但 LEN=3
+AA 55 04 07 01 91 0A EC 13 99  # 27.05 °C / 51.00 %
+AA 55 04 08 01 B8 0B 70 17 26  # 30.00 °C / 60.00 %
+00 FF AA 55 04 0A 01 98 08 A0 0F CF  # 前置 00 FF 杂散,帧同步后成功
 AA 55 04 0B 01 88 08 A4        # 截断:缺湿度高字节与 XOR</textarea>
         <div class="btn-row">
           <button type="button" class="primary" id="play-btn">解析帧流</button>
@@ -768,7 +768,7 @@ $ ./m3_gateway --self-test
 [02] seq=01 cmd=0x01 temp=26.50 hum=48.20 OK
 [03] seq=02 cmd=0x01 temp=-5.25 hum=65.30 OK
 [04] seq=03 cmd=0x02 temp=-- hum=-- OK(heartbeat)
-[05] seq=04 cmd=0x01 temp=-- hum=-- ERR: xor want 0x65 got 0x64
+[05] seq=04 cmd=0x01 temp=-- hum=-- ERR: xor want 0x9A got 0x64
 [06] seq=05 cmd=0x03 temp=-- hum=-- ERR: unknown cmd
 [07] seq=06 cmd=0x01 temp=-- hum=-- ERR: LEN=3 for sensor
 [08] seq=07 cmd=0x01 temp=27.05 hum=51.00 OK
@@ -792,7 +792,7 @@ exit=0</code></pre>
  * 真机: ./m3_gateway /dev/ttyUSB0 &gt; sensor.csv   # 需要 USB-UART 与 M3 设备
  *
  * 协议: AA 55 | LEN | SEQ | CMD | DATA[LEN] | XOR
- *       XOR = LEN ^ SEQ ^ CMD ^ DATA[0..LEN-1](不含帧头 AA 55)
+ *       XOR = AA ^ 55 ^ LEN ^ SEQ ^ CMD ^ DATA[0..LEN-1](含帧头 AA 55)
  *       CMD=0x01 温度 int16LE ×100 + 湿度 uint16LE ×100(LEN=4)
  *       CMD=0x02 心跳(LEN=0);帧间超时 500 ms
  *
@@ -897,7 +897,7 @@ static size_t parse_stream(const uint8_t *buf, size_t n, struct stats *st, FILE 
         unsigned cmd = buf[pos + 4];
         const uint8_t *data = buf + pos + 5;
         unsigned got = buf[pos + total - 1];
-        unsigned calc = len ^ seq ^ cmd;
+        unsigned calc = 0xAA ^ 0x55 ^ len ^ seq ^ cmd;
         for (unsigned i = 0; i &lt; len; i++) {
             calc ^= data[i];
         }
@@ -953,14 +953,14 @@ static size_t parse_stream(const uint8_t *buf, size_t n, struct stats *st, FILE 
 static int self_test(void)
 {
     static const uint8_t stream[] = {
-        0xAA, 0x55, 0x00, 0x00, 0x02, 0x02, 0xAA, 0x55, 0x04, 0x01, 0x01, 0x5A,
-        0x0A, 0xD4, 0x12, 0x92, 0xAA, 0x55, 0x04, 0x02, 0x01, 0xF3, 0xFD, 0x82,
-        0x19, 0x92, 0xAA, 0x55, 0x00, 0x03, 0x02, 0x01, 0xAA, 0x55, 0x04, 0x04,
-        0x01, 0x91, 0x0A, 0xEC, 0x13, 0x64, 0xAA, 0x55, 0x00, 0x05, 0x03, 0x06,
-        0xAA, 0x55, 0x03, 0x06, 0x01, 0x5A, 0x0A, 0xD4, 0x80, 0xAA, 0x55, 0x04,
-        0x07, 0x01, 0x91, 0x0A, 0xEC, 0x13, 0x66, 0xAA, 0x55, 0x04, 0x08, 0x01,
-        0xB8, 0x0B, 0x70, 0x17, 0xD9, 0x00, 0xFF, 0xAA, 0x55, 0x04, 0x0A, 0x01,
-        0x98, 0x08, 0xA0, 0x0F, 0x30, 0xAA, 0x55, 0x04, 0x0B, 0x01, 0x88, 0x08,
+        0xAA, 0x55, 0x00, 0x00, 0x02, 0xFD, 0xAA, 0x55, 0x04, 0x01, 0x01, 0x5A,
+        0x0A, 0xD4, 0x12, 0x6D, 0xAA, 0x55, 0x04, 0x02, 0x01, 0xF3, 0xFD, 0x82,
+        0x19, 0x6D, 0xAA, 0x55, 0x00, 0x03, 0x02, 0xFE, 0xAA, 0x55, 0x04, 0x04,
+        0x01, 0x91, 0x0A, 0xEC, 0x13, 0x64, 0xAA, 0x55, 0x00, 0x05, 0x03, 0xF9,
+        0xAA, 0x55, 0x03, 0x06, 0x01, 0x5A, 0x0A, 0xD4, 0x7F, 0xAA, 0x55, 0x04,
+        0x07, 0x01, 0x91, 0x0A, 0xEC, 0x13, 0x99, 0xAA, 0x55, 0x04, 0x08, 0x01,
+        0xB8, 0x0B, 0x70, 0x17, 0x26, 0x00, 0xFF, 0xAA, 0x55, 0x04, 0x0A, 0x01,
+        0x98, 0x08, 0xA0, 0x0F, 0xCF, 0xAA, 0x55, 0x04, 0x0B, 0x01, 0x88, 0x08,
         0xA4,
     };
     struct stats st = {0};
@@ -1045,7 +1045,7 @@ int main(int argc, char **argv)
       <h2><span class="sec-no">05</span>结果检查</h2>
       <p>逐条勾选。勾选状态只保存在当前页面,刷新后重置;这不是“看完了”的清单,而是“能独立复现”的清单。</p>
       <ul class="checklist" id="checklist">
-        <li><label><input type="checkbox" /> 能画出 10 字节传感器帧与 6 字节心跳帧,并手算默认帧的 XOR 为 <code>0x92</code>;能解释为什么 XOR 不含 <code>AA 55</code>。</label></li>
+        <li><label><input type="checkbox" /> 能画出 10 字节传感器帧与 6 字节心跳帧,并手算默认帧的 XOR 为 <code>0x6D</code>;能解释为什么 XOR 含 <code>AA 55</code>。</label></li>
         <li><label><input type="checkbox" /> 回放默认样例得到 11 帧 / 7 成功 / 5 条记录 / 4 错误 / 2 杂散字节,并能逐条指出 XOR 错、未知 CMD、LEN 错、截断帧的原因。</label></li>
         <li><label><input type="checkbox" /> CSV 有 5 条传感器记录,包含负温度 -5.25 °C;下载文件带 UTF-8 BOM,时间戳带时区偏移,能被表格软件打开。</label></li>
         <li><label><input type="checkbox" /> 温度下限设为 27 时命中 2 条(27.05 与 30.00),均值为 28.53,最低 27.05,最高 30.00;能说明边界含等号。</label></li>
@@ -1069,7 +1069,7 @@ int main(int argc, char **argv)
         <div class="body">
           <dl>
             <dt>现象</dt><dd>能读到字节,但解析表大量 <code>XOR 错</code>;或温度/湿度明显不合理(如 -300 °C、6000 %RH);或帧头 <code>AA 55</code> 都很难出现。</dd>
-            <dt>检查步骤</dt><dd>先用 <code>stty -F 设备 -a</code> 核对 <code>speed 115200</code> 与 <code>cs8 -parenb -cstopb</code>;确认设备端与网关端都按 8N1、无流控;用固定测试帧(如默认样例)从设备端原样发送;检查解析器的 XOR 范围是否与设备端一致(是否误含 <code>AA 55</code>);检查 int16 是否按有符号解释、字节序是否为小端。</dd>
+            <dt>检查步骤</dt><dd>先用 <code>stty -F 设备 -a</code> 核对 <code>speed 115200</code> 与 <code>cs8 -parenb -cstopb</code>;确认设备端与网关端都按 8N1、无流控;用固定测试帧(如默认样例)从设备端原样发送;检查解析器的 XOR 范围是否与设备端一致(是否误漏 <code>AA 55</code>);检查 int16 是否按有符号解释、字节序是否为小端。</dd>
             <dt>预期结果</dt><dd><code>stty</code> 显示 115200 8N1;固定测试帧的 XOR 与页面/自测一致;温度在 -40–80 °C、湿度在 0–100 %RH 的合理范围内。</dd>
             <dt>下一分支</dt><dd>若字节本身乱:先统一波特率/8N1,再查晶振误差、TX/RX 接反、地线与电平。若字节正确但 XOR 错:只改协议实现并同时更新两端,不要“在网关端猜一个容错阈值”。</dd>
           </dl>
@@ -1157,13 +1157,13 @@ SEARCH readings USING INDEX idx_readings_ts_temp (ts&gt;?)</code></pre>
           <div class="explain"><strong>正确答案:A。</strong>温度 <code>5A 0A</code> 小端为 <code>0x0A5A = 2650</code>,除以 100 得 26.50 °C;湿度 <code>D4 12</code> 为 <code>0x12D4 = 4820</code>,除以 100 得 48.20 %RH。温度用 int16(可为负),湿度用 uint16(无负值)。</div>
         </div>
 
-        <div class="quiz-q" data-answer="a">
+        <div class="quiz-q" data-answer="b">
           <div class="stem">2. 本协议的 XOR 覆盖哪些字节?</div>
           <label class="opt"><input type="radio" name="q2" value="a" /> A. LEN、SEQ、CMD 与 DATA[0..LEN-1],不含帧头 AA 55</label>
           <label class="opt"><input type="radio" name="q2" value="b" /> B. 从 AA 到 DATA 的全部字节,包含帧头</label>
           <label class="opt"><input type="radio" name="q2" value="c" /> C. 只有 DATA</label>
           <label class="opt"><input type="radio" name="q2" value="d" /> D. 只有 CMD 与 DATA</label>
-          <div class="explain"><strong>正确答案:A。</strong>契约固定为 <code>LEN ^ SEQ ^ CMD ^ DATA…</code>,不含 <code>AA 55</code>。两端必须完全一致;若一端含帧头,等价于结果再异或 <code>0xFF</code>,所有帧都会“校验错”。</div>
+          <div class="explain"><strong>正确答案:B。</strong>契约固定为 <code>AA ^ 55 ^ LEN ^ SEQ ^ CMD ^ DATA…</code>,含帧头 <code>AA 55</code>。两端必须完全一致;若一端漏算帧头,等价于结果再异或 <code>0xFF</code>,所有帧都会“校验错”。</div>
         </div>
 
         <div class="quiz-q" data-answer="a">
@@ -1367,7 +1367,7 @@ SEARCH readings USING INDEX idx_readings_ts_temp (ts&gt;?)</code></pre>
 
           var data = bytes.slice(pos + 5, pos + 5 + len);
           var got = bytes[pos + total - 1];
-          var calc = len ^ seq ^ cmd;
+          var calc = 0xAA ^ 0x55 ^ len ^ seq ^ cmd;
           for (var i = 0; i < data.length; i++) { calc ^= data[i]; }
           calc &= 0xFF;
 
