@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="实验室:六个交互实验入口与实验规则(模拟验证/实物验证)。" />
+  <title>实验室 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a class="active" href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">LABS</div>
+    <h1>实验室:可看、可玩、可练的交互实验</h1>
+    <p class="lead">
+      现有六站自带交互实验(动画、模拟器、参数联动)。平台层先做统一入口与"证据标识",
+      实验框架统一(环境准备、结果检查、排障)在第一批建设。
+    </p>
+
+    <div class="section">
+      <h2>实验入口</h2>
+      <div class="grid">
+        <a class="card" href="/linux/labs">
+          <div class="t">驱动实验室 · 动画实验室</div>
+          <div class="d">驱动加载、字符设备生命周期、中断上下半部、设备树 probe、DMA 传输等 16 个实验。</div>
+          <div class="tagline">/linux/labs</div>
+        </a>
+        <a class="card" href="/mcu/gpio">
+          <div class="t">MCU Playground · 外设实验</div>
+          <div class="d">GPIO/时钟树/ADC/UART/I2C/SPI/CAN 参数联动与单步动画。</div>
+          <div class="tagline">/mcu/gpio</div>
+        </a>
+        <a class="card" href="/analog/paths">
+          <div class="t">知电 · 实验手册</div>
+          <div class="d">整流、放大、频率响应、反馈、运放等电路实验与波形观察。</div>
+          <div class="tagline">/analog/paths</div>
+        </a>
+        <a class="card" href="/ml/paths">
+          <div class="t">知机 · 机器学习实验</div>
+          <div class="d">线性回归、分类、聚类等交互实验与本地学习记录。</div>
+          <div class="tagline">/ml/paths</div>
+        </a>
+        <a class="card" href="/ros/quiz">
+          <div class="t">ROS 实验室 · 交互测验</div>
+          <div class="d">计算图、话题、TF、导航相关的小测与实验。</div>
+          <div class="tagline">/ros/quiz</div>
+        </a>
+        <a class="card" href="/rtos/paths">
+          <div class="t">RTOS Lab · 调度实验</div>
+          <div class="d">甘特图动画、任务状态机、队列/信号量/互斥量联动。</div>
+          <div class="tagline">/rtos/paths</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>实验规则(第一批统一)</h2>
+      <table>
+        <tr><th>类型</th><th>含义</th><th>成果标注</th></tr>
+        <tr><td>原理示意</td><td>动画/模拟器演示机制,不代表真实运行</td><td><span class="pill">principle</span></td></tr>
+        <tr><td>已编译验证</td><td>代码在指定工具链/版本编译通过</td><td><span class="pill ok">compiled</span></td></tr>
+        <tr><td>已在指定硬件验证</td><td>在具体型号/版本上跑通并记录现象</td><td><span class="pill ok">hardware</span></td></tr>
+        <tr><td>模拟验证</td><td>用样例数据/教学模拟完成流程</td><td><span class="pill warn">simulated</span></td></tr>
+      </table>
+      <p class="muted" style="margin-top:12px">"打开页面"不算完成实验;完成标准以结果检查项为准(第一批给出检查清单)。</p>
+    </div>
+
+    <div class="section">
+      <p><a href="/projects/">查看项目实战 →</a> · <a href="/search/">跨站搜索实验与知识点 →</a></p>
+    </div>
+  </main>
+</body>
+</html>

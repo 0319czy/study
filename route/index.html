@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="1kni4r.top 学习路线:工程基础 → MCU 与外设 → RTOS → 嵌入式 Linux → 驱动与硬件协同 → 联网与交付 → 方向进阶。" />
+  <title>学习路线 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .stage {
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 14px;
+      border: 1px solid #1e2a38;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 12px;
+      background: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9));
+    }
+    .stage .no { font-family: ui-monospace, Menlo, monospace; font-size: 24px; font-weight: 700; color: #5eead4; line-height: 1.2; }
+    .stage h3 { margin: 0 0 6px; font-size: 16px; }
+    .stage .goal { color: #8b9bb0; font-size: 13.5px; line-height: 1.75; }
+    .stage .out { margin-top: 8px; font-size: 13px; color: #e6edf3; }
+    .stage .out b { color: #5eead4; font-weight: 600; }
+    .stage .links { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .stage .links a { font-size: 12.5px; color: #7dd3fc; text-decoration: none; border: 1px solid #1e2a38; border-radius: 7px; padding: 4px 9px; }
+    .stage .links a:hover { border-color: #2c4257; }
+    .stage .links a.todo { color: #8b9bb0; border-style: dashed; }
+    @media (max-width: 640px) {
+      .stage { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">LEARNING PATH</div>
+    <h1>学习路线:从工程基础到设备交付</h1>
+    <p class="lead">
+      目标不是"看完课程",而是能独立完成一条设备系统:需求分析 → 电路与接口 → MCU 固件 → RTOS →
+      Linux 应用与驱动 → 通信联网 → 数据展示 → 调试与交付。七个阶段按依赖排序,每阶段都有必须产出的成果。
+    </p>
+
+    <div class="section">
+      <h2>七个阶段 <span class="muted" style="font-size:13px;font-weight:400">(标注"待建"的课程在第一批建设)</span></h2>
+
+      <div class="stage" id="stage-1">
+        <div class="no">01</div>
+        <div>
+          <h3>工程基础 <span class="pill warn">部分待建</span></h3>
+          <div class="goal">C 语言与指针、位操作、Git、编译链接、基本电路、仪器使用。这是后面所有阶段的底座。</div>
+          <div class="out"><b>成果:</b>能编译、调试并解释一个小工程</div>
+          <div class="links">
+            <a class="todo" href="/knowledge/">C 与工程工具 · 待建</a>
+            <a class="todo" href="/knowledge/">数字电路基础 · 待建</a>
+            <a href="/mcu/">先看 MCU 站的调试与工具页</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage" id="stage-2">
+        <div class="no">02</div>
+        <div>
+          <h3>MCU 与外设 <span class="pill ok">已有</span></h3>
+          <div class="goal">STM32 HAL、GPIO、定时器、ADC、DMA、UART / I2C / SPI / CAN 等通信协议与电气特性。</div>
+          <div class="out"><b>成果:</b>独立完成传感器采集与通信</div>
+          <div class="links">
+            <a href="/mcu/">MCU Playground</a>
+            <a href="/mcu/paths">学习路径</a>
+            <a href="/mcu/gpio">GPIO</a>
+            <a href="/mcu/uart">UART</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage" id="stage-3">
+        <div class="no">03</div>
+        <div>
+          <h3>RTOS <span class="pill ok">已有</span></h3>
+          <div class="goal">任务、队列、同步、中断协作、内存、看门狗——把单线程采集做成稳定运行的多任务设备。</div>
+          <div class="out"><b>成果:</b>完成稳定运行的多任务设备</div>
+          <div class="links">
+            <a href="/rtos/">RTOS Lab</a>
+            <a href="/rtos/paths">学习路径</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage" id="stage-4">
+        <div class="no">04</div>
+        <div>
+          <h3>嵌入式 Linux <span class="pill warn">待建</span></h3>
+          <div class="goal">Shell、交叉编译、进程与线程、文件与网络、启动流程。先学用户态应用,再进内核。</div>
+          <div class="out"><b>成果:</b>完成设备端应用与系统镜像</div>
+          <div class="links">
+            <a class="todo" href="/knowledge/">Linux 用户态入门 · 待建(第一批)</a>
+            <a class="todo" href="/knowledge/">交叉编译与系统镜像 · 待建</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage" id="stage-5">
+        <div class="no">05</div>
+        <div>
+          <h3>驱动与硬件协同 <span class="pill ok">已有</span></h3>
+          <div class="goal">设备树、字符设备、总线驱动、并发与调试——把用户态应用和硬件连成一条数据通路。</div>
+          <div class="out"><b>成果:</b>完成应用到硬件的数据通路</div>
+          <div class="links">
+            <a href="/linux/">驱动实验室</a>
+            <a href="/linux/paths">学习路径</a>
+            <a href="/linux/labs">动画实验室</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage" id="stage-6">
+        <div class="no">06</div>
+        <div>
+          <h3>联网与交付 <span class="pill warn">待建</span></h3>
+          <div class="goal">协议设计、网关、API、数据存储、可视化、升级与恢复——交付一套可部署、可维护的设备系统。</div>
+          <div class="out"><b>成果:</b>完成一套可部署、可维护的设备系统</div>
+          <div class="links">
+            <a class="todo" href="/projects/">采集监控项目 · 第一批建设</a>
+            <a class="todo" href="/knowledge/">网关与协议 · 待建</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage" id="stage-7">
+        <div class="no">07</div>
+        <div>
+          <h3>方向进阶 <span class="pill ok">部分已有</span></h3>
+          <div class="goal">ROS 2、控制、电路与 PCB、边缘 AI——按项目需要选择方向,完成方向项目与作品说明。</div>
+          <div class="out"><b>成果:</b>完成方向项目与作品说明</div>
+          <div class="links">
+            <a href="/ros/">ROS 学习实验室</a>
+            <a href="/ml/">知机 · 机器学习</a>
+            <a class="todo" href="/knowledge/">PCB 与边缘 AI · 第四批</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>第一条完整路线:多传感器采集与监控系统</h2>
+      <p class="lead">
+        传感器 → STM32 HAL → FreeRTOS → 串口通信 → Linux 网关 → 数据存储 → 网页仪表盘。
+        分阶段增加能力,每一步都有可检查的结果(M0–M5)。
+      </p>
+      <p><a href="/projects/">查看项目阶段与验收 →</a></p>
+    </div>
+
+    <div class="section">
+      <h2>怎么用这条路线</h2>
+      <table>
+        <tr><th>你的情况</th><th>建议起点</th><th>下一步</th></tr>
+        <tr><td>零基础 / 刚学 C</td><td>阶段 01 工程基础(待建期间先做 MCU 站基础阅读)</td><td>阶段 02 的 GPIO 与 UART</td></tr>
+        <tr><td>会单片机,没做过 RTOS</td><td>阶段 03 RTOS</td><td>阶段 05 驱动,再做采集监控项目</td></tr>
+        <tr><td>做过驱动,L 想补全栈</td><td>阶段 04/06 待建课程</td><td>项目实战 M0–M5</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <p class="muted">路线上的课程入口都是真实页面;标注"待建"的课程在第一批建设,不会伪装成已完成内容。</p>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="项目实战:多传感器采集与监控系统 M0–M5 阶段说明与验收标准。" />
+  <title>项目实战 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">PROJECTS</div>
+    <h1>第一条路线:多传感器采集与监控系统</h1>
+    <p class="lead">
+      从传感器到网页仪表盘的完整链路:传感器 → STM32 HAL → FreeRTOS → 串口通信 → Linux 网关 →
+      数据存储 → 网页仪表盘。分阶段增加能力,每一步都有可检查的结果。
+    </p>
+
+    <div class="section">
+      <h2>阶段与验收</h2>
+      <table>
+        <tr><th>阶段</th><th>能力</th><th>可检查结果</th><th>状态</th></tr>
+        <tr><td>M0 采集</td><td>能读到传感器数据</td><td>解释单位、采样周期、误差</td><td><span class="pill warn">规划中</span></td></tr>
+        <tr><td>M1 通信</td><td>串口协议跑通</td><td>协议说明 + 错误帧/超时识别</td><td><span class="pill warn">规划中</span></td></tr>
+        <tr><td>M2 多任务</td><td>采集/通信/显示互不阻塞</td><td>运行时序可观测(任务周期、优先级)</td><td><span class="pill warn">规划中</span></td></tr>
+        <tr><td>M3 网关</td><td>Linux 端接收与存储</td><td>能记录、查询设备数据</td><td><span class="pill warn">规划中</span></td></tr>
+        <tr><td>M4 展示</td><td>网页仪表盘</td><td>实时值、历史曲线、设备状态</td><td><span class="pill warn">规划中</span></td></tr>
+        <tr><td>M5 交付</td><td>完整交付物</td><td>接线图、源码、运行步骤、测试记录、故障排查表</td><td><span class="pill warn">规划中</span></td></tr>
+      </table>
+      <p class="muted" style="margin-top:12px">
+        项目阶段按"第一批建设"排期,当前页面先把验收标准固定下来;每个阶段完成后会给出可复现的步骤与证据标识。
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>两种入口(成果必须区分)</h2>
+      <div class="grid">
+        <a class="card" href="/labs/">
+          <div class="t">无开发板 · 样例数据 / 教学模拟</div>
+          <div class="d">用样例数据与模拟器完成采集、协议解析、网关与仪表盘流程;成果标注"模拟验证",不能冒充实物验证。</div>
+          <div class="tagline">simulate →</div>
+        </a>
+        <a class="card" href="/route/">
+          <div class="t">有开发板 · 实物验证</div>
+          <div class="d">按接线图与固件工程在指定硬件上完成采集与通信;成果标注"已硬件验证",写明型号与版本。</div>
+          <div class="tagline">hardware →</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>依赖的课程(第一批补齐)</h2>
+      <table>
+        <tr><th>课程</th><th>用途</th><th>状态</th></tr>
+        <tr><td>C 与工程工具</td><td>指针、位操作、编译链接、Git</td><td><span class="pill warn">待建</span></td></tr>
+        <tr><td>数字电路基础</td><td>电平、上拉/下拉、去抖、采样</td><td><span class="pill warn">待建</span></td></tr>
+        <tr><td>Linux 用户态入门</td><td>串口读取、进程、文件、定时</td><td><span class="pill warn">待建</span></td></tr>
+        <tr><td>MCU 与外设(已有)</td><td>GPIO / ADC / UART</td><td><span class="pill ok">已有</span></td></tr>
+        <tr><td>RTOS(已有)</td><td>任务、队列、同步</td><td><span class="pill ok">已有</span></td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <p><a href="/route/">← 返回学习路线</a> · <a href="/knowledge/">浏览知识库</a></p>
+    </div>
+  </main>
+</body>
+</html>

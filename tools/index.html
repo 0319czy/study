@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="工具与资料:术语表、案例库、官方资料与工具链说明。" />
+  <title>工具与资料 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a class="active" href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">TOOLS &amp; REFERENCES</div>
+    <h1>工具与资料</h1>
+    <p class="lead">
+      环境准备、术语、案例与官方资料入口。第一批会补齐"环境准备服务"(软件/硬件/版本/接线/首次运行检查)。
+    </p>
+
+    <div class="section">
+      <h2>站内资料</h2>
+      <div class="grid">
+        <a class="card" href="/linux/glossary">
+          <div class="t">驱动术语表</div>
+          <div class="d">内核模块、字符设备、设备树、中断、DMA 等 27 条术语。</div>
+          <div class="tagline">/linux/glossary</div>
+        </a>
+        <a class="card" href="/mcu/glossary">
+          <div class="t">MCU 术语表</div>
+          <div class="d">外设、协议、时序相关术语(站内 86 条,支持搜索)。</div>
+          <div class="tagline">/mcu/glossary</div>
+        </a>
+        <a class="card" href="/analog/glossary">
+          <div class="t">模电术语表</div>
+          <div class="d">器件、放大、反馈、运放相关术语与公式。</div>
+          <div class="tagline">/analog/glossary</div>
+        </a>
+        <a class="card" href="/ml/glossary">
+          <div class="t">机器学习术语表</div>
+          <div class="d">算法、指标、实验相关术语。</div>
+          <div class="tagline">/ml/glossary</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>官方资料(对照来源)</h2>
+      <table>
+        <tr><th>主题</th><th>资料</th><th>用途</th></tr>
+        <tr><td>STM32 / HAL</td><td><a href="https://www.st.com" rel="noopener" target="_blank">ST 官网</a> · STM32CubeMX / HAL 用户手册</td><td>寄存器与外设细节、HAL 行为</td></tr>
+        <tr><td>FreeRTOS</td><td><a href="https://www.freertos.org" rel="noopener" target="_blank">FreeRTOS.org</a></td><td>调度、队列、同步机制</td></tr>
+        <tr><td>Linux 内核</td><td><a href="https://www.kernel.org/doc/html/latest/" rel="noopener" target="_blank">kernel.org 文档</a></td><td>驱动模型、设备树、并发</td></tr>
+        <tr><td>Buildroot</td><td><a href="https://buildroot.org/downloads/manual/manual.html" rel="noopener" target="_blank">Buildroot 手册</a></td><td>系统镜像与交叉编译</td></tr>
+        <tr><td>ROS 2</td><td><a href="https://docs.ros.org" rel="noopener" target="_blank">ROS 2 文档</a></td><td>节点、话题、TF、导航</td></tr>
+      </table>
+      <p class="muted" style="margin-top:10px">外链仅作对照来源;课程内容不直接复制受许可限制的原文。</p>
+    </div>
+
+    <div class="section">
+      <h2>环境准备(建设中)</h2>
+      <table>
+        <tr><th>场景</th><th>需要准备</th><th>状态</th></tr>
+        <tr><td>MCU 实验</td><td>STM32F103 开发板、ST-Link、串口工具、STM32CubeMX + 工具链</td><td><span class="pill warn">待建</span></td></tr>
+        <tr><td>RTOS 实验</td><td>FreeRTOS 10.x、调试器、串口输出</td><td><span class="pill warn">待建</span></td></tr>
+        <tr><td>Linux 网关</td><td>Linux 板卡(默认 Orange Pi Zero 2W / 树莓派 Zero 2W)、交叉编译环境</td><td><span class="pill warn">待建</span></td></tr>
+        <tr><td>驱动实验</td><td>Linux 内核头文件、QEMU 或实体板</td><td><span class="pill warn">待建</span></td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <p><a href="/search/">跨站搜索 →</a> · <a href="/knowledge/">知识库 →</a></p>
+    </div>
+  </main>
+</body>
+</html>

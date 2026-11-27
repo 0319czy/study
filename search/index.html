@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="跨站搜索:一次搜索六个教学站的知识页、实验、测验、案例与术语。" />
+  <title>跨站搜索 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .searchbox { display: flex; gap: 10px; margin: 22px 0 8px; }
+    .searchbox input {
+      flex: 1; min-width: 0; padding: 13px 16px; font-size: 15px; color: #e6edf3;
+      background: #0f151d; border: 1px solid #1e2a38; border-radius: 10px; outline: none;
+    }
+    .searchbox input:focus { border-color: #2c4257; }
+    .searchbox button {
+      padding: 0 20px; font-size: 14px; color: #06231f; background: #5eead4;
+      border: none; border-radius: 10px; cursor: pointer; font-weight: 700;
+    }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+    .filters button {
+      font-size: 12.5px; color: #8b9bb0; background: transparent; border: 1px solid #1e2a38;
+      border-radius: 999px; padding: 5px 12px; cursor: pointer;
+    }
+    .filters button.on { color: #5eead4; border-color: rgba(94,234,212,.35); background: rgba(94,234,212,.08); }
+    .result {
+      display: flex; flex-direction: column; gap: 5px; padding: 14px 16px; margin-bottom: 10px;
+      border: 1px solid #1e2a38; border-radius: 12px; background: rgba(15,21,29,.7);
+      text-decoration: none; color: inherit;
+    }
+    .result:hover { border-color: #2c4257; }
+    .result .row1 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .result .title { font-weight: 700; font-size: 15px; }
+    .result .meta { color: #8b9bb0; font-size: 12.5px; font-family: ui-monospace, Menlo, monospace; }
+    .result .path { color: #7dd3fc; font-size: 12px; font-family: ui-monospace, Menlo, monospace; word-break: break-all; }
+    .type-badge { font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid #1e2a38; color: #8b9bb0; }
+    .type-badge.lesson { color: #5eead4; border-color: rgba(94,234,212,.25); }
+    .type-badge.lab { color: #fbbf24; border-color: rgba(251,191,36,.25); }
+    .type-badge.quiz { color: #c084fc; border-color: rgba(192,132,252,.25); }
+    .type-badge.case { color: #7dd3fc; border-color: rgba(125,211,252,.25); }
+    .type-badge.glossary { color: #f472b6; border-color: rgba(244,114,182,.25); }
+    #status { color: #8b9bb0; font-size: 13px; margin-top: 6px; }
+    .empty { color: #8b9bb0; font-size: 14px; padding: 24px 0; }
+    mark { background: rgba(94,234,212,.18); color: #5eead4; padding: 0 2px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch active" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">SEARCH</div>
+    <h1>跨站搜索</h1>
+    <p class="lead">
+      一次搜索六个站的知识页、实验、测验、案例与术语。结果直接跳转到对应站点的真实页面。
+      索引在构建时生成,纯静态、无需后端。
+    </p>
+
+    <form class="searchbox" id="search-form" role="search">
+      <input id="q" type="search" placeholder="试试:设备树 / UART 时序 / 运放 / 调度 / 梯度下降" autocomplete="off" aria-label="搜索关键词" />
+      <button type="submit">搜索</button>
+    </form>
+    <div class="filters" id="filters">
+      <button type="button" class="on" data-site="all">全部</button>
+      <button type="button" data-site="linux">驱动</button>
+      <button type="button" data-site="mcu">MCU</button>
+      <button type="button" data-site="analog">模电</button>
+      <button type="button" data-site="ml">机器学习</button>
+      <button type="button" data-site="ros">ROS</button>
+      <button type="button" data-site="rtos">RTOS</button>
+    </div>
+    <div id="status">正在加载索引…</div>
+    <div id="results"></div>
+  </main>
+
+  <script>
+    (function () {
+      var INDEX_URL = '/data/search-index.json';
+      var items = [];
+      var siteFilter = 'all';
+      var input = document.getElementById('q');
+      var statusEl = document.getElementById('status');
+      var resultsEl = document.getElementById('results');
+      var form = document.getElementById('search-form');
+      var filters = document.getElementById('filters');
+
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+
+      function highlight(text, q) {
+        var safe = esc(text);
+        if (!q) return safe;
+        var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+        return safe.replace(re, '<mark>$1</mark>');
+      }
+
+      function render() {
+        var q = input.value.trim().toLowerCase();
+        var list = items.filter(function (it) {
+          if (siteFilter !== 'all' && it.site !== siteFilter) return false;
+          if (!q) return true;
+          return (it.title + ' ' + (it.keywords || '') + ' ' + it.route + ' ' + it.type).toLowerCase().indexOf(q) !== -1;
+        });
+        if (!q && siteFilter === 'all') list = list.slice(0, 40);
+        statusEl.textContent = q
+          ? '匹配 ' + list.length + ' 条(共 ' + items.length + ' 条索引)'
+          : (siteFilter === 'all' ? '输入关键词搜索;当前显示前 40 条索引(共 ' + items.length + ' 条)' : '按站点筛选:' + siteFilter + '(共 ' + list.length + ' 条)');
+        if (!list.length) {
+          resultsEl.innerHTML = '<div class="empty">没有匹配结果。换个关键词试试,或到<a href="/knowledge/">知识库</a>按站浏览。</div>';
+          return;
+        }
+        resultsEl.innerHTML = list.map(function (it) {
+          var type = esc(it.type);
+          return '<a class="result" href="' + esc(it.route) + '">' +
+            '<div class="row1"><span class="title">' + highlight(it.title, q) + '</span>' +
+            '<span class="type-badge ' + type + '">' + type + '</span></div>' +
+            '<div class="meta">' + esc(it.siteName || it.site) + '</div>' +
+            '<div class="path">' + esc(it.route) + '</div>' +
+            '</a>';
+        }).join('');
+      }
+
+      function load() {
+        fetch(INDEX_URL, { cache: 'no-cache' })
+          .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(function (data) {
+            items = (data.items || []).filter(function (it) { return it && it.route && it.title; });
+            statusEl.textContent = '索引已加载:' + items.length + ' 条(覆盖 6 个站)';
+            render();
+          })
+          .catch(function (e) {
+            statusEl.textContent = '索引加载失败(' + e.message + ')。请先运行 scripts/build-search-index.mjs 生成 data/search-index.json。';
+          });
+      }
+
+      form.addEventListener('submit', function (e) { e.preventDefault(); render(); });
+      input.addEventListener('input', render);
+      filters.addEventListener('click', function (e) {
+        var btn = e.target.closest('button[data-site]');
+        if (!btn) return;
+        siteFilter = btn.getAttribute('data-site');
+        Array.prototype.forEach.call(filters.children, function (b) { b.classList.toggle('on', b === btn); });
+        render();
+      });
+
+      load();
+    })();
+  </script>
+</body>
+</html>

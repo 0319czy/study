@@ -1,0 +1,135 @@
+/* 1kni4r.top 平台共享样式:顶部导航 + 基础排版变量
+ * 供门户 index.html 与 /route/ /knowledge/ /labs/ /projects/ /tools/ /search/ 共用。
+ * 页面自身样式优先;本文件只提供导航组件与通用变量,不覆盖各站原有样式。
+ */
+:root {
+  --nav-bg: rgba(8, 11, 16, 0.82);
+  --nav-line: #1e2a38;
+  --nav-text: #e6edf3;
+  --nav-muted: #8b9bb0;
+  --nav-accent: #5eead4;
+}
+
+* { box-sizing: border-box; }
+
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 24px;
+  height: 58px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--nav-line);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.topnav .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--nav-text);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.topnav .brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nav-accent);
+  box-shadow: 0 0 10px var(--nav-accent);
+  flex: none;
+}
+
+.topnav .navlinks {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.topnav .navlinks::-webkit-scrollbar { display: none; }
+
+.topnav .navlinks a {
+  color: var(--nav-muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  padding: 7px 11px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: color .18s ease, background .18s ease;
+}
+
+.topnav .navlinks a:hover { color: var(--nav-text); background: rgba(94, 234, 212, .08); }
+.topnav .navlinks a.active { color: var(--nav-accent); background: rgba(94, 234, 212, .10); }
+
+.topnav .navsearch {
+  margin-left: auto;
+  color: var(--nav-muted);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 7px 12px;
+  border: 1px solid var(--nav-line);
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: color .18s ease, border-color .18s ease;
+}
+
+.topnav .navsearch:hover { color: var(--nav-accent); border-color: #2c4257; }
+
+/* 页面通用外壳(新页面使用) */
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  color: #e6edf3;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.page h1 { font-size: clamp(26px, 4vw, 38px); margin: 10px 0 12px; letter-spacing: .01em; }
+.page .lead { color: #8b9bb0; font-size: 15px; line-height: 1.8; max-width: 760px; }
+.page .kicker { color: #5eead4; font-size: 12px; letter-spacing: .14em; font-family: ui-monospace, Menlo, monospace; }
+.page .section { margin-top: 36px; }
+.page .section h2 { font-size: 20px; margin: 0 0 12px; }
+.page .muted { color: #8b9bb0; }
+.page a { color: #5eead4; }
+.page .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.page .card {
+  border: 1px solid #1e2a38;
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  background: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9));
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.page .card:hover { border-color: #2c4257; transform: translateY(-2px); }
+.page .card .t { font-weight: 700; font-size: 15px; }
+.page .card .d { color: #8b9bb0; font-size: 13px; line-height: 1.7; }
+.page .card .tagline { color: #5eead4; font-size: 12px; font-family: ui-monospace, Menlo, monospace; }
+.page table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.page th, .page td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #1a2430; vertical-align: top; }
+.page th { color: #8b9bb0; font-weight: 600; font-size: 12.5px; letter-spacing: .04em; }
+.page code { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; color: #9fb3c8; }
+.page .pill { display: inline-block; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; border: 1px solid #1e2a38; color: #8b9bb0; }
+.page .pill.ok { color: #5eead4; border-color: rgba(94, 234, 212, .25); }
+.page .pill.warn { color: #fbbf24; border-color: rgba(251, 191, 36, .25); }
+
+@media (max-width: 720px) {
+  .topnav { padding: 0 14px; gap: 10px; }
+  .topnav .brand { font-size: 13px; }
+  .topnav .navlinks a { font-size: 12.5px; padding: 6px 8px; }
+}
