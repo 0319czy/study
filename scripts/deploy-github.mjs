@@ -63,6 +63,10 @@ function git(...args) {
 
 const step = (msg) => console.log('\n== ' + msg + ' ==');
 
+// 0. 前置:确保 6 站就绪并已注入 SPA 深链恢复脚本(幂等)
+step('0/6 前置检查与收尾(finalize)');
+execFileSync('node', [join(ROOT, 'scripts', 'finalize.mjs')], { stdio: 'inherit' });
+
 // 1. 确认身份与仓库
 step('1/6 校验 GitHub Token 与仓库');
 const me = await api('GET', '/user');
