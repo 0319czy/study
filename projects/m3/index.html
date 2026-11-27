@@ -515,7 +515,8 @@ WantedBy=multi-user.target
 }</code></pre>
       </div>
       <p class="small muted">
-        启用:<code>sudo systemctl enable --now m3-gateway</code>;查看:<code>journalctl -u m3-gateway -f</code>。
+        启用:<code>sudo systemctl enable --now m3-gateway</code>;查看:<code>tail -f /var/log/m3/gateway.log</code>。
+        若改用 journald(删掉 unit 里的 <code>StandardOutput/StandardError</code> 两行),则用 <code>journalctl -u m3-gateway -f</code>。
         <code>copytruncate</code> 适合不支持 reopen 的程序;如果程序自己处理 <code>SIGHUP</code>,改用 <code>create</code> 更稳。
       </p>
 
@@ -545,7 +546,7 @@ $ sqlite3 -header -column /var/lib/m3/sensor.db \
 $ sqlite3 /var/lib/m3/sensor.db \
   "SELECT COUNT(*), AVG(temp_c), MIN(temp_c), MAX(temp_c)
      FROM readings
-    WHERE ts &gt;= date('now','-1 day');"</code></pre>
+    WHERE ts &gt;= strftime('%Y-%m-%dT%H:%M:%SZ','now','-1 day');"</code></pre>
       </div>
       <details class="source">
         <summary>本地只读 HTTP 服务(标准库,约 25 行)</summary>
@@ -609,7 +610,7 @@ $ curl -s '127.0.0.1:8081/?tmin=27&amp;limit=2'
           <label class="field">接收起始时间(本地)<input id="play-start" type="datetime-local" step="1" value="2026-11-27T18:00:00" /></label>
           <label class="field">记录间隔(秒)<input id="play-step" type="number" value="1" min="0.1" max="60" step="0.1" /></label>
         </div>
-        <textarea id="play-input" rows="13" spellcheck="false" aria-label="十六进制帧流"># M3 网关回放样例:11 帧 / 97 字节;4 帧故意写错
+        <textarea id="play-input" rows="13" spellcheck="false" wrap="off" aria-label="十六进制帧流"># M3 网关回放样例:11 帧 / 97 字节;4 帧故意写错
 # 格式:AA 55 | LEN | SEQ | CMD | DATA[LEN] | XOR
 AA 55 00 00 02 02              # 心跳 SEQ=00
 AA 55 04 01 01 5A 0A D4 12 92  # 26.50 °C / 48.20 %
@@ -665,7 +666,7 @@ AA 55 04 0B 01 88 08 A4        # 截断:缺湿度高字节与 XOR</textarea>
           <button type="button" id="csv-download">下载 CSV(data: URL)</button>
           <span class="msg" id="csv-msg" role="status" aria-live="polite"></span>
         </div>
-        <textarea id="csv-preview" rows="7" readonly aria-label="CSV 预览"></textarea>
+        <textarea id="csv-preview" rows="7" readonly wrap="off" aria-label="CSV 预览"></textarea>
         <div class="csv-info" id="csv-info"></div>
       </div>
 
@@ -859,7 +860,8 @@ static int serial_open(const char *dev)
 }
 
 /* 解析一段字节流,返回已消费的字节数。
- * 未消费的尾部留给下一次 read 拼接(半帧)。
+ * 未消费的尾部留给下一次 read 拼接(半帧):未凑齐的帧不在这里计数,
+ * 由调用方在最终化或 500 ms 超时时记一次错误并丢弃。
  * csv != NULL 时把校验通过的传感器帧写成 CSV 行。 */
 static size_t parse_stream(const uint8_t *buf, size_t n, struct stats *st, FILE *csv)
 {
@@ -872,11 +874,9 @@ static size_t parse_stream(const uint8_t *buf, size_t n, struct stats *st, FILE 
             continue;
         }
         if (n - pos &lt; FRAME_MIN) {
-            printf(&quot;[----] truncated: need at least %d bytes, have %zu\n&quot;,
-                   FRAME_MIN, n - pos);
-            st-&gt;frames++;
-            st-&gt;errors++;
-            return pos;                           /* 半帧留给下一次 read */
+            /* 连最小帧都凑不齐:保留在缓冲区,等下一次 read;
+             * 由调用方在最终化或 500 ms 超时时计数并丢弃,避免每轮重复报错。 */
+            return pos;
         }
 
         unsigned len = buf[pos + 2];
@@ -889,11 +889,8 @@ static size_t parse_stream(const uint8_t *buf, size_t n, struct stats *st, FILE 
             continue;
         }
         if (pos + total &gt; n) {
-            st-&gt;frames++;
-            printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=-- hum=-- ERR: truncated need %zu have %zu\n&quot;,
-                   st-&gt;frames, buf[pos + 3], buf[pos + 4], total, n - pos);
-            st-&gt;errors++;
-            return pos;                           /* 半帧留给下一次 read */
+            /* 半帧:保留到下一次 read,不在这里计数;超时后由主循环处理。 */
+            return pos;
         }
 
         unsigned seq = buf[pos + 3];
@@ -968,6 +965,14 @@ static int self_test(void)
     };
     struct stats st = {0};
     size_t used = parse_stream(stream, sizeof stream, &amp;st, NULL);
+    if (used &lt; sizeof stream &amp;&amp; sizeof stream - used &gt;= FRAME_MIN) {
+        /* 自测是“最终化”场景:剩下的半帧不会再补齐,补记一次截断错误。 */
+        unsigned total = FRAME_MIN + stream[used + 2];
+        st.frames++;
+        st.errors++;
+        printf(&quot;[%02u] seq=%02X cmd=0x%02X temp=-- hum=-- ERR: truncated need %u have %zu\n&quot;,
+               st.frames, stream[used + 3], stream[used + 4], total, sizeof stream - used);
+    }
     printf(&quot;consumed=%zu buffered=%zu frames=%u ok=%u sensors=%u errors=%u stray=%u\n&quot;,
            used, sizeof stream - used, st.frames, st.ok, st.sensors, st.errors, st.stray);
     return st.frames == 11 &amp;&amp; st.ok == 7 &amp;&amp; st.sensors == 5 &amp;&amp;
@@ -1009,7 +1014,10 @@ int main(int argc, char **argv)
             }
         } else if (r == 0) {
             if (used &gt; 0) {
+                /* 500 ms 内没补齐:半帧记一次错误并丢弃,而不是每轮 read 重复计数。 */
                 st.timeouts++;
+                st.frames++;
+                st.errors++;
                 fprintf(stderr, &quot;timeout %d ms with %zu bytes buffered, dropped\n&quot;,
                         IO_TIMEOUT, used);
                 used = 0;
@@ -1145,7 +1153,7 @@ SEARCH readings USING INDEX idx_readings_ts_temp (ts&gt;?)</code></pre>
           <label class="opt"><input type="radio" name="q1" value="a" /> A. 26.50 °C / 48.20 %RH</label>
           <label class="opt"><input type="radio" name="q1" value="b" /> B. 48.20 °C / 26.50 %RH</label>
           <label class="opt"><input type="radio" name="q1" value="c" /> C. 90.00 °C / 18.00 %RH</label>
-          <label class="opt"><input type="radio" name="q1" value="d" /> D. 26.50 °C / 48.20 %RH,但湿度按 int16 解释</label>
+          <label class="opt"><input type="radio" name="q1" value="d" /> D. 2.650 °C / 0.482 %RH(忘记除以 100)</label>
           <div class="explain"><strong>正确答案:A。</strong>温度 <code>5A 0A</code> 小端为 <code>0x0A5A = 2650</code>,除以 100 得 26.50 °C;湿度 <code>D4 12</code> 为 <code>0x12D4 = 4820</code>,除以 100 得 48.20 %RH。温度用 int16(可为负),湿度用 uint16(无负值)。</div>
         </div>
 

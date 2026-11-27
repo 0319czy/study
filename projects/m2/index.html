@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="项目实战 M2 多任务:FreeRTOS 任务划分(采集 10ms / 通信 20ms / 心跳 500ms)、队列、优先级与抢占、阻塞与优先级反转、看门狗,含可交互时序与队列模拟器。" />
   <title>M2 多任务 · FreeRTOS 任务划分与队列 · 1kni4r.top</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%235eead4'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="/shared/site.css" />
   <style>
     html { scroll-behavior: smooth; scroll-padding-top: 72px; }
     body { background: #080b10; }
 
-    .tag { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; letter-spacing: .05em; padding: 2px 7px; border-radius: 6px; border: 1px solid; vertical-align: 1px; }
+    .tag { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; letter-spacing: .05em; padding: 2px 7px; border-radius: 6px; border: 1px solid; vertical-align: 1px; white-space: nowrap; }
     .tag.principle { color: #7dd3fc; border-color: rgba(125, 211, 252, .35); background: rgba(125, 211, 252, .07); }
     .tag.sim { color: #fbbf24; border-color: rgba(251, 191, 36, .35); background: rgba(251, 191, 36, .07); }
     .tag.hw { color: #a78bfa; border-color: rgba(167, 139, 250, .35); background: rgba(167, 139, 250, .07); }
@@ -143,7 +144,7 @@
     </div>
 
     <section class="section" id="s1">
-      <h2><span class="n">1/8</span>目标</h2>
+      <h2><span class="n">1/8</span> 目标</h2>
       <table>
         <tr><th style="width:130px">项</th><th>内容</th></tr>
         <tr><td>能力</td><td>在 STM32 + FreeRTOS 上把设备拆成三个周期任务(采集 10ms / 通信 20ms / 心跳 500ms),用队列传递帧,并能说出每个任务的周期、优先级、栈与阻塞点。</td></tr>
@@ -172,7 +173,7 @@
     </section>
 
     <section class="section" id="s2">
-      <h2><span class="n">2/8</span>前置知识</h2>
+      <h2><span class="n">2/8</span> 前置知识</h2>
       <p class="lead">这一页默认你已经能读 ADC、能解析一帧数据。缺哪一块,先回对应页面补,不要在这里硬扛。</p>
       <table>
         <tr><th style="width:170px">前置</th><th>你需要会的东西</th><th style="width:190px">去哪补</th></tr>
@@ -182,7 +183,7 @@
         <tr><td>FreeRTOS 基础</td><td>任务状态(Running / Ready / Blocked / Suspended)、tick、抢占、队列 API、<code>vTaskDelayUntil</code>。</td><td><a href="/rtos/">RTOS 实验室</a></td></tr>
       </table>
 
-      <h3><span class="n">2.1</span>本页用到的几个词</h3>
+      <h3><span class="n">2.1</span> 本页用到的几个词</h3>
       <table>
         <tr><th style="width:150px">词</th><th>在这套设备里的含义</th></tr>
         <tr><td>tick</td><td>FreeRTOS 的系统节拍。<code>configTICK_RATE_HZ = 1000</code> 时 1 tick = 1ms,所以 10 / 20 / 500ms 都能被整 tick 表示。</td></tr>
@@ -193,7 +194,7 @@
         <tr><td>看门狗</td><td>独立看门狗 IWDG,超时 500ms 未喂狗就复位芯片;本页的设计是"采集任务活着才喂狗"。</td></tr>
       </table>
 
-      <h3><span class="n">2.2</span>假设与环境</h3>
+      <h3><span class="n">2.2</span> 假设与环境</h3>
       <table class="mini">
         <tr><th>项</th><th>取值</th><th>说明</th></tr>
         <tr><td>MCU</td><td>STM32F103C8T6</td><td>与 M0 同一块板;72MHz,Cortex-M3</td></tr>
@@ -208,10 +209,10 @@
       </div>
     </section>
     <section class="section" id="s3">
-      <h2><span class="n">3/8</span>原理与图示</h2>
+      <h2><span class="n">3/8</span> 原理与图示</h2>
       <p class="lead">先看清三个任务如何分工、数据怎么流动,再谈调度与最坏情况。</p>
 
-      <h3><span class="n">3.1</span>任务划分:周期、优先级、栈、阻塞点</h3>
+      <h3><span class="n">3.1</span> 任务划分:周期、优先级、栈、阻塞点</h3>
       <table>
         <tr><th>任务</th><th>周期</th><th>优先级</th><th>栈</th><th>职责</th><th>允许的阻塞点</th></tr>
         <tr><td>采集 acq</td><td>10ms</td><td>3(最高)</td><td>512 word</td><td>ADC 采样、换算、组帧、<code>xQueueSend(…, 0)</code></td><td>只允许 <code>vTaskDelayUntil</code>;入队不等待</td></tr>
@@ -223,7 +224,7 @@
         但它执行只有 2ms,占空比 20%,不会饿死别人。这不是唯一正确的排法,但必须能解释你的排法。
       </p>
 
-      <h3><span class="n">3.2</span>数据通路与阻塞关系</h3>
+      <h3><span class="n">3.2</span> 数据通路与阻塞关系</h3>
       <div class="svgwrap">
         <svg viewBox="0 0 900 300" role="img" aria-label="M2 任务与数据通路:t 传感器到采集任务、队列、通信任务、UART,心跳任务也发往 UART,采集任务喂 IWDG">
           <defs>
@@ -280,7 +281,7 @@
       </div>
       <p class="figcap">图 1:三个任务只通过队列和 UART 交互;心跳任务与通信任务共用串口,需要有互斥或串行化设计(见 3.5)。</p>
 
-      <h3><span class="n">3.3</span>帧格式:与 M1 同一契约</h3>
+      <h3><span class="n">3.3</span> 帧格式:与 M1 同一契约</h3>
       <p class="muted" style="font-size:13px;line-height:1.8">
         帧头 <code>AA 55</code>,<code>LEN</code> 为 DATA 字节数,<code>XOR</code> 覆盖 LEN ~ DATA(不含帧头)。
         温度是 <code>int16</code> 小端、×100;湿度是 <code>uint16</code> 小端、×100;心跳帧 CMD=0x02 且 LEN=0。
@@ -310,7 +311,7 @@
         <div class="out" id="f-out">—</div>
       </div>
 
-      <h3><span class="n">3.4</span>优先级与抢占:先看截止时间,再看利用率</h3>
+      <h3><span class="n">3.4</span> 优先级与抢占:先看截止时间,再看利用率</h3>
       <p style="font-size:13.5px;line-height:1.9;color:#c7d3df">
         固定优先级抢占式调度下,CPU 永远给"就绪任务里优先级最高的那个"。周期越短的任务截止时间越紧,
         所以按周期从短到长分配优先级(Rate Monotonic)。对 n 个周期任务,利用率
@@ -327,7 +328,7 @@
         ② 同优先级任务按时间片轮转,不要依赖同优先级之间的先后顺序。
       </div>
 
-      <h3><span class="n">3.5</span>阻塞与优先级反转</h3>
+      <h3><span class="n">3.5</span> 阻塞与优先级反转</h3>
       <p style="font-size:13.5px;line-height:1.9;color:#c7d3df">
         阻塞是"把 CPU 让出去等事件":队列空时通信任务 <code>xQueueReceive(portMAX_DELAY)</code> 进入 Blocked,
         数据一到立刻被唤醒。忙等(<code>while (!ready) {}</code>)则相反:任务一直 Ready,CPU 空转,优先级的坏处被放大。
@@ -398,14 +399,14 @@
         <tr><td>高优先级任务不等低优先级</td><td>从结构上消除反转</td><td>必须共享外设时的互斥需求</td></tr>
       </table>
 
-      <h3><span class="n">3.6</span>看门狗:喂狗要证明"系统真的在跑"</h3>
+      <h3><span class="n">3.6</span> 看门狗:喂狗要证明"系统真的在跑"</h3>
       <p style="font-size:13.5px;line-height:1.9;color:#c7d3df">
         IWDG 由独立时钟驱动,一旦开启就不能关。本设计把喂狗放在采集任务里:采集每 10ms 跑完一轮才 <code>HAL_IWDG_Refresh</code>,
         因此"采集被饿死/卡死"会在 500ms 内变成一次确定的复位,而不是永远卡住。更严格的做法是"多任务计数 + 监控任务检查全部计数都在动,才喂狗",
         避免只证明某一个任务活着。
       </p>
 
-      <h3><span class="n">3.7</span>代码骨架(STM32 HAL + FreeRTOS,principle)</h3>
+      <h3><span class="n">3.7</span> 代码骨架(STM32 HAL + FreeRTOS,principle)</h3>
       <pre class="code"><span class="cm">/* ---- 句柄与帧结构:队列深度 8,元素是整帧,不做零拷贝 ---- */</span>
 static TaskHandle_t  hAcq, hComm, hHb;
 static QueueHandle_t qFrame;
@@ -486,7 +487,7 @@ void m2_start(void)
     </section>
 
     <section class="section" id="s4">
-      <h2><span class="n">4/8</span>操作实验</h2>
+      <h2><span class="n">4/8</span> 操作实验</h2>
       <p class="lead">三个实验分别回答三个问题:会不会超期、队列该多深、等待方式怎么选。所有数字都由页面里的模拟器实时算出来。</p>
 
       <div class="lab">
@@ -522,7 +523,13 @@ void m2_start(void)
           <button class="btn" type="button" data-preset="base">基线:10/20/500,0 超期</button>
           <button class="btn" type="button" data-preset="prio">同负载,优先级配错</button>
           <button class="btn" type="button" data-preset="over">通信耗时 16ms(过载)</button>
-          <span class="hint">改任一滑杆,图与统计立即重算(1000ms 窗口)</span>
+          <label class="hint" style="display:inline-flex;align-items:center;gap:6px">视图
+            <select id="a-view" style="width:auto">
+              <option value="200">200ms</option>
+              <option value="500" selected>500ms</option>
+              <option value="1000">1000ms</option>
+            </select>
+          </label>
         </div>
 
         <canvas id="a-gantt" height="150" aria-label="三个任务的时序甘特图"></canvas>
@@ -533,6 +540,7 @@ void m2_start(void)
           <span><i style="background:#f87171"></i>超期作业(完成时刻 &gt; 释放 + 周期)</span>
           <span><i style="background:#16212c"></i>空闲/被抢占</span>
         </div>
+        <p class="muted" id="a-view-note" style="font-size:12px;margin:6px 0 0">—</p>
 
         <div class="statrow">
           <div class="stat"><div class="k">超期合计</div><div class="v" id="a-miss">0</div><div class="s" id="a-miss-s">deadline miss</div></div>
@@ -636,7 +644,7 @@ void m2_start(void)
       </div>
     </section>
     <section class="section" id="s5">
-      <h2><span class="n">5/8</span>结果检查</h2>
+      <h2><span class="n">5/8</span> 结果检查</h2>
       <p class="lead">下面每一条都能在本页或实板上被验证。全部勾选才算通过 M2;标 <span class="tag hw">hardware-pending</span> 的一条需要开发板。</p>
       <table class="mini">
         <tr><th style="width:180px">检查项</th><th>通过标准(可量化)</th><th style="width:110px">证据</th></tr>
@@ -663,7 +671,7 @@ void m2_start(void)
     </section>
 
     <section class="section" id="s6">
-      <h2><span class="n">6/8</span>故障排查</h2>
+      <h2><span class="n">6/8</span> 故障排查</h2>
       <p class="lead">先按"现象"定位,再做最小验证。每行都给出预期结果和下一分支,不要一上来就改代码。</p>
       <table>
         <tr><th style="width:170px">现象</th><th>先查什么</th><th>预期结果</th><th style="width:210px">下一分支</th></tr>
@@ -711,14 +719,14 @@ void m2_start(void)
     </section>
 
     <section class="section" id="s7">
-      <h2><span class="n">7/8</span>小测</h2>
+      <h2><span class="n">7/8</span> 小测</h2>
       <p class="muted" style="font-size:13px">4 题,点选项立即判分并显示解析;答对 ≥ 3 题算通过。</p>
       <div id="quiz"></div>
       <p class="muted" id="quiz-status">答对 0 / 4</p>
     </section>
 
     <section class="section" id="s8">
-      <h2><span class="n">8/8</span>下一步</h2>
+      <h2><span class="n">8/8</span> 下一步</h2>
       <p class="lead">M2 完成后,设备端已经能稳定产出数据;接下来把数据接到 Linux 网关,或用 M1 把协议细节补齐。</p>
       <table>
         <tr><th style="width:150px">下一步</th><th>内容</th><th style="width:170px">为什么现在做</th><th style="width:130px">状态</th></tr>
@@ -748,7 +756,7 @@ void m2_start(void)
         </tr>
       </table>
 
-      <h3><span class="n">8.1</span>M2 交付清单(实板部分标 hardware-pending)</h3>
+      <h3><span class="n">8.1</span> M2 交付清单(实板部分标 hardware-pending)</h3>
       <table class="mini">
         <tr><th>交付物</th><th>要求</th><th>证据</th></tr>
         <tr><td>固件源码</td><td>三个任务 + 队列 + IWDG 喂狗 + 丢帧计数,注释写清周期/优先级/阻塞点</td><td><span class="tag principle">principle</span> <span class="tag hw">hardware-pending</span></td></tr>
@@ -760,7 +768,907 @@ void m2_start(void)
         完成后回到 <a href="/projects/">项目实战</a> 对照阶段验收;整条链路见 <a href="/route/">学习路线</a>。
       </p>
     </section>
-    <!--PART4-->
   </main>
+
+  <script>
+    (function () {
+      'use strict';
+      function $(id) { return document.getElementById(id); }
+      function hex2(b) { return (b < 16 ? '0' : '') + b.toString(16).toUpperCase(); }
+      function ms(v) { return (Math.round(v * 10) / 10).toFixed(1) + 'ms'; }
+
+      /* ============================================================
+       * 1. 帧生成器:与 M1 契约一致(AA 55 | LEN | SEQ | CMD | DATA | XOR)
+       * ============================================================ */
+      (function frameBuilder() {
+        var tempEl = $('f-temp'), humiEl = $('f-humi'), seqEl = $('f-seq'), out = $('f-out');
+        if (!out) return;
+
+        function render() {
+          var temp = parseFloat(tempEl.value);
+          var humi = parseFloat(humiEl.value);
+          var seq = parseInt(seqEl.value, 10);
+          if (!isFinite(temp)) temp = 0;
+          if (!isFinite(humi)) humi = 0;
+          if (!isFinite(seq)) seq = 0;
+          seq = ((seq % 256) + 256) % 256;
+
+          var tRaw = Math.round(temp * 100);
+          tRaw = Math.max(-32768, Math.min(32767, tRaw));
+          var hRaw = Math.round(humi * 100);
+          hRaw = Math.max(0, Math.min(65535, hRaw));
+          var tU = tRaw < 0 ? tRaw + 65536 : tRaw;
+          var data = [tU & 0xFF, (tU >> 8) & 0xFF, hRaw & 0xFF, (hRaw >> 8) & 0xFF];
+          var bytes = [0xAA, 0x55, 4, seq, 1].concat(data);
+          var xor = 4 ^ seq ^ 1;
+          for (var i = 0; i < data.length; i++) xor ^= data[i];
+          bytes.push(xor);
+
+          out.textContent =
+            '帧: ' + bytes.map(hex2).join(' ') + '\n' +
+            '温度 ' + temp.toFixed(2) + '℃ → ' + tRaw + ' = 0x' + hex2((tU >> 8) & 0xFF) + hex2(tU & 0xFF) +
+            ',小端写入 DATA[0..1] = ' + hex2(data[0]) + ' ' + hex2(data[1]) + '\n' +
+            '湿度 ' + humi.toFixed(2) + '% → ' + hRaw + ' = 0x' + hex2((hRaw >> 8) & 0xFF) + hex2(hRaw & 0xFF) +
+            ',小端写入 DATA[2..3] = ' + hex2(data[2]) + ' ' + hex2(data[3]) + '\n' +
+            'XOR = ' + [4, seq, 1].concat(data).map(hex2).join(' ^ ') + ' = ' + hex2(xor) +
+            (temp < -327.68 || temp > 327.67 ? '\n提示:温度超出 int16 范围,已截断。' : '');
+        }
+        [tempEl, humiEl, seqEl].forEach(function (el) {
+          if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
+        });
+        render();
+      })();
+
+      /* ============================================================
+       * 2. 实验 A:调度模拟(1ms 步长,固定优先级抢占,截止时间 = 释放 + 周期)
+       * ============================================================ */
+      (function schedLab() {
+        var canvas = $('a-gantt');
+        if (!canvas) return;
+        var ctrl = {
+          pa: $('a-pa'), ea: $('a-ea'), pra: $('a-pra'),
+          pb: $('a-pb'), eb: $('a-eb'), prb: $('a-prb'),
+          pc: $('a-pc'), prc: $('a-prc')
+        };
+        var viewEl = $('a-view');
+        var out = {
+          miss: $('a-miss'), missS: $('a-miss-s'), util: $('a-util'), utilS: $('a-util-s'),
+          idle: $('a-idle'), verdict: $('a-verdict'), verdictS: $('a-verdict-s'),
+          table: $('a-table').querySelector('tbody'), note: $('a-note')
+        };
+        var COLORS = { acq: '#5eead4', comm: '#7dd3fc', hb: '#c084fc' };
+        var HORIZON = 1000;
+
+        function readCfg() {
+          return {
+            pa: parseFloat(ctrl.pa.value) || 10,
+            ea: parseFloat(ctrl.ea.value) || 3,
+            pra: parseFloat(ctrl.pra.value) || 1,
+            pb: parseFloat(ctrl.pb.value) || 20,
+            eb: parseFloat(ctrl.eb.value) || 5,
+            prb: parseFloat(ctrl.prb.value) || 1,
+            pc: parseFloat(ctrl.pc.value) || 500,
+            prc: parseFloat(ctrl.prc.value) || 1
+          };
+        }
+
+        /* 纯函数:给定配置,返回 1000ms 窗口的调度结果 */
+        function simulate(cfg) {
+          var tasks = [
+            { id: 'acq', name: '采集', period: cfg.pa, exec: cfg.ea, prio: cfg.pra },
+            { id: 'comm', name: '通信', period: cfg.pb, exec: cfg.eb, prio: cfg.prb },
+            { id: 'hb', name: '心跳', period: cfg.pc, exec: 1, prio: cfg.prc }
+          ];
+          tasks.forEach(function (t) {
+            t.q = []; t.released = 0; t.done = 0; t.miss = 0; t.drop = 0;
+            t.maxResp = 0; t.sumResp = 0; t.firstMiss = -1;
+          });
+          var segs = [], busy = 0, jid = 0, t, i, j;
+
+          for (t = 0; t < HORIZON; t++) {
+            for (i = 0; i < tasks.length; i++) {
+              var tk = tasks[i];
+              if (t % tk.period === 0) {
+                tk.released++;
+                if (tk.q.length >= 8) { tk.drop++; continue; }
+                tk.q.push({ id: jid++, rel: t, rem: tk.exec, missed: false });
+              }
+            }
+            for (i = 0; i < tasks.length; i++) {
+              tk = tasks[i];
+              for (j = 0; j < tk.q.length; j++) {
+                var job = tk.q[j];
+                if (!job.missed && t - job.rel >= tk.period) {
+                  job.missed = true;
+                  tk.miss++;
+                  if (tk.firstMiss < 0) tk.firstMiss = t;
+                }
+              }
+            }
+            var pick = null;
+            for (i = 0; i < tasks.length; i++) {
+              tk = tasks[i];
+              if (!tk.q.length) continue;
+              if (!pick) { pick = tk; continue; }
+              if (tk.prio > pick.prio) pick = tk;
+              else if (tk.prio === pick.prio && tk.q[0].rel < pick.q[0].rel) pick = tk;
+            }
+            if (pick) {
+              var cur = pick.q[0];
+              cur.rem -= 1;
+              busy++;
+              var last = segs[segs.length - 1];
+              if (last && last.job === cur && last.t1 === t) last.t1 = t + 1;
+              else segs.push({ task: pick.id, job: cur, t0: t, t1: t + 1 });
+              if (cur.rem === 0) {
+                pick.q.shift();
+                pick.done++;
+                var resp = t + 1 - cur.rel;
+                pick.sumResp += resp;
+                if (resp > pick.maxResp) pick.maxResp = resp;
+                if (resp > pick.period && !cur.missed) { pick.miss++; cur.missed = true; }
+              }
+            }
+          }
+          for (i = 0; i < tasks.length; i++) {
+            tk = tasks[i];
+            for (j = 0; j < tk.q.length; j++) {
+              var left = tk.q[j];
+              if (!left.missed && HORIZON - left.rel >= tk.period) {
+                left.missed = true;
+                tk.miss++;
+                if (tk.firstMiss < 0) tk.firstMiss = HORIZON;
+              }
+            }
+          }
+          var U = 0, totalMiss = 0, firstMiss = -1;
+          for (i = 0; i < tasks.length; i++) {
+            U += tasks[i].exec / tasks[i].period;
+            totalMiss += tasks[i].miss;
+            if (tasks[i].firstMiss >= 0 && (firstMiss < 0 || tasks[i].firstMiss < firstMiss)) firstMiss = tasks[i].firstMiss;
+          }
+          return { tasks: tasks, segs: segs, busy: busy, U: U, miss: totalMiss, firstMiss: firstMiss };
+        }
+
+        function fitCanvas(cv, cssH) {
+          var dpr = window.devicePixelRatio || 1;
+          var cssW = cv.clientWidth || 900;
+          cv.width = Math.round(cssW * dpr);
+          cv.height = Math.round(cssH * dpr);
+          cv.style.height = cssH + 'px';
+          var ctx = cv.getContext('2d');
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          return { ctx: ctx, w: cssW, h: cssH };
+        }
+
+        function draw(res, cfg) {
+          var viewEnd = parseFloat(viewEl.value) || 500;
+          var laneH = 34, padL = 92, padR = 16, top = 6, axisH = 24;
+          var size = fitCanvas(canvas, top + laneH * 3 + axisH);
+          var ctx = size.ctx, w = size.w;
+          var plotW = Math.max(10, w - padL - padR);
+          var sx = function (t) { return padL + (t / viewEnd) * plotW; };
+          var laneY = function (i) { return top + i * laneH; };
+          var ids = ['acq', 'comm', 'hb'];
+          var axisStep = viewEnd === 200 ? 50 : (viewEnd === 500 ? 100 : 200);
+          var gridStep = axisStep / 2;
+          ctx.clearRect(0, 0, w, size.h);
+
+          for (var i = 0; i < 3; i++) {
+            ctx.fillStyle = '#0d131a';
+            ctx.fillRect(padL, laneY(i), plotW, laneH - 6);
+          }
+          ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+          ctx.lineWidth = 1;
+          for (var g = 0; g <= viewEnd; g += gridStep) {
+            var gx = Math.round(sx(g)) + 0.5;
+            ctx.beginPath(); ctx.moveTo(gx, top); ctx.lineTo(gx, top + laneH * 3 - 6); ctx.stroke();
+          }
+
+          var labels = [
+            '采集 ' + cfg.pa + 'ms P' + cfg.pra,
+            '通信 ' + cfg.pb + 'ms P' + cfg.prb,
+            '心跳 ' + cfg.pc + 'ms P' + cfg.prc
+          ];
+          ctx.font = '11px ui-monospace, Menlo, monospace';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          for (i = 0; i < 3; i++) {
+            ctx.fillStyle = '#8b9bb0';
+            ctx.fillText(labels[i], padL - 10, laneY(i) + (laneH - 6) / 2);
+          }
+
+          for (i = 0; i < res.segs.length; i++) {
+            var s = res.segs[i];
+            if (s.t0 >= viewEnd) continue;
+            var x0 = sx(s.t0), x1 = sx(Math.min(s.t1, viewEnd));
+            if (x1 - x0 < 1) x1 = x0 + 1;
+            ctx.fillStyle = s.job.missed ? '#f87171' : (COLORS[s.task] || '#8b9bb0');
+            ctx.globalAlpha = 0.92;
+            ctx.fillRect(x0, laneY(ids.indexOf(s.task)) + 4, Math.max(1, x1 - x0), laneH - 14);
+            ctx.globalAlpha = 1;
+          }
+
+          /* 释放刻度 */
+          ctx.strokeStyle = 'rgba(230,237,243,0.16)';
+          for (i = 0; i < res.tasks.length; i++) {
+            var tk = res.tasks[i];
+            var yBase = laneY(i) + laneH - 7;
+            for (var rt = 0; rt < viewEnd; rt += tk.period) {
+              ctx.beginPath();
+              ctx.moveTo(Math.round(sx(rt)) + 0.5, yBase - 3);
+              ctx.lineTo(Math.round(sx(rt)) + 0.5, yBase + 1);
+              ctx.stroke();
+            }
+          }
+
+          ctx.fillStyle = '#6b7d92';
+          ctx.font = '10px ui-monospace, Menlo, monospace';
+          ctx.textBaseline = 'top';
+          var ticks = Math.round(viewEnd / axisStep);
+          for (var k = 0; k <= ticks; k++) {
+            var tv = axisStep * k;
+            ctx.textAlign = k === 0 ? 'left' : (k === ticks ? 'right' : 'center');
+            ctx.fillText(k === ticks ? viewEnd + 'ms' : String(tv), sx(tv), top + laneH * 3 + 4);
+          }
+          ctx.strokeStyle = '#1e2a38';
+          ctx.beginPath();
+          ctx.moveTo(padL, top + laneH * 3 + 2.5);
+          ctx.lineTo(padL + plotW, top + laneH * 3 + 2.5);
+          ctx.stroke();
+        }
+
+        function renderStats(res, cfg) {
+          var pct = res.U * 100;
+          out.miss.textContent = String(res.miss);
+          out.miss.className = 'v ' + (res.miss === 0 ? 'ok' : 'bad');
+          out.missS.textContent = res.miss === 0 ? 'deadline miss · 无' : 'deadline miss';
+          out.util.textContent = pct.toFixed(1) + '%';
+          out.util.className = 'v ' + (pct > 100 ? 'bad' : (pct > 78 ? 'warn' : 'ok'));
+          out.utilS.textContent = 'Σ Ci/Ti';
+          out.idle.textContent = String(HORIZON - res.busy) + 'ms';
+          if (res.miss === 0) {
+            out.verdict.textContent = '可调度';
+            out.verdict.className = 'v ok';
+          } else if (pct > 100) {
+            out.verdict.textContent = '过载';
+            out.verdict.className = 'v bad';
+          } else {
+            out.verdict.textContent = '有超期';
+            out.verdict.className = 'v bad';
+          }
+          out.verdictS.textContent = 'RM 上界 78.0%';
+
+          var html = '';
+          for (var i = 0; i < res.tasks.length; i++) {
+            var tk = res.tasks[i];
+            html += '<tr>' +
+              '<td>' + tk.name + '</td>' +
+              '<td class="num">' + tk.period + 'ms</td>' +
+              '<td class="num">P' + tk.prio + '</td>' +
+              '<td class="num">' + tk.released + '</td>' +
+              '<td class="num">' + tk.done + '</td>' +
+              '<td class="num" style="color:' + (tk.miss ? '#f87171' : '#5eead4') + '">' + tk.miss + '</td>' +
+              '<td class="num">' + (tk.done ? tk.maxResp + 'ms' : '—') + '</td>' +
+              '<td class="num">' + (tk.done ? ms(tk.sumResp / tk.done) : '—') + '</td>' +
+              '</tr>';
+          }
+          out.table.innerHTML = html;
+
+          var note;
+          if (res.miss === 0) {
+            note = '1000ms 内 0 超期:三个任务都在各自截止时间内完成,U = ' + pct.toFixed(1) +
+              '%,低于 n=3 的 RM 上界 78.0%。最大响应 ' +
+              Math.max.apply(null, res.tasks.map(function (x) { return x.maxResp; })) + 'ms。';
+          } else {
+            var worst = res.tasks.slice().sort(function (a, b) { return b.miss - a.miss; })[0];
+            note = '第 ' + res.firstMiss + 'ms 出现第一次超期;' + worst.name + '任务超期 ' + worst.miss +
+              ' 次,最大响应 ' + worst.maxResp + 'ms(周期 ' + worst.period + 'ms)。U = ' + pct.toFixed(1) + '%' +
+              (pct > 100 ? ',处理器已经过载(需求超过 1000ms)。' : ',但优先级顺序导致低优先级任务拿不到足够空档。');
+            if (res.tasks[2].done === 0) note += ' 心跳任务被完全饿死(0 次完成)。';
+          }
+          out.note.textContent = note;
+          out.note.className = 'note' + (res.miss === 0 ? '' : ' bad');
+        }
+
+        function render() {
+          var cfg = readCfg();
+          $('a-ea-v').textContent = cfg.ea + 'ms';
+          $('a-eb-v').textContent = cfg.eb + 'ms';
+          $('a-pra-v').textContent = 'P' + cfg.pra;
+          $('a-prb-v').textContent = 'P' + cfg.prb;
+          $('a-prc-v').textContent = 'P' + cfg.prc;
+          var viewEnd = parseFloat(viewEl.value) || 500;
+          $('a-view-note').textContent = '横轴显示 0–' + viewEnd + 'ms,刻度小三角是任务释放时刻;右侧统计仍按 1000ms 窗口计算。';
+          var res = simulate(cfg);
+          draw(res, cfg);
+          renderStats(res, cfg);
+        }
+
+        var PRESETS = {
+          base: { pa: 10, ea: 3, pra: 3, pb: 20, eb: 5, prb: 2, pc: 500, prc: 1 },
+          prio: { pa: 10, ea: 6, pra: 1, pb: 20, eb: 5, prb: 3, pc: 500, prc: 2 },
+          over: { pa: 10, ea: 3, pra: 3, pb: 20, eb: 16, prb: 2, pc: 500, prc: 1 }
+        };
+        var presetBtns = document.querySelectorAll('[data-preset]');
+        Array.prototype.forEach.call(presetBtns, function (btn) {
+          btn.addEventListener('click', function () {
+            var p = PRESETS[btn.getAttribute('data-preset')];
+            if (!p) return;
+            ctrl.pa.value = String(p.pa); ctrl.pb.value = String(p.pb); ctrl.pc.value = String(p.pc);
+            ctrl.ea.value = String(p.ea); ctrl.eb.value = String(p.eb);
+            ctrl.pra.value = String(p.pra); ctrl.prb.value = String(p.prb); ctrl.prc.value = String(p.prc);
+            render();
+          });
+        });
+
+        Object.keys(ctrl).forEach(function (k) {
+          ctrl[k].addEventListener('input', render);
+          ctrl[k].addEventListener('change', render);
+        });
+        if (viewEl) {
+          viewEl.addEventListener('change', render);
+        }
+        render();
+        window.addEventListener('resize', render);
+      })();
+
+      /* ============================================================
+       * 3. 实验 B:队列深度 vs 生产/消费速率(10s 窗口,1ms 步长)
+       * ============================================================ */
+      (function queueLab() {
+        var canvas = $('b-chart');
+        if (!canvas) return;
+        var rpEl = $('b-rp'), rcEl = $('b-rc'), depEl = $('b-d');
+        var out = {
+          drop: $('b-drop'), dropS: $('b-drop-s'), peak: $('b-peak'), peakS: $('b-peak-s'),
+          lat: $('b-lat'), steady: $('b-steady'), steadyS: $('b-steady-s'), note: $('b-note')
+        };
+
+        function simulate(rp, rc, depth) {
+          var msTotal = 10000;
+          var q = 0, produced = 0, consumed = 0, dropped = 0, peak = 0, sumQ = 0;
+          var pAcc = 1, cAcc = 1, samples = [];
+          for (var t = 0; t < msTotal; t++) {
+            pAcc += rp / 1000;
+            while (pAcc >= 1) {
+              pAcc -= 1; produced++;
+              if (q < depth) q++; else dropped++;
+            }
+            if (cAcc > 1) cAcc = 1;
+            cAcc += rc / 1000;
+            while (cAcc >= 1 && q > 0) { cAcc -= 1; q--; consumed++; }
+            if (q > peak) peak = q;
+            sumQ += q;
+            if (t % 20 === 0) samples.push(q);
+          }
+          return {
+            produced: produced, consumed: consumed, dropped: dropped, peak: peak,
+            avgQ: sumQ / msTotal, samples: samples, depth: depth,
+            latency: (sumQ / msTotal) * (1000 / rc),
+            dropRate: produced ? dropped / produced : 0
+          };
+        }
+
+        function draw(res) {
+          var size = fitLocal(canvas, 160);
+          var ctx = size.ctx, w = size.w, h = size.h;
+          var padL = 42, padR = 16, padT = 18, padB = 26;
+          var plotW = Math.max(10, w - padL - padR);
+          var plotH = Math.max(10, h - padT - padB);
+          var maxY = Math.max(res.depth, res.peak, 1);
+          var topY = maxY * 1.15 + 0.4;
+          var sy = function (v) { return padT + plotH - (v / topY) * plotH; };
+          ctx.clearRect(0, 0, w, h);
+
+          ctx.font = '10px ui-monospace, Menlo, monospace';
+          ctx.fillStyle = '#6b7d92';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          for (var k = 0; k <= 2; k++) {
+            var val = Math.round(maxY * k / 2);
+            var yy = Math.round(sy(val)) + 0.5;
+            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+            ctx.beginPath(); ctx.moveTo(padL, yy); ctx.lineTo(padL + plotW, yy); ctx.stroke();
+            ctx.fillText(String(val), padL - 6, yy);
+          }
+
+          var n = res.samples.length;
+          ctx.beginPath();
+          ctx.moveTo(padL, sy(0));
+          for (var i = 0; i < n; i++) {
+            var x = padL + (i / (n - 1)) * plotW;
+            ctx.lineTo(x, sy(res.samples[i]));
+          }
+          ctx.lineTo(padL + plotW, sy(0));
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(94,234,212,0.10)';
+          ctx.fill();
+
+          ctx.beginPath();
+          for (i = 0; i < n; i++) {
+            x = padL + (i / (n - 1)) * plotW;
+            if (i === 0) ctx.moveTo(x, sy(res.samples[i]));
+            else ctx.lineTo(x, sy(res.samples[i]));
+          }
+          ctx.strokeStyle = '#5eead4';
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+
+          ctx.strokeStyle = 'rgba(248,113,113,0.85)';
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(padL, sy(res.depth) + 0.5);
+          ctx.lineTo(padL + plotW, sy(res.depth) + 0.5);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = '#f87171';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText('深度 ' + res.depth, padL + plotW, sy(res.depth) - 5);
+
+          ctx.fillStyle = '#6b7d92';
+          ctx.textBaseline = 'top';
+          ctx.textAlign = 'left';
+          ctx.fillText('0s', padL, padT + plotH + 6);
+          ctx.textAlign = 'center';
+          ctx.fillText('5s', padL + plotW / 2, padT + plotH + 6);
+          ctx.textAlign = 'right';
+          ctx.fillText('10s', padL + plotW, padT + plotH + 6);
+        }
+
+        function fitLocal(cv, cssH) {
+          var dpr = window.devicePixelRatio || 1;
+          var cssW = cv.clientWidth || 900;
+          cv.width = Math.round(cssW * dpr);
+          cv.height = Math.round(cssH * dpr);
+          cv.style.height = cssH + 'px';
+          var ctx = cv.getContext('2d');
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          return { ctx: ctx, w: cssW, h: cssH };
+        }
+
+        function render() {
+          var rp = parseFloat(rpEl.value) || 100;
+          var rc = parseFloat(rcEl.value) || 80;
+          var depth = parseInt(depEl.value, 10) || 8;
+          $('b-rp-v').textContent = rp + '/s';
+          $('b-rc-v').textContent = rc + '/s';
+          $('b-d-v').textContent = String(depth);
+          $('b-rp-t').textContent = '= 每 ' + (1000 / rp).toFixed(1) + 'ms 一帧';
+          $('b-rc-t').textContent = '= 每 ' + (1000 / rc).toFixed(1) + 'ms 一帧';
+
+          var res = simulate(rp, rc, depth);
+          draw(res);
+
+          out.drop.textContent = String(res.dropped);
+          out.drop.className = 'v ' + (res.dropped ? 'bad' : 'ok');
+          out.dropS.textContent = '占生产 ' + (res.dropRate * 100).toFixed(1) + '% · 共 ' + res.produced + ' 帧';
+          out.peak.textContent = String(res.peak);
+          out.peakS.textContent = '帧 / 深度 ' + depth;
+          out.lat.textContent = res.latency < 1 ? '≈0ms' : Math.round(res.latency) + 'ms';
+
+          var note;
+          if (rp > rc) {
+            var fillMs = Math.round(depth / (rp - rc) * 1000);
+            var altDepth = Math.min(64, depth * 2);
+            var alt = simulate(rp, rc, altDepth);
+            out.steady.textContent = '持续溢出';
+            out.steady.className = 'v bad';
+            out.steadyS.textContent = '生产 > 消费';
+            note = '净积压 ' + (rp - rc) + ' 帧/s:队列约在 ' + fillMs + 'ms 后触顶,稳态下每 1000ms 丢约 ' + (rp - rc) +
+              ' 帧。把深度从 ' + depth + ' 加到 ' + altDepth + ':丢帧 ' + res.dropped + ' → ' + alt.dropped +
+              ',平均排队时延 ' + Math.round(res.latency) + 'ms → ' + Math.round(alt.latency) +
+              'ms。结论:加深队列只推迟丢帧时刻,解决不了"生产快于消费"。';
+          } else if (rp === rc) {
+            out.steady.textContent = '临界';
+            out.steady.className = 'v warn';
+            out.steadyS.textContent = '生产 = 消费';
+            note = '生产恰好等于消费,平均积压不增长;但只要来一次抖动或重发,队列就会涨上去,建议预留 20% 的消费余量。';
+          } else {
+            out.steady.textContent = '可排空';
+            out.steady.className = 'v ok';
+            out.steadyS.textContent = '消费 > 生产';
+            note = '消费快于生产 ' + (rc - rp) + ' 帧/s,队列可排空;当前峰值 ' + res.peak +
+              ' 帧,深度只要覆盖这个峰值即可,再大只会增加排队时延。';
+          }
+          out.note.textContent = note;
+          out.note.className = 'note' + (rp > rc ? ' bad' : (rp === rc ? ' warn' : ''));
+        }
+
+        [rpEl, rcEl, depEl].forEach(function (el) {
+          el.addEventListener('input', render);
+          el.addEventListener('change', render);
+        });
+        render();
+        window.addEventListener('resize', render);
+      })();
+
+      /* ============================================================
+       * 4. 实验 C:等待策略对比(0.5ms 步长;忙等 / 轮询 / 阻塞)
+       * ============================================================ */
+      (function waitLab() {
+        var canvas = $('c-timeline');
+        if (!canvas) return;
+        var gapEl = $('c-gap'), paEl = $('c-pa'), pcEl = $('c-pc'), eaEl = $('c-ea');
+        var mode = 'busy';
+        var out = {
+          frames: $('c-frames'), avg: $('c-avg'), spin: $('c-spin'),
+          wdt: $('c-wdt'), wdtS: $('c-wdt-s'), note: $('c-note'), table: $('c-table')
+        };
+        var LANE = 34, PADL = 92, PADR = 16, TOP = 6, AXIS = 24;
+
+        function sim(opts) {
+          var STEP = 0.5, T = 1000;
+          var acqP = Math.round(10 / STEP), acqE = Math.round(opts.ea / STEP);
+          var sendE = Math.round(3 / STEP), pollP = Math.round((opts.pollGap || 5) / STEP);
+          var DEPTH = 8;
+          var acqReady = false, acqRem = 0, acqReleased = 0, acqDone = 0, acqMiss = 0, lastAcqDone = 0;
+          var queue = [], sending = null, waiting = false, waitStart = 0;
+          var spinSteps = 0, commDone = 0, commSum = 0, commMax = 0;
+          var resetAt = -1, qDrop = 0, pollPhase = 0, lanes = [], totalSteps = 0;
+          var t, i, stepMs;
+
+          function lpush(kind, idx) {
+            var last = lanes[lanes.length - 1];
+            if (last && last.kind === kind && last.t1 === idx) last.t1 = idx + 1;
+            else lanes.push({ kind: kind, t0: idx, t1: idx + 1 });
+          }
+
+          var steps = Math.round(T / STEP);
+          for (i = 0; i < steps; i++) {
+            t = i * STEP;
+            if (i % acqP === 0) {
+              if (acqReady && acqRem > 0) acqMiss++;
+              acqReady = true;
+              acqRem = acqE;
+              acqReleased++;
+            }
+            if (!sending && !waiting && queue.length === 0) {
+              waiting = true; waitStart = t; pollPhase = 0;
+            }
+
+            var commReady = false;
+            if (sending) commReady = true;
+            else if (queue.length) {
+              if (waiting && opts.mode === 'poll' && pollPhase % pollP !== 0) commReady = false;
+              else commReady = true;
+            } else if (waiting) {
+              if (opts.mode === 'busy') commReady = true;
+              else if (opts.mode === 'poll') commReady = (pollPhase % pollP === 0);
+            }
+
+            var run = null;
+            if (commReady && (run === null || opts.pc > opts.pa)) run = 'comm';
+            if (acqReady && acqRem > 0 && (run === null || opts.pa >= opts.pc)) run = 'acq';
+
+            if (run === 'comm') {
+              if (!sending && queue.length) {
+                sending = { enq: queue.shift() };
+                waiting = false;
+              }
+              if (sending) {
+                if (sending.rem === undefined) sending.rem = sendE;
+                sending.rem -= 1;
+                lpush('comm', i);
+                if (sending.rem <= 0) {
+                  var lat = (i + 1) * STEP - sending.enq;
+                  commDone++;
+                  commSum += lat;
+                  if (lat > commMax) commMax = lat;
+                  sending = null;
+                  if (queue.length === 0) { waiting = true; waitStart = (i + 1) * STEP; pollPhase = 0; }
+                }
+              } else if (waiting && opts.mode === 'busy') {
+                spinSteps++;
+                lpush('spin', i);
+              }
+            } else if (run === 'acq') {
+              acqRem--;
+              lpush('acq', i);
+              if (acqRem <= 0) {
+                acqReady = false;
+                acqDone++;
+                lastAcqDone = (i + 1) * STEP;
+                if (queue.length < DEPTH) queue.push((i + 1) * STEP);
+                else qDrop++;
+              }
+            }
+
+            if (waiting) pollPhase++;
+            totalSteps = i + 1;
+
+            /* 看门狗:采集任务每 10ms 喂狗,500ms 没喂 → IWDG 复位 */
+            if (t - lastAcqDone >= 500) { resetAt = t; break; }
+          }
+
+          return {
+            lanes: lanes, commDone: commDone,
+            commAvg: commDone ? commSum / commDone : 0,
+            commMax: commMax,
+            spinPct: totalSteps ? spinSteps / totalSteps * 100 : 0,
+            resetAt: resetAt, acqDone: acqDone, acqReleased: acqReleased,
+            acqMiss: acqMiss, qDrop: qDrop
+          };
+        }
+
+        function fit(cv, cssH) {
+          var dpr = window.devicePixelRatio || 1;
+          var cssW = cv.clientWidth || 900;
+          cv.width = Math.round(cssW * dpr);
+          cv.height = Math.round(cssH * dpr);
+          cv.style.height = cssH + 'px';
+          var ctx = cv.getContext('2d');
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          return { ctx: ctx, w: cssW, h: cssH };
+        }
+
+        function draw(res) {
+          var size = fit(canvas, TOP + LANE * 3 + AXIS);
+          var ctx = size.ctx, w = size.w;
+          var plotW = Math.max(10, w - PADL - PADR);
+          var sx = function (t) { return PADL + (t / 1000) * plotW; };
+          ctx.clearRect(0, 0, w, size.h);
+          for (var i = 0; i < 3; i++) {
+            ctx.fillStyle = '#0d131a';
+            ctx.fillRect(PADL, TOP + i * LANE, plotW, LANE - 6);
+          }
+          ctx.strokeStyle = 'rgba(255,255,255,0.045)';
+          for (var g = 0; g <= 1000; g += 100) {
+            var gx = Math.round(sx(g)) + 0.5;
+            ctx.beginPath(); ctx.moveTo(gx, TOP); ctx.lineTo(gx, TOP + LANE * 3 - 6); ctx.stroke();
+          }
+
+          var color = { acq: '#5eead4', comm: '#7dd3fc', spin: '#f87171' };
+          var lanemap = { acq: 0, comm: 1, spin: 2 };
+          for (i = 0; i < res.lanes.length; i++) {
+            var s = res.lanes[i];
+            if (s.kind === 'idle') continue;
+            var x0 = sx(s.t0 * 0.5), x1 = sx(s.t1 * 0.5);
+            if (x1 - x0 < 1) x1 = x0 + 1;
+            ctx.fillStyle = color[s.kind] || '#8b9bb0';
+            ctx.globalAlpha = 0.88;
+            ctx.fillRect(x0, TOP + lanemap[s.kind] * LANE + 4, Math.max(1, x1 - x0), LANE - 14);
+            ctx.globalAlpha = 1;
+          }
+
+          var labels = ['采集', '通信', '忙等空转'];
+          ctx.font = '11px ui-monospace, Menlo, monospace';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          for (i = 0; i < 3; i++) {
+            ctx.fillStyle = i === 2 ? (res.spinPct > 0 ? '#f87171' : '#5a6b7d') : '#8b9bb0';
+            ctx.fillText(labels[i], PADL - 10, TOP + i * LANE + (LANE - 6) / 2);
+          }
+
+          if (res.resetAt >= 0) {
+            var rx = sx(res.resetAt);
+            ctx.strokeStyle = '#f87171';
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath(); ctx.moveTo(rx, TOP); ctx.lineTo(rx, TOP + LANE * 3 - 6); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#f87171';
+            ctx.font = '11px ui-monospace, Menlo, monospace';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('看门狗复位 @' + res.resetAt + 'ms', rx + 6, TOP + 4);
+            ctx.fillStyle = '#5a6b7d';
+            ctx.fillText('复位后无数据', rx + 6, TOP + LANE * 3 - 22);
+          }
+
+          ctx.fillStyle = '#6b7d92';
+          ctx.font = '10px ui-monospace, Menlo, monospace';
+          ctx.textBaseline = 'top';
+          for (g = 0; g <= 1000; g += 200) {
+            ctx.textAlign = g === 0 ? 'left' : (g === 1000 ? 'right' : 'center');
+            ctx.fillText(g === 1000 ? '1000ms' : String(g), sx(g), TOP + LANE * 3 + 4);
+          }
+        }
+
+        function render() {
+          var opts = {
+            mode: mode,
+            pa: parseInt(paEl.value, 10) || 3,
+            pc: parseInt(pcEl.value, 10) || 4,
+            ea: parseInt(eaEl.value, 10) || 2,
+            pollGap: parseInt(gapEl.value, 10) || 5
+          };
+          $('c-gap-v').textContent = opts.pollGap + 'ms';
+          $('c-pa-v').textContent = 'P' + opts.pa;
+          $('c-pc-v').textContent = 'P' + opts.pc;
+          $('c-ea-v').textContent = opts.ea + 'ms';
+
+          var results = {
+            busy: sim({ mode: 'busy', pa: opts.pa, pc: opts.pc, ea: opts.ea, pollGap: opts.pollGap }),
+            poll: sim({ mode: 'poll', pa: opts.pa, pc: opts.pc, ea: opts.ea, pollGap: opts.pollGap }),
+            block: sim({ mode: 'block', pa: opts.pa, pc: opts.pc, ea: opts.ea, pollGap: opts.pollGap })
+          };
+          var cur = results[mode];
+          draw(cur);
+
+          out.frames.textContent = String(cur.commDone);
+          out.frames.className = 'v ' + (cur.commDone ? 'ok' : 'bad');
+          out.avg.textContent = cur.commDone ? ms(cur.commAvg) : '—';
+          out.spin.textContent = cur.spinPct.toFixed(0) + '%';
+          out.spin.className = 'v ' + (cur.spinPct > 20 ? 'bad' : 'ok');
+          if (cur.resetAt >= 0) {
+            out.wdt.textContent = '复位 @' + cur.resetAt + 'ms';
+            out.wdt.className = 'v bad';
+            out.wdtS.textContent = '采集 ' + Math.round(cur.resetAt) + 'ms 未运行,停止喂狗';
+          } else {
+            out.wdt.textContent = '未触发';
+            out.wdt.className = 'v ok';
+            out.wdtS.textContent = '采集周期内正常运行';
+          }
+
+          var rows = [
+            ['busy', '忙等 while(空){}'],
+            ['poll', '非阻塞轮询 ' + opts.pollGap + 'ms'],
+            ['block', '阻塞队列']
+          ];
+          var html = '';
+          rows.forEach(function (r) {
+            var v = results[r[0]];
+            var wdtCell = v.resetAt >= 0 ?
+              '<td style="color:#f87171">复位 @' + v.resetAt + 'ms</td>' :
+              '<td style="color:#5eead4">正常</td>';
+            html += '<tr' + (r[0] === mode ? ' style="background:rgba(94,234,212,.05)"' : '') + '>' +
+              '<td>' + r[1] + '</td>' +
+              '<td class="num">' + v.commDone + '</td>' +
+              '<td class="num">' + (v.commDone ? ms(v.commAvg) : '—') + '</td>' +
+              '<td class="num">' + (v.commDone ? ms(v.commMax) : '—') + '</td>' +
+              '<td class="num">' + v.spinPct.toFixed(0) + '%</td>' +
+              '<td class="num">' + v.acqDone + '/' + v.acqReleased + '</td>' +
+              wdtCell + '</tr>';
+          });
+          out.table.innerHTML = html;
+
+          var note;
+          if (mode === 'busy' && cur.resetAt >= 0) {
+            note = '忙等把采集饿死:' + opts.pc + ' > ' + opts.pa + ' 时通信一直 Ready,采集(以及依赖它的喂狗)永远轮不到,' +
+              '500ms 后看门狗复位。通信 0 帧不是"延迟大",是"永远等不到"。';
+          } else if (mode === 'busy') {
+            note = '采集优先级高于通信,所以没有饿死;但通信空转烧掉 ' + cur.spinPct.toFixed(0) +
+              '% 的 CPU,通信延迟并没有变好(仍然 ≈ 发送时间 ' + ms(cur.commAvg) +
+              ')。任何比通信低优先级的任务都会在这里被饿死。';
+          } else if (mode === 'poll') {
+            var delta = cur.commAvg - results.block.commAvg;
+            note = '轮询不占 CPU,但数据到达后最多要等一个轮询间隔(' + opts.pollGap + 'ms)才被发现:平均延迟 ' +
+              ms(results.block.commAvg) + ' → ' + ms(cur.commAvg) +
+              (delta < 0.2 ? '。间隔 1ms 时几乎看不出差异,把间隔调到 5ms 以上再对比。' : ',抖动也更大。间隔越大越省 CPU、延迟越大。');
+          } else {
+            note = '阻塞队列:队列空时任务进入 Blocked,数据一到立即唤醒;平均延迟 ' + ms(cur.commAvg) +
+              ',CPU 空转 ' + cur.spinPct.toFixed(0) + '%。这是本项目的推荐做法,前提是采集优先于喂狗。';
+          }
+          out.note.textContent = note;
+          out.note.className = 'note' + (cur.resetAt >= 0 ? ' bad' : (mode === 'poll' ? ' warn' : ''));
+        }
+
+        var waitBtns = document.querySelectorAll('[data-wait]');
+        Array.prototype.forEach.call(waitBtns, function (btn) {
+          btn.addEventListener('click', function () {
+            mode = btn.getAttribute('data-wait');
+            Array.prototype.forEach.call(waitBtns, function (b) { b.classList.toggle('on', b === btn); });
+            render();
+          });
+        });
+        [gapEl, paEl, pcEl, eaEl].forEach(function (el) {
+          el.addEventListener('input', render);
+          el.addEventListener('change', render);
+        });
+        render();
+        window.addEventListener('resize', render);
+      })();
+
+      /* ============================================================
+       * 5. 结果检查
+       * ============================================================ */
+      (function checklist() {
+        var box = $('checklist');
+        if (!box) return;
+        var inputs = box.querySelectorAll('input[type=checkbox]');
+        var status = $('check-status');
+        function update() {
+          var done = 0;
+          Array.prototype.forEach.call(inputs, function (c) { if (c.checked) done++; });
+          status.textContent = '已完成 ' + done + ' / ' + inputs.length +
+            (done === inputs.length ? ' ✓ M2 结果检查通过' : '');
+        }
+        Array.prototype.forEach.call(inputs, function (c) { c.addEventListener('change', update); });
+        update();
+      })();
+
+      /* ============================================================
+       * 6. 小测
+       * ============================================================ */
+      (function quiz() {
+        var host = $('quiz');
+        if (!host) return;
+        var QUESTIONS = [
+          {
+            stem: '采集任务 10ms 一次,队列深度 8。xQueueSend 的阻塞时间应该怎么给?',
+            opts: [
+              'portMAX_DELAY,队列满就一直等',
+              '0:满即返回失败,计丢帧,绝不阻塞采集周期',
+              '10ms,等满一个周期',
+              '1000ms,给通信任务足够时间'
+            ],
+            answer: 1,
+            explain: '采集是生产者,阻塞在队列上会拖长自己的周期,并连锁影响通信与心跳。正确做法是 0 阻塞 + 丢帧计数,再通过提高消费能力或降采样解决根因。'
+          },
+          {
+            stem: '同样的负载(采集 6ms / 10ms、通信 5ms / 20ms),把采集优先级从最高降到最低,会出现什么?',
+            opts: [
+              '没有影响,CPU 足够',
+              '通信会自动让出 CPU',
+              '采集只能拿到剩余空档,响应变长并大量超期',
+              '队列深度会自动增加'
+            ],
+            answer: 2,
+            explain: '固定优先级抢占下,低优先级任务只能用高优先级任务留下的空档。本页实验 A 的"同负载,优先级配错"预设:超期 50 次,采集最大响应 12ms > 周期 10ms。'
+          },
+          {
+            stem: '高优先级通信任务用 while (队列为空) {} 忙等,最危险的后果是?',
+            opts: [
+              '通信延迟略微增加',
+              '低优先级生产者与喂狗任务被饿死,最终看门狗复位',
+              '串口波特率下降',
+              '队列容量变小'
+            ],
+            answer: 1,
+            explain: '忙等让任务一直处于 Ready,CPU 不会让给低优先级任务。生产者产不出数据、喂狗任务跑不了,500ms 后 IWDG 复位。实验 C 里可直接复现:通信 0 帧、复位 @500ms。'
+          },
+          {
+            stem: '出现优先级反转(高优先级任务等低优先级任务持有的锁),正确的修法是?',
+            opts: [
+              '把低优先级任务的优先级永久调高',
+              '用带优先级继承的互斥量,并尽量缩短临界区',
+              '在临界区里关中断',
+              '把队列深度加大'
+            ],
+            answer: 1,
+            explain: 'xSemaphoreCreateMutex() 支持优先级继承:持锁者被中优先级任务抢占时临时提升,尽快释放。二值信号量没有继承;加大队列深度与锁无关。'
+          }
+        ];
+        var correct = 0, answered = 0;
+        var status = $('quiz-status');
+
+        QUESTIONS.forEach(function (q, qi) {
+          var wrap = document.createElement('div');
+          wrap.className = 'q';
+          var stem = document.createElement('div');
+          stem.className = 'stem';
+          stem.textContent = (qi + 1) + '. ' + q.stem;
+          wrap.appendChild(stem);
+          var explain = document.createElement('div');
+          explain.className = 'explain';
+          explain.textContent = '解析:' + q.explain;
+          q.opts.forEach(function (text, oi) {
+            var opt = document.createElement('div');
+            opt.className = 'opt';
+            opt.textContent = String.fromCharCode(65 + oi) + '. ' + text;
+            opt.addEventListener('click', function () {
+              if (wrap.getAttribute('data-done')) return;
+              wrap.setAttribute('data-done', '1');
+              answered++;
+              if (oi === q.answer) {
+                opt.classList.add('right');
+                correct++;
+              } else {
+                opt.classList.add('wrong');
+                wrap.querySelectorAll('.opt')[q.answer].classList.add('right');
+              }
+              explain.classList.add('show');
+              status.textContent = '答对 ' + correct + ' / ' + QUESTIONS.length +
+                (answered === QUESTIONS.length ? ' ✓ 全部作答' : '');
+            });
+            wrap.appendChild(opt);
+          });
+          wrap.appendChild(explain);
+          host.appendChild(wrap);
+        });
+      })();
+    })();
+  </script>
 </body>
 </html>

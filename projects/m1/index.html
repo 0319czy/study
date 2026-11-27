@@ -6,6 +6,7 @@
   <meta name="description" content="项目实战 M1 通信:AA 55 | LEN | SEQ | CMD | DATA | XOR 帧的构造、错误注入与 500ms 超时判定。含逐字节 XOR 计算过程、四类错误解析与判分小测;模拟结果标注 simulated,实物验证标注 hardware-pending。" />
   <title>M1 通信:AA 55 帧与 500ms 超时 · 1kni4r.top</title>
   <link rel="stylesheet" href="/shared/site.css" />
+  <link rel="icon" href="data:," />
   <style>
     :root {
       --bg: #080b10;
@@ -157,7 +158,7 @@
     .byte.miss { border-style: dashed; border-color: rgba(248, 113, 113, .45); background: transparent; display: flex; align-items: center; }
     .byte.miss .val { color: var(--red); font-size: 12px; font-weight: 500; }
 
-    .warn { display: none; color: var(--amber); font-size: 12.5px; line-height: 1.8; margin: 8px 0; }
+    .warnbox { display: none; color: var(--amber); font-size: 12.5px; line-height: 1.8; margin: 8px 0; }
 
     .calc { list-style: none; counter-reset: step; margin: 8px 0 0; padding: 0; }
     .calc li { position: relative; padding-left: 34px; margin: 11px 0; font-size: 13px; color: #c7d3df; line-height: 1.75; }
@@ -227,6 +228,7 @@
       padding: 5px 11px; border-radius: 999px; border: 1px solid; margin: 12px 0 0;
     }
     .status.ok { color: var(--teal); border-color: rgba(94, 234, 212, .35); background: rgba(94, 234, 212, .08); }
+    .status.warn { color: var(--amber); border-color: rgba(251, 191, 36, .35); background: rgba(251, 191, 36, .08); }
     .status.bad { color: var(--red); border-color: rgba(248, 113, 113, .35); background: rgba(248, 113, 113, .08); }
     .err-detail { font-size: 13px; color: #cfdae6; line-height: 1.8; margin: 8px 0 0; }
     .err-detail .k { color: var(--muted); font-family: var(--mono); font-size: 11.5px; margin-right: 6px; }
@@ -333,7 +335,7 @@
       <span class="chip">错误类型 <b>4 类</b></span>
       <span class="chip">校验 <b>XOR 单字节</b></span>
     </div>
-    <p class="muted small" style="margin-top:12px">前置:<a href="/projects/collect/">M0 采集</a>(已完成:能读到数据并解释单位)。本页不包含 CRC、重传或应答,契约没有定义的东西不擅自加。</p>
+    <p class="muted small" style="margin-top:12px">前置:<a href="/projects/collect/">M0 采集</a>(需先能读到数据并解释单位)。本页不包含 CRC、重传或应答,契约没有定义的东西不擅自加。</p>
 
     <div class="legend">
       <div class="legend-item"><span class="ev p">principle</span><span>由契约规则与手算/脚本可复现的结论,不依赖某块板子。</span></div>
@@ -644,7 +646,7 @@ F5 ^ 16 = E3   ← XOR = 0xE3,追加到帧尾</pre>
           <button type="button" class="btn ghost" id="b-copy">复制十六进制</button>
         </div>
         <div class="bytes" id="b-strip"></div>
-        <div class="warn" id="b-warn"></div>
+        <div class="warnbox" id="b-warn"></div>
         <div class="steps-wrap">
           <div class="out-label" style="margin-top:16px">计算过程(每一步都能手算复核)</div>
           <ol class="calc" id="b-steps"></ol>
@@ -685,7 +687,7 @@ F5 ^ 16 = E3   ← XOR = 0xE3,追加到帧尾</pre>
         <div class="res" id="g-summary"></div>
         <div class="verdict" id="g-verdict"></div>
         <div class="bars"><div class="bars-plot" id="g-bars"></div></div>
-        <p class="note">纵轴:相邻帧间隔(ms);虚线:500 ms 阈值。柱高按最大间隔等比缩放,红色 = 超过阈值。</p>
+        <p class="note">纵轴:相邻帧间隔(ms);虚线:500 ms 阈值。柱高按最大间隔等比缩放,红色 = 超过阈值。表中 t 是每个间隔结束时(后一帧)的累计时刻,以第一帧为 0。</p>
         <div class="table-wrap">
           <table class="gap-table">
             <thead><tr><th>#</th><th>到达时刻 t(ms)</th><th>间隔 Δt(ms)</th><th>Δt − 500</th><th>判定</th></tr></thead>
@@ -874,14 +876,6 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
         return x & 0xFF;
       }
       function toInt16(u) { return u >= 0x8000 ? u - 0x10000 : u; }
-      function roleOf(i, total) {
-        if (i === 0 || i === 1) { return '帧头'; }
-        if (i === 2) { return 'LEN'; }
-        if (i === 3) { return 'SEQ'; }
-        if (i === 4) { return 'CMD'; }
-        if (i === total - 1) { return 'XOR'; }
-        return 'DATA[' + (i - 5) + ']';
-      }
 
       /* ---------- 实验 1:帧构造器 ---------- */
 
@@ -1250,7 +1244,7 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
         var recv = bytes[need - 1];
         if (calc !== recv) {
           return {
-            status: 'error', step: 4, type: 'XOR 错', offset: need - 1,
+            status: 'error', step: 4, type: 'XOR 错', offset: need - 1, need: need,
             bad: [need - 1], calc: calc, recv: recv,
             detail: '接收末字节 = 0x' + hx(recv) + ',按前 ' + (need - 1) + ' 字节重算得 0x' + hx(calc) + '。',
             advice: ['整帧丢弃(消费 ' + need + ' 字节),不影响后续帧。',
@@ -1264,13 +1258,14 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
         var warnings = [];
         var res = {
           status: 'ok', step: 5, bytes: bytes, need: need, len: len, seq: seq,
-          cmd: cmd, checksum: recv, calc: calc, warnings: warnings
+          cmd: cmd, checksum: recv, calc: calc, warnings: warnings, contractIssue: false
         };
         if (bytes.length > need) {
           warnings.push('本帧之后还有 ' + (bytes.length - need) + ' 字节残留(粘包或噪声),本帧按 ' + need + ' 字节消费,剩余留给下一次解析。');
         }
         if (cmd === 0x01) {
           if (len !== 4) {
+            res.contractIssue = true;
             warnings.push('CMD = 0x01 要求 LEN = 4,当前 LEN = ' + len + ',契约不符,数据不可用。');
           } else {
             var tRaw = bytes[5] | (bytes[6] << 8);
@@ -1282,9 +1277,11 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
           }
         } else if (cmd === 0x02) {
           if (len !== 0) {
+            res.contractIssue = true;
             warnings.push('CMD = 0x02 心跳要求 LEN = 0,当前 LEN = ' + len + ',契约不符。');
           }
         } else {
+          res.contractIssue = true;
           warnings.push('CMD = 0x' + hx(cmd) + ' 不在契约内(仅 0x01/0x02),不得作为有效数据使用。');
         }
         return res;
@@ -1304,13 +1301,24 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
         return cell;
       }
 
-      function renderParse(res) {
+      function renderParse(res, inputBytes) {
         pBytes.textContent = '';
-        var bytes = res.bytes || [];
+        var bytes = inputBytes || res.bytes || [];
+        var headerOk = bytes.length >= 2 && bytes[0] === 0xAA && bytes[1] === 0x55;
+        var need = res.need || null;
         var badMap = {};
         (res.bad || []).forEach(function (i) { badMap[i] = true; });
         bytes.slice(0, 24).forEach(function (v, i) {
-          pBytes.appendChild(byteCell(i, v, roleOf(i, bytes.length), badMap[i]));
+          var role;
+          if (!headerOk) { role = i < 2 ? '帧头?' : '?'; }
+          else if (i === 0 || i === 1) { role = '帧头'; }
+          else if (i === 2) { role = 'LEN'; }
+          else if (i === 3) { role = 'SEQ'; }
+          else if (i === 4) { role = 'CMD'; }
+          else if (need && i === need - 1) { role = 'XOR'; }
+          else if (need && i >= need) { role = '残留'; }
+          else { role = 'DATA[' + (i - 5) + ']'; }
+          pBytes.appendChild(byteCell(i, v, role, badMap[i]));
         });
         if (bytes.length > 24) {
           var more = document.createElement('div');
@@ -1328,10 +1336,16 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
         pResult.textContent = '';
 
         var badge = document.createElement('div');
-        badge.className = 'status ' + (res.status === 'ok' ? 'ok' : 'bad');
-        badge.textContent = res.status === 'ok'
-          ? '解析通过 · 第 5 步语义完成 · 有效帧,可刷新 500 ms 计时'
-          : '第 ' + res.step + ' 步失败 · ' + res.type;
+        if (res.status !== 'ok') {
+          badge.className = 'status bad';
+          badge.textContent = '第 ' + res.step + ' 步失败 · ' + res.type;
+        } else if (res.contractIssue) {
+          badge.className = 'status warn';
+          badge.textContent = '结构/校验通过 · 但契约不符(见下方提示),不得作为有效数据';
+        } else {
+          badge.className = 'status ok';
+          badge.textContent = '解析通过 · 第 5 步语义完成 · 有效帧,可刷新 500 ms 计时';
+        }
         pResult.appendChild(badge);
 
         if (res.status !== 'ok') {
@@ -1376,7 +1390,7 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
         item('CMD', res.cmd === 0x01 ? '0x01 传感器' : '0x02 心跳');
         item('SEQ', String(res.seq));
         item('LEN', String(res.len) + ' / 总长 ' + res.need + ' B');
-        item('XOR 校验', '0x' + hx(res.recv), 'teal');
+        item('XOR 校验', '0x' + hx(res.checksum), 'teal');
         if (res.cmd === 0x01 && res.len === 4) {
           item('温度', res.temp.toFixed(2) + ' ℃', 'teal');
           item('湿度', res.hum.toFixed(2) + ' %', 'teal');
@@ -1417,7 +1431,7 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
           pResult.appendChild(ul);
           return;
         }
-        renderParse(parseFrame(parsed.bytes));
+        renderParse(parseFrame(parsed.bytes), parsed.bytes);
       }
 
       pInput.addEventListener('input', runParse);
@@ -1551,7 +1565,7 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
           d.appendChild(vv);
           gSummary.appendChild(d);
         }
-        item('发送次数', String(list.length));
+        item('间隔数 / 帧数', list.length + ' / ' + (list.length + 1));
         item('总时长', Math.round(stats.total) + ' ms');
         item('平均间隔', Math.round(stats.avg) + ' ms');
         item('最大间隔', stats.maxGap + ' ms');
