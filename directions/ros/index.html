@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="方向课:ROS 2 机器人应用——计算图、QoS、TF 树、Nav2 导航闭环与可验证的机器人项目。" />
+  <title>方向 · ROS 2 机器人应用 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 0; }
+    .tight { margin: 8px 0 0; padding-left: 22px; color: #c7d3df; font-size: 14px; line-height: 1.9; }
+    .tight li { margin: 2px 0; }
+    .section h3 { font-size: 16px; margin: 24px 0 8px; color: #dbe7f2; }
+    .section h4 { font-size: 14px; margin: 18px 0 6px; color: #c7d3df; }
+    .diagram { background: #0b1117; border: 1px solid #16212c; border-left: 3px solid #5eead4; border-radius: 10px; padding: 16px 18px; overflow-x: auto; color: #a9c0d4; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; line-height: 1.8; margin: 12px 0; }
+    .box { border: 1px solid #1e2a38; border-radius: 14px; padding: 18px; margin: 14px 0; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .legend { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: 12px; color: #8b9bb0; }
+    .legend .lg { display: inline-flex; align-items: center; gap: 6px; }
+    .legend .lg i { display: inline-block; width: 18px; height: 2px; border-radius: 2px; }
+    .hint { color: #8b9bb0; font-size: 12px; margin-top: 6px; line-height: 1.7; }
+    .graph-wrap { border: 1px solid #1e2a38; border-radius: 14px; background: #0b1117; padding: 6px; margin-top: 10px; overflow-x: auto; }
+    #graph { display: block; width: 100%; height: auto; min-width: 780px; }
+    #graph .node rect { fill: #101923; stroke: #243449; stroke-width: 1.2; }
+    #graph .topic rect { fill: #0d151e; stroke: #1e2a38; stroke-width: 1.2; }
+    #graph .node text.n-name { fill: #e6edf3; font-size: 13px; font-family: ui-monospace, Menlo, monospace; }
+    #graph .node text.n-desc { fill: #7d8fa3; font-size: 10.5px; }
+    #graph .topic text.t-name { fill: #c7d3df; font-size: 12px; font-family: ui-monospace, Menlo, monospace; }
+    #graph .topic text.t-meta { fill: #6f8297; font-size: 10px; font-family: ui-monospace, Menlo, monospace; }
+    #graph .col-head { fill: #6f8297; font-size: 11px; letter-spacing: .08em; }
+    #graph .edge { fill: none; stroke-width: 1.5; opacity: .28; }
+    #graph .edge.pub { stroke: #5eead4; }
+    #graph .edge.sub { stroke: #fbbf24; }
+    #graph .edge.srv { stroke: #a78bfa; stroke-dasharray: 5 5; opacity: .38; }
+    #graph .edge.active { opacity: .95; stroke-width: 2.4; }
+    #graph .edge.dim { opacity: .05; }
+    #graph .node.sel rect, #graph .topic.sel rect { stroke: #5eead4; fill: #12222b; }
+    #graph .node.peer rect { stroke: #3d6b68; }
+    #graph .topic.peer rect { stroke: #3d6b68; }
+    #graph .node:focus, #graph .topic:focus { outline: none; }
+    #graph .node:focus rect, #graph .topic:focus rect { stroke: #7dd3fc; }
+    #graph .node.pulse rect { stroke: #a78bfa; stroke-width: 2.2; fill: #181a2a; }
+    .sim-panels { display: grid; grid-template-columns: 1.15fr .85fr; gap: 14px; margin-top: 14px; }
+    .detail { border: 1px solid #1e2a38; border-radius: 12px; background: #0b1117; padding: 14px 16px; min-height: 260px; }
+    .detail h4 { margin: 0 0 4px; font-size: 15px; color: #e6edf3; font-family: ui-monospace, Menlo, monospace; }
+    .detail .tag { font-family: inherit; font-size: 10.5px; color: #8b9bb0; border: 1px solid #1e2a38; border-radius: 999px; padding: 1px 7px; margin-left: 6px; vertical-align: 2px; }
+    .detail .mono { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #9fb3c8; margin: 4px 0 10px; }
+    .detail .dline { margin: 8px 0; font-size: 13px; color: #c7d3df; line-height: 1.7; }
+    .detail .dline b { color: #8b9bb0; font-weight: 600; margin-right: 6px; }
+    .detail pre { background: #080d13; border: 1px solid #16212c; border-radius: 8px; padding: 10px; color: #b9c9d8; font-size: 11.5px; line-height: 1.6; overflow-x: auto; margin: 8px 0; }
+    .detail p.muted { font-size: 12px; line-height: 1.7; margin: 8px 0 0; }
+    .chip { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-size: 11px; padding: 1px 7px; border-radius: 6px; margin: 2px 4px 2px 0; border: 1px solid #1e2a38; color: #c7d3df; }
+    .chip.pub { border-color: rgba(94,234,212,.3); color: #7ee8d7; }
+    .chip.sub { border-color: rgba(251,191,36,.3); color: #f5cc6b; }
+    .qos-panel { border: 1px solid #1e2a38; border-radius: 12px; background: #0b1117; padding: 14px 16px; }
+    .qos-panel h4 { margin: 0 0 10px; font-size: 13.5px; color: #dbe7f2; }
+    .qos-panel h4 .mono { font-size: 12px; color: #5eead4; font-family: ui-monospace, Menlo, monospace; }
+    .qos-grid { display: grid; grid-template-columns: 58px 1fr 1fr; gap: 7px 8px; align-items: center; font-size: 12px; }
+    .qos-grid label { color: #8b9bb0; }
+    .qos-grid select { width: 100%; background: #0f151d; color: #e6edf3; border: 1px solid #1e2a38; border-radius: 7px; padding: 6px 7px; font-size: 11.5px; font-family: ui-monospace, Menlo, monospace; }
+    .qos-result { margin-top: 10px; padding: 9px 10px; border-radius: 8px; font-size: 12px; line-height: 1.65; border: 1px solid #1e2a38; color: #8b9bb0; }
+    .qos-result.ok { color: #5eead4; border-color: rgba(94,234,212,.28); background: rgba(94,234,212,.05); }
+    .qos-result.bad { color: #f87171; border-color: rgba(248,113,113,.3); background: rgba(248,113,113,.05); }
+    .qos-result b { margin-right: 4px; }
+    .sim-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .btn { background: #0f151d; color: #e6edf3; border: 1px solid #1e2a38; border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; font-family: inherit; }
+    .btn:hover { border-color: #2c4257; color: #5eead4; }
+    .btn.primary { border-color: rgba(94,234,212,.35); color: #5eead4; background: rgba(94,234,212,.06); }
+    .flow-log { margin-top: 10px; border-top: 1px dashed #1e2a38; padding-top: 8px; font-family: ui-monospace, Menlo, monospace; font-size: 11px; line-height: 1.7; color: #8b9bb0; max-height: 120px; overflow-y: auto; }
+    .flow-log div { margin: 2px 0; }
+    .svc-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; font-size: 12px; }
+    .svc-chip { background: rgba(167,139,250,.08); border: 1px solid rgba(167,139,250,.35); color: #c4b5fd; border-radius: 999px; padding: 5px 12px; font-size: 12px; cursor: pointer; font-family: ui-monospace, Menlo, monospace; }
+    .svc-chip:hover { background: rgba(167,139,250,.15); }
+    table.data { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; }
+    .checklist label { display: flex; gap: 8px; align-items: flex-start; color: #c7d3df; font-size: 13.5px; line-height: 1.75; margin: 7px 0; }
+    .checklist input { margin-top: 4px; flex: none; }
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin-bottom: 6px; }
+    .q .opt { display: block; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; cursor: pointer; }
+    .q .opt:hover { border-color: #2c4257; }
+    .q .opt.right { border-color: rgba(94,234,212,.5); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.5); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin-top: 4px; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    details.evidence { border: 1px solid #1e2a38; border-radius: 10px; background: #0b1117; padding: 12px 14px; margin: 12px 0; }
+    details.evidence summary { cursor: pointer; color: #9fb3c8; font-size: 13px; }
+    details.evidence[open] summary { margin-bottom: 10px; }
+    details.evidence pre { margin: 0; max-height: 420px; overflow: auto; background: #080d13; border: 1px solid #16212c; border-radius: 8px; padding: 12px; color: #b9c9d8; font-size: 11.5px; line-height: 1.55; }
+    pre.term { background: #080d13; border: 1px solid #16212c; border-left: 3px solid #5eead4; border-radius: 8px; padding: 13px 15px; overflow-x: auto; color: #c7d3df; font-size: 12px; line-height: 1.65; margin: 10px 0; }
+    ol.steps { margin: 10px 0 0; padding-left: 22px; color: #c7d3df; font-size: 13.5px; line-height: 1.8; }
+    ol.steps > li { margin: 12px 0; }
+    ol.steps pre { margin: 7px 0; }
+    .note { border-left: 3px solid #fbbf24; background: rgba(251,191,36,.04); padding: 10px 13px; border-radius: 0 8px 8px 0; color: #b9c9d8; font-size: 13px; line-height: 1.75; margin: 12px 0; }
+    @media (max-width: 720px) {
+      .page .section > table { display: block; overflow-x: auto; }
+      .page .section > table th, .page .section > table td { white-space: normal; }
+    }
+    @media (max-width: 900px) {
+      .sim-panels { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">DIRECTION 07 · ROS 2</div>
+    <h1>ROS 2 机器人应用:话题、TF 与导航闭环</h1>
+    <p class="lead">
+      方向目标:用一个能跑的最小机器人把 ROS 2 的三条主线串起来——话题传数据、TF 统一坐标、Nav2 把目标变成速度。
+      计算图要能点开看、能解释每条边的方向与 QoS,并用日志和 rosbag 证明它真的动了。
+    </p>
+    <p class="muted">对应学习路线阶段 07 · 前置:<a href="/foundations/linux-user/">Linux 用户态</a> · <a href="/ros/">ROS 学习实验室</a> · <a href="/projects/m1/">M1 通信</a></p>
+    <div class="hero-meta">
+      <span class="pill ok">compiled:本页 TF 检查器已用 gcc 13.3.0 实测</span>
+      <span class="pill">principle:计算图 / QoS / 导航机制</span>
+      <span class="pill warn">hardware-pending:ROS 2 运行与实车</span>
+    </div>
+
+    <div class="section">
+      <h2>1. 目标</h2>
+      <p class="lead">学完这一页,你应该能面对一个陌生的 ROS 2 系统,先画出计算图与 TF 树,再定位"为什么收不到数据/为什么不走",而不是从报错开始盲改参数。</p>
+      <ul class="tight">
+        <li>区分 topic / service / action,并为传感器流、一次性操作、长任务分别选对通信方式。</li>
+        <li>解释 QoS 的 reliability 与 durability,能判断一对发布/订阅为什么连不上。</li>
+        <li>画出 map→odom→base_link→laser 的 TF 链,指出每段的发布者与失效后果。</li>
+        <li>完成一次 Nav2 导航闭环:目标 → 全局路径 → 局部控制 → /cmd_vel,并留下证据。</li>
+      </ul>
+      <table style="margin-top:14px">
+        <tr><th>成果</th><th>完成标准</th><th>证据标识</th></tr>
+        <tr><td>计算图判断</td><td>看到节点/话题列表能还原数据流,并说明 QoS 不兼容的两种典型组合</td><td><span class="pill">principle</span></td></tr>
+        <tr><td>TF 链检查</td><td>本页工具能回溯 TF、发现多父/成环,并把四元数换算成 yaw</td><td><span class="pill ok">compiled</span></td></tr>
+        <tr><td>导航闭环</td><td>给定地图与目标,机器人输出 /cmd_vel 并到达目标附近</td><td><span class="pill warn">hardware-pending</span></td></tr>
+        <tr><td>工程化交付</td><td>包、launch、参数、地图、rosbag、README 齐备,别人能复现</td><td><span class="pill">principle</span></td></tr>
+      </table>
+      <p class="muted" style="font-size:12.5px;line-height:1.8">
+        证据口径:compiled = 本页代码已在本机 gcc 13.3.0 实际编译运行;principle = 机制与命令模板,未在本机执行;
+        hardware-pending = 依赖 ROS 2 运行环境、仿真器或实车。本机未安装 ROS 2,因此不粘贴任何"已运行 ros2"的伪造输出。
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在本页哪里</th><th>去哪补</th></tr>
+        <tr><td>Linux 命令行 + Python</td><td>写 rclpy 节点、launch、环境变量与工作空间</td><td><a href="/foundations/linux-user/">Linux 用户态入门</a></td></tr>
+        <tr><td>C++ 基础(可选)</td><td>读 rclcpp 示例、理解节点/执行器</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>坐标、旋转、四元数</td><td>TF 变换、yaw、base_link 到 laser 的外参</td><td><a href="/route/">学习路线 · 阶段 01</a></td></tr>
+        <tr><td>UDP / 组播 / 网络基础</td><td>DDS 发现、跨机器与容器通信</td><td><a href="/projects/m1/">M1 通信</a></td></tr>
+        <tr><td>差速运动学</td><td>把 /cmd_vel 的线速度/角速度变成轮速与里程计</td><td><a href="/ros/">ROS 学习实验室</a></td></tr>
+        <tr><td>CMake / colcon 基础</td><td>建包、编译、source 工作空间</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+      </table>
+      <p class="muted">最低门槛:能在 Ubuntu 上装包、跑命令、读日志,知道 Python 的类与回调函数。不需要先学完 ROS 1——ROS 2 的概念是另一套,但"节点/话题"的直觉可以迁移。</p>
+    </div>
+
+    <div class="section">
+      <h2>3. 原理与图示</h2>
+      <p class="lead">ROS 2 不是"一个库",而是一套约定:节点通过命名的 topic / service / action 通信,坐标系通过 TF 统一,生命周期节点由状态机管理。先学会读图,再写代码。</p>
+
+      <h3>3.1 四种通信方式</h3>
+      <table>
+        <tr><th>机制</th><th>方向与语义</th><th>典型用途</th><th>关键点</th></tr>
+        <tr><td>话题 topic</td><td>多对多、异步、有队列</td><td>/scan、/odom、/cmd_vel、/tf</td><td>发布者不关心谁在听;QoS 必须兼容</td></tr>
+        <tr><td>服务 service</td><td>一对一、请求/响应、可超时</td><td>保存地图、清空代价地图、查询状态</td><td>不要用它传持续数据流</td></tr>
+        <tr><td>动作 action</td><td>长任务 + 反馈 + 可取消</td><td>/navigate_to_pose、机械臂抓取</td><td>goal / feedback / result 三段式</td></tr>
+        <tr><td>参数 parameter</td><td>节点内配置、可运行时修改</td><td>速度上限、代价地图膨胀半径</td><td>改完要确认节点是否真的更新</td></tr>
+      </table>
+
+      <h3>3.2 DDS 发现与 QoS:为什么"话题在,数据没有"</h3>
+      <p class="lead">ROS 2 默认用 DDS 做去中心化发现:没有 master,节点靠组播/单播互相认识。<code>ROS_DOMAIN_ID</code> 不同、网络不通、容器没共享网络,都会表现为"两个终端互相看不见"。话题存在但收不到,则优先查 QoS。</p>
+      <table>
+        <tr><th>发布者 \ 订阅者</th><th>订阅 reliable</th><th>订阅 best_effort</th></tr>
+        <tr><td>发布 reliable</td><td>兼容</td><td>兼容(订阅端接受较弱保证)</td></tr>
+        <tr><td>发布 best_effort</td><td><span style="color:#f87171">不兼容</span></td><td>兼容</td></tr>
+      </table>
+      <p class="muted">durability 同理:订阅端要 <code>transient_local</code>(晚加入也能拿到最后一帧),发布端必须是 <code>transient_local</code>;发布端 <code>volatile</code> + 订阅端 <code>transient_local</code> 直接不兼容。传感器数据常配 <code>best_effort</code> + <code>volatile</code>;地图 <code>/map</code> 与 <code>/tf_static</code> 常配 <code>transient_local</code>。</p>
+      <pre class="diagram">sensor_data  : best_effort / volatile       → 允许丢帧,低延迟
+map          : reliable / transient_local    → 晚加入的订阅者也能拿到整张图
+tf_static    : reliable / transient_local    → 静态变换只发一次
+tf (dynamic) : reliable / volatile           → 高频、带时间戳的变换流</pre>
+
+      <h3>3.3 TF 树:一个子帧只能有一个父帧</h3>
+      <pre class="diagram">map ──(定位或建图:SLAM / AMCL)──▶ odom ──(底盘驱动:轮速里程计)──▶ base_link
+                                                                  │
+                                                     (URDF / static) ├──▶ laser
+                                                                     └──▶ camera_link</pre>
+      <table>
+        <tr><th>变换</th><th>通常由谁发布</th><th>作用</th><th>断掉会怎样</th></tr>
+        <tr><td>map → odom</td><td>SLAM 建图节点或 AMCL 定位</td><td>把地图坐标对齐到里程计坐标,吸收累积误差</td><td>导航/建图报 "target frame does not exist" 或地图漂移</td></tr>
+        <tr><td>odom → base_link</td><td>底盘驱动(轮速积分)</td><td>机器人相对起点在哪里</td><td>costmap 无法把雷达点投到全局,规划失败</td></tr>
+        <tr><td>base_link → laser</td><td>URDF + robot_state_publisher / static_transform_publisher</td><td>雷达安装外参</td><td>障碍物位置整体偏移,可能"看不见"墙</td></tr>
+      </table>
+      <p class="muted">建图时由 SLAM 发布 map→odom;切到导航时由 AMCL 接替。两个节点同时发布同一段 TF 会互相打架——切换前先停掉建图节点。查链:<code>ros2 run tf2_ros tf2_echo map laser</code>;画树:<code>ros2 run tf2_tools view_frames</code>。</p>
+
+      <h3>3.4 Nav2:从目标到 /cmd_vel</h3>
+      <pre class="diagram">RViz 2D Goal / action ──▶ bt_navigator(行为树)
+                              │
+                              ├──▶ planner_server ──/plan──▶ controller_server ──/cmd_vel──▶ 底盘
+                              │         ▲                         ▲
+                              │         │                         │
+                              └──▶ 全局/局部 costmap ◀── /map、/scan、TF
+                                     (static + obstacle + inflation 层)</pre>
+      <p class="muted">Nav2 的节点是生命周期节点:<code>unconfigured → inactive → active</code>。<code>lifecycle_manager</code> 负责按顺序 configure/activate;如果 controller_server 停在 inactive,目标可能被拒绝或超时,链路上不会出现 /cmd_vel。用 <code>ros2 lifecycle get /controller_server</code> 确认状态。</p>
+
+      <h3>3.5 时间戳与执行器:两个隐蔽的坑</h3>
+      <ul class="tight">
+        <li><b>TF 时间戳</b>:每条变换都带时间。用消息头的时间去查 TF,查不到会报 extrapolation;回放 rosbag 时忘了 <code>use_sim_time:=true</code> 是最常见原因。</li>
+        <li><b>执行器</b>:单线程执行器里一个阻塞回调会饿死定时器与订阅;长任务用 MultiThreadedExecutor + callback group,或拆到独立节点。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>4. 操作实验:ROS 2 计算图模拟器</h2>
+      <p class="lead">下面把 mybot 的计算图压缩成 6 个业务节点、1 个命令行节点与 8 个话题。点击节点或话题看连接关系;选中话题后改 QoS 可以复现"话题存在但收不到数据";点"发布消息"看数据从发布者经话题流向订阅者。</p>
+
+      <div class="box">
+        <div class="legend">
+          <span class="lg"><i style="background:#5eead4"></i>发布</span>
+          <span class="lg"><i style="background:#fbbf24"></i>订阅</span>
+          <span class="lg"><i style="background:#a78bfa"></i>服务(虚线)</span>
+          <span class="muted">TL = transient_local</span>
+        </div>
+        <div class="hint">提示:点图里的方框或右侧话题;QoS 不兼容时"发布消息"只会记一条丢弃日志,不会画流向。</div>
+        <div class="graph-wrap">
+          <svg id="graph" viewBox="0 0 980 620" role="img" aria-label="ROS 2 计算图:节点与话题的连接关系"></svg>
+        </div>
+        <div class="sim-panels">
+          <div class="detail" id="detail" aria-live="polite"></div>
+          <div class="qos-panel">
+            <h4>QoS 兼容性检查 · <span class="mono" id="qos-topic">/scan</span></h4>
+            <div class="qos-grid">
+              <label for="pub-rel">发布者</label>
+              <select id="pub-rel"><option value="reliable">reliable</option><option value="best_effort">best_effort</option></select>
+              <select id="pub-dur"><option value="volatile">volatile</option><option value="transient_local">transient_local</option></select>
+              <label for="sub-rel">订阅者</label>
+              <select id="sub-rel"><option value="reliable">reliable</option><option value="best_effort">best_effort</option></select>
+              <select id="sub-dur"><option value="volatile">volatile</option><option value="transient_local">transient_local</option></select>
+            </div>
+            <div class="qos-result ok" id="qos-result"></div>
+            <div class="sim-actions">
+              <button type="button" class="btn primary" id="send-btn">发布消息</button>
+              <button type="button" class="btn" id="svc-btn">调用服务</button>
+            </div>
+            <div class="flow-log" id="flow-log" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="svc-row">
+          <span class="muted">服务</span>
+          <button type="button" class="svc-chip" data-svc="/mapper/save_map">/mapper/save_map</button>
+          <span class="muted">slam_toolbox/srv/SaveMap · server /mapper · client ros2 CLI</span>
+        </div>
+      </div>
+
+      <h3>实验任务</h3>
+      <ol class="steps">
+        <li>选中 /scan,把订阅者 reliability 改成 reliable,观察"不兼容";说明为什么不能靠重启节点解决。</li>
+        <li>选中 /map,把发布者 durability 改成 volatile,观察不兼容;解释 transient_local 对"晚加入的 costmap"为什么必要。</li>
+        <li>点击服务 /mapper/save_map,查看 request/response;说明为什么保存地图适合 service 而不是 topic。</li>
+        <li>点"发布消息"看 /scan 的流向,再点 /tf 观察一个话题有多个发布者/订阅者时动画怎么分叉。</li>
+      </ol>
+
+      <h3>证据:compiled(本机 gcc 13.3.0 实测)</h3>
+      <p class="muted">TF 树最容易出错的地方是"链断了/多个父帧/成环",以及四元数到 yaw 的换算。下面这个无 ROS 依赖的检查器把这几条规则固化成代码,用于验证本页 TF 章节的算法;ROS 图本身仍需在目标环境运行。</p>
+      <pre class="term">$ gcc --version | head -1
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+$ gcc -std=c11 -O2 -Wall -Wextra -Werror -o tfcheck tfcheck.c -lm
+$ printf &#x27;map odom\nodom base_link\nbase_link laser\nbase_link camera_link\n&#x27; | ./tfcheck laser 0 0 0.7071068 0.7071068
+== TF 链检查 / mybot ==
+边数        : 4
+目标帧      : laser
+根帧        : map
+深度        : 3
+链路        : map → odom → base_link → laser
+检查        : OK(每个子帧唯一父帧,链路无环)
+节点关系    : map→odom  odom→base_link  base_link→laser  base_link→camera_link
+四元数      : (0.000000, 0.000000, 0.707107, 0.707107) |q| = 1.000000
+yaw         : 90.00 deg(绕 z 轴,逆时针为正)
+$ printf &#x27;odom base_link\nbase_link odom\n&#x27; | ./tfcheck base_link; echo &quot;exit=$?&quot;
+FAIL: 检测到环 odom → base_link
+exit=3
+</pre>
+      <details class="evidence">
+        <summary>展开 tfcheck.c 完整源码(与上面运行的是同一份,约 150 行)</summary>
+        <pre>/* tfcheck.c —— TF 链与四元数检查器(教学用,无 ROS 依赖)
+ *
+ * 从标准输入读 &quot;parent child&quot; 边,检查:
+ *   1) 每个子帧是否只有一个父帧(TF 树不能有多个父);
+ *   2) 从目标帧回溯到根帧的链路是否成环;
+ *   3) 可选:把 (x,y,z,w) 四元数归一化并换算成 yaw(度)。
+ *
+ * 编译: gcc -std=c11 -O2 -Wall -Wextra -Werror -o tfcheck tfcheck.c -lm
+ * 运行: ./tfcheck laser 0 0 0.7071068 0.7071068 &lt;&lt;&#x27;EOF&#x27;
+ *       map odom
+ *       odom base_link
+ *       base_link laser
+ *       EOF
+ * 退出码: 0 通过;1 用法/输入错误;2 多父;3 成环;4 目标帧不存在
+ */
+#include &lt;math.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#define MAX_EDGE 32
+#define NAME_LEN 32
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+struct edge {
+  char parent[NAME_LEN];
+  char child[NAME_LEN];
+};
+
+static struct edge g_edge[MAX_EDGE];
+static int g_n;
+
+static int read_edges(void)
+{
+  char parent[NAME_LEN], child[NAME_LEN];
+  while (scanf(&quot;%31s %31s&quot;, parent, child) == 2) {
+    if (g_n &gt;= MAX_EDGE) {
+      fprintf(stderr, &quot;边数超过 %d,请拆分 TF 树检查\n&quot;, MAX_EDGE);
+      return -1;
+    }
+    snprintf(g_edge[g_n].parent, NAME_LEN, &quot;%s&quot;, parent);
+    snprintf(g_edge[g_n].child, NAME_LEN, &quot;%s&quot;, child);
+    g_n++;
+  }
+  return g_n;
+}
+
+/* 返回父边下标;没有父边返回 -1;多个不同父帧返回 -2 */
+static int parent_of(const char *child)
+{
+  int found = -1;
+  for (int i = 0; i &lt; g_n; i++) {
+    if (strcmp(g_edge[i].child, child) != 0)
+      continue;
+    if (found &gt;= 0 &amp;&amp; strcmp(g_edge[found].parent, g_edge[i].parent) != 0)
+      return -2;
+    found = i;
+  }
+  return found;
+}
+
+static int frame_exists(const char *name)
+{
+  for (int i = 0; i &lt; g_n; i++)
+    if (strcmp(g_edge[i].parent, name) == 0 || strcmp(g_edge[i].child, name) == 0)
+      return 1;
+  return 0;
+}
+
+int main(int argc, char **argv)
+{
+  if (argc != 2 &amp;&amp; argc != 6) {
+    fprintf(stderr, &quot;用法: %s &lt;目标帧&gt; [qx qy qz qw]\n&quot;, argv[0]);
+    return 1;
+  }
+  if (read_edges() &lt; 0)
+    return 1;
+  if (g_n == 0) {
+    fprintf(stderr, &quot;标准输入没有 \&quot;parent child\&quot; 边\n&quot;);
+    return 1;
+  }
+
+  const char *target = argv[1];
+  if (!frame_exists(target)) {
+    fprintf(stderr, &quot;目标帧 %s 不在输入边中(检查 frame_id 拼写)\n&quot;, target);
+    return 4;
+  }
+
+  char chain[MAX_EDGE + 1][NAME_LEN];
+  int depth = 0;
+  snprintf(chain[depth++], NAME_LEN, &quot;%s&quot;, target);
+
+  char current[NAME_LEN];
+  snprintf(current, NAME_LEN, &quot;%s&quot;, target);
+  while (1) {
+    int idx = parent_of(current);
+    if (idx == -2) {
+      fprintf(stderr, &quot;FAIL: 帧 %s 有多个不同父帧,TF 树非法\n&quot;, current);
+      return 2;
+    }
+    if (idx &lt; 0)
+      break; /* 到根帧 */
+    const char *next = g_edge[idx].parent;
+    for (int i = 0; i &lt; depth; i++) {
+      if (strcmp(chain[i], next) == 0) {
+        fprintf(stderr, &quot;FAIL: 检测到环 %s → %s\n&quot;, current, next);
+        return 3;
+      }
+    }
+    if (depth &gt;= MAX_EDGE) {
+      fprintf(stderr, &quot;FAIL: 链路过长,疑似成环\n&quot;);
+      return 3;
+    }
+    snprintf(current, NAME_LEN, &quot;%s&quot;, next);
+    snprintf(chain[depth++], NAME_LEN, &quot;%s&quot;, next);
+  }
+
+  printf(&quot;== TF 链检查 / mybot ==\n&quot;);
+  printf(&quot;边数        : %d\n&quot;, g_n);
+  printf(&quot;目标帧      : %s\n&quot;, target);
+  printf(&quot;根帧        : %s\n&quot;, chain[depth - 1]);
+  printf(&quot;深度        : %d\n&quot;, depth - 1);
+  printf(&quot;链路        : &quot;);
+  for (int i = depth - 1; i &gt;= 0; i--)
+    printf(&quot;%s%s&quot;, chain[i], i == 0 ? &quot;\n&quot; : &quot; → &quot;);
+  printf(&quot;检查        : OK(每个子帧唯一父帧,链路无环)\n&quot;);
+  printf(&quot;节点关系    : &quot;);
+  for (int i = 0; i &lt; g_n; i++)
+    printf(&quot;%s→%s%s&quot;, g_edge[i].parent, g_edge[i].child, i == g_n - 1 ? &quot;\n&quot; : &quot;  &quot;);
+
+  if (argc == 6) {
+    double qx = atof(argv[2]), qy = atof(argv[3]), qz = atof(argv[4]), qw = atof(argv[5]);
+    double norm = sqrt(qx * qx + qy * qy + qz * qz + qw * qw);
+    if (norm &lt; 1e-9) {
+      fprintf(stderr, &quot;四元数模长为 0,非法\n&quot;);
+      return 1;
+    }
+    qx /= norm;
+    qy /= norm;
+    qz /= norm;
+    qw /= norm;
+    double yaw = atan2(2.0 * (qw * qz + qx * qy), 1.0 - 2.0 * (qy * qy + qz * qz));
+    printf(&quot;四元数      : (%.6f, %.6f, %.6f, %.6f) |q| = %.6f\n&quot;, qx, qy, qz, qw,
+           sqrt(qx * qx + qy * qy + qz * qz + qw * qw));
+    printf(&quot;yaw         : %.2f deg(绕 z 轴,逆时针为正)\n&quot;, yaw * 180.0 / M_PI);
+  }
+  return 0;
+}
+</pre>
+      </details>
+      <p class="muted" style="font-size:12.5px">说明:该工具在主机上编译运行通过,验证的是 TF 链算法与 yaw 换算;输入是手工写的边表,不是从 ROS 图实时读取。真实系统的 <code>ros2 run tf2_tools view_frames</code> 输出才是运行证据(hardware-pending)。</p>
+
+      <h3>方向项目:mybot 差速小车——话题 → TF → 导航闭环</h3>
+      <p class="lead">目标不是"装好 Nav2",而是能解释每一步的数据从哪里来、到哪里去,并在失败时用工具定位。推荐先做仿真,再上实车。</p>
+      <table>
+        <tr><th>项目要素</th><th>约定</th></tr>
+        <tr><td>平台</td><td>Ubuntu 24.04 + ROS 2 Jazzy(22.04 对应 Humble,版本不要混搭);Gazebo 仿真或差速实车</td></tr>
+        <tr><td>产物</td><td><code>mybot_bringup</code> 包(节点 / launch / 参数 / URDF)、地图、rosbag、README</td></tr>
+        <tr><td>验收</td><td><code>/scan</code> 稳定有数据;TF 链完整;Nav2 接受目标并输出 <code>/cmd_vel</code>;机器人到达目标 0.3 m 内</td></tr>
+      </table>
+      <p class="muted" style="font-size:12.5px;line-height:1.75">仿真不是必须:底盘节点可以自己写(发布 /scan、/odom 与 TF),也可以用 Gazebo/ros_gz 插件代替。两种路径的验收标准相同——话题频率、TF 链、/cmd_vel。</p>
+
+      <h4>步骤 1:安装与环境确认</h4>
+      <pre class="diagram">sudo apt install ros-jazzy-desktop ros-jazzy-navigation2 \
+  ros-jazzy-nav2-bringup ros-jazzy-slam-toolbox ros-jazzy-teleop-twist-keyboard
+source /opt/ros/jazzy/setup.bash
+ros2 doctor          # 先确认安装、网络、RMW 正常
+echo $ROS_DOMAIN_ID  # 跨机器时两边必须一致</pre>
+
+      <h4>步骤 2:建包并固定依赖</h4>
+      <pre class="diagram">mkdir -p ~/ros2_ws/src &amp;&amp; cd ~/ros2_ws/src
+ros2 pkg create --build-type ament_python mybot_bringup \
+  --dependencies rclpy geometry_msgs sensor_msgs nav_msgs tf2_ros
+cd ~/ros2_ws &amp;&amp; colcon build --symlink-install &amp;&amp; source install/setup.bash
+ros2 pkg list | grep mybot</pre>
+
+      <h4>步骤 3:写底盘节点(话题 + 里程计 + TF)</h4>
+      <p>一个最小底盘节点要同时做三件事:订阅 <code>/cmd_vel</code> 驱动轮子、发布 <code>/odom</code>、广播 <code>odom→base_link</code>。雷达可以用真实驱动或仿真插件发布 <code>/scan</code>。核心 TF 广播如下(节选):</p>
+      <details class="evidence">
+        <summary>展开 rclpy TF 广播节选(principle:本机未安装 ROS 2,未运行)</summary>
+        <pre>import math
+from geometry_msgs.msg import TransformStamped
+from tf2_ros import TransformBroadcaster
+
+class BaseNode(Node):                     # 省略 Node 导入与 __init__
+    def publish_tf(self, x, y, yaw, stamp):
+        t = TransformStamped()
+        t.header.stamp = stamp            # 必须用数据时间,不是处理时间
+        t.header.frame_id = 'odom'
+        t.child_frame_id = 'base_link'
+        t.transform.translation.x = x
+        t.transform.translation.y = y
+        t.transform.rotation.z = math.sin(yaw / 2.0)
+        t.transform.rotation.w = math.cos(yaw / 2.0)
+        self.tf.sendTransform(t)</pre>
+      </details>
+
+      <h4>步骤 4:URDF 与静态外参,确认 TF 链</h4>
+      <pre class="diagram">ros2 launch mybot_bringup bringup.launch.py
+ros2 run tf2_ros tf2_echo base_link laser   # 应持续输出平移/旋转
+ros2 run tf2_tools view_frames              # 生成 frames.pdf,检查树是否分叉
+ros2 run tf2_ros tf2_echo map base_link     # 建图/定位起来后才有 map→odom</pre>
+      <p class="muted">URDF 里 <code>base_link→laser</code> 用 fixed joint;robot_state_publisher 会把它作为静态变换发布。外参 x/y/z 与 yaw 必须和实际安装一致,否则障碍物会整体偏移。</p>
+
+      <h4>步骤 5:建图并保存地图</h4>
+      <pre class="diagram">mkdir -p ~/ros2_ws/maps
+cd ~/ros2_ws/maps
+ros2 launch slam_toolbox online_async_launch.py
+ros2 run teleop_twist_keyboard teleop_twist_keyboard   # 另开终端,慢速走一圈
+ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap \
+  "{name: {data: 'floor1'}}"
+ls -l ~/ros2_ws/maps/   # 保存位置取决于节点工作目录,这里以 maps/ 为例</pre>
+      <p>保存后先停掉 SLAM 节点,再启动导航;否则 SLAM 与 AMCL 会同时发布 <code>map→odom</code>。</p>
+
+      <h4>步骤 6:Nav2 导航闭环</h4>
+      <pre class="diagram">ros2 launch nav2_bringup bringup_launch.py map:=$HOME/ros2_ws/maps/floor1.yaml
+# RViz:先 "2D Pose Estimate" 给初始位姿,再 "Nav2 Goal" 发目标
+ros2 lifecycle get /controller_server       # 期望 active
+ros2 topic echo /cmd_vel --once             # 期望有 Twist 且不为全 0
+ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \
+  "{pose: {header: {frame_id: map}, pose: {position: {x: 1.0, y: 0.0}, orientation: {w: 1.0}}}}" --feedback</pre>
+      <p>观察顺序:目标是否被接受 → <code>/plan</code> 是否有一条从当前位姿到目标的路径 → <code>/cmd_vel</code> 是否变化 → 轮子/仿真是否响应。哪一步断了,就查哪一段,不要同时改五个参数。</p>
+
+      <h4>步骤 7:留证据并复现</h4>
+      <pre class="diagram">ros2 bag record -o run1 /scan /tf /cmd_vel /plan
+# 走一段、发一个目标,30 秒后 Ctrl-C
+ros2 bag info run1
+ros2 param dump /controller_server &gt; controller_params.yaml
+ros2 node list &gt; nodes.txt; ros2 topic list -t &gt; topics.txt</pre>
+
+      <h4>验证材料清单</h4>
+      <table>
+        <tr><th>材料</th><th>怎么产生</th><th>期望内容</th></tr>
+        <tr><td>计算图</td><td><code>ros2 node list</code>、<code>ros2 topic list -t</code></td><td>节点与话题和设计一致,命名空间正确</td></tr>
+        <tr><td>数据频率</td><td><code>ros2 topic hz /scan</code>、<code>ros2 topic echo /cmd_vel --once</code></td><td>/scan 稳定 10–30 Hz;/cmd_vel 随目标变化</td></tr>
+        <tr><td>QoS 证据</td><td><code>ros2 topic info /scan -v</code></td><td>发布/订阅的 reliability、durability 匹配</td></tr>
+        <tr><td>TF 证据</td><td><code>tf2_echo</code> 输出 + <code>view_frames</code> 的 frames.pdf</td><td>链完整、单父、时间戳连续</td></tr>
+        <tr><td>地图</td><td>save_map 的返回值 + yaml/pgm</td><td><code>result: true</code>,分辨率/原点与场地一致</td></tr>
+        <tr><td>导航过程</td><td>action feedback、rosbag、RViz 截图</td><td>路径合理、无频繁恢复行为、到达目标</td></tr>
+        <tr><td>参数快照</td><td><code>ros2 param dump</code></td><td>速度上限、膨胀半径等与调参结论一致</td></tr>
+      </table>
+
+      <h4>交付物</h4>
+      <ul class="tight">
+        <li><b>代码</b>:<code>mybot_bringup</code>(底盘/滤波节点、launch、URDF、Nav2 参数)。</li>
+        <li><b>地图与配置</b>:<code>floor1.yaml/.pgm</code>、初始位姿说明、TF 外参表。</li>
+        <li><b>证据包</b>:<code>run1</code> rosbag、<code>nodes.txt</code>/<code>topics.txt</code>、<code>view_frames</code> 输出、RViz 截图、action result。</li>
+        <li><b>一页说明</b>:ROS 版本、启动顺序、话题/QoS 表、踩坑记录、未完成项(仿真 vs 实车要写清)。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <div class="checklist" id="checklist">
+        <label><input type="checkbox" /> 能说出 topic / service / action 各自适合什么场景,并为一个新需求选对机制</label>
+        <label><input type="checkbox" /> 在模拟器里制造 reliability 与 durability 两种不兼容,能指出是哪一维、怎么改</label>
+        <label><input type="checkbox" /> 能画出 map→odom→base_link→laser 并指出每段由谁发布、断掉会怎样</label>
+        <label><input type="checkbox" /> 项目里 <code>ros2 topic hz</code> 与 <code>tf2_echo</code> 都有稳定输出,并保存了输出</label>
+        <label><input type="checkbox" /> 完成一次导航并发目标,保留 action 结果、rosbag 或 RViz 截图(或写明 hardware-pending 卡点)</label>
+      </div>
+      <p class="muted" id="check-status">已完成 0 / 5</p>
+    </div>
+
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>两个终端互相看不到节点</td><td>对比 <code>echo $ROS_DOMAIN_ID</code>;确认同一网段;用 <code>ros2 multicast send/receive</code> 验证组播</td><td>domain 相同,接收端能收到组播包</td><td>容器/VPN 限制组播 → 用 host 网络或 ROS 2 discovery server</td></tr>
+        <tr><td>话题存在但 <code>echo</code> 没数据</td><td><code>ros2 topic info /scan -v</code> 看发布者数量与 QoS;<code>ros2 topic hz</code> 看频率</td><td>至少 1 个发布者,reliability/durability 兼容</td><td>QoS 不匹配 → 改订阅端或发布端;无发布者 → 查节点崩溃日志</td></tr>
+        <tr><td>TF 报 extrapolation / 时间戳错误</td><td>确认 <code>use_sim_time</code> 与数据源一致;比较 TF 最新时间与消息头时间;回放 bag 时检查时钟</td><td>TF 时间覆盖消息时间,延迟在阈值内</td><td>bag 回放 → 设 <code>use_sim_time:=true</code>;TF 太旧 → 提高发布频率/修驱动</td></tr>
+        <tr><td>TF 报 "frame does not exist"</td><td><code>view_frames</code> 看树;检查 frame_id 拼写、命名空间、静态变换是否启动</td><td>目标帧在树中,链路唯一且完整</td><td>拼写/命名空间错 → 统一命名;缺静态变换 → 补 URDF 或 static publisher</td></tr>
+        <tr><td>Nav2 接受目标但机器人不动</td><td>查 <code>lifecycle get</code> 各服务器;看 <code>/plan</code>、costmap、<code>/cmd_vel</code> 是否有输出;确认底盘订阅了 /cmd_vel</td><td>controller active,/cmd_vel 有非零 Twist</td><td>无 /plan → 规划/代价地图;有 /cmd_vel 不动 → 底盘驱动、急停、轮子标定</td></tr>
+        <tr><td>costmap 不更新 / 地图收不到</td><td>查 <code>/map</code> 发布者与 QoS(应 transient_local);确认 map_server 已 active;看 yaml 路径</td><td>1 个 /map 发布者,订阅端 QoS 兼容</td><td>QoS volatile → 改 transient_local;map_server inactive → 手动 configure/activate</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>7. 小测</h2>
+      <div id="quiz"></div>
+      <p class="muted" id="quiz-status">答对 0 / 3</p>
+    </div>
+
+    <div class="section">
+      <h2>8. 下一步</h2>
+      <table>
+        <tr><th>去向</th><th>内容</th><th>状态</th></tr>
+        <tr><td><a href="/directions/">方向总览</a></td><td>回到方向列表,比较机器人、系统构建与边缘 AI 的能力栈</td><td><span class="pill">已就绪</span></td></tr>
+        <tr><td><a href="/directions/linux-build/">嵌入式 Linux 系统构建</a></td><td>把机器人应用落到自建 rootfs 与交叉编译的设备程序上</td><td><span class="pill ok">姊妹方向</span></td></tr>
+        <tr><td><a href="/route/">学习路线</a></td><td>回到阶段 07,补齐控制、感知或 PCB 等方向能力</td><td><span class="pill">路线页</span></td></tr>
+        <tr><td><a href="/ros/">ROS 学习实验室</a></td><td>继续做节点、TF、导航的专项实验</td><td><span class="pill">已有</span></td></tr>
+      </table>
+      <p class="muted" style="margin-top:12px;font-size:12.5px">完成顺序建议:先让 /scan 与 TF 稳定,再做建图,最后开 Nav2。任何一步没有可复查的输出,就不要进入下一步。</p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var NODES = [
+        { id: 'base', name: '/mybot_base', desc: '底盘驱动 · 里程计/雷达', pub: ['/scan', '/odom', '/tf'], sub: ['/cmd_vel'] },
+        { id: 'filter', name: '/scan_filter', desc: '雷达滤波 · 去噪', pub: ['/scan_filtered'], sub: ['/scan'] },
+        { id: 'mapper', name: '/mapper', desc: '建图 / SLAM', pub: ['/map', '/tf'], sub: ['/scan_filtered', '/tf'], srv: '/mapper/save_map' },
+        { id: 'planner', name: '/planner', desc: '全局路径规划', pub: ['/plan'], sub: ['/map', '/goal_pose', '/tf'] },
+        { id: 'controller', name: '/controller', desc: '局部控制', pub: ['/cmd_vel'], sub: ['/plan', '/odom', '/tf'] },
+        { id: 'rviz2', name: '/rviz2', desc: '可视化 / 发目标', pub: ['/goal_pose'], sub: ['/map', '/scan', '/plan'] },
+        { id: 'cli', name: 'ros2 CLI', desc: '服务客户端', pub: [], sub: [] }
+      ];
+      var TOPICS = [
+        { id: '/scan', type: 'sensor_msgs/msg/LaserScan', rel: 'best_effort', dur: 'volatile' },
+        { id: '/scan_filtered', type: 'sensor_msgs/msg/LaserScan', rel: 'best_effort', dur: 'volatile' },
+        { id: '/odom', type: 'nav_msgs/msg/Odometry', rel: 'reliable', dur: 'volatile' },
+        { id: '/tf', type: 'tf2_msgs/msg/TFMessage', rel: 'reliable', dur: 'volatile' },
+        { id: '/map', type: 'nav_msgs/msg/OccupancyGrid', rel: 'reliable', dur: 'transient_local' },
+        { id: '/goal_pose', type: 'geometry_msgs/msg/PoseStamped', rel: 'reliable', dur: 'volatile' },
+        { id: '/plan', type: 'nav_msgs/msg/Path', rel: 'reliable', dur: 'volatile' },
+        { id: '/cmd_vel', type: 'geometry_msgs/msg/Twist', rel: 'reliable', dur: 'volatile' }
+      ];
+      var SERVICES = [
+        { id: '/mapper/save_map', type: 'slam_toolbox/srv/SaveMap', server: 'mapper', client: 'cli' }
+      ];
+
+      var SVGNS = 'http://www.w3.org/2000/svg';
+      var graph = document.getElementById('graph');
+      var detailEl = document.getElementById('detail');
+      var qosTopicEl = document.getElementById('qos-topic');
+      var pubRelEl = document.getElementById('pub-rel');
+      var pubDurEl = document.getElementById('pub-dur');
+      var subRelEl = document.getElementById('sub-rel');
+      var subDurEl = document.getElementById('sub-dur');
+      var qosResultEl = document.getElementById('qos-result');
+      var sendBtn = document.getElementById('send-btn');
+      var svcBtn = document.getElementById('svc-btn');
+      var flowLog = document.getElementById('flow-log');
+      var svcChip = document.querySelector('.svc-chip');
+
+      var nodePos = {};
+      var topicPos = {};
+      NODES.forEach(function (n, i) {
+        nodePos[n.id] = { x: 22, y: 36 + i * 80, w: 212, h: 46 };
+      });
+      TOPICS.forEach(function (t, j) {
+        topicPos[t.id] = { x: 716, y: 36 + j * 70, w: 244, h: 44 };
+      });
+
+      function svgEl(tag, attrs) {
+        var e = document.createElementNS(SVGNS, tag);
+        if (attrs) {
+          Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+        }
+        return e;
+      }
+      function byTopic(id) {
+        for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i].id === id) return TOPICS[i];
+        return null;
+      }
+      function byNode(id) {
+        for (var i = 0; i < NODES.length; i++) if (NODES[i].id === id) return NODES[i];
+        return null;
+      }
+      function pubsOf(tid) {
+        return NODES.filter(function (n) { return n.pub.indexOf(tid) >= 0; });
+      }
+      function subsOf(tid) {
+        return NODES.filter(function (n) { return n.sub.indexOf(tid) >= 0; });
+      }
+      function shortType(type) {
+        var parts = type.split('/');
+        return parts[parts.length - 1];
+      }
+      function metaText(t) {
+        return shortType(t.type) + ' · ' + (t.dur === 'transient_local' ? 'reliable + TL' : t.rel);
+      }
+
+      var edgeEls = [];
+      var nodeEls = {};
+      var topicEls = {};
+      var selectedTopicId = '/scan';
+      var state = { kind: 'topic', id: '/scan' };
+      var anims = [];
+      var rafId = null;
+      var gDots;
+
+      function edgeGeom(nid, tid) {
+        var n = nodePos[nid];
+        var t = topicPos[tid];
+        var x1 = n.x + n.w;
+        var y1 = n.y + n.h / 2;
+        var x2 = t.x;
+        var y2 = t.y + t.h / 2;
+        return { x1: x1, y1: y1, x2: x2, y2: y2, c1x: x1 + 170, c1y: y1, c2x: x2 - 170, c2y: y2 };
+      }
+      function edgeD(g) {
+        return 'M' + g.x1 + ',' + g.y1 + ' C' + g.c1x + ',' + g.c1y + ' ' + g.c2x + ',' + g.c2y + ' ' + g.x2 + ',' + g.y2;
+      }
+
+      function renderGraph() {
+        graph.innerHTML = '';
+        var gEdges = svgEl('g');
+        graph.appendChild(gEdges);
+
+        var head1 = svgEl('text', { x: 22, y: 20, 'class': 'col-head' });
+        head1.textContent = '节点 / 进程';
+        graph.appendChild(head1);
+        var head2 = svgEl('text', { x: 716, y: 20, 'class': 'col-head' });
+        head2.textContent = '话题 · 类型 · QoS';
+        graph.appendChild(head2);
+
+        NODES.forEach(function (n) {
+          n.pub.forEach(function (tid) {
+            if (!topicPos[tid]) return;
+            var g = edgeGeom(n.id, tid);
+            var p = svgEl('path', { d: edgeD(g), 'class': 'edge pub', 'data-node': n.id, 'data-topic': tid });
+            gEdges.appendChild(p);
+            edgeEls.push(p);
+          });
+          n.sub.forEach(function (tid) {
+            if (!topicPos[tid]) return;
+            var g = edgeGeom(n.id, tid);
+            var p = svgEl('path', { d: edgeD(g), 'class': 'edge sub', 'data-node': n.id, 'data-topic': tid });
+            gEdges.appendChild(p);
+            edgeEls.push(p);
+          });
+        });
+
+        var srvEdge = svgEl('path', {
+          d: 'M128,516 C56,470 56,290 128,242',
+          'class': 'edge srv', 'data-svc': '/mapper/save_map'
+        });
+        gEdges.appendChild(srvEdge);
+        edgeEls.push(srvEdge);
+
+        gDots = svgEl('g');
+        graph.appendChild(gDots);
+
+        var gNodes = svgEl('g');
+        graph.appendChild(gNodes);
+        NODES.forEach(function (n) {
+          var pos = nodePos[n.id];
+          var g = svgEl('g', {
+            'class': 'node', 'data-node': n.id, tabindex: '0', role: 'button',
+            'aria-label': '节点 ' + n.name + ',' + n.desc
+          });
+          g.appendChild(svgEl('rect', { x: pos.x, y: pos.y, width: pos.w, height: pos.h, rx: 9 }));
+          var t1 = svgEl('text', { x: pos.x + 12, y: pos.y + 20, 'class': 'n-name' });
+          t1.textContent = n.name;
+          var t2 = svgEl('text', { x: pos.x + 12, y: pos.y + 35, 'class': 'n-desc' });
+          t2.textContent = n.desc;
+          g.appendChild(t1);
+          g.appendChild(t2);
+          var title = svgEl('title');
+          title.textContent = n.name + ' · ' + n.desc;
+          g.appendChild(title);
+          g.addEventListener('click', function () { selectNode(n.id); });
+          g.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectNode(n.id); }
+          });
+          gNodes.appendChild(g);
+          nodeEls[n.id] = g;
+        });
+
+        var gTopics = svgEl('g');
+        graph.appendChild(gTopics);
+        TOPICS.forEach(function (t) {
+          var pos = topicPos[t.id];
+          var g = svgEl('g', {
+            'class': 'topic', 'data-topic': t.id, tabindex: '0', role: 'button',
+            'aria-label': '话题 ' + t.id + ',' + t.type
+          });
+          g.appendChild(svgEl('rect', { x: pos.x, y: pos.y, width: pos.w, height: pos.h, rx: 8 }));
+          var t1 = svgEl('text', { x: pos.x + 12, y: pos.y + 19, 'class': 't-name' });
+          t1.textContent = t.id;
+          var t2 = svgEl('text', { x: pos.x + 12, y: pos.y + 33, 'class': 't-meta' });
+          t2.textContent = metaText(t);
+          g.appendChild(t1);
+          g.appendChild(t2);
+          g.addEventListener('click', function () { selectTopic(t.id); });
+          g.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectTopic(t.id); }
+          });
+          gTopics.appendChild(g);
+          topicEls[t.id] = g;
+        });
+      }
+
+      function clearHighlight() {
+        edgeEls.forEach(function (e) { e.classList.remove('active', 'dim'); });
+        Object.keys(nodeEls).forEach(function (k) { nodeEls[k].classList.remove('sel', 'peer'); });
+        Object.keys(topicEls).forEach(function (k) { topicEls[k].classList.remove('sel', 'peer'); });
+      }
+
+      function chips(list, cls) {
+        if (!list.length) return '<span class="muted">(无)</span>';
+        return list.map(function (x) { return '<span class="chip ' + cls + '">' + x + '</span>'; }).join('');
+      }
+
+      function selectNode(id) {
+        state = { kind: 'node', id: id };
+        clearHighlight();
+        var n = byNode(id);
+        if (!n) return;
+        nodeEls[id].classList.add('sel');
+        Object.keys(topicEls).forEach(function (tid) {
+          var hit = n.pub.indexOf(tid) >= 0 || n.sub.indexOf(tid) >= 0;
+          topicEls[tid].classList.toggle('peer', hit);
+        });
+        edgeEls.forEach(function (e) {
+          var on = e.getAttribute('data-node') === id;
+          e.classList.toggle('active', on);
+          e.classList.toggle('dim', !on);
+        });
+        var html = '<h4>' + n.name + '<span class="tag">node</span></h4>';
+        html += '<p class="muted">' + n.desc + '</p>';
+        html += '<p class="dline"><b>发布</b>' + chips(n.pub, 'pub') + '</p>';
+        html += '<p class="dline"><b>订阅</b>' + chips(n.sub, 'sub') + '</p>';
+        if (n.srv) html += '<p class="dline"><b>服务</b><span class="chip">' + n.srv + '(server)</span></p>';
+        html += '<p class="muted">绿色边是发布,黄色边是订阅;只显示与当前节点直接相连的话题。</p>';
+        detailEl.innerHTML = html;
+      }
+
+      function selectTopic(id) {
+        var t = byTopic(id);
+        if (!t) return;
+        state = { kind: 'topic', id: id };
+        selectedTopicId = id;
+        clearHighlight();
+        topicEls[id].classList.add('sel');
+        var pubs = pubsOf(id);
+        var subs = subsOf(id);
+        pubs.concat(subs).forEach(function (n) { nodeEls[n.id].classList.add('peer'); });
+        edgeEls.forEach(function (e) {
+          var on = e.getAttribute('data-topic') === id;
+          e.classList.toggle('active', on);
+          e.classList.toggle('dim', !on);
+        });
+        var html = '<h4>' + t.id + '<span class="tag">topic</span></h4>';
+        html += '<p class="mono">' + t.type + '</p>';
+        html += '<p class="dline"><b>发布者</b>' + chips(pubs.map(function (n) { return n.name; }), 'pub') + '</p>';
+        html += '<p class="dline"><b>订阅者</b>' + chips(subs.map(function (n) { return n.name; }), 'sub') + '</p>';
+        html += '<p class="muted">默认 QoS:' + t.rel + ' / ' + t.dur + '。消息从发布者进入话题,再分发给每个订阅者;QoS 不兼容时话题仍存在,但数据到不了。</p>';
+        detailEl.innerHTML = html;
+        qosTopicEl.textContent = t.id;
+        pubRelEl.value = t.rel;
+        pubDurEl.value = t.dur;
+        subRelEl.value = t.rel;
+        subDurEl.value = t.dur;
+        evalQoS();
+        sendBtn.textContent = '发布 ' + t.id + ' 消息';
+      }
+
+      function selectService(id) {
+        state = { kind: 'service', id: id };
+        clearHighlight();
+        var s = null;
+        SERVICES.forEach(function (x) { if (x.id === id) s = x; });
+        if (!s) return;
+        nodeEls[s.server].classList.add('sel');
+        nodeEls[s.client].classList.add('sel');
+        edgeEls.forEach(function (e) {
+          var on = e.getAttribute('data-svc') === id;
+          e.classList.toggle('active', on);
+          e.classList.toggle('dim', !on);
+        });
+        var html = '<h4>' + s.id + '<span class="tag">service</span></h4>';
+        html += '<p class="mono">' + s.type + '</p>';
+        html += '<p class="dline"><b>server</b><span class="chip">' + byNode(s.server).name + '</span><b style="margin-left:10px">client</b><span class="chip">' + byNode(s.client).name + '</span></p>';
+        html += '<pre>request  name: "floor1"\nresponse result: true</pre>';
+        html += '<p class="muted">一次请求对应一次响应,适合"保存地图"这种动作;持续数据流不要用 service。点右侧"调用服务"看日志。</p>';
+        detailEl.innerHTML = html;
+      }
+
+      function log(msg) {
+        var line = document.createElement('div');
+        var d = new Date();
+        var hh = String(d.getHours()).padStart(2, '0');
+        var mm = String(d.getMinutes()).padStart(2, '0');
+        var ss = String(d.getSeconds()).padStart(2, '0');
+        line.textContent = '[' + hh + ':' + mm + ':' + ss + '] ' + msg;
+        flowLog.insertBefore(line, flowLog.firstChild);
+        while (flowLog.children.length > 6) flowLog.removeChild(flowLog.lastChild);
+      }
+
+      function evalQoS() {
+        var pr = pubRelEl.value, pd = pubDurEl.value, sr = subRelEl.value, sd = subDurEl.value;
+        var relOk = pr === 'reliable' || sr === 'best_effort';
+        var durOk = pd === 'transient_local' || sd === 'volatile';
+        var msg;
+        if (!relOk) {
+          msg = '发布者 best_effort 无法满足订阅者 reliable(可靠传输需要确认/重传)。把订阅者改为 best_effort,或把发布者改为 reliable。';
+        } else if (!durOk) {
+          msg = '发布者 volatile 不保留历史,订阅者 transient_local 要求晚加入也能拿到最后一帧(如 /map)。把发布者改为 transient_local,或订阅者改为 volatile。';
+        } else {
+          msg = '发布 ' + pr + '/' + pd + ' → 订阅 ' + sr + '/' + sd + ',消息可以送达。';
+        }
+        qosResultEl.className = 'qos-result ' + ((relOk && durOk) ? 'ok' : 'bad');
+        qosResultEl.innerHTML = '<b>' + ((relOk && durOk) ? '兼容' : '不兼容') + '</b>:' + msg;
+        return relOk && durOk;
+      }
+
+      function animate(g, forward, color, delay, dur) {
+        var pts = forward
+          ? [g.x1, g.y1, g.c1x, g.c1y, g.c2x, g.c2y, g.x2, g.y2]
+          : [g.x2, g.y2, g.c2x, g.c2y, g.c1x, g.c1y, g.x1, g.y1];
+        var c = svgEl('circle', { r: 4, fill: color, opacity: '0' });
+        gDots.appendChild(c);
+        anims.push({ t0: performance.now() + delay, dur: dur, pts: pts, el: c });
+        if (!rafId) rafId = requestAnimationFrame(tick);
+      }
+
+      function tick(now) {
+        var alive = [];
+        anims.forEach(function (a) {
+          var p = (now - a.t0) / a.dur;
+          if (p < 0) { alive.push(a); return; }
+          if (p >= 1) { if (a.el.parentNode) a.el.parentNode.removeChild(a.el); return; }
+          var mt = 1 - p;
+          var x = mt * mt * mt * a.pts[0] + 3 * mt * mt * p * a.pts[2] + 3 * mt * p * p * a.pts[4] + p * p * p * a.pts[6];
+          var y = mt * mt * mt * a.pts[1] + 3 * mt * mt * p * a.pts[3] + 3 * mt * p * p * a.pts[5] + p * p * p * a.pts[7];
+          a.el.setAttribute('opacity', '1');
+          a.el.setAttribute('cx', x);
+          a.el.setAttribute('cy', y);
+          alive.push(a);
+        });
+        anims = alive;
+        if (anims.length) rafId = requestAnimationFrame(tick);
+        else rafId = null;
+      }
+
+      function sendMessage() {
+        var tid = selectedTopicId;
+        var t = byTopic(tid);
+        if (!t) { log('先选择一个话题'); return; }
+        if (!evalQoS()) {
+          log('QoS 不兼容:' + tid + ' 的消息未送达(发布/订阅端点没有建立)');
+          return;
+        }
+        var pubs = pubsOf(tid);
+        var subs = subsOf(tid);
+        if (!pubs.length) { log('没有发布者:' + tid + ' 不会有数据'); return; }
+        if (!subs.length) { log('没有订阅者:' + tid + ' 的消息被 DDS 丢弃'); return; }
+        log('PUB ' + pubs.map(function (n) { return n.name; }).join(',') + ' → ' + tid + ' → ' + subs.map(function (n) { return n.name; }).join(','));
+        var idx = 0;
+        pubs.forEach(function (pub) {
+          subs.forEach(function (sub) {
+            if (idx >= 4) return;
+            var gp = edgeGeom(pub.id, tid);
+            var gs = edgeGeom(sub.id, tid);
+            animate(gp, true, '#5eead4', idx * 140, 520);
+            animate(gs, false, '#fbbf24', idx * 140 + 430, 520);
+            idx++;
+          });
+        });
+        if (idx === 0) log('没有可绘制的端点对');
+      }
+
+      function callService() {
+        var s = SERVICES[0];
+        log('srv ' + s.id + ' ← ros2 CLI:SaveMap{name:"floor1"}');
+        var serverNode = nodeEls[s.server];
+        if (serverNode) serverNode.classList.add('pulse');
+        setTimeout(function () {
+          log('srv ' + s.id + ' → result: true(map.yaml / map.pgm 已写入)');
+          if (serverNode) serverNode.classList.remove('pulse');
+        }, 700);
+      }
+
+      sendBtn.addEventListener('click', sendMessage);
+      svcBtn.addEventListener('click', callService);
+      svcChip.addEventListener('click', function () { selectService(svcChip.getAttribute('data-svc')); });
+      [pubRelEl, pubDurEl, subRelEl, subDurEl].forEach(function (el) {
+        el.addEventListener('change', evalQoS);
+      });
+
+      function updateChecks() {
+        var boxes = document.querySelectorAll('#checklist input');
+        var done = 0;
+        Array.prototype.forEach.call(boxes, function (b) { if (b.checked) done++; });
+        document.getElementById('check-status').textContent =
+          '已完成 ' + done + ' / ' + boxes.length + (done === boxes.length ? ' ✓ 结果检查完成' : '');
+      }
+      Array.prototype.forEach.call(document.querySelectorAll('#checklist input'), function (c) {
+        c.addEventListener('change', updateChecks);
+      });
+
+      var QUESTIONS = [
+        {
+          stem: '30 Hz 的激光雷达数据流,应该用哪种通信方式?',
+          opts: ['service', 'topic', 'action', 'parameter'],
+          answer: 1,
+          explain: '持续、多订阅者、允许丢帧的数据流用 topic;service 适合一次性请求/响应,action 适合有反馈的长任务。'
+        },
+        {
+          stem: '发布者 reliability=best_effort,订阅者 reliability=reliable,结果是什么?',
+          opts: ['自动降级为 best_effort', '正常接收,只是延迟高', 'QoS 不兼容,话题存在但收不到数据', '发布者会被强制改成 reliable'],
+          answer: 2,
+          explain: '订阅端要求可靠传输,发布端给不了;DDS 不会建立这条连接,现象常是"话题在但 echo 没数据"。'
+        },
+        {
+          stem: 'map→odom→base_link→laser 中,哪一段通常由底盘驱动发布?',
+          opts: ['map→odom', 'odom→base_link', 'base_link→laser', '三段都由底盘发布'],
+          answer: 1,
+          explain: '底盘用轮速积分发布 odom→base_link;map→odom 来自 SLAM 或 AMCL;base_link→laser 是静态外参。'
+        }
+      ];
+      var quiz = document.getElementById('quiz');
+      var quizStatus = document.getElementById('quiz-status');
+      var correct = 0;
+      var answered = 0;
+      QUESTIONS.forEach(function (q, qi) {
+        var wrap = document.createElement('div');
+        wrap.className = 'q';
+        var stem = document.createElement('div');
+        stem.className = 'stem';
+        stem.textContent = (qi + 1) + '. ' + q.stem;
+        wrap.appendChild(stem);
+        var explain = document.createElement('div');
+        explain.className = 'explain';
+        explain.textContent = '解析:' + q.explain;
+        q.opts.forEach(function (text, oi) {
+          var opt = document.createElement('div');
+          opt.className = 'opt';
+          opt.setAttribute('role', 'button');
+          opt.tabIndex = 0;
+          opt.textContent = String.fromCharCode(65 + oi) + '. ' + text;
+          function choose() {
+            if (wrap.dataset.done) return;
+            wrap.dataset.done = '1';
+            answered++;
+            if (oi === q.answer) {
+              opt.classList.add('right');
+              correct++;
+            } else {
+              opt.classList.add('wrong');
+              wrap.querySelectorAll('.opt')[q.answer].classList.add('right');
+            }
+            explain.classList.add('show');
+            quizStatus.textContent = '答对 ' + correct + ' / ' + QUESTIONS.length +
+              (answered === QUESTIONS.length ? ' ✓ 全部作答' : '');
+          }
+          opt.addEventListener('click', choose);
+          opt.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); choose(); }
+          });
+          wrap.appendChild(opt);
+        });
+        wrap.appendChild(explain);
+        quiz.appendChild(wrap);
+      });
+
+      renderGraph();
+      selectTopic('/scan');
+      log('就绪:点击节点/话题,或直接发布一条消息');
+      updateChecks();
+    })();
+  </script>
+</body>
+</html>
