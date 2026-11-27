@@ -1,0 +1,42 @@
+/* 统一设计令牌(平台层与知识子站共用;六站逐步映射)
+   浅色为默认,data-theme="dark" 时切换深色;变量前缀 --tok- 避免与既有页面变量冲突。 */
+:root {
+  --tok-font-sans: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --tok-font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --tok-bg: #f7f8f5;
+  --tok-surface: #ffffff;
+  --tok-surface-2: #eef1ea;
+  --tok-text: #16211d;
+  --tok-muted: #5c6a63;
+  --tok-line: #d8ded6;
+  --tok-line-strong: #b9c2b8;
+  --tok-brand: #0f766e;
+  --tok-brand-strong: #0b5c56;
+  --tok-brand-soft: #dff1ec;
+  --tok-accent: #c2410c;
+  --tok-accent-soft: #fbe7d9;
+  --tok-success: #15803d;
+  --tok-warning: #a16207;
+  --tok-danger: #b91c1c;
+  --tok-radius: 12px;
+  --tok-radius-sm: 8px;
+  --tok-shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 10px 26px -16px rgba(15, 23, 42, .25);
+}
+[data-theme="dark"] {
+  --tok-bg: #0a0f0d;
+  --tok-surface: #111815;
+  --tok-surface-2: #17201c;
+  --tok-text: #e6efea;
+  --tok-muted: #a6bbb8;
+  --tok-line: #2b3a34;
+  --tok-line-strong: #3d524a;
+  --tok-brand: #5eead4;
+  --tok-brand-strong: #99f6e4;
+  --tok-brand-soft: #123c36;
+  --tok-accent: #ffa169;
+  --tok-accent-soft: #3a2318;
+  --tok-success: #4ade80;
+  --tok-warning: #fbbf24;
+  --tok-danger: #f87171;
+  --tok-shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 26px -16px rgba(0, 0, 0, .6);
+}

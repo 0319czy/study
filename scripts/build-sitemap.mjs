@@ -15,8 +15,9 @@ const PAGES = [
   '/projects/collect/', '/projects/m1/', '/projects/m2/', '/projects/m3/',
   '/projects/m4/', '/projects/m5/', '/tools/', '/search/', '/archive/',
   '/foundations/', '/foundations/c/', '/foundations/circuits/', '/foundations/linux-user/',
-  '/directions/', '/directions/linux-build/', '/directions/ros/',
-  '/directions/pcb/', '/directions/edge-ai/',
+  '/foundations/c-advanced/', '/foundations/circuits-practice/',
+  '/directions/', '/directions/linux-build/', '/directions/linux-build-deep/',
+  '/directions/ros/', '/directions/pcb/', '/directions/edge-ai/',
   '/linux/', '/mcu/', '/analog/', '/ml/', '/ros/', '/rtos/',
 ];
 

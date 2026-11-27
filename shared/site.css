@@ -1,3 +1,4 @@
+@import url("/shared/tokens.css");
 /* 1kni4r.top 平台共享样式:顶部导航 + 基础排版变量
  * 供门户 index.html 与 /route/ /knowledge/ /labs/ /projects/ /tools/ /search/ 共用。
  * 页面自身样式优先;本文件只提供导航组件与通用变量,不覆盖各站原有样式。

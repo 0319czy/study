@@ -90,7 +90,9 @@ async function renderAll(opts) {
   const inv = JSON.parse(await readFile(invPath, 'utf8'));
   const routes = [];
   const seen = new Set();
+  const SITE_SLUGS = ['linux', 'mcu', 'analog', 'ml', 'ros', 'rtos'];
   for (const site of inv.sites || []) {
+    if (!SITE_SLUGS.includes(site.slug)) continue;
     for (const it of site.items || []) {
       if (!it || !it.route) continue;
       let route;

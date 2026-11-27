@@ -1,0 +1,178 @@
+{
+  "generatedAt": "2026-11-27T13:55:08.508Z",
+  "site": "platform",
+  "count": 19,
+  "items": [
+    {
+      "id": "platform:page:foundations",
+      "title": "工程基础 · 三门最小课",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/foundations/",
+      "keywords": "工程基础 · 三门最小课 foundations page 平台层 · 基础课/项目/方向 platform 工程基础 基础课 c 数字电路 linux"
+    },
+    {
+      "id": "platform:lesson:foundations:c",
+      "title": "C 与工程工具",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/foundations/c/",
+      "keywords": "c 与工程工具 foundations:c lesson 平台层 · 基础课/项目/方向 platform c 语言 指针 编译 git 工具链"
+    },
+    {
+      "id": "platform:lesson:foundations:circuits",
+      "title": "数字电路入门",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/foundations/circuits/",
+      "keywords": "数字电路入门 foundations:circuits lesson 平台层 · 基础课/项目/方向 platform 数字电路 门电路 时序 adc"
+    },
+    {
+      "id": "platform:lesson:foundations:linux-user",
+      "title": "Linux 用户态入门",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/foundations/linux-user/",
+      "keywords": "linux 用户态入门 foundations:linux-user lesson 平台层 · 基础课/项目/方向 platform linux 用户态 进程 文件 串口"
+    },
+    {
+      "id": "platform:page:projects",
+      "title": "项目实战 · 多传感器采集与监控",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/projects/",
+      "keywords": "项目实战 · 多传感器采集与监控 projects page 平台层 · 基础课/项目/方向 platform 项目实战 采集 监控 m0"
+    },
+    {
+      "id": "platform:lesson:projects:collect",
+      "title": "M0 采集",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/projects/collect/",
+      "keywords": "m0 采集 projects:collect lesson 平台层 · 基础课/项目/方向 platform 采集 adc 传感器"
+    },
+    {
+      "id": "platform:lesson:projects:m1",
+      "title": "M1 通信",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/projects/m1/",
+      "keywords": "m1 通信 projects:m1 lesson 平台层 · 基础课/项目/方向 platform 通信 协议 uart 帧"
+    },
+    {
+      "id": "platform:lesson:projects:m2",
+      "title": "M2 多任务",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/projects/m2/",
+      "keywords": "m2 多任务 projects:m2 lesson 平台层 · 基础课/项目/方向 platform 多任务 freertos 调度"
+    },
+    {
+      "id": "platform:lesson:projects:m3",
+      "title": "M3 网关",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/projects/m3/",
+      "keywords": "m3 网关 projects:m3 lesson 平台层 · 基础课/项目/方向 platform 网关 串口 csv 查询 api"
+    },
+    {
+      "id": "platform:lesson:projects:m4",
+      "title": "M4 展示",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/projects/m4/",
+      "keywords": "m4 展示 projects:m4 lesson 平台层 · 基础课/项目/方向 platform 仪表盘 曲线 告警"
+    },
+    {
+      "id": "platform:lesson:projects:m5",
+      "title": "M5 交付",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/projects/m5/",
+      "keywords": "m5 交付 projects:m5 lesson 平台层 · 基础课/项目/方向 platform 交付 自检 复现 摘要"
+    },
+    {
+      "id": "platform:page:directions",
+      "title": "方向进阶总览",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/directions/",
+      "keywords": "方向进阶总览 directions page 平台层 · 基础课/项目/方向 platform 方向进阶 路线"
+    },
+    {
+      "id": "platform:lesson:directions:linux-build",
+      "title": "嵌入式 Linux 系统构建",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/directions/linux-build/",
+      "keywords": "嵌入式 linux 系统构建 directions:linux-build lesson 平台层 · 基础课/项目/方向 platform buildroot 交叉编译 内核 根文件系统 设备树 linux"
+    },
+    {
+      "id": "platform:lesson:directions:ros",
+      "title": "ROS 2 机器人应用",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/directions/ros/",
+      "keywords": "ros 2 机器人应用 directions:ros lesson 平台层 · 基础课/项目/方向 platform ros2 节点 话题 tf 导航"
+    },
+    {
+      "id": "platform:lesson:directions:pcb",
+      "title": "电路与 PCB 设计",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/directions/pcb/",
+      "keywords": "电路与 pcb 设计 directions:pcb lesson 平台层 · 基础课/项目/方向 platform pcb 布线 载流 打样"
+    },
+    {
+      "id": "platform:lesson:directions:edge-ai",
+      "title": "边缘 AI 模型部署",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/directions/edge-ai/",
+      "keywords": "边缘 ai 模型部署 directions:edge-ai lesson 平台层 · 基础课/项目/方向 platform 边缘 ai 量化 部署 int8"
+    },
+    {
+      "id": "platform:lesson:foundations:c-advanced",
+      "title": "C 进阶:指针、内存与调试",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/foundations/c-advanced/",
+      "keywords": "c 进阶:指针、内存与调试 foundations:c-advanced lesson 平台层 · 基础课/项目/方向 platform c 指针 内存 asan gdb 调试"
+    },
+    {
+      "id": "platform:lesson:foundations:circuits-practice",
+      "title": "数字电路实战:采样、去抖与电平",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/foundations/circuits-practice/",
+      "keywords": "数字电路实战:采样、去抖与电平 foundations:circuits-practice lesson 平台层 · 基础课/项目/方向 platform 数字电路 去抖 采样 adc 上拉"
+    },
+    {
+      "id": "platform:lesson:directions:linux-build-deep",
+      "title": "Linux 系统构建深入:Buildroot、内核与启动",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/directions/linux-build-deep/",
+      "keywords": "linux 系统构建深入:buildroot、内核与启动 directions:linux-build-deep lesson 平台层 · 基础课/项目/方向 platform buildroot 内核 dtb rootfs 启动链"
+    }
+  ]
+}

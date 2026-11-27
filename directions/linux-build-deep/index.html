@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="从命令到启动链:Buildroot 流水线、内核/DTB、rootfs 与启动参数;产物可核对,失败可排查。" />
+  <title>Linux 系统构建深入:Buildroot、内核与启动 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin: 0 0 7px; color: #e6edf3; }
+    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #26323f; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; background: #0e141b; cursor: pointer; }
+    .q .opt.right { border-color: rgba(94,234,212,.55); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.55); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
+    .q .explain.show { display: block; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">DIRECTIONS · Linux 系统构建深入</div>
+    <h1>Linux 系统构建深入:Buildroot、内核与启动</h1>
+    <p class="lead">从命令到启动链:Buildroot 流水线、内核/DTB、rootfs 与启动参数;产物可核对,失败可排查。</p>
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>能从零构建 rootfs、内核与 DTB,并解释从 BootROM 到 init 的启动链</td></tr>
+        <tr><td>可检查结果</td><td>产物清单(zImage、dtb、rootfs)、file/readelf 结果、启动日志;能在 QEMU 或实板启动</td></tr>
+        <tr><td>证据标识</td><td><span class="pill">principle</span> · <span class="pill">hardware-pending</span>(实板启动由你验证)</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>Linux 用户态</td><td>进程、文件、串口、shell</td><td><a href="/foundations/linux-user/">Linux 用户态入门</a></td></tr>
+        <tr><td>C 与编译</td><td>交叉编译、链接、ELF</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>方向总览</td><td>构建模拟器与命令清单</td><td><a href="/directions/linux-build/">嵌入式 Linux 系统构建</a></td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>3. 原理与图示</h2>
+      <p>Buildroot 流水线:配置 → 下载 → 工具链 → 内核/DTB → rootfs → 镜像。产物在 <code>output/&lt;board&gt;/images/</code>。</p>
+      <p>启动链:BootROM → SPL/U-Boot → 内核 → 挂载 rootfs → init。DTB 描述硬件,内核与 DTB 必须匹配。</p>
+      <p>rootfs 最小集:/init(或 systemd)、/dev、/proc、/sys、/etc;串口控制台需要 getty 与正确的 console 参数。</p>      <pre class="code">make stm32mp157c_dk2_defconfig
+make linux-rebuild all
+ls output/stm32mp1/images/   # zImage, stm32mp157c-dk2.dtb, rootfs.ext2</pre>
+    </div>
+    <div class="section">
+      <h2>4. 操作实验</h2>
+      <ol><li>在 /directions/linux-build/ 的模拟器里选目标板与工具链,生成命令并检查架构/前缀一致性。</li><li>按命令清单执行(可在 QEMU 环境):Buildroot 配置 → 内核/DTB → rootfs → 镜像。</li><li>用 file/readelf 核对产物架构;用串口日志确认启动到 login。</li><li>记录:产物路径、镜像大小、启动日志关键行、耗时。</li></ol>      <pre class="code">file output/stm32mp1/images/zImage
+readelf -h output/stm32mp1/images/rootfs.ext2 2&gt;/dev/null || true
+# 串口:115200 8N1,看到 "Welcome to Buildroot" 即成功</pre>
+    </div>
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <table>
+        <tr><th>检查项</th><th>预期</th></tr>
+        <tr><td>产物</td><td>zImage、dtb、rootfs.ext2 均存在,大小合理</td></tr>
+        <tr><td>架构</td><td>file 显示 ARM/ARM64,与目标板一致</td></tr>
+        <tr><td>启动</td><td>串口日志出现内核版本与 login</td></tr>
+        <tr><td>可复现</td><td>从空目录按记录重跑一次成功</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>内核不启动</td><td>串口参数/波特率、镜像地址、U-Boot 环境</td><td>串口有 U-Boot 输出</td><td>检查 bootcmd 与 loadaddr</td></tr>
+        <tr><td>rootfs 挂载失败</td><td>root= 参数、文件系统类型、MMC 分区</td><td>内核日志显示挂载成功</td><td>改用 initramfs 验证</td></tr>
+        <tr><td>DTB 不匹配</td><td>dtb 与板卡型号、内核版本</td><td>设备树解析无报错</td><td>换对应 dtb 或更新内核</td></tr>
+      </table>
+    </div>
+    <p class="muted" style="font-size:12.5px">证据边界:命令与产物路径为 principle;实板启动、镜像烧录需硬件验证(hardware-pending)。</p>
+    <div class="section">
+      <h2>7. 小测</h2>
+      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
+      <div id="quiz"></div>
+    </div>
+
+    <div class="section">
+      <h2>8. 下一步</h2>
+      <p><a href="/directions/linux-build/">← 回到嵌入式 Linux 系统构建</a> · <a href="/directions/">方向进阶</a> · <a href="/foundations/linux-user/">Linux 用户态入门</a></p>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var DATA = [{"q": "Buildroot 的产物默认在哪个目录?", "opts": ["/usr/local", "output/&lt;board&gt;/images", "/opt/images", "src/images"], "a": 1, "ex": "output/<board>/images/ 含 zImage、dtb、rootfs 等。"}, {"q": "内核启动后挂载 rootfs 依赖什么参数?", "opts": ["console=", "root=", "quiet", "init="], "a": 1, "ex": "root= 指定根文件系统设备/格式;console 只影响日志输出。"}, {"q": "DTB 的作用是?", "opts": ["压缩内核", "描述硬件(地址、中断、外设)", "提供 rootfs", "编译工具链"], "a": 1, "ex": "设备树把硬件描述从内核代码中分离;内核与 DTB 必须匹配。"}];
+      var root = document.getElementById('quiz');
+      DATA.forEach(function (q, i) {
+        var box = document.createElement('div'); box.className = 'q';
+        var stem = document.createElement('p'); stem.className = 'stem';
+        stem.textContent = (i + 1) + '. ' + q.q; box.appendChild(stem);
+        q.opts.forEach(function (o, oi) {
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'opt';
+          b.textContent = String.fromCharCode(65 + oi) + '. ' + o;
+          b.addEventListener('click', function () {
+            if (box.dataset.done) return;
+            box.dataset.done = '1';
+            var right = oi === q.a;
+            b.className += right ? ' right' : ' wrong';
+            if (!right) box.querySelectorAll('.opt')[q.a].className += ' right';
+            var ex = document.createElement('p'); ex.className = 'explain show'; ex.textContent = q.ex;
+            box.appendChild(ex);
+          });
+          box.appendChild(b);
+        });
+        root.appendChild(box);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+/* 六站注入的共享平台导航(浅色;六站默认浅色,不覆盖其站内 header) */
+#platform-nav {
+  position: relative;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 18px;
+  background: #f7f8f5;
+  border-bottom: 1px solid #d8ded6;
+  font-family: var(--tok-font-sans, "Noto Sans SC", "PingFang SC", system-ui, sans-serif);
+  font-size: 13px;
+  line-height: 1.4;
+}
+#platform-nav a { color: #16211d; text-decoration: none; }
+#platform-nav a:hover { color: #0f766e; }
+#platform-nav .brand { display: inline-flex; align-items: center; gap: 7px; font-weight: 700; letter-spacing: .2px; }
+#platform-nav .brand-dot { width: 7px; height: 7px; border-radius: 50%; background: #0f766e; display: inline-block; }
+#platform-nav .navlinks { display: flex; align-items: center; gap: 13px; flex-wrap: wrap; margin-left: 8px; }
+#platform-nav .navlinks a { color: #5c6a63; }
+#platform-nav .navlinks a:hover { color: #0f766e; }
+#platform-nav .navsearch { margin-left: auto; color: #0f766e; font-weight: 600; }
+@media (max-width: 760px) {
+  #platform-nav { padding: 8px 12px; gap: 8px; font-size: 12px; }
+  #platform-nav .navlinks { display: none; }
+}
