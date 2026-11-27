@@ -1,0 +1,53 @@
+/* 六站统一令牌映射:把各站设计变量指向 --tok-*;主题由 html[data-theme] / .dark 驱动。
+   在六站 index.html 的 </head> 末尾加载(晚于站点自身 CSS,同特异性覆盖)。 */
+@import url("/shared/tokens.css");
+:root {
+  --bg: var(--tok-bg);
+  --surface: var(--tok-surface);
+  --surface-2: var(--tok-surface-2);
+  --surface-3: var(--tok-surface-2);
+  --ink: var(--tok-text);
+  --ink-2: var(--tok-muted);
+  --text: var(--tok-text);
+  --text-soft: var(--tok-muted);
+  --text-muted: var(--tok-muted);
+  --muted: var(--tok-muted);
+  --line: var(--tok-line);
+  --line-strong: var(--tok-line-strong);
+  --border: var(--tok-line);
+  --border-strong: var(--tok-line-strong);
+  --brand: var(--tok-brand);
+  --brand-strong: var(--tok-brand-strong);
+  --brand-soft: var(--tok-brand-soft);
+  --accent: var(--tok-accent);
+  --accent-soft: var(--tok-accent-soft);
+  --accent-ink: #ffffff;
+  --tint: var(--tok-brand-soft);
+  --success: var(--tok-success);
+  --warning: var(--tok-warning);
+  --warn: var(--tok-warning);
+  --danger: var(--tok-danger);
+  --green: var(--tok-success);
+  --orange: var(--tok-accent);
+  --c-canvas: 247 248 245;
+  --c-surface: 255 255 255;
+  --c-ink: 22 33 29;
+  --c-muted: 92 106 99;
+  --c-line: 216 222 214;
+}
+[data-theme="dark"] {
+  --c-canvas: 10 15 13;
+  --c-surface: 17 24 21;
+  --c-ink: 230 239 234;
+  --c-muted: 166 187 184;
+  --c-line: 43 58 52;
+}
+
+/* 基础层:统一页面底色与正文颜色;深色由 tokens 的 [data-theme="dark"] 驱动 */
+html {
+  background: var(--tok-bg);
+  color: var(--tok-text);
+}
+body {
+  color: var(--tok-text);
+}

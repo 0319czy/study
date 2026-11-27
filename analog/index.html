@@ -32,7 +32,8 @@
     <link rel="modulepreload" crossorigin href="/analog/assets/motion-C1OkreXq.js">
     <link rel="modulepreload" crossorigin href="/analog/assets/math-YHKQZZ_w.js">
     <link rel="stylesheet" crossorigin href="/analog/assets/index-BZR8R6iE.css">
-  </head>
+  <link rel="stylesheet" href="/shared/six-tokens.css" data-six-tokens="1" />
+</head>
   <body>
 <link rel="stylesheet" href="/shared/site-nav-light.css" data-platform-nav-style="1" />
 <nav id="platform-nav" aria-label="平台导航">
@@ -47,8 +48,10 @@
     <a href="/archive/">学习档案</a>
   </div>
   <a class="navsearch" href="/search/">搜索 ⌕</a>
+  <button type="button" id="theme-toggle" class="theme-toggle">深色</button>
 </nav>
 
-    <div id="root"></div>
-  </body>
+<div id="root"></div>
+  <script data-theme-script="1">(function(){var KEY='1kni4r-theme-v1';function apply(t){var d=t==='dark';document.documentElement.classList.toggle('dark',d);document.documentElement.dataset.theme=d?'dark':'light';var b=document.getElementById('theme-toggle');if(b){b.textContent=d?'浅色':'深色';}}var s=null;try{s=localStorage.getItem(KEY);}catch(e){}apply(s==='dark'?'dark':'light');var btn=document.getElementById('theme-toggle');if(btn){btn.addEventListener('click',function(){var cur=document.documentElement.dataset.theme==='dark'?'dark':'light';var n=cur==='dark'?'light':'dark';try{localStorage.setItem(KEY,n);}catch(e){}apply(n);});}})();</script>
+</body>
 </html>
