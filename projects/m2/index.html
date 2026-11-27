@@ -358,13 +358,12 @@
             <rect x="389" y="88" width="65" height="16" rx="3" fill="rgba(192,132,252,.25)" stroke="#c084fc" />
             <text x="421" y="100" text-anchor="middle" fill="#c084fc" font-size="10">续</text>
             <text x="259" y="100" text-anchor="middle" fill="#8b9bb0" font-size="9.5">被抢占,但仍持有锁</text>
-            <line x1="64" y1="116" x2="844" y2="116" stroke="#1e2a38" />
+            <line x1="64" y1="116" x2="584" y2="116" stroke="#1e2a38" />
             <text x="64" y="130" text-anchor="middle" fill="#8b9bb0" font-size="9.5">0</text>
             <text x="194" y="130" text-anchor="middle" fill="#8b9bb0" font-size="9.5">20</text>
             <text x="324" y="130" text-anchor="middle" fill="#8b9bb0" font-size="9.5">40</text>
             <text x="454" y="130" text-anchor="middle" fill="#8b9bb0" font-size="9.5">60</text>
-            <text x="584" y="130" text-anchor="middle" fill="#8b9bb0" font-size="9.5">80</text>
-            <text x="844" y="130" text-anchor="middle" fill="#8b9bb0" font-size="9.5">120ms</text>
+            <text x="584" y="130" text-anchor="end" fill="#8b9bb0" font-size="9.5">80ms</text>
 
             <text x="10" y="168" fill="#e6edf3" font-size="12.5" font-weight="600">B. 互斥量(优先级继承):日志临时提升到 P3,通信等锁 10ms</text>
             <text x="60" y="190" text-anchor="end" fill="#7dd3fc" font-size="11">通信 P3</text>
@@ -381,13 +380,12 @@
             <text x="96" y="250" text-anchor="middle" fill="#c084fc" font-size="10">持锁</text>
             <rect x="194" y="238" width="65" height="16" rx="3" fill="rgba(251,191,36,.25)" stroke="#fbbf24" />
             <text x="226" y="250" text-anchor="middle" fill="#fbbf24" font-size="9.5">继承 P3</text>
-            <line x1="64" y1="266" x2="844" y2="266" stroke="#1e2a38" />
+            <line x1="64" y1="266" x2="584" y2="266" stroke="#1e2a38" />
             <text x="64" y="280" text-anchor="middle" fill="#8b9bb0" font-size="9.5">0</text>
             <text x="194" y="280" text-anchor="middle" fill="#8b9bb0" font-size="9.5">20</text>
             <text x="324" y="280" text-anchor="middle" fill="#8b9bb0" font-size="9.5">40</text>
             <text x="454" y="280" text-anchor="middle" fill="#8b9bb0" font-size="9.5">60</text>
-            <text x="584" y="280" text-anchor="middle" fill="#8b9bb0" font-size="9.5">80</text>
-            <text x="844" y="280" text-anchor="middle" fill="#8b9bb0" font-size="9.5">120ms</text>
+            <text x="584" y="280" text-anchor="end" fill="#8b9bb0" font-size="9.5">80ms</text>
           </g>
         </svg>
       </div>
@@ -595,6 +593,7 @@ void m2_start(void)
         <p class="muted" style="font-size:12.5px;margin:0 0 10px">
           为隔离变量,这里把通信任务简化为"取到帧就发"(每帧 3ms),只看等待策略的影响;完整的 20ms 周期时序见实验 A。
           采集每 10ms 产一帧,队列深度 8;采集任务负责喂狗(500ms 超时)。
+          默认故意把通信优先级调到采集之上,用来复现饿死;推荐配置是采集 P3 / 通信 P2 / 心跳 P1(见 3.1)。
         </p>
         <div class="grid3">
           <div class="panel">
@@ -1065,7 +1064,7 @@ void m2_start(void)
             note = '第 ' + res.firstMiss + 'ms 出现第一次超期;' + worst.name + '任务超期 ' + worst.miss +
               ' 次,最大响应 ' + worst.maxResp + 'ms(周期 ' + worst.period + 'ms)。U = ' + pct.toFixed(1) + '%' +
               (pct > 100 ? ',处理器已经过载(需求超过 1000ms)。' : ',但优先级顺序导致低优先级任务拿不到足够空档。');
-            if (res.tasks[2].done === 0) note += ' 心跳任务被完全饿死(0 次完成)。';
+            if (res.tasks[2].done === 0) note += '心跳任务被完全饿死(0 次完成)。';
           }
           out.note.textContent = note;
           out.note.className = 'note' + (res.miss === 0 ? '' : ' bad');
@@ -1269,8 +1268,10 @@ void m2_start(void)
             out.steady.textContent = '可排空';
             out.steady.className = 'v ok';
             out.steadyS.textContent = '消费 > 生产';
-            note = '消费快于生产 ' + (rc - rp) + ' 帧/s,队列可排空;当前峰值 ' + res.peak +
-              ' 帧,深度只要覆盖这个峰值即可,再大只会增加排队时延。';
+            note = '消费快于生产 ' + (rc - rp) + ' 帧/s,队列可排空;' +
+              (res.peak === 0
+                ? '实测队列始终为空,深度 1 也够,但仍建议留几个位置吸收突发。'
+                : '当前峰值 ' + res.peak + ' 帧,深度覆盖这个峰值即可,再大只会增加排队时延。');
           }
           out.note.textContent = note;
           out.note.className = 'note' + (rp > rc ? ' bad' : (rp === rc ? ' warn' : ''));
@@ -1538,7 +1539,7 @@ void m2_start(void)
               (delta < 0.2 ? '。间隔 1ms 时几乎看不出差异,把间隔调到 5ms 以上再对比。' : ',抖动也更大。间隔越大越省 CPU、延迟越大。');
           } else {
             note = '阻塞队列:队列空时任务进入 Blocked,数据一到立即唤醒;平均延迟 ' + ms(cur.commAvg) +
-              ',CPU 空转 ' + cur.spinPct.toFixed(0) + '%。这是本项目的推荐做法,前提是采集优先于喂狗。';
+              ',CPU 空转 ' + cur.spinPct.toFixed(0) + '%。这是本项目的推荐做法;喂狗放在采集任务里,采集在跑,狗就有人喂。';
           }
           out.note.textContent = note;
           out.note.className = 'note' + (cur.resetAt >= 0 ? ' bad' : (mode === 'poll' ? ' warn' : ''));

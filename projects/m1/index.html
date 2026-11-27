@@ -324,7 +324,7 @@
     <div class="kicker">PROJECT M1 · 通信</div>
     <h1>M1 通信:把一帧说清楚</h1>
     <p class="lead">
-      M0 你已经有"一个数";M1 要把它变成"一条两端都能核对的消息":帧头定位边界、LEN 说明长度、
+      M0 的产出是"一个数";M1 要把它变成"一条两端都能核对的消息":帧头定位边界、LEN 说明长度、
       SEQ 编号、CMD 区分数据类型、XOR 自校验,并且在 500 ms 没有消息时明确报超时,而不是假装一切正常。
       本页的构造器、错误注入和超时模拟都可以直接改参数复算,但它们是<strong>模拟</strong>;真实串口上的那一帧标注为
       <span class="ev h">hardware-pending</span>,需要你上板完成。
@@ -498,7 +498,7 @@ F5 ^ 16 = E3   ← XOR = 0xE3,追加到帧尾</pre>
         <p>四类错误的判定有严格先后,顺序错了会把"没发完"误报成"校验错"。按下面五步走:</p>
         <ol class="order">
           <li><b>找帧头</b>:前两字节必须是 <code>AA 55</code>。<span class="err">失败 → 帧头错</span></li>
-          <li><b>看长度</b>:<code>LEN ≤ 8</code>。<span class="err">失败 → LEN 超限</span></li>
+          <li><b>看长度</b>:<code>LEN ≤ 8</code>。<span class="err">失败 → LEN 超限(LEN&gt;8)</span></li>
           <li><b>等收全</b>:缓冲区至少 <code>6 + LEN</code> 字节(含 XOR 尾)。<span class="err">失败 → 帧尾缺失/未收全</span></li>
           <li><b>验校验</b>:重算前 <code>6+LEN-1</code> 字节的 XOR,与末字节比较。<span class="err">失败 → XOR 错</span></li>
           <li><b>解语义</b>:按 CMD 解释 DATA;CMD 与 LEN 不符(如 0x01 却 LEN=2)属契约不符,不是上面四类收发错误,单独记日志。</li>
@@ -513,7 +513,8 @@ F5 ^ 16 = E3   ← XOR = 0xE3,追加到帧尾</pre>
         <h3>3.6 超时:500 ms 没来有效帧,就要说"没来"</h3>
         <p>
           判定公式:<code>now − t_last_valid &gt; 500 ms</code> → 超时。其中 <code>t_last_valid</code> 是<b>最后一条通过校验的有效帧</b>的到达时刻。
-          收到任意有效帧(按本页实现,含心跳)后清除超时标志并重新计时。
+          链路是否活着,可以由任意有效帧(含心跳 0x02)刷新;但要看"传感器数据是否断流",必须单独用 0x01 帧计时。
+          本页的超时模拟按后者统计(只算 0x01 的到达间隔),检验的是数据新鲜度。
         </p>
         <p>
           为什么 500 ms 合理?一帧最多 14 字节,115200 8N1 下约 1.2 ms;<b>500 ms 不是"帧太长",而是给"整帧没来"留的宽限</b>,
@@ -743,7 +744,7 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
       <div class="checklist" id="checklist">
         <label><input type="checkbox" /> 能默写帧结构,并解释 LEN 只数 DATA(0~8)、总长 = 6 + LEN(6~14 字节)</label>
         <label><input type="checkbox" /> 能独立算出 23.45 ℃ / 56.78 % / SEQ=1 的完整帧与 XOR = 0xE3,并与构造器输出一致</label>
-        <label><input type="checkbox" /> 能用错误注入复现四类错误(帧头错、LEN 超限、未收全、XOR 错),并说出各自的处理动作</label>
+        <label><input type="checkbox" /> 能用错误注入复现四类错误(帧头错、LEN&gt;8、未收全、XOR 错),并说出各自的处理动作</label>
         <label><input type="checkbox" /> 能说明 500 ms 超时的计时起点(最后一条有效帧)与恢复条件,并读懂超时统计</label>
         <label><input type="checkbox" /> 能解释为什么用 int16/uint16 小端 + ×100,而不是直接发 float</label>
         <label><input type="checkbox" /> <span class="ev h">hardware-pending</span> 在真实串口(开发板或 USB-TTL)抓到一帧,逐字段核对并用"整帧异或 = 0"自检,记录波特率、工具与时间</label>
@@ -1221,7 +1222,7 @@ void proto_send_sensor(int16_t t100, uint16_t h100, uint8_t seq)
         var len = bytes[2];
         if (len > MAX_LEN) {
           return {
-            status: 'error', step: 2, type: 'LEN 超限', offset: 2, bad: [2],
+            status: 'error', step: 2, type: 'LEN 超限(LEN>8)', offset: 2, bad: [2],
             detail: 'LEN = ' + len + ',超过契约允许的 0~' + MAX_LEN + '。',
             advice: ['整帧丢弃并清空缓冲,不要按 LEN 去等 ' + (6 + len) + ' 字节。',
               '检查发送端是否把"整帧长度"写进了 LEN(应为 DATA 字节数)。',
