@@ -14,11 +14,12 @@ const PAGES = [
   '/', '/route/', '/knowledge/', '/labs/', '/projects/',
   '/projects/collect/', '/projects/m1/', '/projects/m2/', '/projects/m3/',
   '/projects/m4/', '/projects/m5/', '/tools/', '/search/', '/archive/',
-  '/foundations/', '/foundations/linux-user/',
+  '/foundations/',
   '/c/', '/c/start/', '/c/memory-debug/',
   '/digital/', '/digital/start/', '/digital/sampling-debounce/',
-  '/directions/', '/directions/linux-build/', '/directions/linux-build-deep/',
-  '/directions/ros/', '/directions/pcb/', '/directions/edge-ai/',
+  '/linux-user/', '/linux-user/start/', '/linux-user/serial-pty/',
+  '/linux-build/', '/linux-build/start/', '/linux-build/buildroot/',
+  '/directions/', '/directions/ros/', '/directions/pcb/', '/directions/edge-ai/',
   '/linux/', '/mcu/', '/analog/', '/ml/', '/ros/', '/rtos/',
 ];
 

@@ -30,6 +30,8 @@
       .stage { grid-template-columns: 1fr; }
     }
   </style>
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
 </head>
 <body>
   <nav class="topnav">
@@ -42,6 +44,8 @@
       <a href="/projects/">项目实战</a>
       <a href="/tools/">工具与资料</a>
     </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
 
@@ -63,8 +67,8 @@
           <div class="goal">C 语言与指针、位操作、Git、编译链接、基本电路、仪器使用。这是后面所有阶段的底座。</div>
           <div class="out"><b>成果:</b>能编译、调试并解释一个小工程</div>
           <div class="links">
-            <a href="/foundations/c/">C 与工程工具</a>
-            <a href="/foundations/circuits/">数字电路基础</a>
+            <a href="/c/start/">C 与工程工具(C 子站)</a>
+            <a href="/digital/start/">数字电路基础(数字电路子站)</a>
             <a href="/foundations/">基础课总览</a>
           </div>
         </div>
@@ -184,5 +188,6 @@
       <p class="muted">路线上的课程入口都是真实页面;标注"待建"的课程在第一批建设,不会伪装成已完成内容。</p>
     </div>
   </main>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
 </body>
 </html>

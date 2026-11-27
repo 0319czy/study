@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Linux 用户态学科子站:进程、文件、串口与 PTY;两门课从系统调用到读串口。" />
+  <title>Linux 用户态学科子站 · 1kni4r.top · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">SUBJECT · Linux 用户态</div>
+    <h1>Linux 用户态:驱动之前先把应用写对</h1>
+    <p class="lead">驱动工程师也要能写用户态程序:读串口、管进程、处理超时与错误。这个子站从系统调用到 PTY 串口练习,两门课都能在本机复现。</p>
+    <div class="section">
+      <h2>两门课</h2>
+      <div class="grid">
+        <a class="card" href="/linux-user/start/">
+          <div class="t">Linux 用户态入门</div>
+          <div class="d">进程/线程、信号、文件 I/O、定时与日志;8 段结构。</div>
+          <div class="tagline">从零开始 →</div>
+        </a>
+        <a class="card" href="/linux-user/serial-pty/">
+          <div class="t">串口与 PTY 实践</div>
+          <div class="d">用 PTY 模拟串口,读文件描述符、错误处理、超时;接着进入 M3 网关。</div>
+          <div class="tagline">动手实践 →</div>
+        </a>
+      </div>
+    </div>
+    <div class="section">
+      <h2>先修与兼容</h2>
+      <table>
+        <tr><th>项</th><th>说明</th></tr>
+        <tr><td>先修</td><td><a href="/c/start/">C 与工程工具</a>(会读代码)</td></tr>
+        <tr><td>旧地址</td><td><a href="/foundations/linux-user/">/foundations/linux-user/</a> 继续可用;主地址为本站两门课</td></tr>
+        <tr><td>证据</td><td>compiled(gcc 本机可复现)/ simulated(PTY)</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>下一步</h2>
+      <p><a href="/projects/m3/">进入项目 M3 网关</a> · <a href="/linux-build/">Linux 构建子站</a> · <a href="/linux/">内核驱动站</a></p>
+    </div>
+  </main>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>

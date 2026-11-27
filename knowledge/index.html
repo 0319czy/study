@@ -6,6 +6,8 @@
   <meta name="description" content="知识库:六个中文教学站的知识入口与覆盖范围。" />
   <title>知识库 · 1kni4r.top</title>
   <link rel="stylesheet" href="/shared/site.css" />
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
 </head>
 <body>
   <nav class="topnav">
@@ -18,6 +20,8 @@
       <a href="/projects/">项目实战</a>
       <a href="/tools/">工具与资料</a>
     </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
     <a class="navsearch" href="/search/">搜索 ⌕</a>
   </nav>
 
@@ -68,8 +72,8 @@
       <h2>覆盖缺口(第一批补齐)</h2>
       <table>
         <tr><th>缺口</th><th>为什么需要</th><th>状态</th></tr>
-        <tr><td>C 与工程工具</td><td>指针、位操作、编译链接、Git——后面所有项目的底座</td><td><a href="/foundations/c/">已上线最小课 →</a></td></tr>
-        <tr><td>数字电路基础</td><td>电平、上拉/下拉、去抖、采样与仪器使用</td><td><a href="/foundations/circuits/">已上线最小课 →</a></td></tr>
+        <tr><td>C 与工程工具</td><td>指针、位操作、编译链接、Git——后面所有项目的底座</td><td><a href="/c/start/">C 学科子站 →</a></td></tr>
+        <tr><td>数字电路基础</td><td>电平、上拉/下拉、去抖、采样与仪器使用</td><td><a href="/digital/start/">数字电路子站 →</a></td></tr>
         <tr><td>Linux 用户态应用</td><td>串口读取、进程线程、文件与网络——驱动之前必须先会</td><td><a href="/foundations/linux-user/">已上线最小课 →</a></td></tr>
       </table>
     </div>
@@ -88,5 +92,6 @@
       <p class="muted" style="margin-top:10px">个别入口若暂未提供,会落到站内页面;平台层搜索(/search/)可跨站定位具体页面。</p>
     </div>
   </main>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
 </body>
 </html>

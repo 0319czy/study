@@ -1,0 +1,54 @@
+/* 平台页浅色主题覆盖(在 </head> 末尾加载,晚于页面内联样式,覆盖深色常量) */
+html[data-theme="light"] { background: #f7f8f5 !important; color: #16211d !important; }
+html[data-theme="light"] body { background: #f7f8f5 !important; color: #16211d !important; }
+html[data-theme="light"] .topnav { background: rgba(247,248,245,.97) !important; border-bottom-color: #d8ded6 !important; }
+html[data-theme="light"] .topnav a { color: #5c6a63 !important; }
+html[data-theme="light"] .topnav .brand { color: #16211d !important; }
+html[data-theme="light"] .topnav a.active, html[data-theme="light"] .topnav .navlinks a:hover { color: #0f766e !important; }
+html[data-theme="light"] .navsearch { color: #0f766e !important; }
+html[data-theme="light"] .page { color: #16211d !important; }
+html[data-theme="light"] .kicker { color: #0f766e !important; }
+html[data-theme="light"] .lead, html[data-theme="light"] .muted, html[data-theme="light"] .meta { color: #5c6a63 !important; }
+html[data-theme="light"] h1, html[data-theme="light"] h2, html[data-theme="light"] h3 { color: #16211d !important; }
+html[data-theme="light"] a { color: #0f766e; }
+html[data-theme="light"] .section, html[data-theme="light"] .panel, html[data-theme="light"] .card, html[data-theme="light"] .box, html[data-theme="light"] .course, html[data-theme="light"] .dir {
+  background: #ffffff !important; border-color: #d8ded6 !important; color: #16211d !important;
+}
+html[data-theme="light"] .card .d, html[data-theme="light"] .meta, html[data-theme="light"] .tagline { color: #5c6a63 !important; }
+html[data-theme="light"] table { border-color: #d8ded6 !important; }
+html[data-theme="light"] th { background: #eef1ea !important; color: #16211d !important; border-color: #d8ded6 !important; }
+html[data-theme="light"] td { color: #16211d !important; border-color: #d8ded6 !important; }
+html[data-theme="light"] tr:nth-child(even) td { background: #f3f5f0 !important; }
+html[data-theme="light"] pre, html[data-theme="light"] pre.code, html[data-theme="light"] .tree, html[data-theme="light"] code {
+  background: #f1f4ee !important; color: #16211d !important; border-color: #d8ded6 !important;
+}
+html[data-theme="light"] .pill { color: #0f766e !important; border-color: rgba(15,118,110,.35) !important; background: #e7f4f0 !important; }
+html[data-theme="light"] .pill.ok { color: #0b5c56 !important; }
+html[data-theme="light"] .pill.warn { color: #a16207 !important; border-color: rgba(161,98,7,.35) !important; }
+html[data-theme="light"] input, html[data-theme="light"] select, html[data-theme="light"] textarea {
+  background: #ffffff !important; color: #16211d !important; border-color: #d8ded6 !important;
+}
+html[data-theme="light"] button:not(.primary):not([data-theme-toggle]) {
+  background: #ffffff !important; color: #16211d !important; border-color: #d8ded6 !important;
+}
+html[data-theme="light"] .primary { background: #0f766e !important; color: #ffffff !important; border-color: #0f766e !important; }
+html[data-theme="light"] .badge { background: #eef1ea !important; color: #16211d !important; }
+html[data-theme="light"] .q .opt { background: #ffffff !important; color: #16211d !important; border-color: #d8ded6 !important; }
+html[data-theme="light"] .q .opt.right { background: #e7f4f0 !important; color: #0b5c56 !important; border-color: rgba(15,118,110,.5) !important; }
+html[data-theme="light"] .q .opt.wrong { background: #fdeceb !important; color: #b91c1c !important; border-color: rgba(185,28,28,.4) !important; }
+html[data-theme="light"] .stat b, html[data-theme="light"] .stat span { color: #16211d !important; }
+html[data-theme="light"] .progressbar { background: #eef1ea !important; border-color: #d8ded6 !important; }
+
+/* 主题/菜单按钮 */
+.theme-toggle, .nav-toggle {
+  margin-left: 10px; padding: 5px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid #26323f; background: transparent; color: #c7d3df; font: inherit; font-size: 12px;
+}
+html[data-theme="light"] .theme-toggle, html[data-theme="light"] .nav-toggle { border-color: #d8ded6; color: #16211d; }
+.nav-toggle { display: none; }
+@media (max-width: 760px) {
+  .nav-toggle { display: inline-block; }
+  .topnav .navlinks { display: none; }
+  html.nav-open .topnav .navlinks { display: flex; flex-wrap: wrap; gap: 10px; margin-left: 0; }
+  html.nav-open .topnav { flex-wrap: wrap; }
+}

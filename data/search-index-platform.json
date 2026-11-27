@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-27T14:16:52.306Z",
+  "generatedAt": "2026-11-27T14:28:47.060Z",
   "site": "platform",
-  "count": 21,
+  "count": 24,
   "items": [
     {
       "id": "platform:page:foundations",
@@ -11,15 +11,6 @@
       "type": "page",
       "route": "/foundations/",
       "keywords": "工程基础 · 三门最小课 foundations page 平台层 · 基础课/项目/方向 platform 工程基础 基础课 c 数字电路 linux"
-    },
-    {
-      "id": "platform:lesson:foundations:linux-user",
-      "title": "Linux 用户态入门",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/foundations/linux-user/",
-      "keywords": "linux 用户态入门 foundations:linux-user lesson 平台层 · 基础课/项目/方向 platform linux 用户态 进程 文件 串口"
     },
     {
       "id": "platform:page:projects",
@@ -94,15 +85,6 @@
       "keywords": "方向进阶总览 directions page 平台层 · 基础课/项目/方向 platform 方向进阶 路线"
     },
     {
-      "id": "platform:lesson:directions:linux-build",
-      "title": "嵌入式 Linux 系统构建",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/directions/linux-build/",
-      "keywords": "嵌入式 linux 系统构建 directions:linux-build lesson 平台层 · 基础课/项目/方向 platform buildroot 交叉编译 内核 根文件系统 设备树 linux"
-    },
-    {
       "id": "platform:lesson:directions:ros",
       "title": "ROS 2 机器人应用",
       "site": "platform",
@@ -128,15 +110,6 @@
       "type": "lesson",
       "route": "/directions/edge-ai/",
       "keywords": "边缘 ai 模型部署 directions:edge-ai lesson 平台层 · 基础课/项目/方向 platform 边缘 ai 量化 部署 int8"
-    },
-    {
-      "id": "platform:lesson:directions:linux-build-deep",
-      "title": "Linux 系统构建深入:Buildroot、内核与启动",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/directions/linux-build-deep/",
-      "keywords": "linux 系统构建深入:buildroot、内核与启动 directions:linux-build-deep lesson 平台层 · 基础课/项目/方向 platform buildroot 内核 dtb rootfs 启动链"
     },
     {
       "id": "platform:page:c:home",
@@ -191,6 +164,60 @@
       "type": "lesson",
       "route": "/digital/sampling-debounce/",
       "keywords": "数字电路实战:采样、去抖与电平 digital:sampling-debounce lesson 平台层 · 基础课/项目/方向 platform 数字电路实战 去抖 采样 adc 上拉"
+    },
+    {
+      "id": "platform:page:linux-user:home",
+      "title": "Linux 用户态学科子站",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/linux-user/",
+      "keywords": "linux 用户态学科子站 linux-user:home page 平台层 · 基础课/项目/方向 platform linux 用户态 学科子站 串口 pty"
+    },
+    {
+      "id": "platform:lesson:linux-user:start",
+      "title": "Linux 用户态入门(子站版)",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/linux-user/start/",
+      "keywords": "linux 用户态入门(子站版) linux-user:start lesson 平台层 · 基础课/项目/方向 platform linux 用户态入门 linux 进程 文件 串口"
+    },
+    {
+      "id": "platform:lesson:linux-user:serial-pty",
+      "title": "串口与 PTY 实践",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/linux-user/serial-pty/",
+      "keywords": "串口与 pty 实践 linux-user:serial-pty lesson 平台层 · 基础课/项目/方向 platform 串口 pty termios linux"
+    },
+    {
+      "id": "platform:page:linux-build:home",
+      "title": "Linux 系统构建学科子站",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/linux-build/",
+      "keywords": "linux 系统构建学科子站 linux-build:home page 平台层 · 基础课/项目/方向 platform linux 构建 buildroot 交叉编译"
+    },
+    {
+      "id": "platform:lesson:linux-build:start",
+      "title": "Linux 系统构建入门(子站版)",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/linux-build/start/",
+      "keywords": "linux 系统构建入门(子站版) linux-build:start lesson 平台层 · 基础课/项目/方向 platform buildroot 交叉编译 内核 rootfs"
+    },
+    {
+      "id": "platform:lesson:linux-build:buildroot",
+      "title": "Buildroot 与启动",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/linux-build/buildroot/",
+      "keywords": "buildroot 与启动 linux-build:buildroot lesson 平台层 · 基础课/项目/方向 platform buildroot dtb 启动链 内核"
     }
   ]
 }

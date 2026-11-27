@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="方向课:嵌入式 Linux 系统构建——交叉工具链、内核与 DTB、Buildroot rootfs、启动验证与设备程序固化。" />
+  <title>Linux 系统构建入门 · Linux 构建子站 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <link rel="icon" href="data:," />
+  <style>
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 0; }
+    .tight { margin: 8px 0 0; padding-left: 22px; color: #c7d3df; font-size: 14px; line-height: 1.9; }
+    .tight li { margin: 2px 0; }
+    .section h3 { font-size: 16px; margin: 24px 0 8px; color: #dbe7f2; }
+    .section h4 { font-size: 14px; margin: 18px 0 6px; color: #c7d3df; }
+    .diagram { background: #0b1117; border: 1px solid #16212c; border-left: 3px solid #5eead4; border-radius: 10px; padding: 16px 18px; overflow-x: auto; color: #a9c0d4; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; line-height: 1.8; margin: 12px 0; }
+    .box { border: 1px solid #1e2a38; border-radius: 14px; padding: 18px; margin: 14px 0; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .sim-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { color: #8b9bb0; font-size: 12px; }
+    .field.wide { grid-column: span 2; }
+    .field input, .field select { width: 100%; background: #0f151d; color: #e6edf3; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; }
+    .field input:focus, .field select:focus { outline: 1px solid #2c4257; border-color: #2c4257; }
+    .pkgs { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 14px 0 4px; padding: 12px; border: 1px dashed #243449; border-radius: 10px; }
+    .pkgs-title { color: #8b9bb0; font-size: 12px; margin-right: 4px; }
+    .pkgs label { display: inline-flex; align-items: center; gap: 6px; color: #c7d3df; font-size: 12.5px; }
+    .sim-status { margin: 12px 0 0; padding: 9px 12px; border-radius: 9px; font-size: 13px; border: 1px solid #1e2a38; color: #8b9bb0; }
+    .sim-status.ok { color: #5eead4; border-color: rgba(94,234,212,.3); background: rgba(94,234,212,.05); }
+    .sim-status.warn { color: #fbbf24; border-color: rgba(251,191,36,.3); background: rgba(251,191,36,.05); }
+    .sim-status.bad { color: #f87171; border-color: rgba(248,113,113,.35); background: rgba(248,113,113,.06); }
+    .checks { margin: 10px 0 0; padding-left: 20px; font-size: 12.5px; line-height: 1.8; }
+    .checks li.ok { color: #7fd8c6; }
+    .checks li.warn { color: #fbbf24; }
+    .checks li.bad { color: #f87171; }
+    .sim-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 14px; }
+    .sim-grid > *, .out-panel > * { min-width: 0; }
+    .out-panel { display: grid; grid-template-columns: 1.35fr .65fr; gap: 16px; align-items: start; }
+    .out-panel .size-box { margin-top: 0; }
+    .out-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; color: #8b9bb0; font-size: 12px; }
+    .cmd { margin: 0; background: #0b1117; border: 1px solid #16212c; border-radius: 10px; padding: 14px; overflow: auto; max-height: 560px; color: #c7d3df; font-family: ui-monospace, Menlo, monospace; font-size: 12px; line-height: 1.65; white-space: pre; }
+    .btn { background: #0f151d; color: #e6edf3; border: 1px solid #1e2a38; border-radius: 8px; padding: 6px 11px; font-size: 12px; cursor: pointer; font-family: inherit; }
+    .btn:hover { border-color: #2c4257; color: #5eead4; }
+    .artifact-wrap { border: 1px solid #16212c; border-radius: 10px; background: #0b1117; padding: 10px 12px; overflow-x: auto; }
+    table.data { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; }
+    table.data th, table.data td { padding: 6px 8px; border-bottom: 1px solid #16212c; }
+    table.data td:last-child { color: #8b9bb0; }
+    .size-box { margin-top: 12px; border: 1px solid #16212c; border-radius: 10px; background: #0b1117; padding: 12px; }
+    .size-line { display: block; font-size: 12.5px; color: #8b9bb0; line-height: 1.6; }
+    .size-line b { display: block; margin-top: 2px; }
+    .size-line b { color: #5eead4; font-family: ui-monospace, Menlo, monospace; font-size: 16px; }
+    .bar { height: 6px; border-radius: 999px; background: #16212c; margin: 8px 0 10px; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: linear-gradient(90deg, #2dd4bf, #5eead4); }
+    .size-box p { margin: 8px 0 0; font-size: 11.5px; line-height: 1.7; }
+    .checklist label { display: flex; gap: 8px; align-items: flex-start; color: #c7d3df; font-size: 13.5px; line-height: 1.75; margin: 7px 0; }
+    .checklist input { margin-top: 4px; flex: none; }
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin-bottom: 6px; }
+    .q .opt { display: block; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; cursor: pointer; }
+    .q .opt:hover { border-color: #2c4257; }
+    .q .opt.right { border-color: rgba(94,234,212,.5); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.5); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin-top: 4px; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    details.evidence { border: 1px solid #1e2a38; border-radius: 10px; background: #0b1117; padding: 12px 14px; margin: 12px 0; }
+    details.evidence summary { cursor: pointer; color: #9fb3c8; font-size: 13px; }
+    details.evidence[open] summary { margin-bottom: 10px; }
+    details.evidence pre { margin: 0; max-height: 420px; overflow: auto; background: #080d13; border: 1px solid #16212c; border-radius: 8px; padding: 12px; color: #b9c9d8; font-size: 11.5px; line-height: 1.55; }
+    pre.term { background: #080d13; border: 1px solid #16212c; border-left: 3px solid #5eead4; border-radius: 8px; padding: 13px 15px; overflow-x: auto; color: #c7d3df; font-size: 12px; line-height: 1.65; margin: 10px 0; }
+    ol.steps { margin: 10px 0 0; padding-left: 22px; color: #c7d3df; font-size: 13.5px; line-height: 1.8; }
+    ol.steps > li { margin: 12px 0; }
+    ol.steps pre { margin: 7px 0; }
+    .note { border-left: 3px solid #fbbf24; background: rgba(251,191,36,.04); padding: 10px 13px; border-radius: 0 8px 8px 0; color: #b9c9d8; font-size: 13px; line-height: 1.75; margin: 12px 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 720px) {
+      .page .section > table { display: block; overflow-x: auto; }
+      .page .section > table th, .page .section > table td { white-space: normal; }
+    }
+    @media (max-width: 900px) {
+      .sim-grid, .two-col, .out-panel { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .field.wide { grid-column: span 1; }
+    }
+  </style>
+<link rel="canonical" href="https://1kni4r.top/linux-build/start/" />
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">DIRECTION 04 · EMBEDDED LINUX</div>
+    <h1>嵌入式 Linux 系统构建:从工具链到能启动的镜像</h1>
+    <p class="lead">
+      方向目标:亲手产出一套最小系统——内核 + 设备树 + rootfs——再用目标 sysroot 交叉编译设备程序,
+      最后在 QEMU 或真实板卡上启动并验证。重点是每一步都能解释、每个产物都能检查,而不是照着命令粘贴。
+    </p>
+    <p class="muted">主地址:<code>/linux-build/start/</code> · 旧地址 <a href="/directions/linux-build/">/directions/linux-build/</a> 继续可用 · 学科首页:<a href="/linux-build/">/linux-build/</a></p>
+    <p class="muted">对应学习路线阶段 04 / 07 · 前置:<a href="/foundations/linux-user/">Linux 用户态入门</a> · <a href="/foundations/c/">C 与工程工具</a></p>
+    <div class="hero-meta">
+      <span class="pill ok">compiled:本页 C 工具已用 gcc 13.3.0 实测</span>
+      <span class="pill">principle:机制与命令</span>
+      <span class="pill warn">hardware-pending:启动/烧录需目标环境</span>
+    </div>
+
+    <div class="section">
+      <h2>1. 目标</h2>
+      <p class="lead">学完这一页,你应该能在没有现成教程的情况下,为一块新板子搭出"能启动、能登录、能跑自己程序"的最小系统,并能用工具输出证明它确实跑在目标架构上。</p>
+      <ul class="tight">
+        <li>读出交叉工具链前缀每一段的含义,并判断它与目标架构、浮点 ABI 是否匹配。</li>
+        <li>解释 sysroot、target、rootfs 镜像三者的关系,不把主机头文件或主机库混进目标程序。</li>
+        <li>独立完成一次 Buildroot 构建 + 启动 + 上板验证,留下别人能复现的材料。</li>
+      </ul>
+      <table style="margin-top:14px">
+        <tr><th>成果</th><th>完成标准</th><th>证据标识</th></tr>
+        <tr><td>构建链判断</td><td>能说明工具链、内核、DTB、rootfs、sysroot 各自作用;看到前缀与架构不匹配能立刻指出</td><td><span class="pill">principle</span></td></tr>
+        <tr><td>构建计划检查器</td><td>本页工具在主机编译运行通过,能对给定配置做一致性检查并生成命令</td><td><span class="pill ok">compiled</span></td></tr>
+        <tr><td>可启动镜像</td><td>Buildroot 产出内核/DTB/rootfs,在 QEMU 或板卡上启动到 login</td><td><span class="pill warn">hardware-pending</span></td></tr>
+        <tr><td>设备程序</td><td>用目标 sysroot 交叉编译、strip、装入 rootfs,<code>file</code>/<code>readelf</code> 显示 ARM 架构</td><td><span class="pill warn">hardware-pending</span></td></tr>
+      </table>
+      <p class="muted" style="font-size:12.5px;line-height:1.8">
+        证据口径:compiled = 本页给出的代码/命令已在本机(gcc 13.3.0)实际编译或运行;
+        principle = 机制说明与命令模板,未在本机跑通目标板;hardware-pending = 必须依赖板卡、烧录或目标工具链才能完成。
+        本页不把未执行的交叉编译或启动写成已验证。
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在本页哪里</th><th>去哪补</th></tr>
+        <tr><td>C 与编译链接:声明/定义、静态库/动态库、ELF</td><td>看懂 <code>--sysroot</code>、strip、file/readelf 的输出</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>Linux 用户态:shell、权限、进程、挂载</td><td>串口登录、查看 init、挂载镜像</td><td><a href="/foundations/linux-user/">Linux 用户态入门</a></td></tr>
+        <tr><td>Make 与 Kconfig</td><td>Buildroot 的 defconfig/menuconfig、内核构建</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>设备树基础:节点、compatible、dtb</td><td>解释为什么同一内核换个 dtb 就能启动另一块板</td><td><a href="/linux/">驱动实验室</a></td></tr>
+        <tr><td>串口与 SD 卡:UART、波特率、分区</td><td>板端调试输出、烧录镜像</td><td><a href="/mcu/">MCU Playground</a> · UART 章节</td></tr>
+      </table>
+      <p class="muted">最低门槛:能在 x86 上编译并运行一个 C 程序,用过 <code>make</code>,知道 <code>/</code> 下大致有哪些目录。不需要读过内核源码。</p>
+    </div>
+
+    <div class="section">
+      <h2>3. 原理与图示</h2>
+      <p class="lead">"构建一个 Linux 系统"不是编译一个程序,而是凑齐四个互相约束的部件:工具链负责生成目标代码,内核负责管硬件,DTB 告诉内核板子长什么样,rootfs 提供用户空间。四者版本与 ABI 必须对齐。</p>
+
+      <pre class="diagram">[交叉工具链]        [Linux 内核 + DTB]        [rootfs]
+gcc/binutils/glibc   zImage / Image           BusyBox + libc
+arm 或 aarch64       vexpress-*.dtb           /etc /lib /usr/bin
+      │                    │                        │
+      └────────────────────┴───────────┬────────────┘
+                                       ▼
+                        zImage/Image + dtb + rootfs.ext2
+                                       ▼
+             烧录 → BootROM → SPL → U-Boot → kernel + DTB → init → 你的程序</pre>
+
+      <h3>3.1 四个部件与检查点</h3>
+      <table>
+        <tr><th>部件</th><th>是什么</th><th>怎么确认</th></tr>
+        <tr><td>交叉工具链</td><td>在 x86 主机上生成 ARM 指令、按目标 ABI 链接的 gcc/binutils/glibc</td><td><code>arm-linux-gnueabihf-gcc -dumpmachine</code> 应输出 <code>arm-linux-gnueabihf</code></td></tr>
+        <tr><td>内核</td><td>调度、内存、驱动、文件系统;由 defconfig 决定编进哪些驱动</td><td>产物 <code>zImage</code>(arm)或 <code>Image</code>(arm64);启动日志第一行有版本号</td></tr>
+        <tr><td>DTB</td><td>板级硬件的结构化描述:内存地址、串口、GPIO、MMC</td><td>文件名与板子匹配;可用 <code>dtc -I dtb -O dts</code> 反编译核对</td></tr>
+        <tr><td>rootfs</td><td>启动后挂载成 <code>/</code> 的目录树:init、库、配置、你的程序</td><td>存在 <code>/sbin/init</code>、<code>/etc/inittab</code>;ELF 架构与内核一致</td></tr>
+      </table>
+
+      <h3>3.2 工具链前缀怎么读</h3>
+      <pre class="diagram">arm-linux-gnueabihf-gcc
+│    │      │    └── ABI:glibc + EABI5 + hard-float(硬浮点调用约定)
+│    │      └─────── C 库:glibc(gnu)
+│    └────────────── 目标系统:linux
+└─────────────────── 目标指令集:arm(32 位)
+
+aarch64-linux-gnu-gcc   → 64 位 ARMv8 + linux + glibc
+arm-linux-gnueabi-gcc   → soft-float 约定,目标库不能与 gnueabihf 混用</pre>
+      <p class="muted">名字里的 <code>gnueabihf</code> 不只是"编译器名字":它决定了浮点参数怎么传、结构体怎么对齐、链接哪个动态加载器。用 armhf 编译器链接 soft-float 的库,常见结果是能编译、上板就崩或直接跑不起来。</p>
+
+      <h3>3.3 为什么主机 gcc 编译的程序不能直接上板</h3>
+      <ul class="tight">
+        <li><b>指令集不同</b>:主机产物是 x86-64,板端 CPU 不认;内核执行时直接 <code>Exec format error</code>。</li>
+        <li><b>动态加载器路径不同</b>:x86 程序写死 <code>/lib64/ld-linux-x86-64.so.2</code>,armhf 需要 <code>/lib/ld-linux-armhf.so.3</code>。板端没有这个文件,报 "No such file or directory"——注意报的是加载器,不是程序。</li>
+        <li><b>ABI 不同</b>:<code>long</code> 在 arm32 是 4 字节、在 x86-64 是 8 字节;浮点传参、结构体对齐也可能不同。混用会静默算错。</li>
+      </ul>
+
+      <h3>3.4 sysroot / target / images 的分工</h3>
+      <table>
+        <tr><th>路径</th><th>给谁用</th><th>内容</th><th>改动影响</th></tr>
+        <tr><td><code>output/&lt;board&gt;/staging/</code></td><td>编译器(<code>--sysroot</code>)</td><td>目标头文件、<code>.so</code>/<code>.a</code>、pkg-config</td><td>只影响链接;不应手改</td></tr>
+        <tr><td><code>output/&lt;board&gt;/target/</code></td><td>打包 rootfs</td><td>运行期目录树(已裁剪)</td><td>下一次 make 会被覆盖;程序要走 overlay 或 package</td></tr>
+        <tr><td><code>output/&lt;board&gt;/images/rootfs.ext2</code></td><td>烧录/挂载</td><td>ext2/3/4 镜像(Buildroot 固定名为 rootfs.ext2)</td><td>最终交付物;大小与分区表要对齐</td></tr>
+      </table>
+      <div class="note">新手最常踩的坑:把程序 <code>install</code> 到 <code>target/usr/bin</code>,验证成功后跑一次 <code>make</code>,程序消失——因为 <code>target/</code> 是构建产物。正确做法是放进 <code>rootfs-overlay/</code> 或写成 Buildroot package,让每次构建都自动包含。</div>
+
+      <h3>3.5 Buildroot 的输出目录</h3>
+      <pre class="diagram">output/stm32mp1/
+├── images/    zImage  stm32mp157c-dk2.dtb  rootfs.ext2  sdcard.img
+├── target/    rootfs 的内容(构建产物,不要当源码目录)
+├── staging/   sysroot:头文件 + 目标库
+├── host/      主机侧工具(交叉工具链、mkimage 等)
+└── build/     各软件包的构建目录与日志(排错先看这里)</pre>
+      <p class="muted">Buildroot 的 ext 镜像固定命名为 <code>rootfs.ext2</code>;在 menuconfig 里选 ext4 变体时,它仍叫 rootfs.ext2,另外生成一个 <code>rootfs.ext4</code> 符号链接。不要把"文件名 ext2"误读成"文件系统只能是 ext2"。</p>
+      <p class="muted">Buildroot 与 Yocto 的取舍:Buildroot 是"一份配置 + 全量构建",简单直接,适合单一产品和小系统;Yocto 用层与配方做增量、可组合,适合多板型/长期维护但学习曲线更陡。本页选 Buildroot,是因为它能把"一次构建"压缩到可理解的范围。</p>
+
+      <h3>3.6 启动链与三个高频失败点</h3>
+      <pre class="diagram">BootROM → SPL/TPL → U-Boot → Linux + DTB → /sbin/init(BusyBox)→ 你的程序</pre>
+      <ul class="tight">
+        <li><b>DTB 不匹配</b>:内核起来了但找不到串口/MMC,表现为串口静默或卡在 early boot。</li>
+        <li><b>root= 写错</b>:内核打印 "No filesystem could mount root",通常是分区号或文件系统类型不对。</li>
+        <li><b>init 缺失或不可执行</b>:内核打印 "Run /sbin/init as init process" 后 panic,检查 rootfs 里有没有 BusyBox 与 <code>/etc/inittab</code>。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>4. 操作实验:交叉编译命令生成器</h2>
+      <p class="lead">先在页内把"架构 + 工具链 + 路径 + 包"组合成一份可执行的构建计划,观察不一致会在哪一步暴露;再按方向项目真正跑一次构建。</p>
+
+      <div class="box">
+        <div class="sim-form">
+          <div class="field wide">
+            <label for="board">目标板(预设 defconfig / DTB / 输出目录)</label>
+            <select id="board">
+              <option value="stm32mp1" selected>STM32MP157C-DK2(arm,真实板)</option>
+              <option value="vexpress">QEMU vexpress-a9(arm,无板可做)</option>
+              <option value="rockpi4">Rock Pi 4B(arm64,真实板)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="arch">目标架构</label>
+            <select id="arch">
+              <option value="arm">arm(32 位,ARMv7)</option>
+              <option value="arm64">arm64(64 位,ARMv8)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="prefix">工具链前缀</label>
+            <select id="prefix">
+              <option value="arm-linux-gnueabihf-">arm-linux-gnueabihf-(hard-float)</option>
+              <option value="arm-linux-gnueabi-">arm-linux-gnueabi-(soft-float)</option>
+              <option value="aarch64-linux-gnu-">aarch64-linux-gnu-</option>
+              <option value="aarch64-none-linux-gnu-">aarch64-none-linux-gnu-</option>
+            </select>
+          </div>
+          <div class="field wide">
+            <label for="kdir">内核源码目录</label>
+            <input id="kdir" type="text" value="/opt/linux-6.6" spellcheck="false" />
+          </div>
+          <div class="field wide">
+            <label for="brdir">Buildroot 源码目录</label>
+            <input id="brdir" type="text" value="/opt/buildroot" spellcheck="false" />
+          </div>
+          <div class="field wide">
+            <label for="rootfs">rootfs target 目录</label>
+            <input id="rootfs" type="text" value="/opt/buildroot/output/stm32mp1/target" spellcheck="false" />
+          </div>
+          <div class="field wide">
+            <label for="appsrc">设备程序源码</label>
+            <input id="appsrc" type="text" value="src/device_app.c" spellcheck="false" />
+          </div>
+        </div>
+
+        <div class="pkgs">
+          <span class="pkgs-title">rootfs 包(仅用于体积估算)</span>
+          <label><input type="checkbox" data-pkg="busybox" checked /> BusyBox</label>
+          <label><input type="checkbox" data-pkg="dropbear" checked /> Dropbear SSH</label>
+          <label><input type="checkbox" data-pkg="libgpiod" checked /> libgpiod</label>
+          <label><input type="checkbox" data-pkg="curl" /> curl + CA</label>
+          <label><input type="checkbox" data-pkg="python3" /> Python 3</label>
+        </div>
+
+        <div id="sim-status" class="sim-status" aria-live="polite"></div>
+        <ul id="sim-checks" class="checks"></ul>
+
+        <div class="sim-grid">
+          <div>
+            <div class="out-head"><span>生成的命令(按 0→5 顺序执行)</span><button type="button" class="btn" id="copy-btn">复制命令</button></div>
+            <pre class="cmd" id="cmd"></pre>
+          </div>
+          <div class="out-panel">
+            <div>
+              <div class="out-head"><span>产物路径与校验方式</span></div>
+              <div class="artifact-wrap">
+                <table class="data" id="artifacts"></table>
+              </div>
+            </div>
+            <div class="size-box">
+              <div class="size-line"><span>rootfs 估算(不含内核/DTB)</span><b id="size-total">--</b></div>
+              <div class="bar"><i id="size-bar" style="width:0%"></i></div>
+              <div id="size-rows" style="font-size:12px;color:#8b9bb0;line-height:1.8"></div>
+              <p id="size-note" class="muted"></p>
+            </div>
+          </div>
+        </div>
+        <p class="muted" style="margin:10px 0 0;font-size:12px;line-height:1.7">
+          defconfig / DTB 名称随 Buildroot 与内核版本变化,生成命令里保留了 <code>make list-defconfigs</code> 的核对步骤;以板级 readme 为准。
+          体积是教学估算(按典型 Buildroot 裁剪值),不是实测值。
+        </p>
+      </div>
+
+      <h3>实验任务</h3>
+      <ol class="steps">
+        <li>用默认 STM32MP1 配置生成一次,确认生成的命令里 <code>SYSROOT</code>(staging)与安装路径(<code>target/</code>)是两个不同目录。</li>
+        <li>把架构切到 arm64、前缀仍选 armhf,观察状态变红并解释:为什么这不是"变量写错",而是目标 ABI 整体不匹配。</li>
+        <li>勾选 Python 3,估算增加约 12.8 MB;说明为什么最小系统通常不装 Python,以及什么时候值得装。</li>
+      </ol>
+
+      <h3>证据:compiled(本机 gcc 13.3.0 实测)</h3>
+      <p class="muted">下面这个工具把上面的人工判断固化成代码:读取构建配置,检查架构与前缀、浮点 ABI、sysroot 推导,并输出四类产物的路径。它在主机上编译运行通过,用于验证"生成规则"本身;真正的目标板构建仍属于 hardware-pending。</p>
+      <pre class="term">$ gcc --version | head -1
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+$ gcc -std=c11 -O2 -Wall -Wextra -Werror -o buildplan buildplan.c
+$ ./buildplan build.env
+== 构建计划 / linux-build ==
+目标板      : stm32mp157c-dk2
+架构        : arm (32-bit, EABI5)
+工具链前缀  : arm-linux-gnueabihf-
+内核源码    : /opt/linux-6.6
+rootfs 根   : /opt/buildroot/output/stm32mp1/target
+sysroot     : /opt/buildroot/output/stm32mp1/staging
+程序源码    : src/device_app.c
+
+[静态检查]
+  OK    架构与前缀匹配(arm → arm-linux-gnueabihf-)
+  OK    浮点 ABI: hard-float(gnueabihf),与 Buildroot 默认一致
+  OK    前缀以 &#x27;-&#x27; 结尾,可直接拼接 gcc
+  OK    sysroot 由 ROOTFS_TARGET 推导(同级 staging)
+  NOTE  本工具只做静态一致性检查,不访问内核/rootfs 文件系统
+
+[1/5] 内核与设备树
+  make -C /opt/linux-6.6 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- multi_v7_defconfig
+  make -C /opt/linux-6.6 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j$(nproc) zImage dtbs
+
+[2/5] 设备程序(动态链接,使用目标 rootfs 的 sysroot)
+  mkdir -p build
+  arm-linux-gnueabihf-gcc -O2 -Wall -Wextra --sysroot=/opt/buildroot/output/stm32mp1/staging -o build/device_app src/device_app.c
+  arm-linux-gnueabihf-strip build/device_app
+
+[3/5] 安装进 rootfs
+  install -D -m 0755 build/device_app /opt/buildroot/output/stm32mp1/target/usr/bin/device_app
+
+[4/5] 产物路径
+  内核    /opt/linux-6.6/arch/arm/boot/zImage
+  DTB     /opt/buildroot/output/stm32mp1/images/stm32mp157c-dk2.dtb
+  程序    build/device_app
+  rootfs  /opt/buildroot/output/stm32mp1/images/rootfs.ext2
+  (dtb 由内核/Buildroot 安装到 images;若没有,在 /opt/linux-6.6/arch/arm/boot/dts/ 下按板名查找)
+
+[5/5] 校验(在主机上做,不需要上板)
+  file build/device_app
+  arm-linux-gnueabihf-readelf -h build/device_app | grep -E &#x27;Class|Machine&#x27;
+  期望    ELF 32-bit, Machine: ARM
+</pre>
+      <details class="evidence">
+        <summary>展开 build.env(工具输入,与上面的输出逐项对应)</summary>
+        <pre>BOARD="stm32mp157c-dk2"
+ARCH="arm"
+CROSS_COMPILE="arm-linux-gnueabihf-"
+KERNEL_DEFCONFIG="multi_v7_defconfig"
+DTB="stm32mp157c-dk2.dtb"
+KERNEL_DIR="/opt/linux-6.6/"
+ROOTFS_TARGET="/opt/buildroot/output/stm32mp1/target"
+APP_SRC="src/device_app.c"
+APP_OUT="build/device_app"</pre>
+      </details>
+      <details class="evidence">
+        <summary>展开 buildplan.c 完整源码(与上面运行的是同一份,约 240 行)</summary>
+        <pre>/* buildplan.c —— 交叉编译构建计划检查器(教学用,无任何外部依赖)
+ *
+ * 读取 key=value 形式的构建配置,在真正开跑前检查:
+ *   架构(ARCH)与工具链前缀(CROSS_COMPILE)是否匹配、浮点 ABI 是否明确、
+ *   内核镜像名/DTB 路径是否与架构一致,并输出内核、设备程序、rootfs 安装
+ *   与校验命令。
+ *
+ * 编译: gcc -std=c11 -O2 -Wall -Wextra -Werror -o buildplan buildplan.c
+ * 运行: ./buildplan build.env
+ * 退出码: 0 = 通过(可能带 WARN);2 = 架构/前缀不匹配;1 = 用法或读文件错误
+ */
+#include &lt;ctype.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#define MAX_CFG 24
+
+struct cfg {
+  char key[64];
+  char val[256];
+};
+
+static struct cfg g_cfg[MAX_CFG];
+static int g_n;
+
+static const char *cfg_get(const char *key)
+{
+  for (int i = 0; i &lt; g_n; i++)
+    if (strcmp(g_cfg[i].key, key) == 0)
+      return g_cfg[i].val;
+  return NULL;
+}
+
+static char *trim(char *s)
+{
+  while (isspace((unsigned char)*s))
+    s++;
+  size_t n = strlen(s);
+  while (n &gt; 0 &amp;&amp; isspace((unsigned char)s[n - 1]))
+    s[--n] = &#x27;\0&#x27;;
+  return s;
+}
+
+static int load_cfg(const char *path)
+{
+  FILE *fp = fopen(path, &quot;r&quot;);
+  if (!fp) {
+    perror(path);
+    return -1;
+  }
+  char line[512];
+  while (fgets(line, sizeof line, fp)) {
+    char *hash = strchr(line, &#x27;#&#x27;);
+    if (hash)
+      *hash = &#x27;\0&#x27;;
+    char *s = trim(line);
+    if (!*s)
+      continue;
+    char *eq = strchr(s, &#x27;=&#x27;);
+    if (!eq)
+      continue;
+    *eq = &#x27;\0&#x27;;
+    char *key = trim(s);
+    char *val = trim(eq + 1);
+    size_t vl = strlen(val);
+    if (vl &gt;= 2 &amp;&amp; (val[0] == &#x27;&quot;&#x27; || val[0] == &#x27;\&#x27;&#x27;) &amp;&amp; val[vl - 1] == val[0]) {
+      val[vl - 1] = &#x27;\0&#x27;;
+      val++;
+    }
+    if (g_n &gt;= MAX_CFG)
+      break;
+    snprintf(g_cfg[g_n].key, sizeof g_cfg[g_n].key, &quot;%s&quot;, key);
+    snprintf(g_cfg[g_n].val, sizeof g_cfg[g_n].val, &quot;%s&quot;, val);
+    g_n++;
+  }
+  fclose(fp);
+  return 0;
+}
+
+/* 去掉末尾 &#x27;/&#x27;,避免拼出 a//b */
+static void clean_path(const char *in, char *out, size_t n)
+{
+  snprintf(out, n, &quot;%s&quot;, in ? in : &quot;&quot;);
+  size_t l = strlen(out);
+  while (l &gt; 1 &amp;&amp; out[l - 1] == &#x27;/&#x27;)
+    out[--l] = &#x27;\0&#x27;;
+}
+
+/* ROOTFS_TARGET 以 /target 结尾时,同级的 staging 就是 sysroot */
+static void derive_sysroot(const char *target, char *out, size_t n)
+{
+  clean_path(target, out, n);
+  size_t l = strlen(out);
+  const char *suffix = &quot;/target&quot;;
+  size_t sl = strlen(suffix);
+  if (l &gt; sl &amp;&amp; strcmp(out + l - sl, suffix) == 0)
+    out[l - sl] = &#x27;\0&#x27;;
+  strncat(out, &quot;/staging&quot;, n - strlen(out) - 1);
+}
+
+static int mismatch(const char *arch, const char *prefix)
+{
+  if (!strcmp(arch, &quot;arm&quot;)) {
+    if (strncmp(prefix, &quot;arm-&quot;, 4) != 0)
+      return 1;
+    if (!strstr(prefix, &quot;gnueabi&quot;))
+      return 2;
+  } else if (!strcmp(arch, &quot;arm64&quot;)) {
+    if (strncmp(prefix, &quot;aarch64-&quot;, 8) != 0)
+      return 1;
+    if (!strstr(prefix, &quot;gnu&quot;))
+      return 2;
+  } else {
+    return 3;
+  }
+  return 0;
+}
+
+int main(int argc, char **argv)
+{
+  if (argc != 2) {
+    fprintf(stderr, &quot;用法: %s build.env\n&quot;, argv[0]);
+    return 1;
+  }
+  if (load_cfg(argv[1]) != 0)
+    return 1;
+
+  const char *board = cfg_get(&quot;BOARD&quot;);
+  const char *arch = cfg_get(&quot;ARCH&quot;);
+  const char *prefix = cfg_get(&quot;CROSS_COMPILE&quot;);
+  const char *defconfig = cfg_get(&quot;KERNEL_DEFCONFIG&quot;);
+  const char *dtb = cfg_get(&quot;DTB&quot;);
+  const char *kdir = cfg_get(&quot;KERNEL_DIR&quot;);
+  const char *rootfs = cfg_get(&quot;ROOTFS_TARGET&quot;);
+  const char *app = cfg_get(&quot;APP_SRC&quot;);
+  const char *app_out = cfg_get(&quot;APP_OUT&quot;);
+
+  if (!board || !arch || !prefix || !kdir || !rootfs || !app) {
+    fprintf(stderr, &quot;缺少必填项: BOARD / ARCH / CROSS_COMPILE / KERNEL_DIR / ROOTFS_TARGET / APP_SRC(可选 KERNEL_DEFCONFIG)\n&quot;);
+    return 1;
+  }
+  if (!defconfig)
+    defconfig = &quot;defconfig&quot;;
+  if (!dtb)
+    dtb = &quot;board.dtb&quot;;
+  if (!app_out)
+    app_out = &quot;build/device_app&quot;;
+
+  char kdir_c[256], rootfs_c[256], app_c[256], app_out_c[256];
+  char sysroot[1024], kernel_img[1024], dtb_path[1024], images_dir[1024], rootfs_img[1024];
+  char app_dir[256];
+  clean_path(kdir, kdir_c, sizeof kdir_c);
+  clean_path(rootfs, rootfs_c, sizeof rootfs_c);
+  clean_path(app, app_c, sizeof app_c);
+  clean_path(app_out, app_out_c, sizeof app_out_c);
+  derive_sysroot(rootfs_c, sysroot, sizeof sysroot);
+  clean_path(app_out_c, app_dir, sizeof app_dir);
+  {
+    char *slash = strrchr(app_dir, &#x27;/&#x27;);
+    if (slash)
+      *slash = &#x27;\0&#x27;;
+    else
+      strcpy(app_dir, &quot;.&quot;);
+  }
+
+  int is64 = strcmp(arch, &quot;arm64&quot;) == 0;
+  snprintf(kernel_img, sizeof kernel_img, &quot;%s/arch/%s/boot/%s&quot;, kdir_c, is64 ? &quot;arm64&quot; : &quot;arm&quot;,
+           is64 ? &quot;Image&quot; : &quot;zImage&quot;);
+  clean_path(rootfs_c, images_dir, sizeof images_dir);
+  {
+    char *slash = strrchr(images_dir, &#x27;/&#x27;);
+    if (slash)
+      *slash = &#x27;\0&#x27;;
+  }
+  strncat(images_dir, &quot;/images&quot;, sizeof images_dir - strlen(images_dir) - 1);
+  snprintf(dtb_path, sizeof dtb_path, &quot;%s/%s&quot;, images_dir, dtb);
+  snprintf(rootfs_img, sizeof rootfs_img, &quot;%s/rootfs.ext2&quot;, images_dir);
+
+  int bad = mismatch(arch, prefix);
+  int hard = strstr(prefix, &quot;gnueabihf&quot;) != NULL;
+  size_t pl = strlen(prefix);
+  int prefix_ok = pl &gt; 0 &amp;&amp; prefix[pl - 1] == &#x27;-&#x27;;
+
+  printf(&quot;== 构建计划 / linux-build ==\n&quot;);
+  printf(&quot;目标板      : %s\n&quot;, board);
+  printf(&quot;架构        : %s (%s)\n&quot;, arch, is64 ? &quot;64-bit, AArch64&quot; : &quot;32-bit, EABI5&quot;);
+  printf(&quot;工具链前缀  : %s\n&quot;, prefix);
+  printf(&quot;内核源码    : %s\n&quot;, kdir_c);
+  printf(&quot;rootfs 根   : %s\n&quot;, rootfs_c);
+  printf(&quot;sysroot     : %s\n&quot;, sysroot);
+  printf(&quot;程序源码    : %s\n\n&quot;, app_c);
+
+  printf(&quot;[静态检查]\n&quot;);
+  if (bad == 0)
+    printf(&quot;  OK    架构与前缀匹配(%s → %s)\n&quot;, arch, prefix);
+  else if (bad == 1)
+    printf(&quot;  FAIL  前缀与架构不匹配: %s 应使用 %s\n&quot;, arch,
+           is64 ? &quot;aarch64-*-gnu-*&quot; : &quot;arm-*-gnueabi*&quot;);
+  else if (bad == 2)
+    printf(&quot;  FAIL  前缀缺少 C 库标识(gnueabi / gnu)\n&quot;);
+  else
+    printf(&quot;  FAIL  不支持的 ARCH=%s(只接受 arm / arm64)\n&quot;, arch);
+
+  if (!is64)
+    printf(&quot;  %s  浮点 ABI: %s\n&quot;, hard ? &quot;OK  &quot; : &quot;WARN&quot;,
+           hard ? &quot;hard-float(gnueabihf),与 Buildroot 默认一致&quot; : &quot;soft/softfp(gnueabi),确认板端 FPU 使用方式&quot;);
+  printf(&quot;  %s  前缀以 &#x27;-&#x27; 结尾,可直接拼接 gcc\n&quot;, prefix_ok ? &quot;OK  &quot; : &quot;WARN&quot;);
+
+  if (strstr(sysroot, &quot;/staging&quot;) != NULL)
+    printf(&quot;  OK    sysroot 由 ROOTFS_TARGET 推导(同级 staging)\n&quot;);
+  else
+    printf(&quot;  WARN  rootfs 路径不以 /target 结尾,sysroot 可能不准\n&quot;);
+  printf(&quot;  NOTE  本工具只做静态一致性检查,不访问内核/rootfs 文件系统\n\n&quot;);
+
+  printf(&quot;[1/5] 内核与设备树\n&quot;);
+  printf(&quot;  make -C %s ARCH=%s CROSS_COMPILE=%s %s\n&quot;, kdir_c, arch, prefix, defconfig);
+  printf(&quot;  make -C %s ARCH=%s CROSS_COMPILE=%s -j$(nproc) %s dtbs\n\n&quot;, kdir_c, arch, prefix,
+         is64 ? &quot;Image&quot; : &quot;zImage&quot;);
+
+  printf(&quot;[2/5] 设备程序(动态链接,使用目标 rootfs 的 sysroot)\n&quot;);
+  printf(&quot;  mkdir -p %s\n&quot;, app_dir);
+  printf(&quot;  %sgcc -O2 -Wall -Wextra --sysroot=%s -o %s %s\n&quot;, prefix, sysroot, app_out_c,
+         app_c);
+  printf(&quot;  %sstrip %s\n\n&quot;, prefix, app_out_c);
+
+  printf(&quot;[3/5] 安装进 rootfs\n&quot;);
+  printf(&quot;  install -D -m 0755 %s %s/usr/bin/device_app\n\n&quot;, app_out_c, rootfs_c);
+
+  printf(&quot;[4/5] 产物路径\n&quot;);
+  printf(&quot;  内核    %s\n&quot;, kernel_img);
+  printf(&quot;  DTB     %s\n&quot;, dtb_path);
+  printf(&quot;  程序    %s\n&quot;, app_out_c);
+  printf(&quot;  rootfs  %s\n&quot;, rootfs_img);
+  printf(&quot;  (dtb 由内核/Buildroot 安装到 images;若没有,在 %s/arch/%s/boot/dts/ 下按板名查找)\n\n&quot;,
+         kdir_c, is64 ? &quot;arm64&quot; : &quot;arm&quot;);
+
+  printf(&quot;[5/5] 校验(在主机上做,不需要上板)\n&quot;);
+  printf(&quot;  file %s\n&quot;, app_out_c);
+  printf(&quot;  %sreadelf -h %s | grep -E &#x27;Class|Machine&#x27;\n&quot;, prefix, app_out_c);
+  printf(&quot;  期望    %s\n&quot;, is64 ? &quot;ELF 64-bit, Machine: AArch64&quot; : &quot;ELF 32-bit, Machine: ARM&quot;);
+
+  return bad == 0 ? 0 : 2;
+}
+</pre>
+      </details>
+
+      <h3>方向项目:Buildroot 最小系统 + 交叉编译设备程序 + 启动验证</h3>
+      <p class="lead">把"能构建"变成"能启动、能登录、能跑自己的程序、能复现"。推荐先用 QEMU 走通全流程,再上真实板;有板就把 <code>hardware-pending</code> 的证据补齐。</p>
+      <table>
+        <tr><th>项目要素</th><th>约定</th></tr>
+        <tr><td>平台</td><td>QEMU vexpress-a9(无板可做)或 STM32MP157C-DK2 / Rock Pi 4B(有板)</td></tr>
+        <tr><td>产物</td><td>可启动镜像(内核 + DTB + rootfs)+ 交叉编译的 <code>device_app</code> + 构建材料</td></tr>
+        <tr><td>验收</td><td>串口出现 login;登录后 <code>uname -m</code> 为目标架构;<code>/usr/bin/device_app</code> 退出码 0 且打印板型</td></tr>
+      </table>
+
+      <h4>步骤 1:主机准备(空间与依赖)</h4>
+      <p>准备至少 25 GB 空闲磁盘(完整构建 + 下载缓存)。Buildroot 官方依赖在 Ubuntu 24.04 上可一次装齐:</p>
+      <pre class="diagram">sudo apt install build-essential git bc bison flex libssl-dev \
+  libncurses-dev unzip rsync wget cpio file qemu-system-arm
+df -h ~    # 确认可用空间 &gt; 25G</pre>
+
+      <h4>步骤 2:获取 Buildroot 并核对板级入口</h4>
+      <pre class="diagram">git clone -b 2024.02.x https://git.buildroot.net/buildroot /opt/buildroot
+make -C /opt/buildroot list-defconfigs | grep -iE 'stm32mp|vexpress|rock_pi'</pre>
+      <p class="muted">不同版本 defconfig 名称会变。先列出再选,不要凭记忆直接 make——这是"构建前先核对输入"的最小实践。</p>
+
+      <h4>步骤 3:生成配置并打开需要的包</h4>
+      <p class="muted">下面以 <code>stm32mp157c_dk2_defconfig</code> 为例;若步骤 2 列出的名称不同,换成实际 defconfig 名,不要硬套。</p>
+      <pre class="diagram">cd /opt/buildroot
+make O=/opt/buildroot/output/stm32mp1 stm32mp157c_dk2_defconfig
+make O=/opt/buildroot/output/stm32mp1 menuconfig
+# 建议:BR2_PACKAGE_DROPBEAR=y、BR2_PACKAGE_LIBGPIOD=y、BR2_TARGET_ROOTFS_EXT2=y
+#       BR2_ROOTFS_OVERLAY="/opt/myboard/rootfs-overlay"
+make O=/opt/buildroot/output/stm32mp1 savedefconfig BR2_DEFCONFIG=/opt/myboard/stm32mp1_defconfig</pre>
+
+      <h4>步骤 4:构建并记录日志</h4>
+      <pre class="diagram">make -C /opt/buildroot O=/opt/buildroot/output/stm32mp1 -j$(nproc) 2&gt;&amp;1 | tee /opt/myboard/build.log
+ls -lh /opt/buildroot/output/stm32mp1/images/</pre>
+      <p>期望看到 <code>zImage</code>、<code>stm32mp157c-dk2.dtb</code>、<code>rootfs.ext2</code>,以及启用了 genimage 时的 <code>sdcard.img</code>。ext4 变体只会额外生成 <code>rootfs.ext4</code> 符号链接。</p>
+
+      <h4>步骤 5:QEMU 启动(无板路径)</h4>
+      <p>参数以 <code>board/qemu/arm-vexpress/readme.txt</code> 为准,核心是机器型号、DTB、rootfs 与串口:</p>
+      <pre class="diagram">qemu-system-arm -M vexpress-a9 -m 256 \
+  -kernel output/images/zImage \
+  -dtb output/images/vexpress-v2p-ca9.dtb \
+  -drive file=output/images/rootfs.ext2,if=sd,format=raw \
+  -append "console=ttyAMA0,115200 rootwait root=/dev/mmcblk0" \
+  -serial stdio -nographic</pre>
+      <p>登录 root 后收集:<code>uname -a</code>、<code>cat /proc/device-tree/model</code>、<code>df -h /</code>、<code>ps</code>。这些就是"系统真的起来了"的第一手证据。</p>
+
+      <h4>步骤 6:写并交叉编译 device_app</h4>
+      <p>程序只读设备树型号和 uptime,便于在没有外设时也验证"程序在目标用户空间运行":</p>
+      <pre class="diagram">mkdir -p /opt/myboard/rootfs-overlay/usr/bin
+arm-linux-gnueabihf-gcc -O2 -Wall -Wextra \
+  --sysroot=/opt/buildroot/output/stm32mp1/staging \
+  -o build/device_app src/device_app.c
+arm-linux-gnueabihf-strip build/device_app
+file build/device_app        # 期望:ELF 32-bit LSB, ARM, EABI5
+arm-linux-gnueabihf-readelf -h build/device_app | grep -E 'Class|Machine'</pre>
+      <details class="evidence">
+        <summary>展开 device_app.c(本机 gcc 编译通过;目标端交叉编译待执行)</summary>
+        <pre>/* device_app.c —— 最小设备自检程序(只用 libc,先在本机验证逻辑)
+ * 编译: gcc -O2 -Wall -Wextra -Werror -o device_app device_app.c
+ * 目标端: arm-linux-gnueabihf-gcc -O2 --sysroot=$SYSROOT -o device_app device_app.c
+ */
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+static void first_line(const char *path, char *out, size_t n)
+{
+  FILE *fp = fopen(path, &quot;r&quot;);
+  if (!fp) {
+    snprintf(out, n, &quot;(missing)&quot;);
+    return;
+  }
+  if (!fgets(out, (int)n, fp))
+    out[0] = &#x27;\0&#x27;;
+  fclose(fp);
+}
+
+int main(void)
+{
+  char model[128] = {0};
+  char uptime[64] = {0};
+
+  first_line(&quot;/proc/device-tree/model&quot;, model, sizeof model);
+  first_line(&quot;/proc/uptime&quot;, uptime, sizeof uptime);
+  model[strcspn(model, &quot;\r\n&quot;)] = &#x27;\0&#x27;;
+  uptime[strcspn(uptime, &quot;\r\n&quot;)] = &#x27;\0&#x27;;
+
+  printf(&quot;board  : %s\n&quot;, model);
+  {
+    double up = 0.0;
+    if (sscanf(uptime, &quot;%lf&quot;, &amp;up) == 1)
+      printf(&quot;uptime : %.2f s\n&quot;, up);
+    else
+      printf(&quot;uptime : %s s\n&quot;, uptime);
+  }
+  printf(&quot;status : ok\n&quot;);
+  return 0;
+}
+</pre>
+      </details>
+      <pre class="term">$ gcc -O2 -Wall -Wextra -Werror -o device_app device_app.c
+$ ./device_app
+board  : (missing)
+uptime : 1102.05 s
+status : ok
+</pre>
+      <p class="muted">宿主没有 <code>/proc/device-tree/model</code>,所以显示 <code>(missing)</code>;上板后应打印板型。这段输出证明代码逻辑与编译无误,不证明已在 ARM 上运行。</p>
+
+      <h4>步骤 7:固化进镜像并重启验证</h4>
+      <pre class="diagram">install -D -m 0755 build/device_app \
+  /opt/myboard/rootfs-overlay/usr/bin/device_app
+make -C /opt/buildroot O=/opt/buildroot/output/stm32mp1 -j$(nproc)
+# 重新启动后:
+ls -l /usr/bin/device_app &amp;&amp; /usr/bin/device_app; echo "exit=$?"</pre>
+
+      <h4>步骤 8:真实板烧录(hardware-pending)</h4>
+      <div class="note">写卡会破坏目标磁盘全部数据。先 <code>lsblk</code> 确认设备名与容量,再执行 <code>dd</code>;不要对系统盘操作。</div>
+      <pre class="diagram">lsblk
+sudo dd if=output/images/sdcard.img of=/dev/sdX bs=4M conv=fsync status=progress
+sync
+# 串口 115200 8N1 登录,重复步骤 5 的采集命令,对比 QEMU 与实板输出</pre>
+      <p>实板额外记录:U-Boot 版本、内核启动命令行、DTB 型号、SD 卡容量与分区表。没有板卡就停在 QEMU,并在交付说明里明确写"硬件验证未完成",不冒充已上板。</p>
+
+      <h4>验证材料清单</h4>
+      <table>
+        <tr><th>材料</th><th>怎么产生</th><th>期望内容</th></tr>
+        <tr><td>构建日志</td><td><code>make ... | tee build.log</code></td><td>结尾无 error;能看到目标包编译完成</td></tr>
+        <tr><td>镜像清单</td><td><code>ls -lh output/images/</code></td><td>内核、DTB、rootfs 大小合理且时间戳为本次构建</td></tr>
+        <tr><td>ABI 证明</td><td><code>file</code> + <code>readelf -h</code></td><td>ELF 32-bit / ARM,或 ELF 64-bit / AArch64</td></tr>
+        <tr><td>启动日志</td><td>串口或 QEMU 控制台</td><td>内核版本、DTB 型号、<code>Run /sbin/init</code>、login</td></tr>
+        <tr><td>运行输出</td><td><code>/usr/bin/device_app</code></td><td>板型正确、uptime 递增、退出码 0</td></tr>
+        <tr><td>体积记录</td><td><code>du -sh output/images/*</code>、<code>df -h /</code></td><td>rootfs 实际占用与估算的差异可解释</td></tr>
+        <tr><td>复现配置</td><td><code>savedefconfig</code> + overlay 目录</td><td>换一台机器能按 README 重建</td></tr>
+      </table>
+
+      <h4>交付物</h4>
+      <ul class="tight">
+        <li><b>可复现构建</b>:<code>stm32mp1_defconfig</code>(或 QEMU 版)、<code>rootfs-overlay/</code>、<code>device_app.c</code> 与编译脚本。</li>
+        <li><b>证据包</b>:<code>build.log</code>、串口启动日志、<code>file</code>/<code>readelf</code> 输出、板端运行输出、镜像尺寸记录。</li>
+        <li><b>一页说明</b>:Buildroot/内核/工具链版本、构建命令、踩过的坑与修复、QEMU 与实板的差异、未完成项(如 hardware-pending)。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <div class="checklist" id="checklist">
+        <label><input type="checkbox" /> 能解释工具链前缀三段(指令集 / 系统 / ABI)的含义,并说出 sysroot 与 rootfs 的区别</label>
+        <label><input type="checkbox" /> 在模拟器里制造一次架构与前缀不匹配,能指出会失败在哪一步、为什么不能只改一个变量</label>
+        <label><input type="checkbox" /> 能说明 <code>target/</code> 为什么不能手改,以及 overlay / package 两种固化方式的取舍</label>
+        <label><input type="checkbox" /> 完成一次 QEMU 启动到 login,保留串口日志与 <code>uname -a</code> 输出(或写明 hardware-pending 的具体卡点)</label>
+        <label><input type="checkbox" /> 用 <code>file</code> / <code>readelf</code> 证明设备程序是目标架构,并把输出放进证据包</label>
+      </div>
+      <p class="muted" id="check-status">已完成 0 / 5</p>
+    </div>
+
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>内核打印 "No filesystem could mount root"</td><td>核对内核 cmdline 的 <code>root=</code> 与镜像分区表:<code>fdisk -l sdcard.img</code>;确认 rootfs 文件系统类型(ext2/3/4,镜像名仍为 rootfs.ext2)且分区号对</td><td>root= 指向真实存在的分区,文件系统类型匹配</td><td>分区号错 → 改 root=/dev/mmcblk0pN;无分区表 → 查 genimage.cfg</td></tr>
+        <tr><td>串口完全没有输出</td><td>确认波特率 115200 8N1、TX/RX/GND 交叉连接、<code>console=</code> 与 DTB 串口一致;换一根线</td><td>上电能看到 U-Boot 字符</td><td>无 U-Boot → 查启动拨码/SPL;有 U-Boot 无内核 → 查 loadaddr 与镜像类型</td></tr>
+        <tr><td>板端运行程序报 "No such file or directory"</td><td><code>file device_app</code>;<code>readelf -l | grep interpreter</code>;<code>ls /lib/ld-linux-armhf.so.3</code></td><td>解释器存在,ELF 架构为 ARM</td><td>缺加载器/库 → 用目标 sysroot 重链或静态编译;架构错 → 换工具链前缀</td></tr>
+        <tr><td>编译时报找不到目标头文件</td><td>确认 <code>--sysroot</code> 指向 <code>output/&lt;board&gt;/staging</code>;<code>ls $SYSROOT/usr/include</code>;检查包是否已编</td><td>头文件存在,路径拼写正确</td><td>包未启用 → 开对应 BR2_PACKAGE_*;路径错 → 用 staging 而非 target</td></tr>
+        <tr><td>Buildroot 构建中途失败或磁盘写满</td><td><code>df -h</code>;看 <code>output/build/&lt;pkg&gt;/*.log</code> 与 <code>make</code> 最后 30 行</td><td>剩余空间 &gt; 5 GB,错误能定位到具体包</td><td>空间不足 → 清 build 目录或扩盘;下载失败 → 配 BR2_PRIMARY_SITE / 代理</td></tr>
+        <tr><td>启动后 panic,提示找不到 init</td><td>挂载 rootfs.ext2,检查 <code>/sbin/init</code>、<code>/etc/inittab</code> 权限;确认 BusyBox 已启用</td><td>init 存在且可执行</td><td>缺 BusyBox → 开 BR2_PACKAGE_BUSYBOX;权限错 → 检查 overlay 权限后重打镜像</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>7. 小测</h2>
+      <div id="quiz"></div>
+      <p class="muted" id="quiz-status">答对 0 / 3</p>
+    </div>
+
+    <div class="section">
+      <h2>8. 下一步</h2>
+      <table>
+        <tr><th>去向</th><th>内容</th><th>状态</th></tr>
+        <tr><td><a href="/directions/">方向总览</a></td><td>回到方向列表,对比嵌入式 Linux 与 ROS 2、边缘 AI 的侧重</td><td><span class="pill">已就绪</span></td></tr>
+        <tr><td><a href="/directions/ros/">ROS 2 机器人应用</a></td><td>系统起来之后,把设备接入机器人计算图:话题、TF、导航</td><td><span class="pill ok">姊妹方向</span></td></tr>
+        <tr><td><a href="/route/">学习路线</a></td><td>回到阶段 05 驱动与硬件协同,把内核驱动补上</td><td><span class="pill">路线页</span></td></tr>
+        <tr><td><a href="/linux/">驱动实验室</a></td><td>设备树、字符设备、总线驱动——把 rootfs 里的程序接到真实硬件</td><td><span class="pill">已有</span></td></tr>
+      </table>
+      <p class="muted" style="margin-top:12px;font-size:12.5px">完成顺序建议:先 QEMU 走通构建与启动 → 补驱动或通信 → 再上实板。上板前先备份可启动的旧镜像,保证能回退。</p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var BOARDS = {
+        stm32mp1: { arch: 'arm', prefix: 'arm-linux-gnueabihf-', brdefconfig: 'stm32mp157c_dk2_defconfig', kerneldefconfig: 'multi_v7_defconfig', dtb: 'stm32mp157c-dk2.dtb', out: 'stm32mp1', grep: 'stm32mp' },
+        vexpress: { arch: 'arm', prefix: 'arm-linux-gnueabihf-', brdefconfig: 'qemu_arm_vexpress_defconfig', kerneldefconfig: 'vexpress_defconfig', dtb: 'vexpress-v2p-ca9.dtb', out: 'qemu-vexpress', grep: 'vexpress' },
+        rockpi4: { arch: 'arm64', prefix: 'aarch64-linux-gnu-', brdefconfig: 'rock_pi_4_defconfig', kerneldefconfig: 'defconfig', dtb: 'rk3399-rock-pi-4b.dtb', out: 'rockpi4', grep: 'rock_pi' }
+      };
+      var PKGS = [
+        { id: 'busybox', label: 'BusyBox', mb: 1.1, cfg: 'BR2_PACKAGE_BUSYBOX' },
+        { id: 'dropbear', label: 'Dropbear SSH', mb: 0.9, cfg: 'BR2_PACKAGE_DROPBEAR' },
+        { id: 'libgpiod', label: 'libgpiod', mb: 0.4, cfg: 'BR2_PACKAGE_LIBGPIOD' },
+        { id: 'curl', label: 'curl + CA', mb: 1.2, cfg: 'BR2_PACKAGE_CURL' },
+        { id: 'python3', label: 'Python 3', mb: 12.8, cfg: 'BR2_PACKAGE_PYTHON3' }
+      ];
+      var BASE_MB = 3.0;
+
+      var boardEl = document.getElementById('board');
+      var archEl = document.getElementById('arch');
+      var prefixEl = document.getElementById('prefix');
+      var kdirEl = document.getElementById('kdir');
+      var brdirEl = document.getElementById('brdir');
+      var rootfsEl = document.getElementById('rootfs');
+      var appEl = document.getElementById('appsrc');
+      var statusEl = document.getElementById('sim-status');
+      var checksEl = document.getElementById('sim-checks');
+      var cmdEl = document.getElementById('cmd');
+      var artifactsEl = document.getElementById('artifacts');
+      var sizeTotalEl = document.getElementById('size-total');
+      var sizeBarEl = document.getElementById('size-bar');
+      var sizeRowsEl = document.getElementById('size-rows');
+      var sizeNoteEl = document.getElementById('size-note');
+      var copyBtn = document.getElementById('copy-btn');
+
+      function clean(p) {
+        return (p || '').trim().replace(/\/+$/, '');
+      }
+      function outDir() {
+        var t = clean(rootfsEl.value);
+        var i = t.lastIndexOf('/');
+        return i > 0 ? t.slice(0, i) : t;
+      }
+      function startSlash(s) {
+        return /^arm-/.test(s);
+      }
+      function startA64(s) {
+        return /^aarch64-/.test(s);
+      }
+      function selectedPkgs() {
+        var arr = [];
+        Array.prototype.forEach.call(document.querySelectorAll('.pkgs input'), function (cb) {
+          if (!cb.checked) return;
+          for (var i = 0; i < PKGS.length; i++) {
+            if (PKGS[i].id === cb.getAttribute('data-pkg')) arr.push(PKGS[i]);
+          }
+        });
+        return arr;
+      }
+
+      function render() {
+        var b = BOARDS[boardEl.value] || BOARDS.stm32mp1;
+        var arch = archEl.value;
+        var prefix = prefixEl.value;
+        var is64 = arch === 'arm64';
+        var kdir = clean(kdirEl.value) || '/opt/linux-6.6';
+        var brdir = clean(brdirEl.value) || '/opt/buildroot';
+        var rootfs = clean(rootfsEl.value);
+        var O = outDir();
+        var sysroot = O + '/staging';
+        var app = (appEl.value || '').trim() || 'src/device_app.c';
+        var image = is64 ? 'Image' : 'zImage';
+        var imgPath = kdir + '/arch/' + (is64 ? 'arm64' : 'arm') + '/boot/' + image;
+                var rootfsImg = O + '/images/rootfs.ext2';
+        var sdImg = O + '/images/sdcard.img';
+
+        var archOk = (is64 ? startA64(prefix) : startSlash(prefix)) && (is64 ? /gnu/.test(prefix) : /gnueabi/.test(prefix));
+        var prefixOk = /-$/.test(prefix);
+        var pathOk = /\/target$/.test(rootfs);
+        var dirsOk = !!kdir && !!brdir;
+        var boardOk = b.arch === arch;
+        var kernelCfg = is64 ? 'defconfig' : (b.arch === 'arm' ? b.kerneldefconfig : 'multi_v7_defconfig');
+
+        var checks = [
+          { ok: archOk, text: archOk ? ('架构与前缀匹配:' + arch + ' → ' + prefix) : ('架构与前缀不匹配:' + arch + ' 需要 ' + (is64 ? 'aarch64-*-gnu-*' : 'arm-*-gnueabi*')) },
+          { ok: prefixOk, text: prefixOk ? '前缀以 “-” 结尾,可直接拼接 gcc / strip' : '前缀缺少结尾 “-”,拼接出的命令会变成 ...gcc 之外的名字' },
+          { ok: pathOk, text: pathOk ? 'rootfs 路径形如 .../target,可由同级 staging 推导 sysroot' : 'rootfs 路径不以 /target 结尾,sysroot 可能指向错误目录' },
+          { ok: dirsOk, text: dirsOk ? '内核与 Buildroot 路径已填写' : '内核源码或 Buildroot 目录为空' },
+          { ok: boardOk, text: boardOk ? ('目标板预设与架构一致(' + b.arch + ')') : ('目标板预设是 ' + b.arch + ',与当前架构 ' + arch + ' 不一致;defconfig/DTB 不可直接照用') }
+        ];
+
+        var allOk = archOk && prefixOk && pathOk && dirsOk && boardOk;
+        statusEl.className = 'sim-status ' + (allOk ? 'ok' : (archOk ? 'warn' : 'bad'));
+        statusEl.textContent = allOk
+          ? '配置一致:下面命令可依次执行(把示例路径换成你的环境)。'
+          : (!archOk ? '架构与前缀不匹配:先修正工具链,不要执行下面第 2 步之后的命令。'
+            : (!boardOk ? '目标板预设与架构不一致:defconfig/DTB 会对不上,先换板或手动核对。'
+              : '路径或前缀有隐患:命令能生成,但先按检查项修正。'));
+
+        checksEl.innerHTML = '';
+        checks.forEach(function (c) {
+          var li = document.createElement('li');
+          li.className = c.ok ? 'ok' : 'warn';
+          li.textContent = (c.ok ? '通过 · ' : '注意 · ') + c.text;
+          checksEl.appendChild(li);
+        });
+
+        var pkgs = selectedPkgs();
+        var cfgs = pkgs.map(function (p) { return p.cfg + '=y'; });
+        var lines = [
+          '# 0) 变量(按实际目录替换)',
+          'export ARCH=' + arch,
+          'export CROSS_COMPILE=' + prefix,
+          'export BUILDROOT=' + brdir,
+          'export O=' + O,
+          'export SYSROOT=$O/staging',
+          '',
+          '# 1) 最小 rootfs:Buildroot(先核对 defconfig 名称)',
+          'make -C "$BUILDROOT" list-defconfigs | grep -i ' + b.grep,
+          'make -C "$BUILDROOT" O="$O" ' + b.brdefconfig,
+          'make -C "$BUILDROOT" O="$O" menuconfig',
+          '#  建议打开: ' + (cfgs.length ? cfgs.join(' ') : '（按需选择包）'),
+          'make -C "$BUILDROOT" O="$O" -j$(nproc)',
+          '',
+          '# 2) 内核 + 设备树(使用同一套工具链)',
+          'make -C ' + kdir + ' ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE ' + kernelCfg,
+          'make -C ' + kdir + ' ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE -j$(nproc) ' + image + ' dtbs',
+          '',
+          '# 3) 设备程序:用目标 sysroot,不用主机头文件',
+          'mkdir -p build',
+          '${CROSS_COMPILE}gcc -O2 -Wall -Wextra --sysroot="$SYSROOT" -o build/device_app ' + app,
+          '${CROSS_COMPILE}strip build/device_app',
+          'file build/device_app',
+          '${CROSS_COMPILE}readelf -h build/device_app | grep -E "Class|Machine"',
+          '',
+          '# 4a) 临时验证:传到板子 /tmp 跑(不重打镜像)',
+          'scp build/device_app root@192.168.1.50:/tmp/device_app',
+          'ssh root@192.168.1.50 /tmp/device_app',
+          '',
+          '# 4b) 正式固化:overlay,而不是手改 target/',
+          'install -D -m 0755 build/device_app /opt/myboard/rootfs-overlay/usr/bin/device_app',
+          'make -C "$BUILDROOT" O="$O" -j$(nproc)',
+          '',
+          '# 5) 产物与校验',
+          'ls -lh "$O/images/"',
+          'file build/device_app   # 期望:' + (is64 ? 'ELF 64-bit LSB, ARM aarch64' : 'ELF 32-bit LSB, ARM, EABI5')
+        ];
+        cmdEl.textContent = lines.join('\n');
+
+        var rows = [
+          ['内核', imgPath, 'file / ls -lh'],
+          ['设备树', O + '/images/' + b.dtb, '与板名核对'],
+          ['rootfs', rootfsImg, 'mount -o loop 检查'],
+          ['SD 镜像', sdImg, '启用 genimage 才有'],
+          ['设备程序', 'build/device_app', (is64 ? 'ELF 64-bit, AArch64' : 'ELF 32-bit, ARM')],
+          ['sysroot', sysroot, '编译用,不烧录']
+        ];
+        artifactsEl.innerHTML = '';
+        var head = document.createElement('tr');
+        ['产物', '路径', '校验'].forEach(function (h) {
+          var th = document.createElement('th');
+          th.textContent = h;
+          head.appendChild(th);
+        });
+        artifactsEl.appendChild(head);
+        rows.forEach(function (r) {
+          var tr = document.createElement('tr');
+          r.forEach(function (v) {
+            var td = document.createElement('td');
+            td.textContent = v;
+            tr.appendChild(td);
+          });
+          artifactsEl.appendChild(tr);
+        });
+
+        var total = BASE_MB;
+        var sizeRows = '<div>基础系统(BusyBox init、libc、/etc):' + BASE_MB.toFixed(1) + ' MB</div>';
+        pkgs.forEach(function (p) {
+          total += p.mb;
+          sizeRows += '<div>+ ' + p.label + ':' + p.mb.toFixed(1) + ' MB</div>';
+        });
+        var imgMb = Math.ceil((total * 1.3 + 6) / 16) * 16;
+        sizeTotalEl.textContent = '≈ ' + total.toFixed(1) + ' MB → ' + imgMb + ' MB 镜像';
+        sizeBarEl.style.width = Math.min(100, Math.round(total / imgMb * 100)) + '%';
+        sizeRowsEl.innerHTML = sizeRows;
+        sizeNoteEl.textContent = '按 25% 余量 + 元数据、16 MB 对齐估算;实际大小取决于 glibc/musl、strip 与是否启用 SSH。';
+      }
+
+      function applyBoard() {
+        var b = BOARDS[boardEl.value];
+        archEl.value = b.arch;
+        prefixEl.value = b.prefix;
+        rootfsEl.value = '/opt/buildroot/output/' + b.out + '/target';
+        render();
+      }
+
+      boardEl.addEventListener('change', applyBoard);
+      [archEl, prefixEl].forEach(function (el) { el.addEventListener('change', render); });
+      [kdirEl, brdirEl, rootfsEl, appEl].forEach(function (el) {
+        el.addEventListener('input', render);
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('.pkgs input'), function (cb) {
+        cb.addEventListener('change', render);
+      });
+
+      copyBtn.addEventListener('click', function () {
+        var text = cmdEl.textContent;
+        function done(msg) {
+          copyBtn.textContent = msg;
+          setTimeout(function () { copyBtn.textContent = '复制命令'; }, 1600);
+        }
+        function fallback() {
+          try {
+            var range = document.createRange();
+            range.selectNodeContents(cmdEl);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            done('已选中,按 Ctrl+C');
+          } catch (e) {
+            done('请手动选择');
+          }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { done('已复制'); }).catch(fallback);
+        } else {
+          fallback();
+        }
+      });
+
+      function updateChecks() {
+        var boxes = document.querySelectorAll('#checklist input');
+        var done = 0;
+        Array.prototype.forEach.call(boxes, function (b) { if (b.checked) done++; });
+        document.getElementById('check-status').textContent =
+          '已完成 ' + done + ' / ' + boxes.length + (done === boxes.length ? ' ✓ 结果检查完成' : '');
+      }
+      Array.prototype.forEach.call(document.querySelectorAll('#checklist input'), function (c) {
+        c.addEventListener('change', updateChecks);
+      });
+
+      var QUESTIONS = [
+        {
+          stem: '用 arm-linux-gnueabihf-gcc --sysroot=<staging> 交叉编译时,sysroot 提供的是什么?',
+          opts: ['内核源码', '目标架构的头文件与库', '主机的 glibc', '设备树源文件'],
+          answer: 1,
+          explain: 'sysroot 是目标根文件系统的"编译视角":头文件、库、pkg-config 都来自目标环境,用来避免误用主机库。'
+        },
+        {
+          stem: '把 aarch64 程序放到 32 位 arm 板子上运行,最可能的现象是?',
+          opts: ['正常运行,只是慢一点', 'Exec format error 或无法加载解释器', '自动转译成 ARMv7', '编译期就会报错'],
+          answer: 1,
+          explain: '内核只接受与自身架构匹配的 ELF。架构不匹配会在 exec 时失败;若动态链接,还可能先卡在解释器路径不存在。'
+        },
+        {
+          stem: '你把程序 install 到 output/<board>/target/usr/bin 后重新 make,程序消失。正确做法是?',
+          opts: ['每次构建后手动再 install 一次', '用 rootfs overlay 或 Buildroot package 固化', '修改 Makefile 跳过 target 清理', '关闭 Buildroot 的 target 目录'],
+          answer: 1,
+          explain: 'target/ 是构建产物,会被重新生成。overlay 或 package 才参与每次 rootfs 组装,是可复现的固化方式。'
+        }
+      ];
+      var quiz = document.getElementById('quiz');
+      var quizStatus = document.getElementById('quiz-status');
+      var correct = 0;
+      var answered = 0;
+      QUESTIONS.forEach(function (q, qi) {
+        var wrap = document.createElement('div');
+        wrap.className = 'q';
+        var stem = document.createElement('div');
+        stem.className = 'stem';
+        stem.textContent = (qi + 1) + '. ' + q.stem;
+        wrap.appendChild(stem);
+        var explain = document.createElement('div');
+        explain.className = 'explain';
+        explain.textContent = '解析:' + q.explain;
+        q.opts.forEach(function (text, oi) {
+          var opt = document.createElement('div');
+          opt.className = 'opt';
+          opt.setAttribute('role', 'button');
+          opt.tabIndex = 0;
+          opt.textContent = String.fromCharCode(65 + oi) + '. ' + text;
+          function choose() {
+            if (wrap.dataset.done) return;
+            wrap.dataset.done = '1';
+            answered++;
+            if (oi === q.answer) {
+              opt.classList.add('right');
+              correct++;
+            } else {
+              opt.classList.add('wrong');
+              wrap.querySelectorAll('.opt')[q.answer].classList.add('right');
+            }
+            explain.classList.add('show');
+            quizStatus.textContent = '答对 ' + correct + ' / ' + QUESTIONS.length +
+              (answered === QUESTIONS.length ? ' ✓ 全部作答' : '');
+          }
+          opt.addEventListener('click', choose);
+          opt.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter' || ev.key === ' ') {
+              ev.preventDefault();
+              choose();
+            }
+          });
+          wrap.appendChild(opt);
+        });
+        wrap.appendChild(explain);
+        quiz.appendChild(wrap);
+      });
+
+      applyBoard();
+      updateChecks();
+    })();
+  </script>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>

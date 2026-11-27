@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Linux 用户态入门:Shell、进程与线程、文件 I/O、串口 termios(115200 8N1)、定时日志与 gcc 实测。工程基础阶段 01 课程 03。" />
+  <title>串口与 PTY 实践 · Linux 用户态子站 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230b0f14'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%235eead4' font-family='monospace'%3E1%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --panel: #0f151d;
+      --panel-2: #131b25;
+      --line: #1e2a38;
+      --line-2: #2c4257;
+      --text: #e6edf3;
+      --muted: #8b9bb0;
+      --accent: #5eead4;
+      --accent-2: #7dd3fc;
+      --warn: #fbbf24;
+      --red: #f87171;
+      --violet: #c4b5fd;
+    }
+    html { color-scheme: dark; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; color: var(--text); }
+    .page h1 { font-size: clamp(26px, 4vw, 38px); margin: 10px 0 12px; letter-spacing: .01em; }
+    .page .lead { color: var(--muted); font-size: 15px; line-height: 1.85; max-width: 820px; }
+    .page .kicker { color: var(--accent); font-size: 12px; letter-spacing: .14em; font-family: ui-monospace, Menlo, monospace; }
+    .page a { color: var(--accent-2); text-decoration: none; }
+    .page a:hover { text-decoration: underline; }
+    .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+    .chip strong { color: var(--accent); font-weight: 600; }
+    .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 22px; }
+    .toc a { display: block; color: var(--muted); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 13px; background: rgba(15, 21, 29, .6); }
+    .toc a:hover { color: var(--text); border-color: var(--line-2); text-decoration: none; }
+    .toc a b { color: var(--accent); font-family: ui-monospace, Menlo, monospace; margin-right: 6px; }
+    .section { margin-top: 42px; scroll-margin-top: 76px; }
+    .section h2 { display: flex; align-items: center; gap: 10px; font-size: 21px; margin: 0 0 14px; line-height: 1.4; }
+    .sec-no { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #06231f; background: var(--accent); border-radius: 7px; padding: 3px 7px; flex: none; }
+    h3 { font-size: 16.5px; margin: 24px 0 8px; color: #dbe7f1; line-height: 1.5; }
+    p { line-height: 1.85; }
+    .muted { color: var(--muted); }
+    .small { font-size: 12.8px; }
+    code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.6px; color: #9fb3c8; background: rgba(125, 211, 252, .07); border: 1px solid rgba(125, 211, 252, .12); border-radius: 5px; padding: 1px 5px; }
+    .obj { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .obj li { position: relative; padding: 11px 13px 11px 38px; border: 1px solid var(--line); border-radius: 10px; background: rgba(15, 21, 29, .55); font-size: 14px; line-height: 1.75; }
+    .obj li::before { content: "✓"; position: absolute; left: 13px; top: 10px; color: var(--accent); font-weight: 700; }
+    .prereq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+    .mini-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: rgba(15, 21, 29, .55); }
+    .mini-card h3 { margin: 0 0 6px; font-size: 15px; }
+    .mini-card p, .mini-card ul { font-size: 13.5px; margin: 6px 0; line-height: 1.75; }
+    .mini-card ul { padding-left: 20px; }
+    .diagram { border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9)); padding: 14px; margin: 16px 0; }
+    .diagram svg { display: block; width: 100%; height: auto; }
+    .diagram figcaption { color: var(--muted); font-size: 12.5px; margin-top: 8px; line-height: 1.7; }
+    .codecard { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; background: #0b1117; }
+    .codehead { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 9px 14px; background: #101823; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+    .codehead .fname { font-family: ui-monospace, Menlo, monospace; color: #c7d3df; }
+    .codehead .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.6px; line-height: 1.68; color: #c7d3df; background: #0b1117; tab-size: 4; }
+    pre code { font-family: inherit; font-size: inherit; color: inherit; background: none; border: 0; padding: 0; }
+    .note { border-left: 3px solid var(--warn); background: rgba(251, 191, 36, .07); padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 13.3px; color: #d9c9a3; margin: 12px 0; line-height: 1.75; }
+    .note.sim { border-left-color: var(--accent-2); background: rgba(125, 211, 252, .07); color: #b9d5e6; }
+    .note.safe { border-left-color: var(--accent); background: rgba(94, 234, 212, .06); color: #b8d9d3; }
+    .pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-family: ui-monospace, Menlo, monospace; white-space: nowrap; }
+    .pill.compiled { color: var(--accent); border-color: rgba(94, 234, 212, .3); }
+    .pill.sim { color: var(--accent-2); border-color: rgba(125, 211, 252, .3); }
+    .pill.principle { color: var(--violet); border-color: rgba(196, 181, 253, .3); }
+    .pill.measured { color: var(--warn); border-color: rgba(251, 191, 36, .3); }
+    .page table { width: 100%; border-collapse: collapse; font-size: 13.3px; margin: 10px 0; }
+    .page th, .page td { text-align: left; padding: 9px 11px; border-bottom: 1px solid #1a2430; vertical-align: top; line-height: 1.65; }
+    .page th { color: var(--muted); font-weight: 600; font-size: 12.5px; letter-spacing: .03em; }
+    .page tbody tr:hover { background: rgba(94, 234, 212, .025); }
+    .lab { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 16px 0; background: linear-gradient(160deg, rgba(19, 27, 37, .72), rgba(12, 17, 24, .72)); }
+    .lab .labhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .lab .labhead h3 { margin: 0; font-size: 15.5px; }
+    .lab .safety { font-size: 12.5px; color: #e8d29a; background: rgba(251, 191, 36, .06); border: 1px solid rgba(251, 191, 36, .18); border-radius: 8px; padding: 8px 10px; margin: 10px 0; line-height: 1.7; }
+    .steps { list-style: none; padding: 0; margin: 10px 0; }
+    .steps > li { position: relative; padding-left: 28px; margin: 7px 0; font-size: 13.5px; line-height: 1.75; }
+    .steps > li::before { content: counter(step); counter-increment: step; position: absolute; left: 0; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: rgba(94, 234, 212, .12); color: var(--accent); font-size: 11px; font-family: ui-monospace, Menlo, monospace; display: flex; align-items: center; justify-content: center; }
+    .steps { counter-reset: step; }
+    .expect { font-size: 12.8px; color: var(--muted); margin-top: 10px; line-height: 1.75; }
+    .evidence { margin-top: 26px; }
+    .evidence h3 { margin-top: 0; }
+    .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .checklist li label { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: rgba(15, 21, 29, .5); cursor: pointer; font-size: 13.8px; line-height: 1.7; }
+    .checklist input { margin-top: 5px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+    .checklist li.done label { border-color: rgba(94, 234, 212, .35); background: rgba(94, 234, 212, .06); }
+    .check-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 14px; }
+    .progress { flex: 1; min-width: 180px; height: 9px; border-radius: 999px; background: #101823; border: 1px solid var(--line); overflow: hidden; }
+    .progress span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s ease; }
+    button { font: inherit; cursor: pointer; border-radius: 9px; border: 1px solid var(--line); padding: 8px 14px; background: #101823; color: var(--text); font-size: 13px; }
+    button:hover { border-color: var(--line-2); }
+    button.primary { background: var(--accent); color: #06231f; border-color: var(--accent); font-weight: 700; }
+    button.primary:hover { filter: brightness(1.05); }
+    .trouble { border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; background: rgba(15, 21, 29, .55); overflow: hidden; }
+    .trouble summary { cursor: pointer; padding: 12px 14px; font-weight: 600; font-size: 14px; list-style: none; display: flex; gap: 10px; align-items: center; }
+    .trouble summary::-webkit-details-marker { display: none; }
+    .trouble summary::before { content: "▸"; color: var(--accent); transition: transform .15s ease; display: inline-block; }
+    .trouble[open] summary::before { transform: rotate(90deg); }
+    .trouble .body { padding: 0 14px 14px; font-size: 13.2px; }
+    .trouble dl { margin: 0; display: grid; grid-template-columns: 88px 1fr; gap: 6px 12px; }
+    .trouble dt { color: var(--accent); font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding-top: 2px; }
+    .trouble dd { margin: 0; color: #c7d3df; line-height: 1.75; }
+    @media (max-width: 640px) { .trouble dl { grid-template-columns: 1fr; gap: 2px; } .trouble dd { margin-bottom: 6px; } }
+    .quiz-q { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 12px 0; background: rgba(15, 21, 29, .55); }
+    .quiz-q .stem { font-size: 14px; font-weight: 600; margin-bottom: 10px; line-height: 1.7; }
+    .quiz-q label.opt { display: flex; gap: 9px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; margin: 6px 0; cursor: pointer; font-size: 13.3px; color: #c7d3df; line-height: 1.65; }
+    .quiz-q label.opt:hover { border-color: var(--line-2); }
+    .quiz-q input[type="radio"] { margin-top: 4px; accent-color: var(--accent); flex: none; }
+    .quiz-q.is-correct { border-color: rgba(94, 234, 212, .45); }
+    .quiz-q.is-wrong { border-color: rgba(248, 113, 113, .45); }
+    .quiz-q.is-missing { border-color: rgba(251, 191, 36, .5); }
+    .quiz-q .explain { display: none; margin-top: 10px; padding: 9px 11px; border-radius: 8px; background: rgba(94, 234, 212, .06); border: 1px solid rgba(94, 234, 212, .16); color: #b9cfc8; font-size: 12.6px; line-height: 1.75; }
+    .quiz-q .explain.show { display: block; }
+    .quiz-result { display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); font-size: 13.5px; line-height: 1.7; }
+    .quiz-result.show { display: block; }
+    .quiz-result.ok { border-color: rgba(94, 234, 212, .4); background: rgba(94, 234, 212, .08); color: var(--accent); }
+    .quiz-result.warn { border-color: rgba(251, 191, 36, .4); background: rgba(251, 191, 36, .07); color: var(--warn); }
+    .quiz-result.bad { border-color: rgba(248, 113, 113, .4); background: rgba(248, 113, 113, .07); color: var(--red); }
+    .quiz-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .next-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; }
+    .next-card { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: linear-gradient(160deg, rgba(19, 27, 37, .9), rgba(12, 17, 24, .9)); color: inherit; }
+    .next-card:hover { border-color: var(--line-2); text-decoration: none; transform: translateY(-2px); transition: transform .2s ease; }
+    .next-card .t { font-weight: 700; font-size: 15px; color: var(--text); }
+    .next-card .d { color: var(--muted); font-size: 13px; line-height: 1.75; }
+    .next-card .go { color: var(--accent); font-size: 12.5px; font-family: ui-monospace, Menlo, monospace; margin-top: auto; padding-top: 4px; }
+    .footer-note { margin-top: 38px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; line-height: 1.8; }
+    @media (max-width: 720px) {
+      .page { padding: 26px 16px 48px; }
+      .section { margin-top: 34px; }
+      .codehead { flex-direction: column; align-items: flex-start; }
+      .page table { display: block; overflow-x: auto; }
+      .checklist { grid-template-columns: minmax(0, 1fr); }
+      .obj { grid-template-columns: minmax(0, 1fr); }
+      .topnav .navlinks { min-width: 0; flex: 1 1 auto; }
+      .topnav .navsearch { flex: none; }
+      .checklist li label, .quiz-q label.opt { display: block; position: relative; padding-left: 36px; }
+      .checklist input, .quiz-q input[type="radio"] { position: absolute; left: 12px; top: 11px; margin: 0; }
+      .page p, .page li, .page dd, .page td { overflow-wrap: break-word; }
+    }
+  </style>
+<link rel="canonical" href="https://1kni4r.top/linux-user/serial-pty/" />
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <header>
+      <div class="kicker">FOUNDATIONS · 阶段 01 · 课程 03</div>
+      <h1>Linux 用户态入门:从 Shell 到串口</h1>
+      <p class="lead">
+        驱动之前,先把用户态走通。这一课只写运行在 Linux 进程里的程序:用 Shell 管文件与权限,
+        用 <code>fork/exec</code> 和信号理解进程,用 <code>open/read/write</code> 读写文件,
+        用 <code>termios</code> 配置 <strong>115200 8N1</strong> 串口,用单调时钟做定时日志,最后用 gcc 编译运行。
+        没有开发板也能完成:串口数据用 Python 生成、经伪终端(PTY)模拟,页面会明确标注 <span class="pill sim">simulated</span>。
+      </p>
+    <p class="muted">主地址:<code>/linux-user/serial-pty/</code> · 旧地址 <a href="/foundations/linux-user/">/foundations/linux-user/</a> 继续可用 · 学科首页:<a href="/linux-user/">/linux-user/</a></p>
+      <div class="meta-chips">
+        <span class="chip">前置:<strong>C 与工程工具</strong></span>
+        <span class="chip">时长:<strong>约 60 分钟</strong></span>
+        <span class="chip">环境:<strong>Ubuntu 24.04 / gcc 13.3 / Python 3.12</strong></span>
+        <span class="chip">证据:<strong>compiled ×3 · simulated · principle</strong></span>
+        <span class="chip">硬件:<strong>不要求</strong></span>
+      </div>
+      <nav class="toc" aria-label="课程目录">
+        <a href="#objectives"><b>01</b>目标</a>
+        <a href="#prerequisites"><b>02</b>前置知识</a>
+        <a href="#principles"><b>03</b>原理与图示</a>
+        <a href="#experiment"><b>04</b>操作实验</a>
+        <a href="#result-check"><b>05</b>结果检查</a>
+        <a href="#troubleshooting"><b>06</b>故障排查</a>
+        <a href="#quiz"><b>07</b>小测</a>
+        <a href="#next-step"><b>08</b>下一步</a>
+      </nav>
+    </header>
+
+    <!-- 01 目标 -->
+    <section class="section" id="objectives">
+      <h2><span class="sec-no">01</span>目标</h2>
+      <p>学完这一课,你应当能在没有 root 权限、没有开发板的普通 Linux 上完成下面这些<strong>可验证</strong>的动作:</p>
+      <ul class="obj">
+        <li>用管道、重定向和 <code>chmod</code> 完成一次“文件 → 过滤 → 计数”,并说清 <code>&gt;</code>、<code>&gt;&gt;</code>、<code>2&gt;&amp;1</code>、<code>|</code> 的差别。</li>
+        <li>用 <code>fork/exec</code> 模型解释进程如何创建;用 <code>ps -o pid,nlwp,stat,comm</code> 区分进程与线程;用 <code>SIGTERM</code> 结束自己启动的进程,并解释退出码为什么是 143。</li>
+        <li>用 <code>open/read/write/close</code> 写一个 C 程序读写文件;能解释返回值的含义,包括 <code>read() == 0</code> 就是 EOF。</li>
+        <li>用 <code>termios</code> 把串口配置成 <strong>115200 8N1</strong>(raw、8 数据位、无校验、1 停止位),并能说出 <code>c_cflag</code> 里每个开关的作用。</li>
+        <li>用 <code>CLOCK_MONOTONIC</code> 控制周期、用 <code>CLOCK_REALTIME</code> 打时间戳,把日志追加写入文件;知道定时漂移从哪来。</li>
+        <li>用 <code>gcc -Wall -Wextra -O2</code> 编译并运行三个示例,对照真实输出判断程序行为;同时分清“编译通过”和“硬件验证”是两种不同的证据。</li>
+      </ul>
+    </section>
+
+    <!-- 02 前置知识 -->
+    <section class="section" id="prerequisites">
+      <h2><span class="sec-no">02</span>前置知识</h2>
+      <div class="prereq-grid">
+        <div class="mini-card">
+          <h3>必须先会</h3>
+          <ul>
+            <li>C 的变量、数组、指针、函数与头文件;能用 <code>gcc</code> 编译单个文件。</li>
+            <li>在终端里切换目录、编辑文本文件、执行命令;看得懂编译器报错的行号。</li>
+            <li>十六进制与二进制的基本换算(<code>0x2c</code>、<code>CS8</code>、位掩码)。</li>
+          </ul>
+          <p class="small muted">对应先修课:<a href="/foundations/">工程基础 · 课程 01「C 与工程工具」</a>(从工程基础页进入)。</p>
+        </div>
+        <div class="mini-card">
+          <h3>本课环境</h3>
+          <ul>
+            <li>任意 Linux 发行版(本页在 Ubuntu 24.04 LTS、Linux 7.0.0-43、x86_64 上实测)。</li>
+            <li><code>gcc</code>、<code>python3</code>、<code>stty</code>、<code>ps</code>、<code>od</code>、<code>wc</code> 等基础命令。</li>
+            <li>普通用户即可;实验不需要 root,也不需要内核头文件。</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <h3>不要求</h3>
+          <ul>
+            <li>不需要开发板或 USB 转串口模块;串口实验用伪终端(PTY)完成。</li>
+            <li>不需要会写内核模块、设备树或驱动——那是后续阶段的课程。</li>
+            <li>不需要交叉编译工具链;本课只验证本机 gcc。</li>
+          </ul>
+        </div>
+      </div>
+      <p class="small muted" style="margin-top:12px">查手册是这一课的核心技能:<code>man 2 open</code>、<code>man 3 termios</code>、<code>man 7 signal</code>、<code>man 7 tty</code>。不同发行版的手册版本略有差异,以本机 <code>man</code> 为准。</p>
+    </section>
+
+    <!-- 03 原理与图示 -->
+    <section class="section" id="principles">
+      <h2><span class="sec-no">03</span>原理与图示</h2>
+
+      <h3>3.1 Shell:管道、重定向、权限</h3>
+      <p>
+        Shell 本身也是用户态程序。它把多个小程序的输入输出接起来:<code>|</code> 把左边程序的 stdout 接到右边程序的 stdin;
+        <code>&gt;</code> 覆盖写文件,<code>&gt;&gt;</code> 追加;<code>&lt;</code> 把文件接到 stdin;<code>2&gt;&amp;1</code> 把 stderr 也并到 stdout。
+        Linux 的权限分三组(属主 / 属组 / 其他人)各有读 <code>r</code>、写 <code>w</code>、执行 <code>x</code>;数字表示法里 <code>644</code> 就是 <code>rw-r--r--</code>。
+        最小权限原则:只给需要的人必要的位,不要用 <code>chmod 777</code> 图省事。
+      </p>
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">shell 实测:管道 / 重定向 / 权限</span>
+          <span class="tags"><span class="pill measured">实测命令</span><span class="pill">Ubuntu 24.04</span></span>
+        </div>
+        <pre><code>$ whoami
+czy
+$ cat sensor.log | wc -l
+3
+$ wc -c &lt; sensor.log
+63
+$ ls -l sensor.log
+-rw-r--r-- 1 czy czy 63 Nov 27 17:51 sensor.log
+$ chmod 600 sensor.log &amp;&amp; ls -l sensor.log
+-rw------- 1 czy czy 63 Nov 27 17:51 sensor.log
+$ cat secret.log
+cat: secret.log: Permission denied
+exit=1
+</code></pre>
+      </div>
+      <p class="small muted">
+        输出里的用户名、大小、时间都来自本机这次会话;换一台机器会不同。<code>secret.log</code> 是实验临时文件,
+        用 <code>chmod 000</code> 演示“没有读权限”;演示后立刻恢复权限并删除,不要对系统文件这样做。
+      </p>
+
+      <h3>3.2 进程、线程与信号</h3>
+      <p>
+        <strong>进程</strong>是资源分配的单位:它有独立的虚拟地址空间、文件描述符表、信号处理设置。
+        <strong>线程</strong>是 CPU 调度的单位:同一进程内的线程共享地址空间和文件描述符,但各自有栈和寄存器上下文。
+        <code>fork()</code> 复制出一个几乎一样的子进程(写时复制,COW),<code>exec()</code> 则用新程序替换当前进程的代码与数据;
+        典型的“启动新程序”是 <code>fork</code> 之后在子进程里 <code>exec</code>。
+      </p>
+      <p>
+        查看进程常用 <code>ps</code>:<code>ps -o pid,ppid,stat,comm</code> 看父子关系与状态,<code>ps -o nlwp</code> 看线程数(大于 1 说明是多线程),
+        <code>ps -T -p &lt;pid&gt;</code> 列出线程。状态列常见值:<code>R</code> 运行、<code>S</code> 可中断睡眠、<code>D</code> 不可中断睡眠、
+        <code>Z</code> 僵尸、<code>T</code> 停止。结束进程优先发 <code>SIGTERM</code>(15),让程序有机会清理;程序不响应时才考虑 <code>SIGKILL</code>(9)。
+      </p>
+      <figure class="diagram">
+        <svg viewBox="0 0 900 250" role="img" aria-label="进程与线程:进程拥有独立地址空间和文件描述符表,线程共享进程资源,各有自己的栈">
+          <defs>
+            <marker id="arr1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#5eead4"></path>
+            </marker>
+          </defs>
+          <rect x="20" y="34" width="330" height="182" rx="12" fill="#0f151d" stroke="#1e2a38"></rect>
+          <text x="185" y="60" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="700">进程 A(资源容器)</text>
+          <rect x="42" y="78" width="286" height="30" rx="6" fill="#131b25" stroke="#1e2a38"></rect>
+          <text x="185" y="98" text-anchor="middle" fill="#9fb3c8" font-size="12">代码 / 数据 / 堆</text>
+          <rect x="42" y="116" width="286" height="30" rx="6" fill="#131b25" stroke="#1e2a38"></rect>
+          <text x="185" y="136" text-anchor="middle" fill="#9fb3c8" font-size="12">文件描述符表(共享)</text>
+          <rect x="42" y="154" width="136" height="42" rx="6" fill="#0b2b28" stroke="#2c6b62"></rect>
+          <text x="110" y="172" text-anchor="middle" fill="#5eead4" font-size="12">线程 T1</text>
+          <text x="110" y="188" text-anchor="middle" fill="#8b9bb0" font-size="10.5">栈 / 寄存器</text>
+          <rect x="192" y="154" width="136" height="42" rx="6" fill="#0b2b28" stroke="#2c6b62"></rect>
+          <text x="260" y="172" text-anchor="middle" fill="#5eead4" font-size="12">线程 T2</text>
+          <text x="260" y="188" text-anchor="middle" fill="#8b9bb0" font-size="10.5">栈 / 寄存器</text>
+          <line x1="362" y1="130" x2="430" y2="130" stroke="#5eead4" stroke-width="1.6" marker-end="url(#arr1)"></line>
+          <text x="396" y="120" text-anchor="middle" fill="#8b9bb0" font-size="11">fork()</text>
+          <rect x="442" y="46" width="180" height="168" rx="12" fill="#0f151d" stroke="#1e2a38"></rect>
+          <text x="532" y="72" text-anchor="middle" fill="#e6edf3" font-size="13.5" font-weight="700">子进程 B</text>
+          <text x="532" y="94" text-anchor="middle" fill="#8b9bb0" font-size="11">写时复制(COW)</text>
+          <rect x="462" y="108" width="140" height="26" rx="5" fill="#131b25" stroke="#1e2a38"></rect>
+          <text x="532" y="126" text-anchor="middle" fill="#9fb3c8" font-size="11">独立地址空间</text>
+          <rect x="462" y="144" width="140" height="26" rx="5" fill="#131b25" stroke="#1e2a38"></rect>
+          <text x="532" y="162" text-anchor="middle" fill="#9fb3c8" font-size="11">独立 fd 表</text>
+          <line x1="632" y1="130" x2="700" y2="130" stroke="#7dd3fc" stroke-width="1.6" marker-end="url(#arr1)"></line>
+          <text x="666" y="120" text-anchor="middle" fill="#8b9bb0" font-size="11">exec()</text>
+          <rect x="712" y="70" width="168" height="120" rx="12" fill="#0f151d" stroke="#1e2a38"></rect>
+          <text x="796" y="100" text-anchor="middle" fill="#e6edf3" font-size="13.5" font-weight="700">新程序</text>
+          <text x="796" y="124" text-anchor="middle" fill="#8b9bb0" font-size="11">代码/数据被替换</text>
+          <text x="796" y="146" text-anchor="middle" fill="#8b9bb0" font-size="11">PID 不变</text>
+        </svg>
+        <figcaption>进程与线程示意:<strong>fork</strong> 复制资源(COW 延迟复制),<strong>exec</strong> 替换程序映像但保留 PID;线程共享进程的地址空间与 fd 表,只独享栈和寄存器。</figcaption>
+      </figure>
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">进程 / 线程 / 信号实测</span>
+          <span class="tags"><span class="pill measured">实测命令</span><span class="pill">Linux 7.0.0-43</span></span>
+        </div>
+        <pre><code>$ sleep 30 &amp;
+$ ps -o pid,ppid,stat,comm -p $!
+    PID    PPID STAT COMMAND
+ 259731  259660 S    sleep
+$ kill -TERM $!
+$ wait $!; echo "exit=$?"
+exit=143
+$ ps -o pid,stat,comm -p $! (进程已回收)
+    PID STAT COMMAND
+
+$ python3 -c "import threading,time; threading.Thread(target=time.sleep,args=(30,)).start(); time.sleep(30)" &amp;
+$ ps -o pid,nlwp,stat,comm -p $!
+    PID NLWP STAT COMMAND
+ 259736    2 Sl   python3
+$ kill -TERM $!
+
+$ top -b -n 1 | head -n 3
+top - 17:51:15 up  4:57,  1 user,  load average: 2.51, 3.07, 3.09
+Tasks: 496 total,   1 running, 494 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  6.9 us,  2.3 sy,  0.0 ni, 90.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st 
+</code></pre>
+      </div>
+      <p class="small muted">
+        提示:交互式 shell 启动后台任务时会多打印一行 <code>[1] &lt;pid&gt;</code>,本页是在非交互脚本里采集的。
+        <code>exit=143</code> = 128 + 15(SIGTERM);<code>NLWP=2</code> 说明该进程有 2 个线程。只对你自己启动的进程发信号。
+      </p>
+
+      <h3>3.3 文件 I/O:open / read / write</h3>
+      <p>
+        用户态通过系统调用访问文件。每个打开的文件对应一个<strong>文件描述符</strong>(小整数,从 0 开始分配;0/1/2 默认是 stdin/stdout/stderr)。
+        <code>open()</code> 返回 fd,失败返回 -1 并设置 <code>errno</code>;<code>read()</code> 返回实际读到的字节数,
+        <code>0</code> 表示 EOF,<code>-1</code> 表示出错;<code>write()</code> 可能只写一部分,正确写法要循环到全部写完;<code>close()</code> 释放 fd。
+        <code>O_CREAT</code> 的权限参数会被 <code>umask</code> 掩掉一部分,通常 <code>0644</code> 得到 <code>rw-r--r--</code>。
+      </p>
+      <p>
+        下面的程序用 <code>open/write</code> 写 3 帧模拟数据,再用 <code>open/read</code> 循环读回,统计字节数和行数。
+        3 帧 × 21 字节(20 字符 + 换行)= 63 字节,正好可以和 <code>wc -c</code> 对照。
+      </p>
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">file_io.c</span>
+          <span class="tags"><span class="pill compiled">compiled · gcc 13.3.0</span></span>
+        </div>
+        <pre><code>/* file_io.c — 用 open/read/write 写 3 帧模拟数据,再读回统计字节数与行数
+ * 编译: gcc -Wall -Wextra -O2 -o file_io file_io.c
+ * 运行: ./file_io sensor.log
+ * 说明: 数据是模拟传感器帧,不是真实设备采集。
+ */
+#include &lt;errno.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+
+static const char *frames[] = {
+    "T=24.5,H=58.2,P=1013\n",
+    "T=24.7,H=58.0,P=1013\n",
+    "T=24.9,H=57.8,P=1012\n",
+};
+static const int nframes = (int)(sizeof(frames) / sizeof(frames[0]));
+
+int main(int argc, char **argv)
+{
+    const char *path = (argc &gt; 1) ? argv[1] : "sensor.log";
+
+    /* 1) open + write: 截断写模式,权限 0644 */
+    int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd &lt; 0) {
+        fprintf(stderr, "open(%s, O_WRONLY): %s\n", path, strerror(errno));
+        return 1;
+    }
+    for (int i = 0; i &lt; nframes; i++) {
+        size_t len = strlen(frames[i]);
+        ssize_t n = write(fd, frames[i], len);
+        if (n != (ssize_t)len) {
+            fprintf(stderr, "write frame %d: %s\n", i, strerror(errno));
+            close(fd);
+            return 1;
+        }
+    }
+    close(fd);
+    printf("[write] %d 帧 -&gt; %s\n", nframes, path);
+
+    /* 2) open + read: 循环读直到 read 返回 0(EOF) */
+    fd = open(path, O_RDONLY);
+    if (fd &lt; 0) {
+        fprintf(stderr, "open(%s, O_RDONLY): %s\n", path, strerror(errno));
+        return 1;
+    }
+    char buf[128];
+    long bytes = 0, lines = 0;
+    ssize_t n;
+    while ((n = read(fd, buf, sizeof buf)) &gt; 0) {
+        bytes += (long)n;
+        for (ssize_t i = 0; i &lt; n; i++)
+            if (buf[i] == '\n')
+                lines++;
+    }
+    if (n &lt; 0) {
+        fprintf(stderr, "read: %s\n", strerror(errno));
+        close(fd);
+        return 1;
+    }
+    close(fd);
+
+    printf("[read ] path=%s bytes=%ld lines=%ld\n", path, bytes, lines);
+    printf("[ok   ] 与 wc -c / wc -l 对照\n");
+    return 0;
+}
+</code></pre>
+      </div>
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">编译 + 运行 + 校验(真实输出)</span>
+          <span class="tags"><span class="pill compiled">compiled</span><span class="pill measured">实测输出</span></span>
+        </div>
+        <pre><code>$ gcc -Wall -Wextra -O2 -o file_io file_io.c
+(无警告,退出码 0)
+$ ./file_io sensor.log
+[write] 3 帧 -&gt; sensor.log
+[read ] path=sensor.log bytes=63 lines=3
+[ok   ] 与 wc -c / wc -l 对照
+$ wc -c -l sensor.log
+ 3 63 sensor.log
+$ cat sensor.log
+T=24.5,H=58.2,P=1013
+T=24.7,H=58.0,P=1013
+T=24.9,H=57.8,P=1012
+</code></pre>
+      </div>
+
+      <h3>3.4 串口与 termios(115200 8N1)</h3>
+      <p>
+        在 Linux 上,串口被抽象成 tty 设备文件:<code>/dev/ttyUSB0</code>(USB 转串口)、<code>/dev/ttyACM0</code>(USB CDC)、
+        <code>/dev/ttyS0</code>(板载 UART)。打开时常用 <code>O_RDWR | O_NOCTTY</code>,<code>O_NOCTTY</code> 防止这个 tty 变成进程的控制终端。
+        配置参数放在 <code>struct termios</code> 里,通过 <code>tcgetattr()</code> 读出、修改、<code>tcsetattr()</code> 写回。
+      </p>
+      <p>
+        “115200 8N1”是四个参数:波特率 115200、8 个数据位、无校验(no parity)、1 个停止位。对应到 termios:
+        <code>cfsetispeed/cfsetospeed(B115200)</code>,<code>c_cflag |= CS8</code>,<code>c_cflag &amp;= ~PARENB</code>,
+        <code>c_cflag &amp;= ~CSTOPB</code>。注意 <code>CSTOPB</code> 置位表示 <strong>2</strong> 个停止位,清掉才是 1 个。
+        再加 <code>CLOCAL | CREAD</code> 忽略调制解调器控制线并启用接收器。<code>cfmakeraw()</code> 关闭行缓冲、回显、信号字符和 CR/LF 转换,
+        这是二进制/帧协议场景的常用起点。
+      </p>
+      <figure class="diagram">
+        <svg viewBox="0 0 900 200" role="img" aria-label="115200 8N1 串口一帧:起始位 0,8 个数据位,无校验,停止位 1,共 10 bit">
+          <rect x="0" y="0" width="900" height="200" rx="10" fill="none"></rect>
+          <g font-size="11" fill="#8b9bb0" text-anchor="middle">
+            <text x="90" y="42">起始</text>
+            <text x="150" y="42">D0</text>
+            <text x="210" y="42">D1</text>
+            <text x="270" y="42">D2</text>
+            <text x="330" y="42">D3</text>
+            <text x="390" y="42">D4</text>
+            <text x="450" y="42">D5</text>
+            <text x="510" y="42">D6</text>
+            <text x="570" y="42">D7</text>
+            <text x="630" y="42">停止</text>
+          </g>
+          <g stroke="#1e2a38" stroke-width="1" stroke-dasharray="3 4">
+            <line x1="60" y1="55" x2="60" y2="128"></line>
+            <line x1="120" y1="55" x2="120" y2="128"></line>
+            <line x1="180" y1="55" x2="180" y2="128"></line>
+            <line x1="240" y1="55" x2="240" y2="128"></line>
+            <line x1="300" y1="55" x2="300" y2="128"></line>
+            <line x1="360" y1="55" x2="360" y2="128"></line>
+            <line x1="420" y1="55" x2="420" y2="128"></line>
+            <line x1="480" y1="55" x2="480" y2="128"></line>
+            <line x1="540" y1="55" x2="540" y2="128"></line>
+            <line x1="600" y1="55" x2="600" y2="128"></line>
+            <line x1="660" y1="55" x2="660" y2="128"></line>
+          </g>
+          <polyline points="10,70 60,70 60,110 120,110 120,70 180,70 180,110 480,110 480,70 540,70 540,110 600,110 600,70 720,70"
+                    fill="none" stroke="#5eead4" stroke-width="2.6" stroke-linejoin="miter"></polyline>
+          <g font-size="10.5" fill="#8b9bb0">
+            <text x="10" y="62">空闲 1</text>
+            <text x="70" y="126">0</text>
+            <text x="130" y="62">1</text>
+            <text x="185" y="126">0</text>
+            <text x="545" y="126">0</text>
+            <text x="605" y="62">1</text>
+            <text x="672" y="62">空闲 1</text>
+          </g>
+          <line x1="60" y1="150" x2="660" y2="150" stroke="#7dd3fc" stroke-width="1.4"></line>
+          <line x1="60" y1="145" x2="60" y2="155" stroke="#7dd3fc" stroke-width="1.4"></line>
+          <line x1="660" y1="145" x2="660" y2="155" stroke="#7dd3fc" stroke-width="1.4"></line>
+          <text x="360" y="170" text-anchor="middle" fill="#7dd3fc" font-size="11.5">10 bit(1 起始 + 8 数据 + 1 停止),@115200 → 86.8 µs/字节</text>
+          <text x="360" y="188" text-anchor="middle" fill="#8b9bb0" font-size="10.5">数据位 LSB 先发;示例为 0x41(&#39;A&#39; = 0100 0001)</text>
+        </svg>
+        <figcaption>8N1 帧格式与时间预算:115200 bit/s 时每 bit 约 8.68 µs,一帧 10 bit 约 86.8 µs,理论吞吐上限 11520 字节/秒。真实链路的晶振误差、线材和中断延迟都会降低上限。</figcaption>
+      </figure>
+      <table>
+        <tr><th>termios 设置</th><th>本课取值</th><th>作用</th></tr>
+        <tr><td><code>cfsetispeed/cfsetospeed</code></td><td><code>B115200</code></td><td>输入/输出波特率 115200</td></tr>
+        <tr><td><code>c_cflag &amp;= ~CSIZE; c_cflag |= CS8</code></td><td><code>CS8</code></td><td>8 个数据位</td></tr>
+        <tr><td><code>c_cflag &amp;= ~PARENB</code></td><td>无校验</td><td>关闭奇偶校验</td></tr>
+        <tr><td><code>c_cflag &amp;= ~CSTOPB</code></td><td>1 停止位</td><td><code>CSTOPB</code> 置位才是 2 个停止位</td></tr>
+        <tr><td><code>c_cflag |= CLOCAL | CREAD</code></td><td>忽略 Modem 线、启用接收</td><td>不依赖 DCD/DSR,允许 read</td></tr>
+        <tr><td><code>cfmakeraw()</code></td><td>raw 模式</td><td>关闭行规程、回显、CR/LF 转换与信号字符</td></tr>
+        <tr><td><code>VMIN=0, VTIME=10</code></td><td>0 字节 / 1.0 秒</td><td>read 最多等 1 秒;返回 0 表示超时或对端关闭</td></tr>
+        <tr><td><code>tcsetattr(fd, TCSANOW, &amp;tio)</code></td><td>立即生效</td><td>写回配置;之后用 <code>tcgetattr</code> 回读确认</td></tr>
+      </table>
+      <p>
+        下面程序打开 tty、配置 115200 8N1、回读确认,然后按行解析 <code>T=..,H=..,P=..</code> 帧。
+        <strong>本课没有真实串口硬件</strong>:运行时由 Python 脚本创建伪终端(PTY),把模拟数据写到 master 端,C 程序从 slave 端读。
+        <code>termios</code>、tty 行规程和 <code>read</code> 走的是同一套内核代码路径,但数据没有经过 UART 电气层,也没有真实传感器的单位与误差。
+      </p>
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">serial_termios.c</span>
+          <span class="tags"><span class="pill compiled">compiled · gcc 13.3.0</span><span class="pill sim">simulated 数据</span></span>
+        </div>
+        <pre><code>/* serial_termios.c — 打开 tty,配置 115200 8N1 raw 模式,读取模拟传感器帧
+ * 编译: gcc -Wall -Wextra -O2 -o serial_termios serial_termios.c
+ * 运行: ./serial_termios /dev/ttyUSB0        # 真实串口(需硬件)
+ *       python3 sim_serial.py --pty ./serial_termios   # 伪终端模拟(本课)
+ * 说明: 页面演示使用 PTY 模拟数据;未在 USB-UART 硬件上验证。
+ */
+#define _POSIX_C_SOURCE 200809L
+#define _DEFAULT_SOURCE
+#include &lt;errno.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;termios.h&gt;
+#include &lt;unistd.h&gt;
+
+static int serial_config(int fd, const char *dev)
+{
+    struct termios tio;
+    if (tcgetattr(fd, &amp;tio) &lt; 0) {
+        perror("tcgetattr");
+        return -1;
+    }
+
+    cfmakeraw(&amp;tio);                              /* 关行缓冲/回显/CR 转换 */
+    tio.c_cflag &amp;= ~(PARENB | CSTOPB | CSIZE | CRTSCTS);
+    tio.c_cflag |= CS8 | CLOCAL | CREAD;          /* 8 数据位,无校验,1 停止位 */
+    tio.c_iflag &amp;= ~(IXON | IXOFF | IXANY);       /* 关软件流控 */
+    tio.c_cc[VMIN] = 0;
+    tio.c_cc[VTIME] = 10;                         /* 0.1s 单位:1.0s 读超时 */
+    cfsetispeed(&amp;tio, B115200);
+    cfsetospeed(&amp;tio, B115200);
+    if (tcsetattr(fd, TCSANOW, &amp;tio) &lt; 0) {
+        perror("tcsetattr");
+        return -1;
+    }
+
+    /* 回读确认内核真的接受了设置 */
+    struct termios chk;
+    if (tcgetattr(fd, &amp;chk) &lt; 0) {
+        perror("tcgetattr(chk)");
+        return -1;
+    }
+    int is_8n1 = ((chk.c_cflag &amp; CSIZE) == CS8)
+              &amp;&amp; !(chk.c_cflag &amp; PARENB)
+              &amp;&amp; !(chk.c_cflag &amp; CSTOPB);
+    int baud_ok = (cfgetispeed(&amp;chk) == B115200) &amp;&amp; (cfgetospeed(&amp;chk) == B115200);
+    printf("[serial] dev=%s baud=%s 8N1=%s VMIN=%d VTIME=%d\n",
+           dev, baud_ok ? "115200" : "mismatch", is_8n1 ? "yes" : "no",
+           (int)chk.c_cc[VMIN], (int)chk.c_cc[VTIME]);
+    return 0;
+}
+
+int main(int argc, char **argv)
+{
+    const char *dev = (argc &gt; 1) ? argv[1] : "/dev/ttyUSB0";
+    int fd = open(dev, O_RDWR | O_NOCTTY | O_NONBLOCK);
+    if (fd &lt; 0) {
+        fprintf(stderr, "open(%s): %s\n", dev, strerror(errno));
+        return 1;
+    }
+    if (serial_config(fd, dev) &lt; 0) {
+        close(fd);
+        return 1;
+    }
+
+    /* O_NONBLOCK 只用于 open 阶段,读之前恢复阻塞 + VTIME 超时语义 */
+    int flags = fcntl(fd, F_GETFL);
+    if (flags &gt;= 0)
+        fcntl(fd, F_SETFL, flags &amp; ~O_NONBLOCK);
+
+    char line[128];
+    size_t used = 0;
+    long frames = 0, bytes = 0, bad = 0;
+    unsigned long checksum = 0;
+    for (;;) {
+        char ch;
+        ssize_t n = read(fd, &amp;ch, 1);
+        if (n == 0)
+            break;                    /* VTIME 超时或对端关闭 */
+        if (n &lt; 0) {
+            if (errno == EINTR)
+                continue;
+            break;
+        }
+        bytes++;
+        checksum = (checksum + (unsigned char)ch) &amp; 0xFF;
+        if (ch == '\n') {
+            line[used] = '\0';
+            double t = 0, h = 0;
+            int p = 0;
+            if (used &gt; 0 &amp;&amp; sscanf(line, "T=%lf,H=%lf,P=%d", &amp;t, &amp;h, &amp;p) == 3) {
+                frames++;
+                printf("[frame %ld] T=%.1f H=%.1f P=%d\n", frames, t, h, p);
+            } else if (used &gt; 0) {
+                bad++;
+                printf("[bad   ] %s\n", line);
+            }
+            used = 0;
+        } else if (used + 1 &lt; sizeof line) {
+            line[used++] = ch;
+        }
+    }
+    close(fd);
+    printf("[serial] frames=%ld bytes=%ld bad=%ld checksum=0x%02lx\n",
+           frames, bytes, bad, checksum);
+    return (frames &gt; 0) ? 0 : 2;
+}
+</code></pre>
+      </div>
+      <div class="note sim">
+        <strong>simulated 边界:</strong>下面的串口数据由 <code>sim_serial.py</code> 用固定随机种子生成,经 PTY 送入 C 程序。
+        它能证明 termios 配置、按行解析、字节统计和超时逻辑可运行;<strong>不能</strong>证明真实 UART 的波特率精度、电气兼容性、
+        传感器量程或误差。要标 <span class="pill measured">hardware</span>,需要接上具体型号的 USB-TTL/开发板并记录实测条件。
+      </div>
+
+      <h3>3.5 定时与日志</h3>
+      <p>
+        定时任务不要依赖“睡固定时间再干活”的朴素循环:每次处理耗时都会累计成漂移。正确做法是用<strong>单调时钟</strong>
+        <code>CLOCK_MONOTONIC</code> 计算周期,生产代码常用 <code>clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, ...)</code>
+        指定绝对唤醒时刻。给日志打时间戳则要用<strong>墙上时钟</strong> <code>CLOCK_REALTIME</code>,因为人要看“几点几分”。
+        两者分工:单调时钟管间隔,墙上时钟管记录。
+      </p>
+      <p>
+        日志用 <code>O_APPEND</code> 打开,保证每次 <code>write</code> 追加在文件末尾;多进程写同一文件时,单次 <code>write</code>
+        的原子性依赖于文件系统与写入方式。生产环境还要考虑轮转(rotating)、落盘时机(<code>fsync</code> 与性能的取舍)以及日志级别。
+        下面示例每 200 ms 写一行,连跑两次可以验证 <code>O_APPEND</code> 不会覆盖旧内容。
+      </p>
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">timer_log.c</span>
+          <span class="tags"><span class="pill compiled">compiled · gcc 13.3.0</span></span>
+        </div>
+        <pre><code>/* timer_log.c — 用 CLOCK_MONOTONIC 控周期、CLOCK_REALTIME 打时间戳,定时写日志
+ * 编译: gcc -Wall -Wextra -O2 -o timer_log timer_log.c
+ * 运行: ./timer_log timer.log
+ * 说明: 只演示周期与追加写;生产代码应使用 clock_nanosleep(TIMER_ABSTIME) 减少累计漂移。
+ */
+#define _POSIX_C_SOURCE 200809L
+#include &lt;errno.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;time.h&gt;
+#include &lt;unistd.h&gt;
+
+static void timestamp(char *out, size_t cap)
+{
+    struct timespec rt;
+    clock_gettime(CLOCK_REALTIME, &amp;rt);
+    struct tm tm;
+    localtime_r(&amp;rt.tv_sec, &amp;tm);
+    char base[32];
+    strftime(base, sizeof base, "%Y-%m-%d %H:%M:%S", &amp;tm);
+    int ms = (int)(rt.tv_nsec / 1000000L);
+    snprintf(out, cap, "%s.%03d", base, ms);
+}
+
+int main(int argc, char **argv)
+{
+    const char *path = (argc &gt; 1) ? argv[1] : "timer.log";
+    int fd = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    if (fd &lt; 0) {
+        fprintf(stderr, "open(%s): %s\n", path, strerror(errno));
+        return 1;
+    }
+
+    struct timespec t0;
+    clock_gettime(CLOCK_MONOTONIC, &amp;t0);
+    for (int i = 0; i &lt; 4; i++) {
+        struct timespec now, req;
+        clock_gettime(CLOCK_MONOTONIC, &amp;now);
+        double elapsed = (double)(now.tv_sec - t0.tv_sec)
+                       + (double)(now.tv_nsec - t0.tv_nsec) / 1e9;
+        char ts[40], line[128];
+        timestamp(ts, sizeof ts);
+        int len = snprintf(line, sizeof line,
+                           "[%s] seq=%d elapsed=%.1fs\n", ts, i, elapsed);
+        if (write(fd, line, (size_t)len) != len) {
+            fprintf(stderr, "write: %s\n", strerror(errno));
+            close(fd);
+            return 1;
+        }
+        printf("%s", line);
+        req.tv_sec = 0;
+        req.tv_nsec = 200L * 1000L * 1000L; /* 200 ms */
+        nanosleep(&amp;req, NULL);
+    }
+    close(fd);
+    return 0;
+}
+</code></pre>
+      </div>
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">编译 + 运行 + 追加校验(真实输出)</span>
+          <span class="tags"><span class="pill compiled">compiled</span><span class="pill measured">实测输出</span></span>
+        </div>
+        <pre><code>$ gcc -Wall -Wextra -O2 -o timer_log timer_log.c
+(无警告,退出码 0)
+$ ./timer_log timer.log
+[2026-11-27 17:51:11.481] seq=0 elapsed=0.0s
+[2026-11-27 17:51:11.681] seq=1 elapsed=0.2s
+[2026-11-27 17:51:11.881] seq=2 elapsed=0.4s
+[2026-11-27 17:51:12.081] seq=3 elapsed=0.6s
+$ cat timer.log
+[2026-11-27 17:51:11.481] seq=0 elapsed=0.0s
+[2026-11-27 17:51:11.681] seq=1 elapsed=0.2s
+[2026-11-27 17:51:11.881] seq=2 elapsed=0.4s
+[2026-11-27 17:51:12.081] seq=3 elapsed=0.6s
+$ ./timer_log timer.log &gt; /dev/null   # 再跑一次,验证 O_APPEND
+$ wc -l timer.log
+8 timer.log
+</code></pre>
+      </div>
+
+      <h3>3.6 gcc:编译、警告与证据边界</h3>
+      <p>
+        gcc 的四个阶段是:预处理(<code>-E</code>,展开头文件与宏)→ 编译(<code>-S</code>,生成汇编)→ 汇编(<code>-c</code>,生成目标文件)
+        → 链接(把目标文件与 libc 等库合成可执行文件)。本课统一用 <code>gcc -Wall -Wextra -O2 -o 程序 源文件.c</code>。
+        <code>-Wall -Wextra</code> 打开常用警告,警告往往就是未定义行为的线索;本课三个程序在此选项下<strong>零警告</strong>编译通过。
+      </p>
+      <div class="codecard">
+        <div class="codehead">
+          <span class="fname">工具版本(真实输出)</span>
+          <span class="tags"><span class="pill measured">实测命令</span></span>
+        </div>
+        <pre><code>$ gcc --version | head -1
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+$ python3 --version
+Python 3.12.3
+$ uname -r
+7.0.0-43-generic
+</code></pre>
+      </div>
+      <p class="small muted">
+        证据边界:编译通过说明源码在 gcc 13.3.0 / glibc 2.39 / x86_64 上语法与链接成立,不说明它在 ARM 目标板、
+        其他 libc 或交叉工具链上也能直接编译,更不说明硬件行为正确。
+      </p>
+    </section>
+
+    <!-- 04 操作实验 -->
+    <section class="section" id="experiment">
+      <h2><span class="sec-no">04</span>操作实验</h2>
+      <p>
+        所有实验都在普通用户下完成,建议统一放在 <code>~/linux-user-lab</code>。把 03 节的 C 代码分别保存成对应文件,
+        再按下面步骤执行。命令与输出都可以直接复制;标注 <span class="pill measured">实测输出</span> 的块来自本机真实运行,
+        标注 <span class="pill sim">simulated</span> 的块来自 PTY 模拟数据。
+      </p>
+      <pre><code>mkdir -p ~/linux-user-lab &amp;&amp; cd ~/linux-user-lab
+# 目录最终应包含:
+#   file_io.c  timer_log.c  serial_termios.c  sim_serial.py
+# 编译产物:file_io  timer_log  serial_termios
+# 运行产物:sensor.log  timer.log  sim_serial.log</code></pre>
+
+      <div class="lab" id="lab-file-io">
+        <div class="labhead">
+          <h3>实验 1:文件读写与字节统计</h3>
+          <span class="pill compiled">compiled</span><span class="pill measured">实测输出</span>
+        </div>
+        <ol class="steps">
+          <li>把 3.3 的 <code>file_io.c</code> 保存到当前目录。</li>
+          <li>用 <code>gcc -Wall -Wextra -O2 -o file_io file_io.c</code> 编译,应无任何输出。</li>
+          <li>运行 <code>./file_io sensor.log</code>,再用 <code>wc -c -l</code> 与 <code>cat</code> 交叉验证。</li>
+          <li>把程序里的 <code>frames</code> 改成 4 帧,重新编译运行,观察字节数是否等于 4 × 21。</li>
+        </ol>
+        <div class="codecard">
+          <div class="codehead"><span class="fname">file_io 实测</span><span class="tags"><span class="pill compiled">compiled</span></span></div>
+          <pre><code>$ gcc -Wall -Wextra -O2 -o file_io file_io.c
+(无警告,退出码 0)
+$ ./file_io sensor.log
+[write] 3 帧 -&gt; sensor.log
+[read ] path=sensor.log bytes=63 lines=3
+[ok   ] 与 wc -c / wc -l 对照
+$ wc -c -l sensor.log
+ 3 63 sensor.log
+$ cat sensor.log
+T=24.5,H=58.2,P=1013
+T=24.7,H=58.0,P=1013
+T=24.9,H=57.8,P=1012
+</code></pre>
+        </div>
+        <p class="expect"><strong>判定:</strong><code>[read] ... bytes=63 lines=3</code> 与 <code>wc -c -l</code> 输出的 <code>3 63</code>(3 行 / 63 字节)一致;若不一致,先检查是否在写入时少写了换行,或读取时没有循环到 EOF。</p>
+      </div>
+
+      <div class="lab" id="lab-process">
+        <div class="labhead">
+          <h3>实验 2:观察进程 / 线程并发送信号</h3>
+          <span class="pill measured">实测命令</span>
+        </div>
+        <div class="safety"><strong>安全:</strong>只对刚刚由你启动的 PID 操作;先用 <code>ps</code> 核对命令名再 <code>kill</code>。不要对系统进程或别人的进程发信号,不要把 <code>kill -9</code> 当默认手段。</div>
+        <ol class="steps">
+          <li>启动一个 <code>sleep 30 &amp;</code>,用 <code>$!</code> 记住它的 PID。</li>
+          <li><code>ps -o pid,ppid,stat,comm -p $!</code> 应看到状态 <code>S</code>、命令 <code>sleep</code>。</li>
+          <li><code>kill -TERM $!</code>,然后 <code>wait $!; echo "exit=$?"</code>,退出码应为 <code>143</code>。</li>
+          <li>再启动一个带线程的 Python 进程,用 <code>ps -o pid,nlwp,stat,comm</code> 看到 <code>NLWP=2</code>;实验完同样用 SIGTERM 结束。</li>
+          <li>用 <code>top -b -n 1 | head -n 3</code> 看一次系统级进程统计;交互式 <code>top</code> 里按 <code>q</code> 退出。</li>
+        </ol>
+        <div class="codecard">
+          <div class="codehead"><span class="fname">进程 / 线程 / 信号实测</span><span class="tags"><span class="pill measured">实测输出</span></span></div>
+          <pre><code>$ sleep 30 &amp;
+$ ps -o pid,ppid,stat,comm -p $!
+    PID    PPID STAT COMMAND
+ 259731  259660 S    sleep
+$ kill -TERM $!
+$ wait $!; echo "exit=$?"
+exit=143
+$ ps -o pid,stat,comm -p $! (进程已回收)
+    PID STAT COMMAND
+
+$ python3 -c "import threading,time; threading.Thread(target=time.sleep,args=(30,)).start(); time.sleep(30)" &amp;
+$ ps -o pid,nlwp,stat,comm -p $!
+    PID NLWP STAT COMMAND
+ 259736    2 Sl   python3
+$ kill -TERM $!
+
+$ top -b -n 1 | head -n 3
+top - 17:51:15 up  4:57,  1 user,  load average: 2.51, 3.07, 3.09
+Tasks: 496 total,   1 running, 494 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  6.9 us,  2.3 sy,  0.0 ni, 90.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st 
+</code></pre>
+        </div>
+        <p class="expect"><strong>判定:</strong>SIGTERM 后 <code>exit=143</code>(128+15),进程从 <code>ps</code> 中消失;Python 进程的 <code>NLWP=2</code> 表示一个进程内有 2 个线程。<code>top</code> 的 Tasks 行是整机统计,与本次实验进程无关。</p>
+      </div>
+
+      <div class="lab" id="lab-serial">
+        <div class="labhead">
+          <h3>实验 3:termios 115200 8N1 + 模拟串口读取</h3>
+          <span class="pill compiled">compiled</span><span class="pill sim">simulated</span>
+        </div>
+        <div class="safety"><strong>安全:</strong>本实验只操作伪终端(PTY),不会向真实串口写数据。若之后接真实设备,先确认电压与引脚(TX/RX/GND),不要带电插拔。</div>
+        <ol class="steps">
+          <li>把 3.4 的 <code>serial_termios.c</code> 和下面的 <code>sim_serial.py</code> 保存到当前目录。</li>
+          <li>编译:<code>gcc -Wall -Wextra -O2 -o serial_termios serial_termios.c</code>。</li>
+          <li>运行:<code>python3 sim_serial.py --pty ./serial_termios</code>。</li>
+          <li>用 <code>wc -c -l sim_serial.log</code> 和 <code>od -An -tx1 -N 32 sim_serial.log</code> 检查保存下来的模拟数据。</li>
+          <li>把 <code>--count</code> 改成 10、<code>--seed</code> 改成别的整数,重跑,确认帧数随参数变化且仍可解析。</li>
+        </ol>
+        <div class="codecard">
+          <div class="codehead"><span class="fname">sim_serial.py</span><span class="tags"><span class="pill sim">simulated · Python 3.12.3</span></span></div>
+          <pre><code>#!/usr/bin/env python3
+"""sim_serial.py — 生成模拟串口数据;可选通过 PTY 喂给 termios 程序。
+
+注意:数据由随机数生成,是教学模拟,不是真实串口/传感器采集。
+不要据此声称硬件验证;真实串口请用 /dev/ttyUSB0 等设备路径。
+"""
+import argparse
+import os
+import pty
+import random
+import subprocess
+import sys
+import time
+
+
+def make_frames(count, seed):
+    rng = random.Random(seed)
+    temp, hum, pres = 24.5, 58.0, 1013
+    frames = []
+    for _ in range(count):
+        temp += rng.uniform(-0.3, 0.3)
+        hum += rng.uniform(-0.4, 0.4)
+        pres += rng.choice((-1, 0, 0, 1))
+        frames.append(f"T={temp:.1f},H={hum:.1f},P={pres}\n")
+    return frames
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--count", type=int, default=6)
+    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--out", default="sim_serial.log")
+    ap.add_argument("--pty", metavar="PROG",
+                    help="把数据经伪终端喂给该程序(如 ./serial_termios)")
+    args = ap.parse_args()
+
+    frames = make_frames(args.count, args.seed)
+    with open(args.out, "w", encoding="utf-8") as f:
+        f.writelines(frames)
+    print(f"[sim] frames={len(frames)} seed={args.seed} -&gt; {args.out}", flush=True)
+    for i, line in enumerate(frames, 1):
+        print(f"[sim] tx {i}: {line.rstrip()}", flush=True)
+
+    if not args.pty:
+        return 0
+
+    master, slave = pty.openpty()
+    slave_name = os.ttyname(slave)
+    print(f"[pty] slave={slave_name} (伪终端,不是硬件串口)", flush=True)
+    proc = subprocess.Popen([args.pty, slave_name])
+    time.sleep(0.4)  # 等 C 程序完成 tcsetattr
+    for line in frames:
+        os.write(master, line.encode())
+        time.sleep(0.1)
+    time.sleep(0.2)
+    os.close(master)
+    os.close(slave)
+    rc = proc.wait(timeout=5)
+    print(f"[pty] 子进程退出码={rc}", flush=True)
+    return rc
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+</code></pre>
+        </div>
+        <div class="codecard">
+          <div class="codehead"><span class="fname">串口实验实测(数据为模拟)</span><span class="tags"><span class="pill compiled">compiled</span><span class="pill sim">simulated</span></span></div>
+          <pre><code>$ gcc -Wall -Wextra -O2 -o serial_termios serial_termios.c
+(无警告,退出码 0)
+$ python3 sim_serial.py --pty ./serial_termios
+[sim] frames=6 seed=7 -&gt; sim_serial.log
+[sim] tx 1: T=24.4,H=57.7,P=1012
+[sim] tx 2: T=24.1,H=57.7,P=1012
+[sim] tx 3: T=24.2,H=58.1,P=1012
+[sim] tx 4: T=23.9,H=58.0,P=1011
+[sim] tx 5: T=23.8,H=58.1,P=1010
+[sim] tx 6: T=24.0,H=57.8,P=1010
+[pty] slave=/dev/pts/3 (伪终端,不是硬件串口)
+[serial] dev=/dev/pts/3 baud=115200 8N1=yes VMIN=0 VTIME=10
+[frame 1] T=24.4 H=57.7 P=1012
+[frame 2] T=24.1 H=57.7 P=1012
+[frame 3] T=24.2 H=58.1 P=1012
+[frame 4] T=23.9 H=58.0 P=1011
+[frame 5] T=23.8 H=58.1 P=1010
+[frame 6] T=24.0 H=57.8 P=1010
+[serial] frames=6 bytes=126 bad=0 checksum=0x36
+[pty] 子进程退出码=0
+$ wc -c -l sim_serial.log
+  6 126 sim_serial.log
+$ od -An -tx1 -N 32 sim_serial.log
+ 54 3d 32 34 2e 34 2c 48 3d 35 37 2e 37 2c 50 3d
+ 31 30 31 32 0a 54 3d 32 34 2e 31 2c 48 3d 35 37
+</code></pre>
+        </div>
+        <p class="expect"><strong>判定:</strong><code>[serial] ... baud=115200 8N1=yes</code> 说明配置回读正确;<code>frames=6 bytes=126 bad=0</code> 说明按行解析到 6 帧且没有坏帧;<code>od</code> 输出应与 <code>sim_serial.log</code> 的前 32 字节一致。<code>/dev/pts/N</code> 的号码每次会变,属正常现象。</p>
+      </div>
+
+      <div class="lab" id="lab-timer">
+        <div class="labhead">
+          <h3>实验 4:定时与日志追加</h3>
+          <span class="pill compiled">compiled</span><span class="pill measured">实测输出</span>
+        </div>
+        <ol class="steps">
+          <li>把 3.5 的 <code>timer_log.c</code> 保存到当前目录并编译。</li>
+          <li>运行 <code>./timer_log timer.log</code>,观察 4 行日志的时间戳与 <code>elapsed</code>。</li>
+          <li><code>cat timer.log</code> 确认内容已写入文件。</li>
+          <li>再运行一次 <code>./timer_log timer.log</code>,用 <code>wc -l timer.log</code> 验证行数变成 8(追加而非覆盖)。</li>
+        </ol>
+        <div class="codecard">
+          <div class="codehead"><span class="fname">timer_log 实测</span><span class="tags"><span class="pill compiled">compiled</span></span></div>
+          <pre><code>$ gcc -Wall -Wextra -O2 -o timer_log timer_log.c
+(无警告,退出码 0)
+$ ./timer_log timer.log
+[2026-11-27 17:51:11.481] seq=0 elapsed=0.0s
+[2026-11-27 17:51:11.681] seq=1 elapsed=0.2s
+[2026-11-27 17:51:11.881] seq=2 elapsed=0.4s
+[2026-11-27 17:51:12.081] seq=3 elapsed=0.6s
+$ cat timer.log
+[2026-11-27 17:51:11.481] seq=0 elapsed=0.0s
+[2026-11-27 17:51:11.681] seq=1 elapsed=0.2s
+[2026-11-27 17:51:11.881] seq=2 elapsed=0.4s
+[2026-11-27 17:51:12.081] seq=3 elapsed=0.6s
+$ ./timer_log timer.log &gt; /dev/null   # 再跑一次,验证 O_APPEND
+$ wc -l timer.log
+8 timer.log
+</code></pre>
+        </div>
+        <p class="expect"><strong>判定:</strong><code>seq=0..3</code> 的 <code>elapsed</code> 约为 0.0 / 0.2 / 0.4 / 0.6 秒;<code>O_APPEND</code> 生效后 <code>wc -l</code> 为 8。时间戳的毫秒值会随运行时刻变化,这是正常的。</p>
+      </div>
+
+      <div class="evidence" id="evidence">
+        <h3>证据标识与工具版本</h3>
+        <p class="small muted">按课程 schema v1 的证据规则(principle / compiled / hardware)加上本任务要求的 simulated 标识。每条都写清“证明了什么、没证明什么”。</p>
+        <table>
+          <tr><th>标识</th><th>对象</th><th>工具 / 版本</th><th>证明 / 边界</th></tr>
+          <tr>
+            <td><span class="pill compiled">compiled</span></td>
+            <td><code>file_io.c</code>(文件读写)</td>
+            <td>gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0,glibc 2.39,x86_64,Linux 7.0.0-43</td>
+            <td>2026-11-27 用 <code>-Wall -Wextra -O2</code> 零警告编译并运行:写 3 帧、读回 <code>bytes=63 / lines=3</code>,与 <code>wc</code> 一致;<strong>未</strong>交叉编译到 ARM。</td>
+          </tr>
+          <tr>
+            <td><span class="pill compiled">compiled</span></td>
+            <td><code>timer_log.c</code>(定时与日志)</td>
+            <td>gcc 13.3.0,glibc 2.39,Linux 7.0.0-43</td>
+            <td>同样零警告编译并运行:4 行、间隔约 200 ms,第二次运行后 <code>wc -l=8</code> 验证 <code>O_APPEND</code>;<strong>未</strong>验证长时间漂移、日志轮转与掉电持久性。</td>
+          </tr>
+          <tr>
+            <td><span class="pill compiled">compiled</span></td>
+            <td><code>serial_termios.c</code>(termios 配置)</td>
+            <td>gcc 13.3.0,glibc 2.39,Linux 7.0.0-43</td>
+            <td>零警告编译;在 PTY 上回读为 115200 8N1、读 6 帧 / 126 字节全部解析成功;<strong>未</strong>在真实 USB-TTL/开发板上验证,不代表 UART 电气层或波特率误差。</td>
+          </tr>
+          <tr>
+            <td><span class="pill compiled">compiled</span> + <span class="pill sim">simulated</span></td>
+            <td><code>serial_termios</code> 对模拟串口的读取</td>
+            <td>gcc 13.3.0 + Python 3.12.3 的 <code>pty</code> 模块(PTY)</td>
+            <td>termios 配置、按行解析、超时与字节统计在伪终端上跑通;<strong>不</strong>代表真实 UART 波特率误差、电气层或传感器精度。数据由固定种子生成,不是实测。</td>
+          </tr>
+          <tr>
+            <td><span class="pill sim">simulated</span></td>
+            <td><code>sim_serial.py</code> 生成的 6 帧数据</td>
+            <td>Python 3.12.3,<code>seed=7</code>,伪终端 master/slave</td>
+            <td>用于可复现地演示读取与解析流程;<strong>不能</strong>当作真实设备采集记录,也不能用于标定或精度评估。</td>
+          </tr>
+          <tr>
+            <td><span class="pill measured">实测命令</span></td>
+            <td>Shell、<code>ps</code>/<code>kill</code>/<code>top</code>、<code>stty</code>、<code>cat</code>/<code>od</code> 输出</td>
+            <td>Ubuntu 24.04;bash 5.2.21;procps-ng 4.0.4;coreutils 9.4;util-linux 2.39.3</td>
+            <td>本机终端的真实记录;不同机器的用户名、PID、时间、负载会不同。它验证的是“操作与观察方法”,不是硬件功能。</td>
+          </tr>
+          <tr>
+            <td><span class="pill principle">principle</span></td>
+            <td>Shell 语义、fork/exec、线程共享、termios 位含义、8N1 帧时间、定时时钟选择</td>
+            <td>Linux man-pages 6.7(manpages 6.7-2;本机 <code>man 2 open</code> / <code>man 3 termios</code> / <code>man 7 tty</code>)</td>
+            <td>原理与手册口径的讲解和示意;具体目标板/内核版本的行为需要在该环境复测。</td>
+          </tr>
+        </table>
+        <p class="small muted"><strong>没有硬件验证:</strong>本页不包含任何 <span class="pill measured">hardware</span> 结论。要升级证据,需要接上具体型号的 USB-TTL 或开发板,记录设备名、波特率、接线、实测数据和测量条件。</p>
+      </div>
+    </section>
+
+    <!-- 05 结果检查 -->
+    <section class="section" id="result-check">
+      <h2><span class="sec-no">05</span>结果检查</h2>
+      <p>逐条勾选;这不是“看完了”的清单,而是“能独立做出来”的清单。勾选状态只保存在当前页面,刷新后重置。</p>
+      <ul class="checklist" id="checklist">
+        <li><label><input type="checkbox" /> 能解释进程与线程的差别:进程有独立地址空间与 fd 表,线程共享进程资源、各自有栈;并能用 <code>NLWP=2</code> 证明一个进程里有 2 个线程。</label></li>
+        <li><label><input type="checkbox" /> 能独立写出 115200 8N1 的 termios 配置:<code>CS8</code>、清 <code>PARENB</code>、清 <code>CSTOPB</code>、<code>B115200</code>、raw,并知道用 <code>tcsetattr</code> 写回、<code>tcgetattr</code> 回读。</label></li>
+        <li><label><input type="checkbox" /> 能编译并运行 <code>file_io.c</code>,读出 63 字节 / 3 行,并解释 <code>open/read/write</code> 的返回值以及 <code>read() == 0</code> 是 EOF。</label></li>
+        <li><label><input type="checkbox" /> 能用 <code>cat</code> 与 <code>od -An -tx1</code> 查看模拟串口数据,并用 <code>wc -c -l</code> 核对 <code>sim_serial.log</code> 的字节数与帧数。</label></li>
+        <li><label><input type="checkbox" /> 能对刚启动的进程发 <code>SIGTERM</code>,解释退出码 <code>143 = 128 + 15</code>;并能用 <code>ps</code> 识别 <code>Z</code> 状态僵尸进程。</label></li>
+        <li><label><input type="checkbox" /> 能说明 <code>CLOCK_MONOTONIC</code> 与 <code>CLOCK_REALTIME</code> 的分工,并解释定时循环为什么会产生累计漂移。</label></li>
+      </ul>
+      <div class="check-toolbar">
+        <div class="progress" aria-hidden="true"><span id="check-bar"></span></div>
+        <span class="small muted" id="check-count" aria-live="polite">已完成 0 / 6</span>
+        <button type="button" id="check-reset">重置勾选</button>
+      </div>
+    </section>
+
+    <!-- 06 故障排查 -->
+    <section class="section" id="troubleshooting">
+      <h2><span class="sec-no">06</span>故障排查</h2>
+      <p>每条按“现象 → 检查步骤 → 预期结果 → 下一分支”组织。先复现、再定位,不要一上来就改代码或加 <code>sudo</code>。</p>
+
+      <details class="trouble" open>
+        <summary>1. 权限不足:能打开设备/文件,但读不了或写不了</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd><code>cat: secret.log: Permission denied</code>、<code>open(...): Permission denied</code>,或非 root 用户访问 <code>/dev/ttyUSB0</code> 报错。</dd>
+            <dt>检查步骤</dt><dd><code>ls -l 文件或设备</code> 看权限位与属主;<code>id</code> 看自己属于哪些组;<code>namei -l 路径</code> 逐级检查目录权限;串口设备再看 <code>ls -l /dev/ttyUSB0</code> 的组是不是 <code>dialout</code>。</dd>
+            <dt>预期结果</dt><dd>文件权限为 <code>rw-r--r--</code> 且属主是你;串口设备组为 <code>dialout</code>(Ubuntu/Debian),而 <code>id</code> 的输出里包含该组。<code>/dev</code> 下的设备通常只有 root 和对应组可读写。</dd>
+            <dt>下一分支</dt><dd>文件只给自己读写:<code>chmod 600 文件</code>(不要 <code>chmod 777</code>)。串口:<code>sudo usermod -aG dialout $USER</code>,<strong>重新登录</strong>(组变更不会影响已登录会话)后再试;或使用 udev 规则固定权限。仍失败时检查是否被 SELinux/AppArmor 或容器权限限制。</dd>
+          </dl>
+          <pre><code>$ cat secret.log
+cat: secret.log: Permission denied
+$ echo $?
+1</code></pre>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>2. 串口设备名变化:/dev/ttyUSB0 时有时无</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd>昨天程序用 <code>/dev/ttyUSB0</code> 正常,今天变成 <code>/dev/ttyUSB1</code> 或 <code>/dev/ttyACM0</code>;插拔多个 USB 设备后编号漂移。</dd>
+            <dt>检查步骤</dt><dd><code>ls -l /dev/ttyUSB* /dev/ttyACM*</code> 看当前节点;插拔前后各跑一次 <code>dmesg | tail -n 20</code> 看内核识别日志;用 <code>udevadm info -q property -n /dev/ttyUSB0</code> 查 <code>ID_SERIAL</code>、<code>ID_VENDOR_ID</code>、<code>ID_MODEL_ID</code>;检查 <code>/dev/serial/by-id/</code> 是否有稳定软链接。</dd>
+            <dt>预期结果</dt><dd>设备节点与 USB 设备的序列号/VID:PID 一一对应;<code>/dev/serial/by-id/usb-...-if00-port0</code> 这类路径在重新插拔后保持不变。</dd>
+            <dt>下一分支</dt><dd>程序不要硬编码 <code>ttyUSB0</code>,把设备路径作为命令行参数;优先使用 <code>/dev/serial/by-id/</code> 下的稳定路径;需要固定名字/权限时写 udev 规则(<code>SYMLINK+=</code>、<code>MODE=</code>、<code>GROUP=</code>)。</dd>
+          </dl>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>3. 波特率或帧格式不匹配:读到乱码、坏帧、超时</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd>程序能读到字节,但内容是乱码;<code>sscanf</code> 解析失败、<code>bad</code> 计数增加;或一直等到超时也读不到完整帧。</dd>
+            <dt>检查步骤</dt><dd><code>stty -F 设备 -a</code> 检查 <code>speed</code> 与 <code>cs8/-parenb/-cstopb</code>;确认两端波特率一致(115200 vs 9600 是最常见错误);确认数据位、校验、停止位一致;用已知字符串(如 <code>AT</code> 或 <code>hello</code>)先做回环/单向测试;示波器或逻辑分析仪可进一步测位宽。</dd>
+            <dt>预期结果</dt><dd><code>stty -a</code> 显示 <code>speed 115200 baud</code>,且标志包含 <code>cs8</code>、<code>-parenb</code>、<code>-cstopb</code>;发送已知字符串能原样收到,帧格式与代码一致。</dd>
+            <dt>下一分支</dt><dd>先统一两端的波特率与 8N1,再检查晶振误差(某些模块 115200 下误差偏大)、线材/地线、电平匹配(3.3V vs 5V),以及是否把 TX/RX 接反。协议层再考虑帧头、校验和与超时。</dd>
+          </dl>
+          <div class="codecard">
+            <div class="codehead"><span class="fname">stty 实测(PTY 上配置 115200 8N1)</span><span class="tags"><span class="pill measured">实测命令</span></span></div>
+            <pre><code>$ stty -F /dev/pts/3 115200 cs8 -parenb -cstopb raw
+(exit 0 )
+$ stty -F /dev/pts/3 -a | head -3
+speed 115200 baud; rows 0; columns 0; line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = &lt;undef&gt;;
+eol2 = &lt;undef&gt;; swtch = &lt;undef&gt;; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+</code></pre>
+          </div>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>4. 进程僵尸:ps 的 STAT 列显示 Z,kill 也杀不掉</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd>子进程已经退出,但 <code>ps</code> 里仍能看到它,STAT 为 <code>Z</code>;用 <code>kill -9</code> 也删不掉。</dd>
+            <dt>检查步骤</dt><dd><code>ps -o pid,ppid,stat,comm -p PID</code> 确认状态是 Z;<code>ps -o pid,ppid,stat,comm --ppid PPID</code> 找到父进程;检查父进程是否调用 <code>wait()/waitpid()</code>,是否因为循环里没有回收子进程而堆积。</dd>
+            <dt>预期结果</dt><dd>僵尸进程的父进程仍在运行且没有 wait;子进程的退出码保存在内核的僵尸结构里,直到父进程回收。父进程退出后,僵尸会被 init/systemd 收养并回收。</dd>
+            <dt>下一分支</dt><dd>修父进程:收到 <code>SIGCHLD</code> 后循环 <code>waitpid(-1, &amp;status, WNOHANG)</code>,或对不需要的子进程设置 <code>SA_NOCLDWAIT</code>。僵尸已经死了,<code>kill</code> 对它没有意义;不要用 <code>kill -9</code> 试图清除僵尸,必要时重启父进程。</dd>
+          </dl>
+          <div class="codecard">
+            <div class="codehead"><span class="fname">僵尸观察实测(父进程未 wait)</span><span class="tags"><span class="pill measured">实测命令</span></span></div>
+            <pre><code>PID    PPID STAT COMMAND
+ 259751  259749 Z    python3
+[parent] waitpid 后:
+PID STAT COMMAND
+</code></pre>
+          </div>
+          <p class="small muted">本演示用 <code>fork()</code> 让子进程立刻退出、父进程故意不 wait,<code>ps</code> 看到 <code>Z</code>;随后 <code>waitpid</code> 回收,<code>ps</code> 只剩表头。</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>5. 读完数据不返回/只读到半帧:VMIN、VTIME 与部分读</summary>
+        <div class="body">
+          <dl>
+            <dt>现象</dt><dd>程序一直阻塞在 <code>read</code>;或一次 <code>read</code> 只拿到半行、下一帧的开头被拼到上一行;或被信号打断后 <code>read</code> 返回 -1。</dd>
+            <dt>检查步骤</dt><dd>检查 <code>c_cc[VMIN]</code> 与 <code>c_cc[VTIME]</code> 的设置;打印每次 <code>read</code> 的返回值;检查是否处理了 <code>errno == EINTR</code>;确认发送端是否按行发送、行尾是 <code>\n</code> 还是 <code>\r\n</code>。</dd>
+            <dt>预期结果</dt><dd><code>VMIN=0, VTIME=10</code> 时 <code>read</code> 最多等 1 秒,超时返回 0;正常收到数据时返回实际字节数。按行缓冲并处理半帧后,每帧应完整解析。</dd>
+            <dt>下一分支</dt><dd>不要假设一次 <code>read</code> 等于一帧:维护行缓冲,按 <code>\n</code> 切分,处理跨 read 的半帧;对 <code>EINTR</code> 重试;上位机与设备端统一行尾;必要时加帧头、长度和校验和做帧同步。</dd>
+          </dl>
+        </div>
+      </details>
+    </section>
+
+    <!-- 07 小测 -->
+    <section class="section" id="quiz">
+      <h2><span class="sec-no">07</span>小测</h2>
+      <p>4 题,单选。点“提交答案”后页面内判分并显示每题解析;可点“重做”清零。题目只检查本课的概念与配置,不考记忆数字。</p>
+      <div id="quiz-box">
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">1. 同一进程内的两个线程,哪些资源是共享的?</div>
+          <label class="opt"><input type="radio" name="q1" value="a" /> A. 地址空间和文件描述符表共享;每个线程有自己的栈和寄存器上下文</label>
+          <label class="opt"><input type="radio" name="q1" value="b" /> B. 只有文件描述符表共享;地址空间各自独立</label>
+          <label class="opt"><input type="radio" name="q1" value="c" /> C. 寄存器和栈共享;地址空间独立</label>
+          <label class="opt"><input type="radio" name="q1" value="d" /> D. 所有资源都独立,和进程没有区别</label>
+          <div class="explain"><strong>正确答案:A。</strong>线程是调度单位,共享进程的地址空间、fd 表、信号处理等;每个线程只独享栈和寄存器上下文。进程之间才有各自独立的地址空间。实验里 <code>ps -o nlwp</code> 的 <code>NLWP=2</code> 就是同一进程有两个线程。</div>
+        </div>
+
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">2. 要把串口配成 115200 8N1,下面哪组 termios 设置正确?</div>
+          <label class="opt"><input type="radio" name="q2" value="a" /> A. <code>cfsetispeed/cfsetospeed(B115200)</code>、<code>CS8</code>、清 <code>PARENB</code>、清 <code>CSTOPB</code>,并进入 raw 模式</label>
+          <label class="opt"><input type="radio" name="q2" value="b" /> B. <code>B9600</code>、<code>CS8</code>、置 <code>PARENB</code>、置 <code>CSTOPB</code></label>
+          <label class="opt"><input type="radio" name="q2" value="c" /> C. 只设置 <code>B115200</code>,其他保持终端默认值即可</label>
+          <label class="opt"><input type="radio" name="q2" value="d" /> D. 置 <code>CSTOPB</code> 表示 1 个停止位</label>
+          <div class="explain"><strong>正确答案:A。</strong>8N1 = 8 数据位(<code>CS8</code>)、无校验(清 <code>PARENB</code>)、1 停止位(清 <code>CSTOPB</code>);<code>CSTOPB</code> 置位反而是 2 个停止位。配置完用 <code>tcgetattr</code> 回读确认,并可再用 <code>stty -F 设备 -a</code> 核对 <code>speed 115200</code> 与 <code>cs8 -parenb -cstopb</code>。</div>
+        </div>
+
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">3. <code>read(fd, buf, sizeof buf)</code> 返回 0,表示什么?</div>
+          <label class="opt"><input type="radio" name="q3" value="a" /> A. 已到达文件末尾(EOF),没有更多数据</label>
+          <label class="opt"><input type="radio" name="q3" value="b" /> B. 出错,应立刻检查 <code>errno</code></label>
+          <label class="opt"><input type="radio" name="q3" value="c" /> C. 被信号中断,应该忽略并继续</label>
+          <label class="opt"><input type="radio" name="q3" value="d" /> D. 成功读到 0 个字节,但文件还没结束</label>
+          <div class="explain"><strong>正确答案:A。</strong><code>read</code> 返回值:大于 0 是实际读到的字节数;等于 0 是 EOF(对 tty 也可能是 VTIME 超时/对端关闭);等于 -1 才是错误,需要看 <code>errno</code>;被信号打断时通常是 -1 且 <code>errno == EINTR</code>,应重试。</div>
+        </div>
+
+        <div class="quiz-q" data-answer="a">
+          <div class="stem">4. 子进程已经退出,父进程没有调用 <code>waitpid</code>,<code>ps</code> 里 STAT 显示 <code>Z</code>。正确处理是?</div>
+          <label class="opt"><input type="radio" name="q4" value="a" /> A. 让父进程调用 <code>waitpid</code> 回收子进程(或父进程退出后由 init/systemd 回收)</label>
+          <label class="opt"><input type="radio" name="q4" value="b" /> B. 对僵尸进程执行 <code>kill -9</code>,把它强制删除</label>
+          <label class="opt"><input type="radio" name="q4" value="c" /> C. 给僵尸进程发 <code>SIGTERM</code>,它就会退出</label>
+          <label class="opt"><input type="radio" name="q4" value="d" /> D. 必须重启系统才能清除僵尸进程</label>
+          <div class="explain"><strong>正确答案:A。</strong>僵尸进程已经死了,只剩一个退出状态等待父进程读取;<code>kill</code> 已无进程可杀。父进程应调用 <code>wait()/waitpid()</code>(可在 <code>SIGCHLD</code> 处理里循环 <code>WNOHANG</code>),或让父进程退出由 init/systemd 收养回收。重启系统不是正确做法。</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="primary" id="quiz-submit">提交答案</button>
+          <button type="button" id="quiz-reset">重做</button>
+        </div>
+        <div class="quiz-result" id="quiz-result" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- 08 下一步 -->
+    <section class="section" id="next-step">
+      <h2><span class="sec-no">08</span>下一步</h2>
+      <p>你已经在用户态完成了“读文件、读串口、定时记日志、管进程”。接下来把这条链路接到项目里,或者回到路线检查后续课程。</p>
+      <div class="next-grid">
+        <a class="next-card" href="/projects/collect/">
+          <div class="t">项目 M0:多传感器采集与监控</div>
+          <div class="d">把串口读取接入采集监控项目。M0 的验收不是“读出一个数”,而是能解释单位、采样周期与误差;后面还有 M1 通信到 M5 交付。</div>
+          <div class="go">进入 /projects/collect/ →</div>
+        </a>
+        <a class="next-card" href="/route/">
+          <div class="t">学习路线:确认前后依赖</div>
+          <div class="d">回到总路线,查看嵌入式 Linux 阶段后续的交叉编译、系统镜像与驱动课程,以及 MCU/RTOS 前置阶段的位置。</div>
+          <div class="go">打开 /route/ →</div>
+        </a>
+        <a class="next-card" href="/foundations/">
+          <div class="t">还想补基础?</div>
+          <div class="d">返回工程基础页,检查 C 与工程工具、数字电路入门两门先修课;本课的示例代码都以 C 与基本电路概念为前提。</div>
+          <div class="go">返回 /foundations/ →</div>
+        </a>
+      </div>
+      <div class="footer-note">
+        本页依据课程 schema v1 的 8 段结构组织:目标 → 前置知识 → 原理与图示 → 操作实验 → 结果检查 → 故障排查 → 小测 → 下一步。
+        页面代码均在本机编译;串口数据为模拟;页面没有硬件验证结论。若发现命令输出与你的环境不同,以你机器上的 <code>man</code>、<code>gcc --version</code> 与真实输出为准。
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------- 05 结果检查:勾选进度 ---------- */
+      var checklist = document.getElementById('checklist');
+      if (checklist) {
+        var boxes = Array.prototype.slice.call(checklist.querySelectorAll('input[type="checkbox"]'));
+        var countEl = document.getElementById('check-count');
+        var barEl = document.getElementById('check-bar');
+        var resetCheck = document.getElementById('check-reset');
+
+        var refreshChecklist = function () {
+          var done = 0;
+          boxes.forEach(function (box) {
+            if (box.checked) { done += 1; }
+            var li = box.parentNode ? box.parentNode.parentNode : null;
+            if (li && li.tagName === 'LI') { li.classList.toggle('done', box.checked); }
+          });
+          if (countEl) { countEl.textContent = '已完成 ' + done + ' / ' + boxes.length; }
+          if (barEl) { barEl.style.width = boxes.length ? (done * 100 / boxes.length) + '%' : '0%'; }
+        };
+
+        boxes.forEach(function (box) { box.addEventListener('change', refreshChecklist); });
+        if (resetCheck) {
+          resetCheck.addEventListener('click', function () {
+            boxes.forEach(function (box) { box.checked = false; });
+            refreshChecklist();
+          });
+        }
+        refreshChecklist();
+      }
+
+      /* ---------- 07 小测:判分与解析 ---------- */
+      var quiz = document.getElementById('quiz-box');
+      if (!quiz) { return; }
+      var questions = Array.prototype.slice.call(quiz.querySelectorAll('.quiz-q'));
+      var resultEl = document.getElementById('quiz-result');
+      var submitQuiz = document.getElementById('quiz-submit');
+      var resetQuiz = document.getElementById('quiz-reset');
+
+      var pickedValue = function (q) {
+        var input = q.querySelector('input[type="radio"]:checked');
+        return input ? input.value : '';
+      };
+
+      var clearQuestion = function (q) {
+        q.classList.remove('is-correct', 'is-wrong', 'is-missing');
+        var exp = q.querySelector('.explain');
+        if (exp) { exp.classList.remove('show'); }
+      };
+
+      var gradeQuiz = function () {
+        var score = 0;
+        var missing = 0;
+        questions.forEach(function (q) {
+          var answer = q.getAttribute('data-answer');
+          var picked = pickedValue(q);
+          clearQuestion(q);
+          if (!picked) {
+            missing += 1;
+            q.classList.add('is-missing');
+            return;
+          }
+          if (picked === answer) {
+            score += 1;
+            q.classList.add('is-correct');
+          } else {
+            q.classList.add('is-wrong');
+          }
+          var exp = q.querySelector('.explain');
+          if (exp) { exp.classList.add('show'); }
+        });
+        if (!resultEl) { return; }
+        resultEl.classList.add('show');
+        resultEl.classList.remove('ok', 'warn', 'bad');
+        if (missing > 0) {
+          resultEl.classList.add('warn');
+          resultEl.textContent = '还有 ' + missing + ' 题没有选择。已选题目中答对 ' + score + ' / ' + questions.length + '。';
+        } else if (score === questions.length) {
+          resultEl.classList.add('ok');
+          resultEl.textContent = '全部正确:' + score + ' / ' + questions.length + '。可以进入项目 M0 了。';
+        } else if (score >= Math.ceil(questions.length * 0.6)) {
+          resultEl.classList.add('warn');
+          resultEl.textContent = '答对 ' + score + ' / ' + questions.length + '。看每题解析,再回到对应小节复习。';
+        } else {
+          resultEl.classList.add('bad');
+          resultEl.textContent = '答对 ' + score + ' / ' + questions.length + '。建议重读 03 原理与 04 实验后再测一次。';
+        }
+      };
+
+      if (submitQuiz) { submitQuiz.addEventListener('click', gradeQuiz); }
+      if (resetQuiz) {
+        resetQuiz.addEventListener('click', function () {
+          questions.forEach(function (q) {
+            var checked = q.querySelector('input[type="radio"]:checked');
+            if (checked) { checked.checked = false; }
+            clearQuestion(q);
+          });
+          if (resultEl) {
+            resultEl.classList.remove('show', 'ok', 'warn', 'bad');
+            resultEl.textContent = '';
+          }
+        });
+      }
+    })();
+  </script>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>
