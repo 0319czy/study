@@ -38,9 +38,12 @@ node scripts/prerender-poc.mjs --slug linux --route /linux/labs
   ├─ 2. 渲染阶段刻意把目标路由「当作不存在」
   │       → Chrome 必然走一遍 404 → sessionStorage → 恢复路径 → React 渲染 的完整链路
   │       → 第一次跑和第 N 次跑输入一致(不会被上一次落盘的快照干扰)
-  ├─ 3. headless Chrome dump DOM:
+  ├─ 3. headless Chrome 渲染(CDP 等页面稳定后取 DOM):
   │       --headless=new --disable-gpu --no-sandbox --hide-scrollbars
-  │       --virtual-time-budget=12000 --force-prefers-reduced-motion --dump-dom
+  │       --force-prefers-reduced-motion --remote-debugging-port=0
+  │       → 连上页面 target,等 URL 落到目标路由
+  │       → 注入稳定检测:CSS 动画 finish() + MutationObserver 盯 DOM,
+  │         ≥1.2s 且连续 700ms 无变更才取 document.documentElement.outerHTML
   ├─ 4. 清洗:去掉 <html> 上的运行时 class/style(明暗主题等),插入生成标记,统一换行
   ├─ 5. 断言:<!DOCTYPE html> / 不是 404 兜底页 / #root 内有渲染结果 /
   │       正文 ≥ 500 字符 / 命中关键字 / 没有任何相对路径引用
@@ -53,12 +56,21 @@ node scripts/prerender-poc.mjs --slug linux --route /linux/labs
         再用 Chrome 渲染一次已落盘页面 → React 接管后内容仍在(无退化)
 ```
 
-### 为什么加 `--force-prefers-reduced-motion`
+### 为什么不用 `--dump-dom`,以及 `--force-prefers-reduced-motion` 的作用
 
-不加这个 flag 时,dump 可能截到 Framer Motion 的 spring 中间帧(如
-`transform: translateY(5.55025px)`),不同次渲染字节不同,`git status` 会反复出现脏改动。
-强制 reduced-motion 后,framer-motion 跳过 transform/位移动画、CSS 过渡停用,DOM 落在稳定
-终态。实测 3 次独立渲染输出 **sha256 完全一致**,重复执行不再产生差异。
+`--dump-dom` 在固定的虚拟时间点取 DOM,正好可能截到 Framer Motion 的 spring 中间帧
+(如 `transform: translateY(5.55025px)`、`opacity: 0.72`),同一页面两次渲染字节不同,
+`git status` 反复出现脏改动 —— 迭代时实测出现过一次「第 1 次写 145,164 字节、第 2 次写
+145,178 字节」的抖动。
+
+现在改成:**Chrome 带 `--remote-debugging-port=0` 启动,脚本经 CDP 连上页面,注入
+「稳定检测」后再取 `outerHTML`** —— 检测同时做两件事:`document.getAnimations()` 逐个
+`finish()`(CSS 动画直接到终态),`MutationObserver` 监听 DOM 变更,已等待 ≥1.2s 且连续
+700ms 无变更才认为页面稳定。这样取到的是动画收敛后的终态,而不是中间帧。
+
+`--force-prefers-reduced-motion` 仍然保留:framer-motion 会跳过 transform/位移动画,
+页面更快进入稳定态,也减少需要等待的动画数量。实测:连续 6 次运行 + 2 次在 CPU 满载
+(`yes` 压满)下运行,输出 **sha256 全部一致**,第 2 次起都是「未变化(幂等,跳过重写)」。
 
 ### 参数
 
@@ -69,7 +81,7 @@ node scripts/prerender-poc.mjs --slug linux --route /linux/labs
 | `--out` | `<repo>/<route>/index.html` | 快照输出路径(必须在仓库内) |
 | `--expect` | 内置 `/linux/labs`: `动画实验室,实验` | 断言关键字 |
 | `--chrome` | 自动探测 / `CHROME_PATH` | Chrome 可执行文件 |
-| `--budget` | `12000` | headless Chrome 虚拟时间预算(ms) |
+| `--settle` | `15000` | 等待页面动画/DOM 稳定的上限(ms);`--budget` 作为别名兼容 |
 | `--port` | `0` | 临时服务端口,0 = 自动分配 |
 | `--control` | `/ml/paths` | 404 兜底抽查用的另一条深链 |
 | `--no-verify` | 关 | 跳过写盘后的 HTTP / 资源 / 404 校验 |
@@ -84,18 +96,18 @@ node scripts/prerender-poc.mjs --slug linux --route /linux/labs
 
 | 验收项 | 结果 |
 |---|---|
-| `GET /linux/labs`(local-preview,无斜杠) | **HTTP 200**,`text/html; charset=utf-8`,145,178 字节 |
-| `GET /linux/labs/`(带斜杠) | **HTTP 200**,145,178 字节 |
+| `GET /linux/labs`(local-preview,无斜杠) | **HTTP 200**,`text/html; charset=utf-8`,145,166 字节 |
+| `GET /linux/labs/`(带斜杠) | **HTTP 200**,145,166 字节 |
 | 快照正文 | 可见文本 **11,002 字符**,219 个 `<button>`、148 个 `<svg>`,16 个实验全部在 DOM 里 |
 | 关键字命中 | `动画实验室` ×3、`实验` ×15、`驱动` ×46;`<h1>动画实验室</h1>`、`<h2>现在可玩</h2>` |
 | 资源引用 | 18 个 `src/href`,**0 个相对路径**;4 个 `/linux/assets/...` 引用全部 200(无需改写) |
 | 404 兜底抽查 | `GET /ml/paths` → HTTP 404,内容为 404.html(1,935 字节,「正在打开站点…」),兜底链路完好 |
 | 其他站点未受影响 | `/linux/` 仍 200(1,714 字节,原入口未变)、`/` 仍 200 |
-| 幂等 | 连续运行 3 次:第 1 次写入,第 2、3 次「未变化(幂等,跳过重写)」;三次输出 sha256 均为 `da31c44a…b9c9620`,145,178 字节 |
-| 渲染耗时 | 单次 Chrome render ≈ 700ms,完整一次运行(渲染 + 校验 + 二次渲染)≈ 1.4s |
-| 二次渲染 | 命中快照后仍由 React 重渲染,输出 145,259 字节 DOM,关键字仍在(说明静态内容不会让 hydration 崩掉) |
+| 幂等 | 连续运行 6 次(另在 CPU 满载下 2 次):输出 sha256 均为 `bbafd29c…fc4f85f6`,145,166 字节;第 2 次起全部「未变化(幂等,跳过重写)」 |
+| 渲染耗时 | 单次 Chrome render ≈ 1.6–1.8s(含稳定等待),完整一次运行(渲染 + 校验 + 二次渲染)≈ 3.5s |
+| 二次渲染 | 命中快照后仍由 React 重渲染,输出 145,110 字节 DOM,关键字仍在(说明静态内容不会让 hydration 崩掉) |
 
-快照体积:145,178 字节(原始)/ 约 23,966 字节(gzip -9);对比 `/linux/index.html`
+快照体积:145,166 字节(原始)/ 约 23,956 字节(gzip -9);对比 `/linux/index.html`
 空壳 1,714 字节、`404.html` 1,935 字节。
 
 HEAD 结构(`linux/labs/index.html` 开头):
@@ -141,8 +153,8 @@ HEAD 结构(`linux/labs/index.html` 开头):
 2. **交互状态被冻结。** 动画停在初始帧、进度条是 0、`可交互` 实验的按钮要等 JS 才能点。
    滚动入场元素在快照里是初始值(部分 `opacity: 0`):**文本在 HTML 里(爬虫/SEO 可读),
    但无 JS 截图可能看不到这些元素**。真实用户有 JS,行为不变。
-3. **`--force-prefers-reduced-motion` 只影响渲染。** 它只是让快照确定、可复现;真实用户
-   未开启 reduced-motion 时动画照常。
+3. **`--force-prefers-reduced-motion` 与稳定等待只影响渲染。** 它们只是让快照确定、可复现;
+   真实用户未开启 reduced-motion 时动画照常。快照里冻结的是渲染时的终态。
 4. **与构建产物 hash 强耦合(接入 CI 的关键约束)。** 快照写死了
    `/linux/assets/index-PBeKe8lt.js` 这类带 hash 的文件名。只要子站重新 build 并替换
    `linux/` 目录,快照就会指向不存在的旧资源。因此必须**在每次把 `dist/` 复制进 slug 目录

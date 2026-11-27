@@ -4,7 +4,7 @@
 > 机器可读明细:[inventory.json](inventory.json)(六站共 **937 条**)
 > 盘点对象:`/home/czy/linux-driver-lab`、`/home/czy/mcu-playground`、`/home/czy/analog-playground`、`/home/czy/ml-playground`、`~/文档/deepseek-harness/default-workspace/ros-learn`、`~/文档/deepseek-harness/default-workspace/rtos-lab`
 > 关联文档:[DECISIONS.md](DECISIONS.md) 的 A3(7 阶段顺序)与 [HANDOFF-codex.md](HANDOFF-codex.md) 的 T0.1 任务卡。
-> **只读声明:本次盘点未修改六站任何源码或构建产物;只新增 `docs/inventory.json` 与 `docs/INVENTORY.md`。**
+> **只读声明:本次盘点未修改六站任何源码或内容;只新增 `docs/inventory.json` 与 `docs/INVENTORY.md`。验收时运行六站自带测试,仅 ros 的 vitest 更新了 `node_modules/.vite/vitest/results.json` 缓存(非源码/非页面产物,见第 6 节)。**
 
 ## 0. 结论摘要
 
@@ -148,7 +148,7 @@
 6. **rtos 实验锚点不一致**:页面里链接写 `#lab-<labId>`,但 `ChapterPage.tsx` 的 lab 块实际 id 是 `#block-<index>`;inventory 的 lab route 只到章节页。
 7. **术语字段命名差异**:linux `id/zh/en/definition`;mcu `zh/en/desc`;analog `term/en/definition`;ml `id/zh/en/definition`;ros `term/zh/desc`;rtos `id/zh/en/desc`。无 id 的站按序号生成盘点 id(如 `mcu-term-1`)。
 8. **路由模式数与导航/页脚条数不同**:linux 顶部导航 5 条、页脚索引 11 条,而路由模式只有 9 条;mcu 导航清单 26 条,加上 `/cases/:slug` 为 27 条路由模式。`inventory.json` 的 `routeCount` 采用"路由模式数"口径,并附 `routeSource` 说明。
-9. **参考数量核对**:linux 21/16/7/27、analog 18/24/55、mcu 19 知识页、ml 19 主题/41 题/10 实验均与源码一致;任务参考里的 ml「7 模块」与当前源码不一致——`src/data/site.ts` 的 `modules` 实际是 9 条导航项(`/paths`、`/map`、`/algorithms`…),不是知识模块,本次按实际记 9 条导航项、不写入 items。
+9. **参考数量核对**:linux 21/16/7/27、analog 18/24/55、mcu 19 知识页、ml 19 主题/41 题/10 实验均与源码一致。任务参考里的 ml「7 模块」来自 ml 站 `scripts/verify.mjs` 的汇总文案(`assert moduleCount >= 7` + 固定文案「7 个完整模块」);同一脚本实际跑了 8 个 `checks/*.mjs`,源码 `src/data/site.ts` 的 `modules` 则是 9 条导航项——三处口径不一致,本次按实际 9 条导航项记录、不计入 items。
 
 ## 5. 盘点方法(可复现)
 
@@ -249,6 +249,20 @@ console.log(inv.sites.length, inv.sites.reduce((n,s)=>n+s.items.length,0))"
 | 同站 `type|id` 重复 | ✅ 0 条重复 |
 | 站点数量对账 | ✅ linux 21/16/63/7/27;mcu 19/12/57/8/86;analog 18/24/55/6/80;ml 19/10/41/4/76;ros 11/15/34/5/74;rtos 9/15/27/5/93(知识页/实验/题目/案例/术语) |
 | 阶段字段合法 | ✅ 937 条全部落在 7 个 stage 内,无未知值 |
-| 未改动六站 | ✅ 六站目录在 2026-11-27 17:25 之后没有新增/修改文件(`find -newermt` 计数均为 0);六站均非 git 仓库,无法用 git status 佐证,以 mtime 为准 |
+| 未改动六站内容 | ✅ 盘点/验收期间 `find -newermt` 检查:linux/mcu/analog/ml/rtos 均为 0 个新增/修改文件;ros 仅 `node_modules/.vite/vitest/results.json`(运行站点自带 `npm test` 产生的 vitest 缓存,非源码/非页面产物)。六站均非 git 仓库,以 mtime 为准 |
+| 六站自带校验 | ✅ 见 6.1,六个命令全部 EXIT=0 |
 
-> 盘点时间窗口内六站未被写入;本仓库只新增 `docs/inventory.json`、`docs/INVENTORY.md` 两个文件。
+### 6.1 六站自带校验(验收时实际执行)
+
+| 站点 | 命令 | 结果 |
+|---|---|---|
+| linux | `npm run verify` | EXIT=0;16/16 实验、27 术语、7 案例、结构检查全部通过 |
+| analog | `npm run verify` | EXIT=0;18 模块 / 24 实验 / 55 题,761 条断言全部通过 |
+| ml | `npm run verify` | EXIT=0;1169 项断言通过(19 主题 / 41 题 / 10 实验) |
+| mcu | `npm run typecheck` | EXIT=0(未跑 `npm run verify`:它会先 `vite build` 写 dist,按"不修改六站"红线改用只读 typecheck) |
+| ros | `npm test` | EXIT=0;11 个测试文件、75 个测试全部通过 |
+| rtos | `npm run lint` | EXIT=0(`tsc -p tsconfig.app.json --noEmit`) |
+
+> 本仓库没有根 `package.json`/docs 测试套件;本次交付的 `inventory.json` 由项目自带构建脚本 `scripts/build-search-index.mjs` 成功消费(隔离副本运行:条目总数 937,按站/按类型计数与盘点一致),说明其格式可被下游 T0.3 搜索索引构建直接使用。
+
+> 盘点与验收期间六站源码/页面内容未被写入(唯一例外是 ros 测试缓存 `node_modules/.vite/vitest/results.json`,见 6.1);本仓库本次只新增 `docs/inventory.json`、`docs/INVENTORY.md` 两个文件。
