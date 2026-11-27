@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+  <script id="1kni4r-spa-restore">(function(){try{var p=sessionStorage.getItem('1kni4r-spa-path');if(p&&p.indexOf('/analog/')===0){sessionStorage.removeItem('1kni4r-spa-path');history.replaceState(null,'',p);}}catch(e){}})();</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f4ef" />
+    <link rel="icon" type="image/svg+xml" href="/analog/favicon.svg" />
+    <meta
+      name="description"
+      content="知电：用生活比喻、标准电路图、波形动画与参数实验，把模拟电子技术变成看得见、玩得动、算得清的知识。"
+    />
+    <title>知电 · 模拟电子技术交互实验手册</title>
+    <script>
+      // 在首屏渲染前恢复主题，避免暗色模式闪白。默认浅色，尊重用户上次选择。
+      (function () {
+        try {
+          var raw = localStorage.getItem('zd-theme');
+          var saved = raw;
+          try {
+            saved = raw === null ? null : JSON.parse(raw);
+          } catch (ignore) {
+            /* 兼容早期直接写入字符串的版本 */
+          }
+          if (saved === 'dark' || raw === 'dark') document.documentElement.classList.add('dark');
+        } catch (e) {
+          /* 隐私模式下 localStorage 可能不可用，忽略即可 */
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/analog/assets/index-CuVw4NKY.js"></script>
+    <link rel="modulepreload" crossorigin href="/analog/assets/motion-C1OkreXq.js">
+    <link rel="modulepreload" crossorigin href="/analog/assets/math-YHKQZZ_w.js">
+    <link rel="stylesheet" crossorigin href="/analog/assets/index-BZR8R6iE.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

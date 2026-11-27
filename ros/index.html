@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN" class="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="ROS 学习实验室：用动画、交互实验和命令行示例，从零理解 ROS 2 的节点、话题、服务、动作、TF2、SLAM、Nav2 与 MoveIt2。"
+    />
+    <title>ROS 学习实验室 · 从零看懂机器人操作系统</title>
+    <script>
+      // 首屏防闪烁：在 CSS 加载前就决定亮/暗主题
+      (function () {
+        try {
+          var saved = localStorage.getItem('ros-learn-theme');
+          var sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = saved === 'dark' || ((!saved || saved === 'system') && sysDark);
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
+    <script type="module" crossorigin src="/ros/assets/index-Be38zSI8.js"></script>
+    <link rel="modulepreload" crossorigin href="/ros/assets/react-_h4VlNTK.js">
+    <link rel="modulepreload" crossorigin href="/ros/assets/motion-nuCiaqxJ.js">
+    <link rel="modulepreload" crossorigin href="/ros/assets/math-DW4SxPVY.js">
+    <link rel="stylesheet" crossorigin href="/ros/assets/index-Db4oMtHi.css">
+  </head>
+  <body class="bg-white text-ink-900 dark:bg-ink-950 dark:text-ink-100 antialiased">
+    <div id="root"></div>
+  </body>
+</html>

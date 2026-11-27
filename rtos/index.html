@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="RTOS Lab：可看、可玩、可练的中文实时操作系统学习站。用动画、交互实验和可运行代码，从零理解 FreeRTOS 任务调度、同步通信、内存与低功耗。"
+    />
+    <meta name="theme-color" content="#f7f8fb" />
+    <title>RTOS Lab · 看得见的实时操作系统</title>
+    <link rel="icon" type="image/svg+xml" href="/rtos/favicon.svg" />
+    <script>
+      // 在首屏绘制前恢复主题，避免暗色模式闪白。
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('rtos-theme')
+          var dark = saved
+            ? saved === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+          document.documentElement.classList.toggle('dark', dark)
+        } catch (e) {}
+      })()
+    </script>
+    <script type="module" crossorigin src="/rtos/assets/index-iIDfZjmp.js"></script>
+    <link rel="stylesheet" crossorigin href="/rtos/assets/index-BU8D6pT8.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

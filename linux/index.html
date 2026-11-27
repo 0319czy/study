@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+  <script id="1kni4r-spa-restore">(function(){try{var p=sessionStorage.getItem('1kni4r-spa-path');if(p&&p.indexOf('/linux/')===0){sessionStorage.removeItem('1kni4r-spa-path');history.replaceState(null,'',p);}}catch(e){}})();</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f766e" />
+    <meta
+      name="description"
+      content="驱动实验室：用生活比喻、内核分层动画、设备树可视化与可交互实验，从零理解 Linux 内核驱动。以 Linux 6.x / ARM64 为默认主线。"
+    />
+    <link rel="icon" type="image/svg+xml" href="/linux/favicon.svg" />
+    <title>驱动实验室 · Linux 内核驱动交互教程</title>
+    <script>
+      // 在 React 挂载前恢复主题，避免闪白。主题键与 useTheme 保持一致。
+      (function () {
+        try {
+          var saved = localStorage.getItem('drv-theme');
+          var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (error) {
+          /* 隐私模式下 localStorage 可能不可用，忽略即可。 */
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/linux/assets/index-PBeKe8lt.js"></script>
+    <link rel="modulepreload" crossorigin href="/linux/assets/motion-CvjUy04y.js">
+    <link rel="modulepreload" crossorigin href="/linux/assets/math-YHKQZZ_w.js">
+    <link rel="stylesheet" crossorigin href="/linux/assets/index-Djg_MDre.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

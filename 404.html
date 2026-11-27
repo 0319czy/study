@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>正在打开站点… · 1kni4r.top</title>
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #080b10; color: #8b9bb0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; }
+    .box { min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 24px; }
+    .spin { width: 26px; height: 26px; margin: 0 auto 16px; border: 2px solid #1e2a38; border-top-color: #5eead4; border-radius: 50%; animation: r .8s linear infinite; }
+    @keyframes r { to { transform: rotate(360deg); } }
+    p { font-size: 14px; }
+    a { color: #5eead4; }
+  </style>
+  <script>
+    /*
+     * GitHub Pages 的 SPA 深链兜底:
+     * 访问 /linux/xxx 这类不存在于磁盘上的路径时,GitHub Pages 返回仓库根的 404.html。
+     * 这里把原始完整路径暂存到 sessionStorage,再回到对应站点根目录;
+     * 站点 index.html 里的恢复脚本会用 history.replaceState 还原路径,交给 React Router 渲染。
+     */
+    (function () {
+      var prefixes = ['/linux/', '/mcu/', '/analog/', '/ml/', '/ros/', '/rtos/'];
+      var pathname = location.pathname;
+      var full = pathname + location.search + location.hash;
+      for (var i = 0; i < prefixes.length; i++) {
+        var p = prefixes[i];
+        if (pathname.indexOf(p) === 0 || pathname === p.replace(/\/$/, '')) {
+          try { sessionStorage.setItem('1kni4r-spa-path', full); } catch (e) {}
+          location.replace(p);
+          return;
+        }
+      }
+      location.replace('/');
+    })();
+  </script>
+</head>
+<body>
+  <div class="box">
+    <div>
+      <div class="spin"></div>
+      <p>正在打开站点…</p>
+      <p><a href="/">返回首页</a></p>
+    </div>
+  </div>
+</body>
+</html>
