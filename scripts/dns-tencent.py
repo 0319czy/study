@@ -12,9 +12,13 @@
 
 动作:
   1. 查询域名 1kni4r.top 现有记录;
-  2. 删除已存在且值不符的 A 记录(仅主机记录 @);
-  3. 创建 GitHub Pages 官方 A 记录(4 条)与 AAAA 记录(4 条,可选);
+  2. 删除已存在但不在目标清单里的 @ 主机 A/AAAA 记录;
+  3. 创建缺失的 A/AAAA 记录;
   4. 打印最终记录列表。
+
+说明:DNSPod 免费套餐对同一子域名的"负载均衡"数量有限,默认线路只能放 2 条 A/AAAA,
+因此 4 条 GitHub Pages 官方 IP 采用「默认 2 条 + 电信 1 条 + 联通 1 条」的方式覆盖,
+每条线路各自只有 1~2 条记录,既满足免费套餐限制,又保留官方 4 个 IP 的冗余。
 """
 import hashlib
 import hmac
@@ -22,19 +26,27 @@ import json
 import os
 import sys
 import time
-import urllib.parse
 import urllib.request
 
 DOMAIN = "1kni4r.top"
 HOST = "@"
-# GitHub Pages 官方 IP(https://docs.github.com/pages/configuring-a-custom-domain-for-your-github-pages-site)
-A_RECORDS = ["185.199.108.153", "185.199.109.153", "185.199.110.153", "185.199.111.153"]
-# 可选 IPv6(如 DNS 服务商不支持可留空)
-AAAA_RECORDS = ["2606:50c0:8000::153", "2606:50c0:8001::153", "2606:50c0:8002::153", "2606:50c0:8003::153"]
 REGION = ""
 SERVICE = "dnspod"
 ENDPOINT = "dnspod.tencentcloudapi.com"
 VERSION = "2021-03-23"
+
+# GitHub Pages 官方 IP(https://docs.github.com/pages/configuring-a-custom-domain-for-a-github-pages-site)
+# (记录类型, 记录值, 线路) —— 线路分配见文件头说明
+RECORDS = [
+    ("A", "185.199.108.153", "默认"),
+    ("A", "185.199.109.153", "默认"),
+    ("A", "185.199.110.153", "电信"),
+    ("A", "185.199.111.153", "联通"),
+    ("AAAA", "2606:50c0:8000::153", "默认"),
+    ("AAAA", "2606:50c0:8001::153", "默认"),
+    ("AAAA", "2606:50c0:8002::153", "电信"),
+    ("AAAA", "2606:50c0:8003::153", "联通"),
+]
 
 SECRET_ID = os.environ.get("TENCENTCLOUD_SECRET_ID", "")
 SECRET_KEY = os.environ.get("TENCENTCLOUD_SECRET_KEY", "")
@@ -49,7 +61,6 @@ def call(action: str, payload: dict) -> dict:
     body = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
     timestamp = int(time.time())
     date = time.strftime("%Y-%m-%d", time.gmtime(timestamp))
-    # 1. 拼接待签名字符串
     canonical_request = "\n".join(
         [
             "POST",
@@ -65,7 +76,6 @@ def call(action: str, payload: dict) -> dict:
     string_to_sign = "\n".join(
         ["TC3-HMAC-SHA256", str(timestamp), credential_scope, hashed_request]
     )
-    # 2. 派生签名密钥
     secret_date = _hmac(("TC3" + SECRET_KEY).encode("utf-8"), date)
     secret_service = _hmac(secret_date, SERVICE)
     secret_signing = _hmac(secret_service, "tc3_request")
@@ -117,32 +127,32 @@ def main() -> int:
     for rec in records:
         print(
             f"  {rec.get('Name'):<10} {rec.get('Type'):<6} {rec.get('Value'):<45} "
-            f"TTL={rec.get('TTL')} id={rec.get('RecordId')}"
+            f"线路={rec.get('Line') or rec.get('RecordLine') or '-'} TTL={rec.get('TTL')} id={rec.get('RecordId')}"
         )
     if check:
         return 0
 
-    desired = [("A", v) for v in A_RECORDS] + [("AAAA", v) for v in AAAA_RECORDS]
-    # 只清理主机记录为 @ 的 A/AAAA(不碰 MX/TXT/子域名记录)
+    desired = set(RECORDS)
+    # 只清理主机记录为 @ 的 A/AAAA(不碰 MX/TXT/子域名记录),且 (类型,值,线路) 不在目标清单里
     stale = [
         rec
         for rec in records
         if rec.get("Name") == HOST
         and rec.get("Type") in ("A", "AAAA")
-        and (rec.get("Type"), rec.get("Value")) not in desired
+        and (rec.get("Type"), rec.get("Value"), rec.get("Line") or rec.get("RecordLine")) not in desired
     ]
     existing = {
-        (rec.get("Type"), rec.get("Value"))
+        (rec.get("Type"), rec.get("Value"), rec.get("Line") or rec.get("RecordLine"))
         for rec in records
         if rec.get("Name") == HOST
     }
-    to_create = [d for d in desired if d not in existing]
+    to_create = [d for d in RECORDS if d not in existing]
 
     print("\n计划:")
     for rec in stale:
-        print(f"  删除 {rec.get('Type')} {rec.get('Value')} (id={rec.get('RecordId')})")
-    for typ, val in to_create:
-        print(f"  创建 {typ} {val}")
+        print(f"  删除 {rec.get('Type')} {rec.get('Value')} 线路={rec.get('Line')} (id={rec.get('RecordId')})")
+    for typ, val, line in to_create:
+        print(f"  创建 {typ} {val} 线路={line}")
     if not stale and not to_create:
         print("  无需变更,记录已就绪")
         return 0
@@ -151,30 +161,28 @@ def main() -> int:
         return 0
 
     for rec in stale:
-        if rec.get("Type") == "AAAA" and not AAAA_RECORDS:
-            continue
-        call(
-            "DeleteRecord",
-            {"Domain": DOMAIN, "RecordId": rec["RecordId"]},
-        )
-        print(f"已删除 {rec.get('Type')} {rec.get('Value')}")
-    for typ, val in to_create:
+        call("DeleteRecord", {"Domain": DOMAIN, "RecordId": rec["RecordId"]})
+        print(f"已删除 {rec.get('Type')} {rec.get('Value')} 线路={rec.get('Line')}")
+    for typ, val, line in to_create:
         call(
             "CreateRecord",
             {
                 "Domain": DOMAIN,
                 "SubDomain": HOST,
                 "RecordType": typ,
-                "RecordLine": "默认",
+                "RecordLine": line,
                 "Value": val,
                 "TTL": 600,
             },
         )
-        print(f"已创建 {typ} {val}")
+        print(f"已创建 {typ} {val} 线路={line}")
 
     print("\n最终记录:")
     for rec in list_records():
-        print(f"  {rec.get('Name'):<10} {rec.get('Type'):<6} {rec.get('Value'):<45} TTL={rec.get('TTL')}")
+        print(
+            f"  {rec.get('Name'):<10} {rec.get('Type'):<6} {rec.get('Value'):<45} "
+            f"线路={rec.get('Line') or rec.get('RecordLine') or '-'} TTL={rec.get('TTL')}"
+        )
     return 0
 
 
