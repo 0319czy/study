@@ -45,20 +45,20 @@
     <div class="section" id="car">
       <h2>实验 1 · 寻迹小车(PID)</h2>
       <div class="lab-ctl">
-        <label>Kp <input id="kp" type="range" min="0" max="3" step="0.05" value="1.2" /><span class="lab-num" id="kp-v">1.20</span></label>
-        <label>Ki <input id="ki" type="range" min="0" max="1.5" step="0.05" value="0.15" /><span class="lab-num" id="ki-v">0.15</span></label>
-        <label>Kd <input id="kd" type="range" min="0" max="1.5" step="0.05" value="0.25" /><span class="lab-num" id="kd-v">0.25</span></label>
-        <label>车速 <input id="speed" type="range" min="0.5" max="3" step="0.1" value="1.6" /><span class="lab-num" id="speed-v">1.60</span></label>
+        <label>Kp <input id="kp" type="range" min="0" max="4" step="0.05" value="2.0" /><span class="lab-num" id="kp-v">2.00</span></label>
+        <label>Ki <input id="ki" type="range" min="0" max="1.5" step="0.05" value="0.10" /><span class="lab-num" id="ki-v">0.10</span></label>
+        <label>Kd <input id="kd" type="range" min="0" max="1.5" step="0.05" value="0.35" /><span class="lab-num" id="kd-v">0.35</span></label>
+        <label>车速 <input id="speed" type="range" min="0.5" max="3" step="0.1" value="1.2" /><span class="lab-num" id="speed-v">1.20</span></label>
         <button id="car-play" class="on" type="button">暂停</button>
         <button id="car-step" type="button">单步</button>
         <button id="car-reset" type="button">复位</button>
         <button id="car-preset" type="button">预设:默认</button>
       </div>
       <div class="lab-grid">
-        <canvas id="car-anim" class="lab-canvas" width="640" height="260" aria-label="寻迹小车动画"></canvas>
-        <canvas id="car-wave" class="wave" width="560" height="260" aria-label="横向误差与转向命令波形"></canvas>
+        <canvas id="car-anim" class="lab-canvas" width="640" height="420" aria-label="闭环赛道寻迹小车动画"></canvas>
+        <canvas id="car-wave" class="wave" width="640" height="260" aria-label="横向误差与转向命令波形"></canvas>
       </div>
-      <p class="lab-note" id="car-note">默认:中等增益,走 S 弯;试试高 Kp 或高车速,看弯道误差与饱和。</p>
+      <p class="lab-note" id="car-note">默认:闭环曲折赛道,车头沿行驶方向;试试高 Kp 或高车速,看弯道误差与饱和。</p>
       <p class="lab-num" id="car-num">t=0.00s · e=0.000 · steer=0.000 · FPS=--</p>
     </div>
 
@@ -91,7 +91,8 @@
         <label>Kp <input id="m-kp" type="range" min="0" max="20" step="0.5" value="8" /><span class="lab-num" id="m-kp-v">8.0</span></label>
         <label>Ki <input id="m-ki" type="range" min="0" max="40" step="1" value="12" /><span class="lab-num" id="m-ki-v">12</span></label>
         <button id="m-play" class="on" type="button">暂停</button>
-        <button id="m-load" type="button">加负载</button>
+        <label>负载 <input id="m-load2" type="range" min="0" max="8" step="0.5" value="0" /><span class="lab-num" id="m-load-v">0.0</span></label>
+        <button id="m-load" type="button">负载阶跃</button>
         <button id="m-reset" type="button">复位</button>
       </div>
       <canvas id="m-anim" class="lab-canvas" width="640" height="200" aria-label="电机转子动画"></canvas>
@@ -103,6 +104,7 @@
       <div class="lab-ctl">
         <label>观测器增益 L1 <input id="o-l" type="range" min="0.5" max="10" step="0.5" value="3" /><span class="lab-num" id="o-l-v">3.0</span></label>
         <button id="o-play" class="on" type="button">暂停</button>
+        <label>测量噪声 <input id="o-noise" type="range" min="0" max="0.05" step="0.005" value="0" /><span class="lab-num" id="o-noise-v">0.000</span></label>
         <button id="o-kick" type="button">扰动</button>
         <button id="o-reset" type="button">复位</button>
       </div>
@@ -118,80 +120,103 @@
       function $(id) { return document.getElementById(id); }
       function fmt(v, n) { return Number(v).toFixed(n); }
 
-      // ---------- 小车 ----------
+      // ---------- 小车(闭环赛道,横向误差模型) ----------
+      function trackPoint(th) {
+        var r = 2.0 * (1 + 0.22 * Math.sin(3 * th) + 0.10 * Math.cos(2 * th));
+        return { x: r * Math.cos(th), y: r * Math.sin(th) };
+      }
+      var TRACK = (function () { var a = [], N = 720; for (var i = 0; i < N; i++) a.push(trackPoint(i / N * Math.PI * 2)); return a; })();
       var car = {
-        t: 0, x: 0, y: 0, yaw: 0, eint: 0, eold: 0, speed: 1.6,
-        kp: 1.2, ki: 0.15, kd: 0.25,
-        hist: [], running: true, frame: 0, fps: []
+        t: 0, theta: 0, e: 0.15, he: 0, eint: 0, speed: 1.2, kp: 1.2, ki: 0.10, kd: 0.4,
+        running: true, hist: [], x: 0, y: 0, yaw: 0, steer: 0
       };
-      function carPath(x) { return 0.9 * Math.sin(x * 0.9); }
       function carReset() {
-        car.t = 0; car.x = 0; car.y = carPath(0); car.yaw = 0; car.eint = 0; car.eold = 0; car.hist = []; car.frame = 0;
+        car.t = 0; car.theta = 0; car.e = 0.15; car.he = 0; car.eint = 0; car.steer = 0;
+        car.hist = [];
+        var p = trackPoint(0), p2 = trackPoint(0.02);
+        car.x = p.x; car.y = p.y; car.yaw = Math.atan2(p2.y - p.y, p2.x - p.x);
       }
       function carStep(dt) {
-        var yr = carPath(car.x + 0.15) - carPath(car.x);
-        var e = car.y - carPath(car.x);
-        car.eint += e * dt;
-        var de = (e - car.eold) / dt; car.eold = e;
-        var steer = -(car.kp * e + car.ki * car.eint + car.kd * de) + yr * 2.2;
-        steer = clamp(steer, -0.8, 0.8);
-        car.yaw = clamp(car.yaw + steer * dt * 4, -1.1, 1.1);
-        car.x += car.speed * dt;
-        car.y += car.speed * Math.sin(car.yaw) * dt;
-        car.t += dt;
-        if (car.x > 6.4) { carReset(); }
-        car.hist.push({ t: car.t, e: e, s: steer });
-        if (car.hist.length > 900) car.hist.shift();
+        var p = trackPoint(car.theta), p2 = trackPoint(car.theta + 0.02);
+        var tx = p2.x - p.x, ty = p2.y - p.y, tl = Math.sqrt(tx * tx + ty * ty) || 1;
+        tx /= tl; ty /= tl;
+        var nx = -ty, ny = tx;
+        var steer = -(car.kp * car.e + car.ki * car.eint + car.kd * car.he);
+        steer = clamp(steer, -0.7, 0.7);
+        car.he += steer * car.speed * dt / 0.9;
+        car.e += car.speed * Math.sin(car.he) * dt;
+        car.eint += car.e * dt;
+        car.theta += car.speed * dt / 2.2;
+        car.t += dt; car.steer = steer;
+        var q = trackPoint(car.theta);
+        car.x = q.x + nx * car.e;
+        car.y = q.y + ny * car.e;
+        car.yaw = Math.atan2(ty, tx) + car.he;
+        car.hist.push({ t: car.t, e: car.e, s: steer, x: car.x, y: car.y });
+        if (car.hist.length > 2000) car.hist.shift();
       }
       function carDraw() {
         var c = $('car-anim'), g = c.getContext('2d'), W = c.width, H = c.height;
         g.clearRect(0, 0, W, H);
-        var sx = W / 6.4, sy = H / 3.2, ox = 0, oy = H / 2;
-        g.strokeStyle = '#9aa89f'; g.lineWidth = 2; g.beginPath();
-        for (var x = 0; x <= 6.4; x += 0.05) {
-          var py = oy - carPath(x) * sy;
-          if (x === 0) g.moveTo(ox + x * sx, py); else g.lineTo(ox + x * sx, py);
-        }
-        g.stroke();
+        var S = 80, ox = W / 2, oy = H / 2 + 4;
+        function X(x) { return ox + x * S; }
+        function Y(y) { return oy - y * S; }
+        g.lineCap = 'round'; g.lineJoin = 'round';
+        g.strokeStyle = '#dfe5dc'; g.lineWidth = 26; g.beginPath();
+        for (var i = 0; i < TRACK.length; i++) { var px = X(TRACK[i].x), py = Y(TRACK[i].y); i ? g.lineTo(px, py) : g.moveTo(px, py); }
+        g.closePath(); g.stroke();
+        g.strokeStyle = '#f7f8f5'; g.lineWidth = 20; g.stroke();
+        g.strokeStyle = '#9aa89f'; g.lineWidth = 1.4; g.setLineDash([6, 7]); g.beginPath();
+        for (var j = 0; j < TRACK.length; j++) { var qx = X(TRACK[j].x), qy = Y(TRACK[j].y); j ? g.lineTo(qx, qy) : g.moveTo(qx, qy); }
+        g.closePath(); g.stroke(); g.setLineDash([]);
         if (car.hist.length > 1) {
-          g.strokeStyle = '#0f766e'; g.lineWidth = 1.5; g.beginPath();
-          for (var i = 0; i < car.hist.length; i += 3) {
-            var h = car.hist[i];
-            var xx = ox + h.t * car.speed * sx, yy = oy - (carPath(0) + h.e) * sy;
-            if (i === 0) g.moveTo(xx, yy); else g.lineTo(xx, yy);
-          }
+          g.strokeStyle = '#0f766e'; g.lineWidth = 2; g.beginPath();
+          for (var k = 0; k < car.hist.length; k++) { var h = car.hist[k]; k ? g.lineTo(X(h.x), Y(h.y)) : g.moveTo(X(h.x), Y(h.y)); }
           g.stroke();
         }
-        var cx = ox + car.x * sx, cy = oy - car.y * sy;
-        g.fillStyle = '#16211d';
-        g.save(); g.translate(cx, cy); g.rotate(car.yaw);
-        g.fillRect(-14, -8, 28, 16);
-        g.fillStyle = '#c2410c'; g.fillRect(8, -6, 6, 12);
+        var cx = X(car.x), cy = Y(car.y);
+        g.save(); g.translate(cx, cy); g.rotate(-car.yaw);
+        g.fillStyle = '#16211d'; g.fillRect(-16, -9, 32, 18);
+        g.fillStyle = '#0b1117'; g.fillRect(-12, -12, 8, 4); g.fillRect(-12, 8, 8, 4);
+        g.fillStyle = '#0b1117'; g.fillRect(6, -12, 8, 4); g.fillRect(6, 8, 8, 4);
+        g.fillStyle = '#c2410c'; g.beginPath(); g.moveTo(16, -7); g.lineTo(25, 0); g.lineTo(16, 7); g.closePath(); g.fill();
+        g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(19, -3.5, 2.4, 0, Math.PI * 2); g.fill();
         g.restore();
+        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif';
+        g.fillText('闭环赛道 · 曲折路线 · 车头朝前', 12, 20);
       }
       function carWaveDraw() {
         var c = $('car-wave'), g = c.getContext('2d'), W = c.width, H = c.height;
         g.clearRect(0, 0, W, H);
-        g.strokeStyle = '#d8ded6'; g.lineWidth = 1; g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
+        // 图例(顶部)
+        g.font = '12px sans-serif';
+        g.fillStyle = '#0f766e'; g.fillRect(56, 10, 18, 3); g.fillText('横向误差 e', 80, 16);
+        g.fillStyle = '#c2410c'; g.fillRect(190, 10, 18, 3); g.fillText('转向命令 steer', 214, 16);
+        g.fillStyle = '#5c6a63'; g.font = '11px sans-serif';
+        g.fillText('时间窗 12 s', W - 88, 16);
+        // 网格
+        g.strokeStyle = '#e4e9e2'; g.lineWidth = 1;
+        for (var i = 0; i < 5; i++) { var gy = 46 + (H - 74) * i / 4; g.beginPath(); g.moveTo(50, gy); g.lineTo(W - 10, gy); g.stroke(); }
+        for (var j = 0; j <= 4; j++) { var gx = 50 + (W - 60) * j / 4; g.beginPath(); g.moveTo(gx, 46); g.lineTo(gx, H - 26); g.stroke(); }
+        // 零线
+        g.strokeStyle = '#b9c2b8'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(50, 46 + (H - 74) / 2); g.lineTo(W - 10, 46 + (H - 74) / 2); g.stroke();
         if (!car.hist.length) return;
-        var t0 = car.hist[0].t, t1 = car.hist[car.hist.length - 1].t;
-        var span = Math.max(0.5, t1 - t0);
-        function drawSeries(key, scale, color) {
-          g.strokeStyle = color; g.lineWidth = 2; g.beginPath();
-          for (var i = 0; i < car.hist.length; i++) {
-            var h = car.hist[i];
-            var px = (h.t - t0) / span * (W - 20) + 10;
-            var py = H / 2 - h[key] * scale;
-            if (i === 0) g.moveTo(px, py); else g.lineTo(px, py);
-          }
-          g.stroke();
-        }
-        drawSeries('e', 60, '#0f766e');
-        drawSeries('s', 40, '#c2410c');
-        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif';
-        g.fillText('横向误差 e', 10, 18); g.fillStyle = '#c2410c'; g.fillText('转向命令', 10, 36);
+        var t1 = car.t, t0 = Math.max(0, t1 - 12), span = Math.max(4, t1 - t0);
+        function X(t) { return 50 + (t - t0) / span * (W - 60); }
+        function Y(v) { return 46 + (H - 74) / 2 - v / 0.8 * ((H - 74) / 2); }
+        g.strokeStyle = '#0f766e'; g.lineWidth = 2.4; g.beginPath();
+        for (var k = 0; k < car.hist.length; k++) { var h = car.hist[k]; if (h.t < t0) continue; var px = X(h.t), py = Y(h.e); k ? g.lineTo(px, py) : g.moveTo(px, py); }
+        g.stroke();
+        g.strokeStyle = '#c2410c'; g.lineWidth = 2.4; g.beginPath();
+        for (var m = 0; m < car.hist.length; m++) { var h2 = car.hist[m]; if (h2.t < t0) continue; var px2 = X(h2.t), py2 = Y(h2.s); m ? g.lineTo(px2, py2) : g.moveTo(px2, py2); }
+        g.stroke();
+        // 当前值
+        g.fillStyle = '#16211d'; g.font = '11px sans-serif';
+        g.fillText('e=' + car.e.toFixed(3) + '  steer=' + car.steer.toFixed(3), 56, 34);
+        // 时间刻度
+        g.fillStyle = '#8b9bb0';
+        for (var q = 0; q <= 4; q++) { var tt = t0 + span * q / 4; g.fillText(tt.toFixed(1) + 's', 50 + (W - 60) * q / 4 - 10, H - 8); }
       }
-
       // ---------- 倒立摆 ----------
       var pen = {
         t: 0, th: 0.08, thd: 0, x: 0, xd: 0, qr: 0, running: true, hist: [], frame: 0
@@ -255,7 +280,7 @@
 
       // ---------- 电机(一阶 + PI) ----------
       var motor = { t: 0, w: 0, ref: 6, kp: 8, ki: 12, integ: 0, load: 0, running: true, hist: [], fps: 0 };
-      function motorReset() { motor.t = 0; motor.w = 0; motor.integ = 0; motor.load = 0; motor.hist = []; }
+      function motorReset() { motor.t = 0; motor.w = 0; motor.integ = 0; motor.hist = []; }
       function motorStep(dt) {
         var e = motor.ref - motor.w;
         motor.integ += e * dt;
@@ -264,7 +289,8 @@
         var tau = 0.2;
         motor.w += ((u - motor.load) - motor.w) / tau * dt;
         motor.t += dt;
-        motor.hist.push({ t: motor.t, w: motor.w, ref: motor.ref }); if (motor.hist.length > 900) motor.hist.shift();
+        motor.hist.push({ t: motor.t, w: motor.w, ref: motor.ref, load: motor.load });
+        if (motor.hist.length > 2000) motor.hist.shift();
       }
       function drawMotor() {
         var c = $('m-anim'), g = c.getContext('2d'), W = c.width, H = c.height;
@@ -274,46 +300,71 @@
         var a = motor.w * 1.2;
         g.strokeStyle = '#0f766e'; g.lineWidth = 6; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); g.stroke();
         g.fillStyle = '#c2410c'; g.beginPath(); g.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 7, 0, Math.PI * 2); g.fill();
-        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif'; g.fillText('ω=' + motor.w.toFixed(2), 12, 20);
+        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif'; g.fillText('ω=' + motor.w.toFixed(2) + '  负载=' + motor.load.toFixed(1), 12, 20);
       }
       function drawMotorWave() {
         var c = $('m-wave'), g = c.getContext('2d'), W = c.width, H = c.height;
-        g.clearRect(0, 0, W, H); g.strokeStyle = '#d8ded6'; g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
+        g.clearRect(0, 0, W, H);
+        g.font = '12px sans-serif';
+        g.fillStyle = '#c2410c'; g.fillRect(56, 10, 18, 3); g.fillText('参考转速 ref', 80, 16);
+        g.fillStyle = '#0f766e'; g.fillRect(220, 10, 18, 3); g.fillText('实际转速 ω', 244, 16);
+        g.strokeStyle = '#e4e9e2'; g.lineWidth = 1;
+        for (var i = 0; i <= 4; i++) { var gy = 40 + (H - 64) * i / 4; g.beginPath(); g.moveTo(50, gy); g.lineTo(W - 10, gy); g.stroke(); }
         if (!motor.hist.length) return;
-        var t0 = motor.hist[0].t, t1 = motor.hist[motor.hist.length - 1].t, span = Math.max(0.5, t1 - t0);
-        function line(key, color) { g.strokeStyle = color; g.lineWidth = 2; g.beginPath(); for (var i = 0; i < motor.hist.length; i++) { var h = motor.hist[i]; var px = (h.t - t0) / span * (W - 20) + 10, py = H / 2 - h[key] * 12; if (i === 0) g.moveTo(px, py); else g.lineTo(px, py); } g.stroke(); }
-        line('ref', '#c2410c'); line('w', '#0f766e');
+        var t1 = motor.t, t0 = Math.max(0, t1 - 12), span = Math.max(4, t1 - t0);
+        function X(t) { return 50 + (t - t0) / span * (W - 60); }
+        function Y(v) { return H - 24 - v / 10 * (H - 64); }
+        g.strokeStyle = '#c2410c'; g.lineWidth = 2; g.beginPath();
+        for (var a = 0; a < motor.hist.length; a++) { var h = motor.hist[a]; if (h.t < t0) continue; var px = X(h.t), py = Y(h.ref); a ? g.lineTo(px, py) : g.moveTo(px, py); }
+        g.stroke();
+        g.strokeStyle = '#0f766e'; g.lineWidth = 2.4; g.beginPath();
+        for (var b = 0; b < motor.hist.length; b++) { var h2 = motor.hist[b]; if (h2.t < t0) continue; var px2 = X(h2.t), py2 = Y(h2.w); b ? g.lineTo(px2, py2) : g.moveTo(px2, py2); }
+        g.stroke();
+        g.fillStyle = '#16211d'; g.font = '11px sans-serif';
+        g.fillText('ω=' + motor.w.toFixed(2) + '  ref=' + motor.ref.toFixed(1) + '  load=' + motor.load.toFixed(1), 56, 34);
       }
 
       // ---------- 观测器(双积分,只测位置) ----------
-      var obs = { t: 0, x: 0.2, v: 0, xh: 0, vh: 0, l: 3, running: true, hist: [] };
-      function obsReset() { obs.t = 0; obs.x = 0.2; obs.v = 0; obs.xh = 0; obs.vh = 0; obs.hist = []; }
+      var obs = { t: 0, x: 0, v: 0, xh: 0, vh: 0, l: 3, noise: 0, running: true, hist: [] };
+      function obsReset() { obs.t = 0; obs.x = 0; obs.v = 0; obs.xh = 0; obs.vh = 0; obs.hist = []; }
       function obsStep(dt) {
-        var e = obs.x - obs.xh;
+        obs.t += dt;
+        obs.x = 0.2 * Math.sin(0.8 * obs.t);
+        obs.v = 0.16 * Math.cos(0.8 * obs.t);
+        var m = obs.x + (Math.random() - 0.5) * 2 * obs.noise;
+        var e = m - obs.xh;
         obs.xh += obs.vh * dt + obs.l * e * dt;
         obs.vh += (obs.l * obs.l * 0.25) * e * dt;
-        obs.x += obs.v * dt;
-        obs.t += dt;
-        obs.hist.push({ t: obs.t, x: obs.x, xh: obs.xh, e: obs.x - obs.xh }); if (obs.hist.length > 900) obs.hist.shift();
+        obs.hist.push({ t: obs.t, x: obs.x, xh: obs.xh, e: obs.x - obs.xh });
+        if (obs.hist.length > 2000) obs.hist.shift();
       }
       function drawObs() {
         var c = $('o-anim'), g = c.getContext('2d'), W = c.width, H = c.height;
         g.clearRect(0, 0, W, H);
         g.strokeStyle = '#d8ded6'; g.beginPath(); g.moveTo(0, H - 30); g.lineTo(W, H - 30); g.stroke();
         var y = H - 30;
-        function dot(x, color, label) { var px = W / 2 + x * 200; g.fillStyle = color; g.beginPath(); g.arc(px, y - 6, 9, 0, Math.PI * 2); g.fill(); g.font = '12px sans-serif'; g.fillText(label, px - 18, y - 26); }
+        function dot(x, color, label) { var px = W / 2 + x * 200; g.fillStyle = color; g.beginPath(); g.arc(px, y - 8, 9, 0, Math.PI * 2); g.fill(); g.font = '12px sans-serif'; g.fillText(label, px - 18, y - 26); }
         dot(obs.x, '#0f766e', '真实'); dot(obs.xh, '#c2410c', '估计');
-        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif'; g.fillText('只测位置,观测器估计速度', 12, 20);
+        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif'; g.fillText('真实状态按正弦运动;只测位置,观测器估计', 12, 20);
       }
       function drawObsWave() {
         var c = $('o-wave'), g = c.getContext('2d'), W = c.width, H = c.height;
-        g.clearRect(0, 0, W, H); g.strokeStyle = '#d8ded6'; g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
+        g.clearRect(0, 0, W, H);
+        g.font = '12px sans-serif';
+        g.fillStyle = '#0f766e'; g.fillRect(56, 10, 18, 3); g.fillText('真实 x', 80, 16);
+        g.fillStyle = '#c2410c'; g.fillRect(170, 10, 18, 3); g.fillText('估计 x̂', 194, 16);
+        g.fillStyle = '#b91c1c'; g.fillRect(280, 10, 18, 3); g.fillText('误差 e', 304, 16);
+        g.strokeStyle = '#e4e9e2'; g.lineWidth = 1;
+        for (var i = 0; i <= 4; i++) { var gy = 40 + (H - 64) * i / 4; g.beginPath(); g.moveTo(50, gy); g.lineTo(W - 10, gy); g.stroke(); }
         if (!obs.hist.length) return;
-        var t0 = obs.hist[0].t, t1 = obs.hist[obs.hist.length - 1].t, span = Math.max(0.5, t1 - t0);
-        function line(key, color, sc) { g.strokeStyle = color; g.lineWidth = 2; g.beginPath(); for (var i = 0; i < obs.hist.length; i++) { var h = obs.hist[i]; var px = (h.t - t0) / span * (W - 20) + 10, py = H / 2 - h[key] * sc; if (i === 0) g.moveTo(px, py); else g.lineTo(px, py); } g.stroke(); }
-        line('x', '#0f766e', 120); line('xh', '#c2410c', 120); line('e', '#b91c1c', 300);
+        var t1 = obs.t, t0 = Math.max(0, t1 - 12), span = Math.max(4, t1 - t0);
+        function X(t) { return 50 + (t - t0) / span * (W - 60); }
+        function Y(v) { return H - 24 - (v + 0.3) / 0.6 * (H - 64); }
+        function line(key, color) { g.strokeStyle = color; g.lineWidth = 2; g.beginPath(); for (var k = 0; k < obs.hist.length; k++) { var h = obs.hist[k]; if (h.t < t0) continue; var px = X(h.t), py = Y(h[key]); k ? g.lineTo(px, py) : g.moveTo(px, py); } g.stroke(); }
+        line('x', '#0f766e'); line('xh', '#c2410c'); line('e', '#b91c1c');
+        g.fillStyle = '#16211d'; g.font = '11px sans-serif';
+        g.fillText('x=' + obs.x.toFixed(3) + '  x̂=' + obs.xh.toFixed(3) + '  e=' + (obs.x - obs.xh).toFixed(3) + '  noise=' + obs.noise.toFixed(3), 56, 34);
       }
-
       // ---------- 共用主循环 ----------
       var last = performance.now(), fpsAcc = [], fpsLast = last;
       function loop(now) {
@@ -328,7 +379,7 @@
         fpsAcc.push(1 / Math.max(0.001, dtReal));
         if (fpsAcc.length > 30) fpsAcc.shift();
         var fps = fpsAcc.reduce(function (a, b) { return a + b; }, 0) / fpsAcc.length;
-        var e = car.y - carPath(car.x);
+        var e = car.hist.length ? car.hist[car.hist.length - 1].e : 0;
         var steer = car.hist.length ? car.hist[car.hist.length - 1].s : 0;
         $('car-num').textContent = 't=' + fmt(car.t, 2) + 's · e=' + fmt(e, 3) + ' · steer=' + fmt(steer, 3) + ' · FPS=' + fmt(fps, 1);
         var u = pen.hist.length ? pen.hist[pen.hist.length - 1].u : 0;
@@ -360,9 +411,9 @@
       $('car-step').addEventListener('click', function () { car.running = false; $('car-play').classList.remove('on'); $('car-play').textContent = '播放'; carStep(0.004); });
       $('car-reset').addEventListener('click', carReset);
       $('car-preset').addEventListener('click', function () {
-        car.kp = 1.2; car.ki = 0.15; car.kd = 0.25; car.speed = 1.6;
-        $('kp').value = 1.2; $('ki').value = 0.15; $('kd').value = 0.25; $('speed').value = 1.6;
-        $('kp-v').textContent = '1.20'; $('ki-v').textContent = '0.15'; $('kd-v').textContent = '0.25'; $('speed-v').textContent = '1.60';
+        car.kp = 2.0; car.ki = 0.10; car.kd = 0.35; car.speed = 1.2;
+        $('kp').value = 2.0; $('ki').value = 0.10; $('kd').value = 0.35; $('speed').value = 1.2;
+        $('kp-v').textContent = '2.00'; $('ki-v').textContent = '0.10'; $('kd-v').textContent = '0.35'; $('speed-v').textContent = '1.20';
         carReset();
       });
       $('pen-step').addEventListener('click', function () { pen.running = false; $('pen-play').classList.remove('on'); $('pen-play').textContent = '播放'; penStep(0.004); });
@@ -375,10 +426,12 @@
       bindRange2('m-kp', motor, 'kp', 'm-kp-v');
       bindRange2('m-ki', motor, 'ki', 'm-ki-v');
       bindRange2('o-l', obs, 'l', 'o-l-v');
+      bindRange2('m-load2', motor, 'load', 'm-load-v');
+      bindRange2('o-noise', obs, 'noise', 'o-noise-v');
       toggleBtn('m-play', motor); toggleBtn('o-play', obs);
-      $('m-load').addEventListener('click', function () { motor.load = 8; setTimeout(function () { motor.load = 0; }, 2000); });
+      $('m-load').addEventListener('click', function () { motor.load = 6; setTimeout(function () { motor.load = 0; }, 2000); });
       $('m-reset').addEventListener('click', motorReset);
-      $('o-kick').addEventListener('click', function () { obs.v += 0.8; });
+      $('o-kick').addEventListener('click', function () { obs.xh += 0.15; });
       $('o-reset').addEventListener('click', obsReset);
       motorReset(); obsReset();
       carReset(); penReset();
