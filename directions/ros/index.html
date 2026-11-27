@@ -6,6 +6,7 @@
   <meta name="description" content="方向课:ROS 2 机器人应用——计算图、QoS、TF 树、Nav2 导航闭环与可验证的机器人项目。" />
   <title>方向 · ROS 2 机器人应用 · 1kni4r.top</title>
   <link rel="stylesheet" href="/shared/site.css" />
+  <link rel="icon" href="data:," />
   <style>
     .hero-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 0; }
     .tight { margin: 8px 0 0; padding-left: 22px; color: #c7d3df; font-size: 14px; line-height: 1.9; }
@@ -232,7 +233,7 @@ tf (dynamic) : reliable / volatile           → 高频、带时间戳的变换�
         </div>
         <div class="hint">提示:点图里的方框或右侧话题;QoS 不兼容时"发布消息"只会记一条丢弃日志,不会画流向。</div>
         <div class="graph-wrap">
-          <svg id="graph" viewBox="0 0 980 620" role="img" aria-label="ROS 2 计算图:节点与话题的连接关系"></svg>
+          <svg id="graph" viewBox="0 0 980 620" role="group" aria-label="ROS 2 计算图:节点与话题的连接关系,可用 Tab 聚焦后回车选择"></svg>
         </div>
         <div class="sim-panels">
           <div class="detail" id="detail" aria-live="polite"></div>
@@ -240,11 +241,11 @@ tf (dynamic) : reliable / volatile           → 高频、带时间戳的变换�
             <h4>QoS 兼容性检查 · <span class="mono" id="qos-topic">/scan</span></h4>
             <div class="qos-grid">
               <label for="pub-rel">发布者</label>
-              <select id="pub-rel"><option value="reliable">reliable</option><option value="best_effort">best_effort</option></select>
-              <select id="pub-dur"><option value="volatile">volatile</option><option value="transient_local">transient_local</option></select>
+              <select id="pub-rel" aria-label="发布者 reliability"><option value="reliable">reliable</option><option value="best_effort">best_effort</option></select>
+              <select id="pub-dur" aria-label="发布者 durability"><option value="volatile">volatile</option><option value="transient_local">transient_local</option></select>
               <label for="sub-rel">订阅者</label>
-              <select id="sub-rel"><option value="reliable">reliable</option><option value="best_effort">best_effort</option></select>
-              <select id="sub-dur"><option value="volatile">volatile</option><option value="transient_local">transient_local</option></select>
+              <select id="sub-rel" aria-label="订阅者 reliability"><option value="reliable">reliable</option><option value="best_effort">best_effort</option></select>
+              <select id="sub-dur" aria-label="订阅者 durability"><option value="volatile">volatile</option><option value="transient_local">transient_local</option></select>
             </div>
             <div class="qos-result ok" id="qos-result"></div>
             <div class="sim-actions">
@@ -459,6 +460,7 @@ int main(int argc, char **argv)
       <h4>步骤 1:安装与环境确认</h4>
       <pre class="diagram">sudo apt install ros-jazzy-desktop ros-jazzy-navigation2 \
   ros-jazzy-nav2-bringup ros-jazzy-slam-toolbox ros-jazzy-teleop-twist-keyboard
+# 若用 Gazebo 仿真,再装: sudo apt install ros-jazzy-ros-gz
 source /opt/ros/jazzy/setup.bash
 ros2 doctor          # 先确认安装、网络、RMW 正常
 echo $ROS_DOMAIN_ID  # 跨机器时两边必须一致</pre>

@@ -6,6 +6,7 @@
   <meta name="description" content="方向课:嵌入式 Linux 系统构建——交叉工具链、内核与 DTB、Buildroot rootfs、启动验证与设备程序固化。" />
   <title>方向 · 嵌入式 Linux 系统构建 · 1kni4r.top</title>
   <link rel="stylesheet" href="/shared/site.css" />
+  <link rel="icon" href="data:," />
   <style>
     .hero-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 0; }
     .tight { margin: 8px 0 0; padding-left: 22px; color: #c7d3df; font-size: 14px; line-height: 1.9; }
@@ -32,6 +33,7 @@
     .checks li.warn { color: #fbbf24; }
     .checks li.bad { color: #f87171; }
     .sim-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 14px; }
+    .sim-grid > *, .out-panel > * { min-width: 0; }
     .out-panel { display: grid; grid-template-columns: 1.35fr .65fr; gap: 16px; align-items: start; }
     .out-panel .size-box { margin-top: 0; }
     .out-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; color: #8b9bb0; font-size: 12px; }
@@ -122,7 +124,7 @@
         <tr><td>构建链判断</td><td>能说明工具链、内核、DTB、rootfs、sysroot 各自作用;看到前缀与架构不匹配能立刻指出</td><td><span class="pill">principle</span></td></tr>
         <tr><td>构建计划检查器</td><td>本页工具在主机编译运行通过,能对给定配置做一致性检查并生成命令</td><td><span class="pill ok">compiled</span></td></tr>
         <tr><td>可启动镜像</td><td>Buildroot 产出内核/DTB/rootfs,在 QEMU 或板卡上启动到 login</td><td><span class="pill warn">hardware-pending</span></td></tr>
-        <tr><td>设备程序</td><td>用目标 sysroot 交叉编译、strip、装入 rootfs,`file`/`readelf` 显示 ARM 架构</td><td><span class="pill warn">hardware-pending</span></td></tr>
+        <tr><td>设备程序</td><td>用目标 sysroot 交叉编译、strip、装入 rootfs,<code>file</code>/<code>readelf</code> 显示 ARM 架构</td><td><span class="pill warn">hardware-pending</span></td></tr>
       </table>
       <p class="muted" style="font-size:12.5px;line-height:1.8">
         证据口径:compiled = 本页给出的代码/命令已在本机(gcc 13.3.0)实际编译或运行;
@@ -135,13 +137,13 @@
       <h2>2. 前置知识</h2>
       <table>
         <tr><th>需要会</th><th>用在本页哪里</th><th>去哪补</th></tr>
-        <tr><td>C 与编译链接:声明/定义、静态库/动态库、ELF</td><td>看懂 `--sysroot`、strip、file/readelf 的输出</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>C 与编译链接:声明/定义、静态库/动态库、ELF</td><td>看懂 <code>--sysroot</code>、strip、file/readelf 的输出</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
         <tr><td>Linux 用户态:shell、权限、进程、挂载</td><td>串口登录、查看 init、挂载镜像</td><td><a href="/foundations/linux-user/">Linux 用户态入门</a></td></tr>
         <tr><td>Make 与 Kconfig</td><td>Buildroot 的 defconfig/menuconfig、内核构建</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
         <tr><td>设备树基础:节点、compatible、dtb</td><td>解释为什么同一内核换个 dtb 就能启动另一块板</td><td><a href="/linux/">驱动实验室</a></td></tr>
-        <tr><td>串口与 SD 卡:UART、波特率、分区</td><td>板端调试输出、烧录镜像</td><td><a href="/mcu/uart">MCU · UART</a></td></tr>
+        <tr><td>串口与 SD 卡:UART、波特率、分区</td><td>板端调试输出、烧录镜像</td><td><a href="/mcu/">MCU Playground</a> · UART 章节</td></tr>
       </table>
-      <p class="muted">最低门槛:能在 x86 上编译并运行一个 C 程序,用过 `make`,知道 `/` 下大致有哪些目录。不需要读过内核源码。</p>
+      <p class="muted">最低门槛:能在 x86 上编译并运行一个 C 程序,用过 <code>make</code>,知道 <code>/</code> 下大致有哪些目录。不需要读过内核源码。</p>
     </div>
 
     <div class="section">
@@ -154,7 +156,7 @@ arm 或 aarch64       vexpress-*.dtb           /etc /lib /usr/bin
       │                    │                        │
       └────────────────────┴───────────┬────────────┘
                                        ▼
-                        zImage/Image + dtb + rootfs.ext4
+                        zImage/Image + dtb + rootfs.ext2
                                        ▼
              烧录 → BootROM → SPL → U-Boot → kernel + DTB → init → 你的程序</pre>
 
@@ -180,9 +182,9 @@ arm-linux-gnueabi-gcc   → soft-float 约定,目标库不能与 gnueabihf 混�
 
       <h3>3.3 为什么主机 gcc 编译的程序不能直接上板</h3>
       <ul class="tight">
-        <li><b>指令集不同</b>:主机产物是 x86-64,板端 CPU 不认;内核执行时直接 `Exec format error`。</li>
+        <li><b>指令集不同</b>:主机产物是 x86-64,板端 CPU 不认;内核执行时直接 <code>Exec format error</code>。</li>
         <li><b>动态加载器路径不同</b>:x86 程序写死 <code>/lib64/ld-linux-x86-64.so.2</code>,armhf 需要 <code>/lib/ld-linux-armhf.so.3</code>。板端没有这个文件,报 "No such file or directory"——注意报的是加载器,不是程序。</li>
-        <li><b>ABI 不同</b>:`long` 在 arm32 是 4 字节、在 x86-64 是 8 字节;浮点传参、结构体对齐也可能不同。混用会静默算错。</li>
+        <li><b>ABI 不同</b>:<code>long</code> 在 arm32 是 4 字节、在 x86-64 是 8 字节;浮点传参、结构体对齐也可能不同。混用会静默算错。</li>
       </ul>
 
       <h3>3.4 sysroot / target / images 的分工</h3>
@@ -190,17 +192,18 @@ arm-linux-gnueabi-gcc   → soft-float 约定,目标库不能与 gnueabihf 混�
         <tr><th>路径</th><th>给谁用</th><th>内容</th><th>改动影响</th></tr>
         <tr><td><code>output/&lt;board&gt;/staging/</code></td><td>编译器(<code>--sysroot</code>)</td><td>目标头文件、<code>.so</code>/<code>.a</code>、pkg-config</td><td>只影响链接;不应手改</td></tr>
         <tr><td><code>output/&lt;board&gt;/target/</code></td><td>打包 rootfs</td><td>运行期目录树(已裁剪)</td><td>下一次 make 会被覆盖;程序要走 overlay 或 package</td></tr>
-        <tr><td><code>output/&lt;board&gt;/images/rootfs.ext4</code></td><td>烧录/挂载</td><td>ext4 镜像</td><td>最终交付物;大小与分区表要对齐</td></tr>
+        <tr><td><code>output/&lt;board&gt;/images/rootfs.ext2</code></td><td>烧录/挂载</td><td>ext2/3/4 镜像(Buildroot 固定名为 rootfs.ext2)</td><td>最终交付物;大小与分区表要对齐</td></tr>
       </table>
-      <div class="note">新手最常踩的坑:把程序 `install` 到 <code>target/usr/bin</code>,验证成功后跑一次 `make`,程序消失——因为 <code>target/</code> 是构建产物。正确做法是放进 <code>rootfs-overlay/</code> 或写成 Buildroot package,让每次构建都自动包含。</div>
+      <div class="note">新手最常踩的坑:把程序 <code>install</code> 到 <code>target/usr/bin</code>,验证成功后跑一次 <code>make</code>,程序消失——因为 <code>target/</code> 是构建产物。正确做法是放进 <code>rootfs-overlay/</code> 或写成 Buildroot package,让每次构建都自动包含。</div>
 
       <h3>3.5 Buildroot 的输出目录</h3>
       <pre class="diagram">output/stm32mp1/
-├── images/    zImage  stm32mp157c-dk2.dtb  rootfs.ext4  sdcard.img
+├── images/    zImage  stm32mp157c-dk2.dtb  rootfs.ext2  sdcard.img
 ├── target/    rootfs 的内容(构建产物,不要当源码目录)
 ├── staging/   sysroot:头文件 + 目标库
 ├── host/      主机侧工具(交叉工具链、mkimage 等)
 └── build/     各软件包的构建目录与日志(排错先看这里)</pre>
+      <p class="muted">Buildroot 的 ext 镜像固定命名为 <code>rootfs.ext2</code>;在 menuconfig 里选 ext4 变体时,它仍叫 rootfs.ext2,另外生成一个 <code>rootfs.ext4</code> 符号链接。不要把"文件名 ext2"误读成"文件系统只能是 ext2"。</p>
       <p class="muted">Buildroot 与 Yocto 的取舍:Buildroot 是"一份配置 + 全量构建",简单直接,适合单一产品和小系统;Yocto 用层与配方做增量、可组合,适合多板型/长期维护但学习曲线更陡。本页选 Buildroot,是因为它能把"一次构建"压缩到可理解的范围。</p>
 
       <h3>3.6 启动链与三个高频失败点</h3>
@@ -343,7 +346,7 @@ sysroot     : /opt/buildroot/output/stm32mp1/staging
   内核    /opt/linux-6.6/arch/arm/boot/zImage
   DTB     /opt/buildroot/output/stm32mp1/images/stm32mp157c-dk2.dtb
   程序    build/device_app
-  rootfs  /opt/buildroot/output/stm32mp1/images/rootfs.ext4
+  rootfs  /opt/buildroot/output/stm32mp1/images/rootfs.ext2
   (dtb 由内核/Buildroot 安装到 images;若没有,在 /opt/linux-6.6/arch/arm/boot/dts/ 下按板名查找)
 
 [5/5] 校验(在主机上做,不需要上板)
@@ -351,6 +354,18 @@ sysroot     : /opt/buildroot/output/stm32mp1/staging
   arm-linux-gnueabihf-readelf -h build/device_app | grep -E &#x27;Class|Machine&#x27;
   期望    ELF 32-bit, Machine: ARM
 </pre>
+      <details class="evidence">
+        <summary>展开 build.env(工具输入,与上面的输出逐项对应)</summary>
+        <pre>BOARD="stm32mp157c-dk2"
+ARCH="arm"
+CROSS_COMPILE="arm-linux-gnueabihf-"
+KERNEL_DEFCONFIG="multi_v7_defconfig"
+DTB="stm32mp157c-dk2.dtb"
+KERNEL_DIR="/opt/linux-6.6/"
+ROOTFS_TARGET="/opt/buildroot/output/stm32mp1/target"
+APP_SRC="src/device_app.c"
+APP_OUT="build/device_app"</pre>
+      </details>
       <details class="evidence">
         <summary>展开 buildplan.c 完整源码(与上面运行的是同一份,约 240 行)</summary>
         <pre>/* buildplan.c —— 交叉编译构建计划检查器(教学用,无任何外部依赖)
@@ -530,7 +545,7 @@ int main(int argc, char **argv)
   }
   strncat(images_dir, &quot;/images&quot;, sizeof images_dir - strlen(images_dir) - 1);
   snprintf(dtb_path, sizeof dtb_path, &quot;%s/%s&quot;, images_dir, dtb);
-  snprintf(rootfs_img, sizeof rootfs_img, &quot;%s/rootfs.ext4&quot;, images_dir);
+  snprintf(rootfs_img, sizeof rootfs_img, &quot;%s/rootfs.ext2&quot;, images_dir);
 
   int bad = mismatch(arch, prefix);
   int hard = strstr(prefix, &quot;gnueabihf&quot;) != NULL;
@@ -621,6 +636,7 @@ make -C /opt/buildroot list-defconfigs | grep -iE 'stm32mp|vexpress|rock_pi'</pr
       <p class="muted">不同版本 defconfig 名称会变。先列出再选,不要凭记忆直接 make——这是"构建前先核对输入"的最小实践。</p>
 
       <h4>步骤 3:生成配置并打开需要的包</h4>
+      <p class="muted">下面以 <code>stm32mp157c_dk2_defconfig</code> 为例;若步骤 2 列出的名称不同,换成实际 defconfig 名,不要硬套。</p>
       <pre class="diagram">cd /opt/buildroot
 make O=/opt/buildroot/output/stm32mp1 stm32mp157c_dk2_defconfig
 make O=/opt/buildroot/output/stm32mp1 menuconfig
@@ -631,7 +647,7 @@ make O=/opt/buildroot/output/stm32mp1 savedefconfig BR2_DEFCONFIG=/opt/myboard/s
       <h4>步骤 4:构建并记录日志</h4>
       <pre class="diagram">make -C /opt/buildroot O=/opt/buildroot/output/stm32mp1 -j$(nproc) 2&gt;&amp;1 | tee /opt/myboard/build.log
 ls -lh /opt/buildroot/output/stm32mp1/images/</pre>
-      <p>期望看到 <code>zImage</code>、<code>stm32mp157c-dk2.dtb</code>、<code>rootfs.ext4</code>,以及启用了 genimage 时的 <code>sdcard.img</code>。</p>
+      <p>期望看到 <code>zImage</code>、<code>stm32mp157c-dk2.dtb</code>、<code>rootfs.ext2</code>,以及启用了 genimage 时的 <code>sdcard.img</code>。ext4 变体只会额外生成 <code>rootfs.ext4</code> 符号链接。</p>
 
       <h4>步骤 5:QEMU 启动(无板路径)</h4>
       <p>参数以 <code>board/qemu/arm-vexpress/readme.txt</code> 为准,核心是机器型号、DTB、rootfs 与串口:</p>
@@ -755,12 +771,12 @@ sync
       <h2>6. 故障排查</h2>
       <table>
         <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
-        <tr><td>内核打印 "No filesystem could mount root"</td><td>核对内核 cmdline 的 <code>root=</code> 与镜像分区表:<code>fdisk -l sdcard.img</code>;确认 rootfs 是 ext4 且分区号对</td><td>root= 指向真实存在的分区,文件系统类型匹配</td><td>分区号错 → 改 root=/dev/mmcblk0pN;无分区表 → 查 genimage.cfg</td></tr>
+        <tr><td>内核打印 "No filesystem could mount root"</td><td>核对内核 cmdline 的 <code>root=</code> 与镜像分区表:<code>fdisk -l sdcard.img</code>;确认 rootfs 文件系统类型(ext2/3/4,镜像名仍为 rootfs.ext2)且分区号对</td><td>root= 指向真实存在的分区,文件系统类型匹配</td><td>分区号错 → 改 root=/dev/mmcblk0pN;无分区表 → 查 genimage.cfg</td></tr>
         <tr><td>串口完全没有输出</td><td>确认波特率 115200 8N1、TX/RX/GND 交叉连接、<code>console=</code> 与 DTB 串口一致;换一根线</td><td>上电能看到 U-Boot 字符</td><td>无 U-Boot → 查启动拨码/SPL;有 U-Boot 无内核 → 查 loadaddr 与镜像类型</td></tr>
-        <tr><td>板端运行程序报 "No such file or directory"</td><td><code>file device_app</code>;`readelf -l | grep interpreter`;`ls /lib/ld-linux-armhf.so.3`</td><td>解释器存在,ELF 架构为 ARM</td><td>缺加载器/库 → 用目标 sysroot 重链或静态编译;架构错 → 换工具链前缀</td></tr>
-        <tr><td>编译时报找不到目标头文件</td><td>确认 <code>--sysroot</code> 指向 <code>output/&lt;board&gt;/staging</code>;`ls $SYSROOT/usr/include`;检查包是否已编</td><td>头文件存在,路径拼写正确</td><td>包未启用 → 开对应 BR2_PACKAGE_*;路径错 → 用 staging 而非 target</td></tr>
+        <tr><td>板端运行程序报 "No such file or directory"</td><td><code>file device_app</code>;<code>readelf -l | grep interpreter</code>;<code>ls /lib/ld-linux-armhf.so.3</code></td><td>解释器存在,ELF 架构为 ARM</td><td>缺加载器/库 → 用目标 sysroot 重链或静态编译;架构错 → 换工具链前缀</td></tr>
+        <tr><td>编译时报找不到目标头文件</td><td>确认 <code>--sysroot</code> 指向 <code>output/&lt;board&gt;/staging</code>;<code>ls $SYSROOT/usr/include</code>;检查包是否已编</td><td>头文件存在,路径拼写正确</td><td>包未启用 → 开对应 BR2_PACKAGE_*;路径错 → 用 staging 而非 target</td></tr>
         <tr><td>Buildroot 构建中途失败或磁盘写满</td><td><code>df -h</code>;看 <code>output/build/&lt;pkg&gt;/*.log</code> 与 <code>make</code> 最后 30 行</td><td>剩余空间 &gt; 5 GB,错误能定位到具体包</td><td>空间不足 → 清 build 目录或扩盘;下载失败 → 配 BR2_PRIMARY_SITE / 代理</td></tr>
-        <tr><td>启动后 panic,提示找不到 init</td><td>挂载 rootfs.ext4,检查 <code>/sbin/init</code>、<code>/etc/inittab</code> 权限;确认 BusyBox 已启用</td><td>init 存在且可执行</td><td>缺 BusyBox → 开 BR2_PACKAGE_BUSYBOX;权限错 → 检查 overlay 权限后重打镜像</td></tr>
+        <tr><td>启动后 panic,提示找不到 init</td><td>挂载 rootfs.ext2,检查 <code>/sbin/init</code>、<code>/etc/inittab</code> 权限;确认 BusyBox 已启用</td><td>init 存在且可执行</td><td>缺 BusyBox → 开 BR2_PACKAGE_BUSYBOX;权限错 → 检查 overlay 权限后重打镜像</td></tr>
       </table>
     </div>
 
@@ -856,7 +872,7 @@ sync
         var app = (appEl.value || '').trim() || 'src/device_app.c';
         var image = is64 ? 'Image' : 'zImage';
         var imgPath = kdir + '/arch/' + (is64 ? 'arm64' : 'arm') + '/boot/' + image;
-                var rootfsImg = O + '/images/rootfs.ext4';
+                var rootfsImg = O + '/images/rootfs.ext2';
         var sdImg = O + '/images/sdcard.img';
 
         var archOk = (is64 ? startA64(prefix) : startSlash(prefix)) && (is64 ? /gnu/.test(prefix) : /gnueabi/.test(prefix));
@@ -965,7 +981,7 @@ sync
           sizeRows += '<div>+ ' + p.label + ':' + p.mb.toFixed(1) + ' MB</div>';
         });
         var imgMb = Math.ceil((total * 1.3 + 6) / 16) * 16;
-        sizeTotalEl.textContent = '≈ ' + total.toFixed(1) + ' MB → ' + imgMb + ' MB ext4';
+        sizeTotalEl.textContent = '≈ ' + total.toFixed(1) + ' MB → ' + imgMb + ' MB 镜像';
         sizeBarEl.style.width = Math.min(100, Math.round(total / imgMb * 100)) + '%';
         sizeRowsEl.innerHTML = sizeRows;
         sizeNoteEl.textContent = '按 25% 余量 + 元数据、16 MB 对齐估算;实际大小取决于 glibc/musl、strip 与是否启用 SSH。';
@@ -995,16 +1011,16 @@ sync
           setTimeout(function () { copyBtn.textContent = '复制命令'; }, 1600);
         }
         function fallback() {
-          var ta = document.createElement('textarea');
-          ta.value = text;
-          ta.style.position = 'fixed';
-          ta.style.opacity = '0';
-          document.body.appendChild(ta);
-          ta.select();
-          var ok = false;
-          try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
-          document.body.removeChild(ta);
-          done(ok ? '已复制' : '请手动选择');
+          try {
+            var range = document.createRange();
+            range.selectNodeContents(cmdEl);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            done('已选中,按 Ctrl+C');
+          } catch (e) {
+            done('请手动选择');
+          }
         }
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(function () { done('已复制'); }).catch(fallback);
