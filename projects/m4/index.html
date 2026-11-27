@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="项目 M4 展示:网页仪表盘——实时值、历史曲线、设备状态与告警。" />
+  <title>M4 展示 · 网页仪表盘 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .box { border: 1px solid #1e2a38; border-radius: 14px; padding: 18px; margin-bottom: 14px; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .box h3 { margin: 0 0 10px; font-size: 16px; }
+    .cards4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+    .metric { border: 1px solid #1e2a38; border-radius: 12px; padding: 14px; background: #0b1117; }
+    .metric .k { color: #8b9bb0; font-size: 12px; }
+    .metric .v { font-size: 26px; font-weight: 800; color: #5eead4; font-family: ui-monospace, Menlo, monospace; margin-top: 4px; }
+    .metric .v small { font-size: 13px; color: #8b9bb0; font-weight: 400; }
+    .status { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; padding: 5px 12px; border-radius: 999px; border: 1px solid #1e2a38; }
+    .status .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status.ok { color: #5eead4; border-color: rgba(94,234,212,.3); }
+    .status.ok .dot { background: #5eead4; box-shadow: 0 0 8px #5eead4; }
+    .status.warn { color: #fbbf24; border-color: rgba(251,191,36,.3); }
+    .status.warn .dot { background: #fbbf24; }
+    .status.off { color: #f87171; border-color: rgba(248,113,113,.3); }
+    .status.off .dot { background: #f87171; }
+    canvas.chart { width: 100%; height: 220px; display: block; background: #0b1117; border: 1px solid #1e2a38; border-radius: 12px; }
+    .kv { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 10px 0; }
+    .kv label { color: #8b9bb0; font-size: 13px; }
+    .kv input, .kv select { background: #0f151d; color: #e6edf3; border: 1px solid #1e2a38; border-radius: 8px; padding: 7px 10px; font-size: 13px; }
+    .kv textarea { width: 100%; min-height: 90px; background: #0b1117; color: #c7d3df; border: 1px solid #1e2a38; border-radius: 8px; padding: 10px; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
+    .checklist label { display: flex; gap: 8px; align-items: flex-start; color: #c7d3df; font-size: 13.5px; line-height: 1.7; margin: 6px 0; }
+    .checklist input { margin-top: 4px; }
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin-bottom: 6px; }
+    .q .opt { display: block; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; cursor: pointer; }
+    .q .opt.right { border-color: rgba(94,234,212,.5); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.5); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin-top: 4px; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    pre.code { background: #0b1117; border: 1px solid #16212c; border-radius: 10px; padding: 14px; overflow-x: auto; color: #c7d3df; font-size: 12.5px; line-height: 1.65; }
+    table.data { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
+    .muted { color: #8b9bb0; }
+    .pill { display: inline-block; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; border: 1px solid #1e2a38; color: #8b9bb0; }
+    .pill.ok { color: #5eead4; border-color: rgba(94,234,212,.25); }
+    .pill.warn { color: #fbbf24; border-color: rgba(251,191,36,.25); }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">PROJECT M4 · 展示</div>
+    <h1>M4 展示:网页仪表盘</h1>
+    <p class="lead">
+      目标:把设备数据变成能看的东西——实时值、历史曲线、设备状态。数据链路:
+      设备 → M1 协议帧 → M3 网关存储 → 查询接口 → 本页仪表盘。本页用内置样例数据模拟整条链路,并支持粘贴 M3 导出的 CSV。
+    </p>
+    <p class="muted">前置:<a href="/projects/collect/">M0 采集</a> · <a href="/projects/m1/">M1 通信</a> · <a href="/projects/m2/">M2 多任务</a> · <a href="/projects/m3/">M3 网关</a></p>
+
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>把 M3 的记录渲染成仪表盘:实时卡片、历史曲线、在线状态、阈值告警</td></tr>
+        <tr><td>可检查结果</td><td>能说明刷新率与采样率的关系;能解释告警为什么不抖动;能指出断线检测依据(500ms 心跳)</td></tr>
+        <tr><td>证据标识</td><td><span class="pill">principle</span> · <span class="pill warn">simulated</span> · <span class="pill">hardware-pending</span></td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>M0 采集</td><td>温度 ×100 定点、单位换算</td><td><a href="/projects/collect/">M0</a></td></tr>
+        <tr><td>M1 协议</td><td>帧格式与 500ms 心跳超时</td><td><a href="/projects/m1/">M1</a></td></tr>
+        <tr><td>M3 存储/查询</td><td>CSV 字段与时间戳</td><td><a href="/projects/m3/">M3</a></td></tr>
+        <tr><td>HTML/JS 基础</td><td>canvas 画曲线、定时刷新</td><td><a href="/foundations/c/">C 与工程工具</a>(语言基础通用)</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>3. 原理与图示</h2>
+      <p class="lead">刷新率(页面多久取一次数)和采样率(设备多久采一次)是两件事:采样率决定数据密度,刷新率决定视觉流畅度;刷新率高于采样率时只是在重复显示同一批数据。</p>
+      <pre class="code">设备采样 10ms → 网关聚合/存储 → 查询接口(如 /api/latest?limit=60)
+                                      ↓
+页面每 1s 拉一次最新值 → 实时卡片 + 历史曲线 + 状态灯
+
+状态判定(示例):
+  在线: 最近心跳距今 &lt; 500ms(与 M1 超时一致)
+  告警: 温度 &gt; 阈值(默认 28℃)且连续 3 个采样点
+  离线: 最近心跳距今 ≥ 500ms 或 M3 记录断档</pre>
+      <p class="muted">告警"连续 N 点"是为了避免单点噪声抖动;断线用 M1 的 500ms 心跳超时,不用"页面多久没刷新"判断。</p>
+    </div>
+
+    <div class="section">
+      <h2>4. 操作实验:仪表盘模拟器</h2>
+      <div class="box">
+        <div class="cards4">
+          <div class="metric"><div class="k">当前温度</div><div class="v" id="m-temp">--<small> ℃</small></div></div>
+          <div class="metric"><div class="k">当前湿度</div><div class="v" id="m-hum">--<small> %RH</small></div></div>
+          <div class="metric"><div class="k">告警次数</div><div class="v" id="m-alarms">0</div></div>
+          <div class="metric"><div class="k">设备状态</div><div class="v" style="font-size:15px"><span class="status ok" id="m-status"><span class="dot"></span><span id="m-status-text">在线</span></span></div></div>
+        </div>
+        <div class="kv" style="margin-top:12px">
+          <label>温度阈值(℃)</label><input id="th" type="number" value="28" step="0.1" style="width:90px" />
+          <label>刷新率(ms)</label><select id="refresh"><option value="1000" selected>1000</option><option value="500">500</option><option value="2000">2000</option></select>
+          <label>数据源</label><select id="source"><option value="sample">内置样例(60 点)</option><option value="csv">粘贴 M3 CSV</option></select>
+        </div>
+        <canvas id="chart" class="chart" width="900" height="220"></canvas>
+        <div class="kv" id="csv-row" style="display:none;margin-top:10px">
+          <textarea id="csv" placeholder="粘贴 M3 导出的 CSV(表头 timestamp,seq,temp_c,humidity_pct,frame_hex)。可以直接粘贴 M3 页面的样本。"></textarea>
+          <button type="button" id="load-csv" style="background:#0f151d;color:#e6edf3;border:1px solid #1e2a38;border-radius:8px;padding:8px 14px;cursor:pointer">解析并渲染</button>
+          <span class="muted" id="csv-status" style="font-size:12.5px">等待粘贴</span>
+        </div>
+        <p class="muted" style="margin-top:10px;font-size:12.5px">模拟数据由页面内模型生成(simulated);曲线、告警和状态判定逻辑与真实网关一致。</p>
+      </div>
+      <p class="muted" style="margin-top:8px">自检:把阈值调到 20℃,告警次数应明显上升;调到 35℃,告警应为 0。若状态灯没有变化,检查刷新定时器是否被清理。</p>
+    </div>
+
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <div class="checklist" id="checklist">
+        <label><input type="checkbox" /> 能解释"刷新率 ≠ 采样率",并说明为什么页面 1s 刷新不代表 1s 采样</label>
+        <label><input type="checkbox" /> 能说明告警去抖(连续 3 点)与断线判定(500ms 心跳)是两套逻辑</label>
+        <label><input type="checkbox" /> 完成模拟器阈值实验(20℃ 告警上升、35℃ 归零),并记录截图或数据</label>
+        <label><input type="checkbox" /> 用 M3 的 CSV 成功渲染曲线(或说明数据字段不匹配的原因)</label>
+      </div>
+      <p class="muted" id="check-status">已完成 0 / 4</p>
+    </div>
+
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>页面数据不刷新</td><td>看控制台是否有 JS 报错;确认定时器是否被重复清理</td><td>无报错,定时器按刷新率触发</td><td>检查 refresh 选择值与 visibilitychange</td></tr>
+        <tr><td>曲线时间轴错位</td><td>核对 CSV 时间戳时区(应 +08:00)与采样间隔</td><td>时间戳单调递增,间隔一致</td><td>时区错 → 统一用 ISO 本地时间</td></tr>
+        <tr><td>曲线锯齿/跳变</td><td>检查是否有断档与重复点;看采样间隔是否抖动</td><td>间隔稳定,无重复 seq</td><td>网关侧去重/补空点</td></tr>
+        <tr><td>告警来回闪</td><td>确认阈值与去抖点数;检查是否单点噪声</td><td>连续 3 点超阈才告警</td><td>保留去抖,不要用瞬时值</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>7. 小测</h2>
+      <div id="quiz"></div>
+      <p class="muted" id="quiz-status">答对 0 / 3</p>
+    </div>
+
+    <div class="section">
+      <h2>8. 下一步</h2>
+      <table>
+        <tr><th>下一步</th><th>内容</th><th>状态</th></tr>
+        <tr><td>M5 交付</td><td>接线图、源码、运行步骤、测试记录、故障排查表</td><td><a href="/projects/m5/">进入 →</a></td></tr>
+        <tr><td>真实接入</td><td>把 M3 网关的查询接口换成真实 HTTP API,页面同构</td><td><span class="pill warn">hardware-pending</span></td></tr>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var THRESH = 28;
+      var refreshMs = 1000;
+      var timer = null;
+      var data = [];
+
+      // 生成 60 点样例:温度在 22~30 波动,含 3 个超阈值点和一段离线段
+      (function () {
+        var t = 22;
+        for (var i = 0; i < 60; i++) {
+          t += (Math.sin(i / 6) * 0.6) + ((i % 7 === 0) ? 0.5 : -0.15);
+          var temp = Math.round(t * 100) / 100;
+          var hum = Math.round((52 + Math.cos(i / 5) * 6) * 100) / 100;
+          var offline = (i >= 42 && i <= 45);
+          var warn = (!offline && temp > THRESH);
+          data.push({ t: i, temp: temp, hum: hum, offline: offline, warn: warn });
+        }
+      })();
+
+      var thEl = document.getElementById('th');
+      var refreshEl = document.getElementById('refresh');
+      var sourceEl = document.getElementById('source');
+      var csvRow = document.getElementById('csv-row');
+      var csvEl = document.getElementById('csv');
+      var loadBtn = document.getElementById('load-csv');
+      var csvStatus = document.getElementById('csv-status');
+      var mTemp = document.getElementById('m-temp');
+      var mHum = document.getElementById('m-hum');
+      var mAlarm = document.getElementById('m-alarms');
+      var mStatus = document.getElementById('m-status');
+      var mStatusText = document.getElementById('m-status-text');
+      var chart = document.getElementById('chart');
+      var ctx = chart.getContext('2d');
+
+      function threshold() {
+        var v = parseFloat(thEl.value);
+        return isNaN(v) ? 28 : v;
+      }
+
+      function computeAlarms(list) {
+        var th = threshold();
+        var n = 0;
+        var streak = 0;
+        for (var i = 0; i < list.length; i++) {
+          if (!list[i].offline && list[i].temp > th) streak++;
+          else streak = 0;
+          if (streak === 3) n++;
+        }
+        return n;
+      }
+
+      function last() { return data.length ? data[data.length - 1] : null; }
+
+      function drawChart() {
+        var W = chart.width, H = chart.height;
+        ctx.clearRect(0, 0, W, H);
+        if (!data.length) return;
+        var pad = { l: 40, r: 12, t: 14, b: 22 };
+        var minT = 18, maxT = 34;
+        function x(i) { return pad.l + (W - pad.l - pad.r) * (i / (data.length - 1)); }
+        function y(v) { return pad.t + (H - pad.t - pad.b) * (1 - (v - minT) / (maxT - minT)); }
+
+        // 网格与刻度
+        ctx.strokeStyle = '#16212c';
+        ctx.fillStyle = '#5f7186';
+        ctx.font = '11px ui-monospace, Menlo, monospace';
+        for (var g = 20; g <= 34; g += 2) {
+          var gy = y(g);
+          ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(W - pad.r, gy); ctx.stroke();
+          ctx.fillText(g + '℃', 6, gy + 4);
+        }
+        // 阈值线
+        var ty = y(threshold());
+        ctx.strokeStyle = 'rgba(251,191,36,.7)';
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(pad.l, ty); ctx.lineTo(W - pad.r, ty); ctx.stroke();
+        ctx.setLineDash([]);
+        // 离线段阴影
+        for (var i = 0; i < data.length; i++) {
+          if (data[i].offline) {
+            ctx.fillStyle = 'rgba(248,113,113,.12)';
+            ctx.fillRect(x(i) - 2, pad.t, 5, H - pad.t - pad.b);
+          }
+        }
+        // 曲线
+        ctx.strokeStyle = '#5eead4';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        var started = false;
+        for (var j = 0; j < data.length; j++) {
+          if (data[j].offline) { started = false; continue; }
+          var px = x(j), py = y(data[j].temp);
+          if (!started) { ctx.moveTo(px, py); started = true; }
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        // 告警点
+        for (var k = 0; k < data.length; k++) {
+          if (data[k].temp > threshold() && !data[k].offline) {
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath(); ctx.arc(x(k), y(data[k].temp), 2.5, 0, Math.PI * 2); ctx.fill();
+          }
+        }
+      }
+
+      function render() {
+        var l = last();
+        if (l) {
+          mTemp.innerHTML = l.temp.toFixed(2) + '<small> ℃</small>';
+          mHum.innerHTML = l.hum.toFixed(2) + '<small> %RH</small>';
+          mAlarm.textContent = computeAlarms(data);
+          var offline = l.offline;
+          var warn = !offline && l.temp > threshold();
+          mStatus.className = 'status ' + (offline ? 'off' : (warn ? 'warn' : 'ok'));
+          mStatusText.textContent = offline ? '离线' : (warn ? '告警' : '在线');
+        }
+        drawChart();
+        var checks = document.querySelectorAll('#checklist input');
+        var done = 0;
+        checks.forEach(function (c) { if (c.checked) done++; });
+        document.getElementById('check-status').textContent = '已完成 ' + done + ' / ' + checks.length + (done === checks.length ? ' ✓ M4 结果检查通过' : '');
+      }
+
+      function restartTimer() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(render, refreshMs);
+      }
+
+      thEl.addEventListener('input', render);
+      refreshEl.addEventListener('change', function () { refreshMs = parseInt(refreshEl.value, 10) || 1000; restartTimer(); });
+      sourceEl.addEventListener('change', function () {
+        csvRow.style.display = sourceEl.value === 'csv' ? '' : 'none';
+      });
+      loadBtn.addEventListener('click', function () {
+        var lines = csvEl.value.split(/\r?\n/).filter(function (s) { return s.trim(); });
+        if (lines.length && /timestamp/i.test(lines[0])) lines.shift();
+        var parsed = [];
+        for (var i = 0; i < lines.length; i++) {
+          var parts = lines[i].split(',');
+          if (parts.length < 4) continue;
+          var temp = parseFloat(parts[2]);
+          var hum = parseFloat(parts[3]);
+          if (isNaN(temp) || isNaN(hum)) continue;
+          parsed.push({ t: parsed.length, temp: temp, hum: hum, offline: false, warn: temp > threshold() });
+        }
+        if (!parsed.length) { csvStatus.textContent = '没有解析到有效行(需要 timestamp,seq,temp_c,humidity_pct)'; return; }
+        data = parsed;
+        csvStatus.textContent = '已载入 ' + parsed.length + ' 条记录';
+        render();
+      });
+
+      document.querySelectorAll('#checklist input').forEach(function (c) { c.addEventListener('change', render); });
+
+      var QUESTIONS = [
+        { stem: '页面刷新率 1s、设备采样 10ms,以下说法正确的是?', opts: ['页面每 1s 采一次传感器', '页面每 1s 显示一次最新数据,数据密度由 10ms 采样决定', '刷新率越高采样越准', '两者必须相等'], answer: 1, explain: '刷新只是视觉更新;采样率决定数据密度,刷新率高于采样率只是重复显示。' },
+        { stem: '告警采用"连续 3 点超阈"主要是为了?', opts: ['提高采样率', '避免单点噪声导致告警抖动', '减少存储空间', '让曲线更平滑'], answer: 1, explain: '去抖:连续多点确认,避免单点噪声触发告警。' },
+        { stem: '断线判定应依据?', opts: ['页面多久没刷新', 'M1 协议 500ms 心跳超时', '曲线是否平滑', '用户是否切换标签页'], answer: 1, explain: '断线由设备心跳缺失判定,与页面刷新无关。' }
+      ];
+      var quiz = document.getElementById('quiz');
+      var quizStatus = document.getElementById('quiz-status');
+      var correct = 0, answered = 0;
+      QUESTIONS.forEach(function (q, qi) {
+        var wrap = document.createElement('div');
+        wrap.className = 'q';
+        var stem = document.createElement('div');
+        stem.className = 'stem';
+        stem.textContent = (qi + 1) + '. ' + q.stem;
+        wrap.appendChild(stem);
+        var explain = document.createElement('div');
+        explain.className = 'explain';
+        explain.textContent = '解析:' + q.explain;
+        q.opts.forEach(function (text, oi) {
+          var opt = document.createElement('div');
+          opt.className = 'opt';
+          opt.textContent = String.fromCharCode(65 + oi) + '. ' + text;
+          opt.addEventListener('click', function () {
+            if (wrap.dataset.done) return;
+            wrap.dataset.done = '1';
+            answered++;
+            if (oi === q.answer) { opt.classList.add('right'); correct++; }
+            else { opt.classList.add('wrong'); wrap.querySelectorAll('.opt')[q.answer].classList.add('right'); }
+            explain.classList.add('show');
+            quizStatus.textContent = '答对 ' + correct + ' / ' + QUESTIONS.length + (answered === QUESTIONS.length ? ' ✓ 全部作答' : '');
+          });
+          wrap.appendChild(opt);
+        });
+        wrap.appendChild(explain);
+        quiz.appendChild(wrap);
+      });
+
+      render();
+      restartTimer();
+    })();
+  </script>
+</body>
+</html>

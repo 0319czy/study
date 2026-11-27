@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="项目 M5 交付:接线图、源码、运行步骤、测试记录、故障排查表与交付自检。" />
+  <title>M5 交付 · 可复现的设备系统 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .box { border: 1px solid #1e2a38; border-radius: 14px; padding: 18px; margin-bottom: 14px; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .box h3 { margin: 0 0 10px; font-size: 16px; }
+    .tree { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; color: #c7d3df; background: #0b1117; border: 1px solid #16212c; border-radius: 10px; padding: 14px 16px; line-height: 1.9; }
+    .tree .d { color: #5eead4; }
+    .tree .f { color: #8b9bb0; }
+    .tree .r { color: #7dd3fc; }
+    .checklist label { display: flex; gap: 8px; align-items: flex-start; color: #c7d3df; font-size: 13.5px; line-height: 1.7; margin: 7px 0; }
+    .checklist input { margin-top: 4px; }
+    .progressbar { height: 8px; background: #0b1117; border: 1px solid #1e2a38; border-radius: 999px; overflow: hidden; margin: 10px 0; }
+    .progressbar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #5eead4, #7dd3fc); transition: width .2s ease; }
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin-bottom: 6px; }
+    .q .opt { display: block; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; cursor: pointer; }
+    .q .opt.right { border-color: rgba(94,234,212,.5); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.5); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin-top: 4px; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    .muted { color: #8b9bb0; }
+    .pill { display: inline-block; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; border: 1px solid #1e2a38; color: #8b9bb0; }
+    .pill.ok { color: #5eead4; border-color: rgba(94,234,212,.25); }
+    .pill.warn { color: #fbbf24; border-color: rgba(251,191,36,.25); }
+    pre.code { background: #0b1117; border: 1px solid #16212c; border-radius: 10px; padding: 14px; overflow-x: auto; color: #c7d3df; font-size: 12.5px; line-height: 1.65; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a class="active" href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">PROJECT M5 · 交付</div>
+    <h1>M5 交付:让别人能复现你的系统</h1>
+    <p class="lead">
+      交付不是"把代码发过去",而是让别人按文档能复现、能检查、能排障。本页给出交付包结构、自检清单和常见缺失;
+      完成自检后,你的 M0–M4 才算真正交付。
+    </p>
+    <p class="muted">前置:<a href="/projects/m0/">M0 采集</a> · <a href="/projects/m1/">M1 通信</a> · <a href="/projects/m2/">M2 多任务</a> · <a href="/projects/m3/">M3 网关</a> · <a href="/projects/m4/">M4 展示</a></p>
+
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>交付一套可部署、可维护的设备系统:材料齐全、步骤可复现、结果可检查、故障有排查</td></tr>
+        <tr><td>可检查结果</td><td>别人按你的文档从零复现;每个阶段有证据标识;交付自检 10/10 通过</td></tr>
+        <tr><td>证据标识</td><td><span class="pill">principle</span> · <span class="pill ok">compiled</span> · <span class="pill">hardware-pending</span>(实物验证由你完成)</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>M0–M4 全链路</td><td>交付内容就是这条链路的证据</td><td><a href="/projects/">项目总览</a></td></tr>
+        <tr><td>Git 与版本</td><td>源码版本、证据版本</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>排障方法</td><td>故障排查表的"现象—检查—预期—下一分支"</td><td><a href="/tools/">工具与资料</a></td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>3. 原理与图示:交付包结构</h2>
+      <div class="tree">
+<span class="d">sensor-monitor/</span>
+├── <span class="r">README.md</span>            <span class="f"># 一页看懂:是什么、怎么跑、验收点</span>
+├── <span class="d">hardware/</span>           <span class="f"># 接线图、BOM、电平说明</span>
+│   ├── <span class="f">wiring.svg / .png</span>
+│   └── <span class="f">bom.csv</span>            <span class="f"># 型号、数量、备注</span>
+├── <span class="d">firmware/</span>           <span class="f"># STM32 工程(M2 多任务)</span>
+│   ├── <span class="f">Core/ …</span>
+│   └── <span class="f">README.md</span>          <span class="f"># 版本、工具链、烧录步骤</span>
+├── <span class="d">gateway/</span>            <span class="f"># Linux 网关(M3)</span>
+│   ├── <span class="f">serial_reader.c</span>
+│   ├── <span class="f">store.py</span>
+│   └── <span class="f">systemd/*.service</span>
+├── <span class="d">dashboard/</span>          <span class="f"># 仪表盘(M4)</span>
+│   └── <span class="f">index.html</span>
+├── <span class="d">docs/</span>
+│   ├── <span class="r">protocol.md</span>        <span class="f"># M1 帧格式与错误码</span>
+│   ├── <span class="r">test-record.md</span>     <span class="f"># 测试记录:时间/环境/结果</span>
+│   └── <span class="r">troubleshooting.md</span><span class="f"> # 现象—检查—预期—下一分支</span>
+└── <span class="d">evidence/</span>           <span class="f"># 证据:截图、日志、串口抓包</span>
+      </div>
+      <p class="muted" style="margin-top:10px">关键:README 是入口,不是附属品;每份证据要写清"证明了什么、没证明什么"。</p>
+    </div>
+
+    <div class="section">
+      <h2>4. 操作实验:交付自检</h2>
+      <div class="box">
+        <h3>交付自检清单(10 项)</h3>
+        <div class="checklist" id="checklist">
+          <label><input type="checkbox" /> README 能让人 5 分钟内知道:这是什么、需要什么硬件、怎么跑</label>
+          <label><input type="checkbox" /> 接线图清楚标出:3.3V/5V、GND 共地、信号针脚与电平</label>
+          <label><input type="checkbox" /> BOM 写了型号、数量、替代件、注意事项</label>
+          <label><input type="checkbox" /> 固件有版本与工具链说明,能按步骤编译/烧录</label>
+          <label><input type="checkbox" /> 协议文档与 M1 一致(帧头、LEN、XOR 覆盖范围、超时)</label>
+          <label><input type="checkbox" /> 网关有运行步骤(systemd/日志路径/权限),不是"直接跑"</label>
+          <label><input type="checkbox" /> 仪表盘有数据来源说明(API/CSV)与刷新率说明</label>
+          <label><input type="checkbox" /> 测试记录含:环境、时间、输入、期望输出、实际输出</label>
+          <label><input type="checkbox" /> 故障排查表 ≥5 条,每条可执行、有下一分支</label>
+          <label><input type="checkbox" /> 证据标识真实:principle / compiled / hardware 分明,写明版本</label>
+        </div>
+        <div class="progressbar"><i id="bar"></i></div>
+        <p class="muted" id="check-status">已完成 0 / 10</p>
+      </div>
+      <p class="muted">自检未满 10 项不要宣称"交付完成";缺一项就写进"待办",不要用"基本完成"糊过去。</p>
+    </div>
+
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <table>
+        <tr><th>检查项</th><th>通过标准</th></tr>
+        <tr><td>可复现</td><td>另一台机器按 README 能跑通最小链路(采样→网关→仪表盘)</td></tr>
+        <tr><td>可检查</td><td>每个阶段有"预期输出"与实测对照</td></tr>
+        <tr><td>可排障</td><td>至少 5 条故障有明确检查步骤与分支</td></tr>
+        <tr><td>可维护</td><td>版本、日志、配置、数据保留策略写清楚</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>别人复现失败</td><td>让他在干净环境按 README 逐步执行并记录卡住的位置</td><td>能定位到某一步</td><td>补步骤/补依赖/补截图</td></tr>
+        <tr><td>版本对不上</td><td>核对 README/firmware/gateway 的版本号与证据时间</td><td>版本一致</td><td>固定版本并重新出证据</td></tr>
+        <tr><td>日志缺失</td><td>检查日志路径、权限、轮转策略</td><td>日志能按时间查</td><td>补 systemd 日志与保留策略</td></tr>
+        <tr><td>接线图与实物不符</td><td>对照 BOM 与实物照片逐针核对</td><td>针脚/电平一致</td><td>重画接线图并标版本</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>7. 小测</h2>
+      <div id="quiz"></div>
+      <p class="muted" id="quiz-status">答对 0 / 3</p>
+    </div>
+
+    <div class="section">
+      <h2>8. 下一步</h2>
+      <table>
+        <tr><th>下一步</th><th>内容</th><th>状态</th></tr>
+        <tr><td>完成实物验证</td><td>按交付包在指定硬件上跑通,把 hardware-pending 改成 hardware 并补证据</td><td><span class="pill warn">待你实测</span></td></tr>
+        <tr><td>第二批</td><td>M4 真实 API 接入、学习档案与错题、全站静态预渲染</td><td><span class="pill">规划中</span></td></tr>
+        <tr><td>回到路线</td><td>查看下一个阶段与方向进阶</td><td><a href="/route/">学习路线 →</a></td></tr>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var checks = document.querySelectorAll('#checklist input');
+      var bar = document.getElementById('bar');
+      var status = document.getElementById('check-status');
+      function render() {
+        var done = 0;
+        checks.forEach(function (c) { if (c.checked) done++; });
+        var pct = Math.round(done / checks.length * 100);
+        bar.style.width = pct + '%';
+        status.textContent = '已完成 ' + done + ' / ' + checks.length + (done === checks.length ? ' ✓ 交付自检通过' : ' · 还差 ' + (checks.length - done) + ' 项');
+      }
+      checks.forEach(function (c) { c.addEventListener('change', render); });
+      render();
+
+      var QUESTIONS = [
+        { stem: '交付包中最重要的入口文件是?', opts: ['firmware/main.c', 'README', 'bom.csv', 'evidence/ 截图'], answer: 1, explain: 'README 说明是什么、需要什么、怎么跑;其他都是它引用的材料。' },
+        { stem: '证据标识写 "hardware" 意味着?', opts: ['代码能编译', '在指定型号硬件上实测通过并记录现象', '原理画得对', '页面能打开'], answer: 1, explain: 'hardware = 真实硬件实测;编译通过是 compiled,原理示意是 principle。' },
+        { stem: '故障排查表必须包含?', opts: ['只写现象', '现象—检查步骤—预期结果—下一分支', '只写解决方案', '截图链接'], answer: 1, explain: '四段结构才能让别人自己走下去,而不是照抄一个答案。' }
+      ];
+      var quiz = document.getElementById('quiz');
+      var quizStatus = document.getElementById('quiz-status');
+      var correct = 0, answered = 0;
+      QUESTIONS.forEach(function (q, qi) {
+        var wrap = document.createElement('div');
+        wrap.className = 'q';
+        var stem = document.createElement('div');
+        stem.className = 'stem';
+        stem.textContent = (qi + 1) + '. ' + q.stem;
+        wrap.appendChild(stem);
+        var explain = document.createElement('div');
+        explain.className = 'explain';
+        explain.textContent = '解析:' + q.explain;
+        q.opts.forEach(function (text, oi) {
+          var opt = document.createElement('div');
+          opt.className = 'opt';
+          opt.textContent = String.fromCharCode(65 + oi) + '. ' + text;
+          opt.addEventListener('click', function () {
+            if (wrap.dataset.done) return;
+            wrap.dataset.done = '1';
+            answered++;
+            if (oi === q.answer) { opt.classList.add('right'); correct++; }
+            else { opt.classList.add('wrong'); wrap.querySelectorAll('.opt')[q.answer].classList.add('right'); }
+            explain.classList.add('show');
+            quizStatus.textContent = '答对 ' + correct + ' / ' + QUESTIONS.length + (answered === QUESTIONS.length ? ' ✓ 全部作答' : '');
+          });
+          wrap.appendChild(opt);
+        });
+        wrap.appendChild(explain);
+        quiz.appendChild(wrap);
+      });
+    })();
+  </script>
+</body>
+</html>
