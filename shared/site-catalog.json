@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "generatedAt": "2026-11-27",
+  "groups": ["工程基础", "核心学科", "方向专题"],
+  "sites": [
+    {"slug": "c", "name": "C 语言", "href": "/c/", "group": "工程基础", "summary": "从能编译到能定位内存错误:指针、内存、ASan 与 gdb。", "tags": ["C", "指针", "调试"]},
+    {"slug": "digital", "name": "数字电路", "href": "/digital/", "group": "工程基础", "summary": "电平、上拉/下拉、去抖、采样与 ADC 量化,参数可算。", "tags": ["电平", "去抖", "采样"]},
+    {"slug": "linux", "name": "Linux 驱动实验室", "href": "/linux/", "group": "核心学科", "summary": "内核模块、字符设备、设备树、中断、并发、DMA 与安全。", "tags": ["kernel", "C", "驱动"]},
+    {"slug": "mcu", "name": "MCU Playground", "href": "/mcu/", "group": "核心学科", "summary": "单片机结构、GPIO/定时器/ADC/DMA、UART/I2C/SPI/CAN 协议。", "tags": ["STM32", "HAL", "协议"]},
+    {"slug": "analog", "name": "知电 · 模拟电子技术", "href": "/analog/", "group": "核心学科", "summary": "器件、放大、频率响应、反馈、运放、电源与振荡器。", "tags": ["模电", "运放", "波形"]},
+    {"slug": "ml", "name": "知机 · 机器学习", "href": "/ml/", "group": "核心学科", "summary": "从线性回归到神经网络:类比、公式、实验与测验。", "tags": ["ML", "实验", "测验"]},
+    {"slug": "rtos", "name": "RTOS Lab", "href": "/rtos/", "group": "核心学科", "summary": "调度、同步、内存、低功耗与启动流程,任务时序可视化。", "tags": ["RTOS", "调度", "同步"]},
+    {"slug": "ros", "name": "ROS 学习实验室", "href": "/ros/", "group": "核心学科", "summary": "ROS 2 节点、话题、TF、SLAM、导航与调试。", "tags": ["ROS 2", "TF", "导航"]},
+    {"slug": "linux-user", "name": "Linux 用户态", "href": "/linux-user/", "group": "方向专题", "summary": "进程、文件、串口与 PTY:驱动之前先把应用写对。", "tags": ["Linux", "串口", "PTY"]},
+    {"slug": "linux-build", "name": "Linux 系统构建", "href": "/linux-build/", "group": "方向专题", "summary": "交叉编译、Buildroot、内核/DTB、rootfs 与启动排障。", "tags": ["Buildroot", "内核", "启动"]}
+  ]
+}

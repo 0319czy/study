@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="知识库:六个中文教学站的知识入口与覆盖范围。" />
+  <meta name="description" content="知识库:全部中文教学站的知识入口与覆盖范围。" />
   <title>知识库 · 1kni4r.top</title>
   <link rel="stylesheet" href="/shared/site.css" />
 <link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
@@ -27,43 +27,66 @@
 
   <main class="page">
     <div class="kicker">KNOWLEDGE BASE</div>
-    <h1>知识库:六个学科站的内容入口</h1>
+    <h1>知识库:全部学科站的内容入口(共 10 个)</h1>
     <p class="lead">
-      六个站继续保留在知识库中。每站包含知识页、交互实验、测验、术语与案例;
+      各学科站继续保留在知识库中。每站包含知识页、交互实验、测验、术语与案例;
       平台层的跨站搜索与学习路线会引用这些真实页面,不复制内容。
     </p>
 
     <div class="section">
       <div class="grid">
+        <div class="cat-group" style="grid-column:1/-1;font-size:12px;letter-spacing:.12em;color:#8b9bb0;text-transform:uppercase;margin:14px 0 2px">工程基础</div>
+        <a class="card" href="/c/">
+          <div class="t">C 语言</div>
+          <div class="d">从能编译到能定位内存错误:指针、内存、ASan 与 gdb。</div>
+          <div class="tagline">进入学科首页 →</div>
+        </a>
+        <a class="card" href="/digital/">
+          <div class="t">数字电路</div>
+          <div class="d">电平、上拉/下拉、去抖、采样与 ADC 量化,参数可算。</div>
+          <div class="tagline">进入学科首页 →</div>
+        </a>
+        <div class="cat-group" style="grid-column:1/-1;font-size:12px;letter-spacing:.12em;color:#8b9bb0;text-transform:uppercase;margin:14px 0 2px">核心学科</div>
         <a class="card" href="/linux/">
-          <div class="t">驱动实验室 · Linux 内核驱动</div>
-          <div class="d">内核模块、字符设备、设备树、平台驱动、中断、并发、DMA、调试与安全。</div>
-          <div class="tagline">21 知识页 · 16 实验 · 7 案例</div>
+          <div class="t">Linux 驱动实验室</div>
+          <div class="d">内核模块、字符设备、设备树、中断、并发、DMA 与安全。</div>
+          <div class="tagline">进入学科首页 →</div>
         </a>
         <a class="card" href="/mcu/">
           <div class="t">MCU Playground</div>
-          <div class="d">单片机内部结构、GPIO/定时器/ADC/DMA、UART/I2C/SPI/CAN/USB 等协议与时序。</div>
-          <div class="tagline">26 路由 · 19 知识页</div>
+          <div class="d">单片机结构、GPIO/定时器/ADC/DMA、UART/I2C/SPI/CAN 协议。</div>
+          <div class="tagline">进入学科首页 →</div>
         </a>
         <a class="card" href="/analog/">
           <div class="t">知电 · 模拟电子技术</div>
-          <div class="d">半导体器件、放大电路、频率响应、反馈、运放、电源与振荡器。</div>
-          <div class="tagline">18 模块 · 24 实验 · 55 题</div>
+          <div class="d">器件、放大、频率响应、反馈、运放、电源与振荡器。</div>
+          <div class="tagline">进入学科首页 →</div>
         </a>
         <a class="card" href="/ml/">
           <div class="t">知机 · 机器学习</div>
-          <div class="d">从线性回归到神经网络:生活类比、数学公式、交互实验与测验。</div>
-          <div class="tagline">19 主题 · 41 题 · 10 实验</div>
-        </a>
-        <a class="card" href="/ros/">
-          <div class="t">ROS 学习实验室</div>
-          <div class="d">ROS 2 核心概念、计算图、话题/服务、TF、SLAM 与导航。</div>
-          <div class="tagline">11 路由 · 交互实验</div>
+          <div class="d">从线性回归到神经网络:类比、公式、实验与测验。</div>
+          <div class="tagline">进入学科首页 →</div>
         </a>
         <a class="card" href="/rtos/">
           <div class="t">RTOS Lab</div>
-          <div class="d">实时调度、任务状态、队列/信号量/互斥量、内存与看门狗。</div>
-          <div class="tagline">13 路由 · 甘特图实验</div>
+          <div class="d">调度、同步、内存、低功耗与启动流程,任务时序可视化。</div>
+          <div class="tagline">进入学科首页 →</div>
+        </a>
+        <a class="card" href="/ros/">
+          <div class="t">ROS 学习实验室</div>
+          <div class="d">ROS 2 节点、话题、TF、SLAM、导航与调试。</div>
+          <div class="tagline">进入学科首页 →</div>
+        </a>
+        <div class="cat-group" style="grid-column:1/-1;font-size:12px;letter-spacing:.12em;color:#8b9bb0;text-transform:uppercase;margin:14px 0 2px">方向专题</div>
+        <a class="card" href="/linux-user/">
+          <div class="t">Linux 用户态</div>
+          <div class="d">进程、文件、串口与 PTY:驱动之前先把应用写对。</div>
+          <div class="tagline">进入学科首页 →</div>
+        </a>
+        <a class="card" href="/linux-build/">
+          <div class="t">Linux 系统构建</div>
+          <div class="d">交叉编译、Buildroot、内核/DTB、rootfs 与启动排障。</div>
+          <div class="tagline">进入学科首页 →</div>
         </a>
       </div>
     </div>

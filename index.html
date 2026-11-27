@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="1kni4r.top 学习实验室：六个可看、可玩、可练的中文交互式教学站。" />
+  <meta name="description" content="1kni4r.top 学习实验室：10 个可看、可玩、可练的中文交互式教学站。" />
   <title>1kni4r.top · 学习实验室</title>
   <link rel="stylesheet" href="/shared/site.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230b0f14'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%235eead4' font-family='monospace'%3E1%3C/text%3E%3C/svg%3E" />
@@ -242,7 +242,7 @@
       <div class="domain"><span class="dot"></span>1kni4r.top</div>
       <h1>学习实验室 <span class="accent">· 可看 · 可玩 · 可练</span></h1>
       <p class="sub">
-        六个中文交互式教学站,覆盖 <b>嵌入式底层</b> 到 <b>人工智能</b>:
+        10 个中文交互式教学站,覆盖 <b>嵌入式底层</b> 到 <b>人工智能</b>:
         内核驱动、单片机与外设、模拟电路、机器学习、ROS 机器人、实时操作系统——
         用动画、模拟器和动手实验,把抽象概念拆开看。
       </p>
@@ -273,85 +273,79 @@
 
     <main>
       <div class="cards" id="cards">
-
+        <div class="cat-group" style="grid-column:1/-1;font-size:12px;letter-spacing:.12em;color:#8b9bb0;text-transform:uppercase;margin:14px 0 2px">工程基础</div>
+        <a class="card" href="/c/">
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">01</span></div>
+          <h2>C 语言</h2>
+          <p>从能编译到能定位内存错误:指针、内存、ASan 与 gdb。</p>
+          <div class="tags"><span class="tag">C</span><span class="tag">指针</span><span class="tag">调试</span></div>
+          <span class="go">进入 →</span>
+        </a>
+        <a class="card" href="/digital/">
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">02</span></div>
+          <h2>数字电路</h2>
+          <p>电平、上拉/下拉、去抖、采样与 ADC 量化,参数可算。</p>
+          <div class="tags"><span class="tag">电平</span><span class="tag">去抖</span><span class="tag">采样</span></div>
+          <span class="go">进入 →</span>
+        </a>
+        <div class="cat-group" style="grid-column:1/-1;font-size:12px;letter-spacing:.12em;color:#8b9bb0;text-transform:uppercase;margin:14px 0 2px">核心学科</div>
         <a class="card" href="/linux/">
-          <div class="card-top">
-            <div class="icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3"/><path d="M13 15h4"/></svg>
-            </div>
-            <span class="idx">01</span>
-          </div>
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">03</span></div>
           <h2>Linux 驱动实验室</h2>
-          <p>从内核模块、字符设备到设备树、中断、并发与 DMA:用分层动画和虚拟加载流程,把内核机制讲成生活化的故事。</p>
-          <div class="tags"><span class="tag">kernel</span><span class="tag">C</span><span class="tag">字符设备</span><span class="tag">设备树</span></div>
-          <span class="go">进入 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <p>内核模块、字符设备、设备树、中断、并发、DMA 与安全。</p>
+          <div class="tags"><span class="tag">kernel</span><span class="tag">C</span><span class="tag">驱动</span></div>
+          <span class="go">进入 →</span>
         </a>
-
         <a class="card" href="/mcu/">
-          <div class="card-top">
-            <div class="icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"/></svg>
-            </div>
-            <span class="idx">02</span>
-          </div>
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">04</span></div>
           <h2>MCU Playground</h2>
-          <p>单片机内部结构、GPIO、定时器与 UART / I2C / SPI / CAN 等通讯协议:时序图、帧格式、电气特性和调试套路一网打尽。</p>
-          <div class="tags"><span class="tag">STM32</span><span class="tag">HAL</span><span class="tag">UART</span><span class="tag">SPI</span></div>
-          <span class="go">进入 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <p>单片机结构、GPIO/定时器/ADC/DMA、UART/I2C/SPI/CAN 协议。</p>
+          <div class="tags"><span class="tag">STM32</span><span class="tag">HAL</span><span class="tag">协议</span></div>
+          <span class="go">进入 →</span>
         </a>
-
         <a class="card" href="/analog/">
-          <div class="card-top">
-            <div class="icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-6 3 3 4-9 3 5 4-2"/><path d="M3 21h18"/></svg>
-            </div>
-            <span class="idx">03</span>
-          </div>
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">05</span></div>
           <h2>知电 · 模拟电子技术</h2>
-          <p>半导体器件、放大电路、频率响应、反馈、运放、电源与振荡器:标准电路符号 + 波形动画 + 参数调节,公式推导不跳步。</p>
-          <div class="tags"><span class="tag">模电</span><span class="tag">运放</span><span class="tag">电路图</span><span class="tag">波形</span></div>
-          <span class="go">进入 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <p>器件、放大、频率响应、反馈、运放、电源与振荡器。</p>
+          <div class="tags"><span class="tag">模电</span><span class="tag">运放</span><span class="tag">波形</span></div>
+          <span class="go">进入 →</span>
         </a>
-
         <a class="card" href="/ml/">
-          <div class="card-top">
-            <div class="icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 013 3v1a6 6 0 013 10.4V19a2 2 0 01-2 2h-1.5a2.5 2.5 0 00-2.5 1h0a2.5 2.5 0 00-2.5-1H9a2 2 0 01-2-2v-1.6A6 6 0 019 7V6a3 3 0 013-3z"/><path d="M9.5 12.5h5M12 10v5"/></svg>
-            </div>
-            <span class="idx">04</span>
-          </div>
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">06</span></div>
           <h2>知机 · 机器学习</h2>
-          <p>通过生活类比、数学公式与交互实验,一步一步理解机器学习:从线性回归到神经网络,概念、推导和动手实验三线并行。</p>
-          <div class="tags"><span class="tag">ML</span><span class="tag">KaTeX</span><span class="tag">实验</span><span class="tag">测验</span></div>
-          <span class="go">进入 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <p>从线性回归到神经网络:类比、公式、实验与测验。</p>
+          <div class="tags"><span class="tag">ML</span><span class="tag">实验</span><span class="tag">测验</span></div>
+          <span class="go">进入 →</span>
         </a>
-
-        <a class="card" href="/ros/">
-          <div class="card-top">
-            <div class="icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M12 7.2v4.4M12 11.6L6.2 16M12 11.6l5.8 4.4"/></svg>
-            </div>
-            <span class="idx">05</span>
-          </div>
-          <h2>ROS 学习实验室</h2>
-          <p>ROS 2 核心概念、计算图、话题与服务、TF、SLAM 与导航:计算图动画 + 通信模拟 + 命令行示例,从零看懂机器人操作系统。</p>
-          <div class="tags"><span class="tag">ROS 2</span><span class="tag">TF</span><span class="tag">SLAM</span><span class="tag">导航</span></div>
-          <span class="go">进入 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </a>
-
         <a class="card" href="/rtos/">
-          <div class="card-top">
-            <div class="icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/><path d="M12 3.5v1.6M12 18.9v1.6M20.5 12h-1.6M5.1 12H3.5"/></svg>
-            </div>
-            <span class="idx">06</span>
-          </div>
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">07</span></div>
           <h2>RTOS Lab</h2>
-          <p>实时调度、任务状态机、队列 / 信号量 / 互斥量、内存与看门狗:甘特图动画和同步模拟,把 FreeRTOS 机制看得见。</p>
-          <div class="tags"><span class="tag">FreeRTOS</span><span class="tag">调度</span><span class="tag">同步</span><span class="tag">IPC</span></div>
-          <span class="go">进入 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <p>调度、同步、内存、低功耗与启动流程,任务时序可视化。</p>
+          <div class="tags"><span class="tag">RTOS</span><span class="tag">调度</span><span class="tag">同步</span></div>
+          <span class="go">进入 →</span>
         </a>
-
+        <a class="card" href="/ros/">
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">08</span></div>
+          <h2>ROS 学习实验室</h2>
+          <p>ROS 2 节点、话题、TF、SLAM、导航与调试。</p>
+          <div class="tags"><span class="tag">ROS 2</span><span class="tag">TF</span><span class="tag">导航</span></div>
+          <span class="go">进入 →</span>
+        </a>
+        <div class="cat-group" style="grid-column:1/-1;font-size:12px;letter-spacing:.12em;color:#8b9bb0;text-transform:uppercase;margin:14px 0 2px">方向专题</div>
+        <a class="card" href="/linux-user/">
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">09</span></div>
+          <h2>Linux 用户态</h2>
+          <p>进程、文件、串口与 PTY:驱动之前先把应用写对。</p>
+          <div class="tags"><span class="tag">Linux</span><span class="tag">串口</span><span class="tag">PTY</span></div>
+          <span class="go">进入 →</span>
+        </a>
+        <a class="card" href="/linux-build/">
+          <div class="card-top"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg></div><span class="idx">10</span></div>
+          <h2>Linux 系统构建</h2>
+          <p>交叉编译、Buildroot、内核/DTB、rootfs 与启动排障。</p>
+          <div class="tags"><span class="tag">Buildroot</span><span class="tag">内核</span><span class="tag">启动</span></div>
+          <span class="go">进入 →</span>
+        </a>
       </div>
     </main>
 
