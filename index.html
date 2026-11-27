@@ -242,12 +242,12 @@
       <div class="domain"><span class="dot"></span>1kni4r.top</div>
       <h1>学习实验室 <span class="accent">· 可看 · 可玩 · 可练</span></h1>
       <p class="sub">
-        10 个中文交互式教学站,覆盖 <b>嵌入式底层</b> 到 <b>人工智能</b>:
+        13 个中文交互式教学站,覆盖 <b>嵌入式底层</b> 到 <b>人工智能</b>:
         内核驱动、单片机与外设、模拟电路、机器学习、ROS 机器人、实时操作系统——
         用动画、模拟器和动手实验,把抽象概念拆开看。
       </p>
       <div class="stats">
-        <span>6 个教学站</span><i></i>
+        <span>13 个教学站</span><i></i>
         <span>纯前端 · 无需登录</span><i></i>
         <span>零后端依赖</span>
       </div>
@@ -266,6 +266,7 @@
         <select id="stage-select" aria-label="当前阶段"></select>
         <select id="task-select" aria-label="当前任务"></select>
         <button id="save-progress" type="button">记录当前进度</button>
+        <button id="reset-progress" type="button" style="background:transparent;color:#f87171;border:1px solid rgba(248,113,113,.45);font-weight:600">重置学习进度</button>
       </div>
       <p style="margin-top:10px;font-size:12px;color:#8b9bb0">进度只存在本机浏览器(localStorage),不上传、不需要登录。后续批次会接入课程内的自动记录。</p>
       <p style="margin-top:8px"><a href="/archive/" style="font-size:13px;color:#5eead4">查看完整学习档案(进度 / 错题 / 笔记 / 迁移旧记录)→</a></p>
@@ -442,6 +443,14 @@
           '<br>历史自标记 ' + done + ' 条(不代表验收通过;模拟交付验收在 M5 单独记录)' +
           (p.updatedAt ? ' · 最近更新 ' + new Date(p.updatedAt).toLocaleString('zh-CN') : '') +
           '<br><a href="' + t[2] + '">继续 →</a>';
+      }
+      var resetBtn = document.getElementById('reset-progress');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function () {
+          if (!confirm('确定重置学习进度?仅清空本机继续位置,不影响学习档案/错题/笔记。')) { return; }
+          try { localStorage.removeItem(KEY); } catch (e) {}
+          render();
+        });
       }
       saveBtn.addEventListener('click', function () {
         var p = load() || { completed: [] };

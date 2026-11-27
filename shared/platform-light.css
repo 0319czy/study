@@ -52,3 +52,12 @@ html[data-theme="light"] .theme-toggle, html[data-theme="light"] .nav-toggle { b
   html.nav-open .topnav .navlinks { display: flex; flex-wrap: wrap; gap: 10px; margin-left: 0; }
   html.nav-open .topnav { flex-wrap: wrap; }
 }
+
+/* 浅色下工作台面板可读性 */
+html[data-theme="light"] .panel { background: #ffffff !important; border-color: #d8ded6 !important; }
+html[data-theme="light"] .panel h2,
+html[data-theme="light"] .panel #progress-body,
+html[data-theme="light"] .panel p { color: #33404a !important; }
+html[data-theme="light"] .panel .muted { color: #4b5a63 !important; }
+html[data-theme="light"] .panel .badge { color: #0b5c56 !important; border-color: #b9c2b8 !important; }
+html[data-theme="light"] #reset-progress { background: #fff !important; color: #b91c1c !important; border-color: rgba(185,28,28,.45) !important; }
