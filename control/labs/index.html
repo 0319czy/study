@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="控制理论交互实验:寻迹小车 PID 与倒立摆 LQR,可调参数、同步波形、暂停单步复位。" />
+  <title>控制实验:寻迹小车 PID / 倒立摆 LQR · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .lab-grid { display:grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr); gap:16px; }
+    @media (max-width: 900px) { .lab-grid { grid-template-columns: 1fr; } }
+    .lab-canvas { width:100%; height:auto; background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; display:block; }
+    .wave { width:100%; height:auto; background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; display:block; }
+    .lab-ctl { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:10px 0; font-size:13px; }
+    .lab-ctl label { display:inline-flex; align-items:center; gap:6px; color:#16211d; }
+    .lab-ctl input[type="range"] { width:110px; }
+    .lab-ctl button { border:1px solid #d8ded6; background:#fff; color:#16211d; border-radius:8px; padding:6px 10px; cursor:pointer; font:inherit; font-size:12.5px; }
+    .lab-ctl button.on { background:#0f766e; color:#fff; border-color:#0f766e; }
+    .lab-num { font-family: ui-monospace, Menlo, monospace; font-size:12.5px; color:#0b5c56; }
+    .lab-note { color:#5c6a63; font-size:12.5px; }
+  </style>
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+  <main class="page">
+    <div class="kicker">CONTROL · LABS</div>
+    <h1>控制实验:改一次参数,看懂对象怎样动</h1>
+    <p class="lead">两个共用同一套仿真与显示代码的实验:寻迹小车(PID/数字控制)与小车倒立摆(LQR)。动画与波形来自同一份轨迹;支持播放、暂停、单步、复位与预设。浏览器模拟,非实物验证。</p>
+
+    <div class="section" id="car">
+      <h2>实验 1 · 寻迹小车(PID)</h2>
+      <div class="lab-ctl">
+        <label>Kp <input id="kp" type="range" min="0" max="3" step="0.05" value="1.2" /><span class="lab-num" id="kp-v">1.20</span></label>
+        <label>Ki <input id="ki" type="range" min="0" max="1.5" step="0.05" value="0.15" /><span class="lab-num" id="ki-v">0.15</span></label>
+        <label>Kd <input id="kd" type="range" min="0" max="1.5" step="0.05" value="0.25" /><span class="lab-num" id="kd-v">0.25</span></label>
+        <label>车速 <input id="speed" type="range" min="0.5" max="3" step="0.1" value="1.6" /><span class="lab-num" id="speed-v">1.60</span></label>
+        <button id="car-play" class="on" type="button">暂停</button>
+        <button id="car-step" type="button">单步</button>
+        <button id="car-reset" type="button">复位</button>
+        <button id="car-preset" type="button">预设:默认</button>
+      </div>
+      <div class="lab-grid">
+        <canvas id="car-anim" class="lab-canvas" width="640" height="260" aria-label="寻迹小车动画"></canvas>
+        <canvas id="car-wave" class="wave" width="560" height="260" aria-label="横向误差与转向命令波形"></canvas>
+      </div>
+      <p class="lab-note" id="car-note">默认:中等增益,走 S 弯;试试高 Kp 或高车速,看弯道误差与饱和。</p>
+      <p class="lab-num" id="car-num">t=0.00s · e=0.000 · steer=0.000 · FPS=--</p>
+    </div>
+
+    <div class="section" id="pendulum">
+      <h2>实验 2 · 小车倒立摆(LQR)</h2>
+      <div class="lab-ctl">
+        <label>Q/R 预设
+          <select id="qr" style="border:1px solid #d8ded6;border-radius:8px;padding:5px 8px;font:inherit">
+            <option value="0">平衡预设(Q 中/R 中)</option>
+            <option value="1">更看重角度(Q 大)</option>
+            <option value="2">更省控制(R 大)</option>
+          </select>
+        </label>
+        <button id="pen-play" class="on" type="button">暂停</button>
+        <button id="pen-step" type="button">单步</button>
+        <button id="pen-reset" type="button">复位</button>
+        <button id="pen-kick" type="button">扰动</button>
+      </div>
+      <div class="lab-grid">
+        <canvas id="pen-anim" class="lab-canvas" width="640" height="260" aria-label="小车倒立摆动画"></canvas>
+        <canvas id="pen-wave" class="wave" width="560" height="260" aria-label="摆角与小车位置波形"></canvas>
+      </div>
+      <p class="lab-note" id="pen-note">小角度线性化:默认小扰动回到误差带;角度过大时提示超出线性化范围。</p>
+      <p class="lab-num" id="pen-num">t=0.00s · θ=0.00° · x=0.000 · u=0.00 · FPS=--</p>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var G = 9.81, L = 0.6, M = 1.0;
+      function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+      function $(id) { return document.getElementById(id); }
+      function fmt(v, n) { return Number(v).toFixed(n); }
+
+      // ---------- 小车 ----------
+      var car = {
+        t: 0, x: 0, y: 0, yaw: 0, eint: 0, eold: 0, speed: 1.6,
+        kp: 1.2, ki: 0.15, kd: 0.25,
+        hist: [], running: true, frame: 0, fps: []
+      };
+      function carPath(x) { return 0.9 * Math.sin(x * 0.9); }
+      function carReset() {
+        car.t = 0; car.x = 0; car.y = carPath(0); car.yaw = 0; car.eint = 0; car.eold = 0; car.hist = []; car.frame = 0;
+      }
+      function carStep(dt) {
+        var yr = carPath(car.x + 0.15) - carPath(car.x);
+        var e = car.y - carPath(car.x);
+        car.eint += e * dt;
+        var de = (e - car.eold) / dt; car.eold = e;
+        var steer = -(car.kp * e + car.ki * car.eint + car.kd * de) + yr * 2.2;
+        steer = clamp(steer, -0.8, 0.8);
+        car.yaw = clamp(car.yaw + steer * dt * 4, -1.1, 1.1);
+        car.x += car.speed * dt;
+        car.y += car.speed * Math.sin(car.yaw) * dt;
+        car.t += dt;
+        if (car.x > 6.4) { carReset(); }
+        car.hist.push({ t: car.t, e: e, s: steer });
+        if (car.hist.length > 900) car.hist.shift();
+      }
+      function carDraw() {
+        var c = $('car-anim'), g = c.getContext('2d'), W = c.width, H = c.height;
+        g.clearRect(0, 0, W, H);
+        var sx = W / 6.4, sy = H / 3.2, ox = 0, oy = H / 2;
+        g.strokeStyle = '#9aa89f'; g.lineWidth = 2; g.beginPath();
+        for (var x = 0; x <= 6.4; x += 0.05) {
+          var py = oy - carPath(x) * sy;
+          if (x === 0) g.moveTo(ox + x * sx, py); else g.lineTo(ox + x * sx, py);
+        }
+        g.stroke();
+        if (car.hist.length > 1) {
+          g.strokeStyle = '#0f766e'; g.lineWidth = 1.5; g.beginPath();
+          for (var i = 0; i < car.hist.length; i += 3) {
+            var h = car.hist[i];
+            var xx = ox + h.t * car.speed * sx, yy = oy - (carPath(0) + h.e) * sy;
+            if (i === 0) g.moveTo(xx, yy); else g.lineTo(xx, yy);
+          }
+          g.stroke();
+        }
+        var cx = ox + car.x * sx, cy = oy - car.y * sy;
+        g.fillStyle = '#16211d';
+        g.save(); g.translate(cx, cy); g.rotate(car.yaw);
+        g.fillRect(-14, -8, 28, 16);
+        g.fillStyle = '#c2410c'; g.fillRect(8, -6, 6, 12);
+        g.restore();
+      }
+      function carWaveDraw() {
+        var c = $('car-wave'), g = c.getContext('2d'), W = c.width, H = c.height;
+        g.clearRect(0, 0, W, H);
+        g.strokeStyle = '#d8ded6'; g.lineWidth = 1; g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
+        if (!car.hist.length) return;
+        var t0 = car.hist[0].t, t1 = car.hist[car.hist.length - 1].t;
+        var span = Math.max(0.5, t1 - t0);
+        function drawSeries(key, scale, color) {
+          g.strokeStyle = color; g.lineWidth = 2; g.beginPath();
+          for (var i = 0; i < car.hist.length; i++) {
+            var h = car.hist[i];
+            var px = (h.t - t0) / span * (W - 20) + 10;
+            var py = H / 2 - h[key] * scale;
+            if (i === 0) g.moveTo(px, py); else g.lineTo(px, py);
+          }
+          g.stroke();
+        }
+        drawSeries('e', 60, '#0f766e');
+        drawSeries('s', 40, '#c2410c');
+        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif';
+        g.fillText('横向误差 e', 10, 18); g.fillStyle = '#c2410c'; g.fillText('转向命令', 10, 36);
+      }
+
+      // ---------- 倒立摆 ----------
+      var pen = {
+        t: 0, th: 0.08, thd: 0, x: 0, xd: 0, qr: 0, running: true, hist: [], frame: 0
+      };
+      var GAINS = [
+        { th: 28, thd: 6, x: 1.8, xd: 3.2, name: '平衡' },
+        { th: 40, thd: 9, x: 2.6, xd: 4.4, name: '角度优先' },
+        { th: 20, thd: 4, x: 1.2, xd: 2.4, name: '省控制' }
+      ];
+      function penReset() { pen.t = 0; pen.th = 0.08; pen.thd = 0; pen.x = 0; pen.xd = 0; pen.hist = []; pen.frame = 0; }
+      function penStep(dt) {
+        var k = GAINS[pen.qr];
+        var u = -(k.th * pen.th + k.thd * pen.thd + k.x * pen.x + k.xd * pen.xd);
+        u = clamp(u, -8, 8);
+        var thdd = (G / L) * Math.sin(pen.th) + u / (M * L * L) * Math.cos(pen.th);
+        pen.thd += thdd * dt; pen.th += pen.thd * dt;
+        var xdd = u / M;
+        pen.xd += xdd * dt; pen.x += pen.xd * dt;
+        pen.t += dt;
+        if (pen.x > 1.2 || pen.x < -1.2) { pen.x = clamp(pen.x, -1.2, 1.2); pen.xd = -pen.xd * 0.3; }
+        if (Math.abs(pen.th) > 1.1) { pen.th = 1.05; pen.thd = 0; }
+        pen.hist.push({ t: pen.t, th: pen.th, x: pen.x, u: u });
+        if (pen.hist.length > 900) pen.hist.shift();
+      }
+      function penDraw() {
+        var c = $('pen-anim'), g = c.getContext('2d'), W = c.width, H = c.height;
+        g.clearRect(0, 0, W, H);
+        g.strokeStyle = '#d8ded6'; g.beginPath(); g.moveTo(0, H - 40); g.lineTo(W, H - 40); g.stroke();
+        var cx = W / 2 + pen.x * 70, cy = H - 40;
+        g.fillStyle = '#16211d'; g.fillRect(cx - 26, cy - 16, 52, 16);
+        var len = 130 * (L / 0.6);
+        var tx = cx - Math.sin(pen.th) * len, ty = cy - Math.cos(pen.th) * len;
+        g.strokeStyle = '#0f766e'; g.lineWidth = 4; g.beginPath(); g.moveTo(cx, cy); g.lineTo(tx, ty); g.stroke();
+        g.fillStyle = '#c2410c'; g.beginPath(); g.arc(tx, ty, 7, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif';
+        g.fillText('θ=' + (pen.th * 180 / Math.PI).toFixed(1) + '°', 12, 20);
+        g.fillText(pen.x > 1.1 ? '轨道限位' : '', W - 80, 20);
+      }
+      function penWaveDraw() {
+        var c = $('pen-wave'), g = c.getContext('2d'), W = c.width, H = c.height;
+        g.clearRect(0, 0, W, H);
+        g.strokeStyle = '#d8ded6'; g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
+        if (!pen.hist.length) return;
+        var t0 = pen.hist[0].t, t1 = pen.hist[pen.hist.length - 1].t, span = Math.max(0.5, t1 - t0);
+        function draw(key, scale, color) {
+          g.strokeStyle = color; g.lineWidth = 2; g.beginPath();
+          for (var i = 0; i < pen.hist.length; i++) {
+            var h = pen.hist[i];
+            var px = (h.t - t0) / span * (W - 20) + 10, py = H / 2 - h[key] * scale;
+            if (i === 0) g.moveTo(px, py); else g.lineTo(px, py);
+          }
+          g.stroke();
+        }
+        draw('th', 180, '#0f766e');
+        draw('x', 60, '#c2410c');
+        g.fillStyle = '#5c6a63'; g.font = '12px sans-serif';
+        g.fillText('摆角 θ', 10, 18); g.fillStyle = '#c2410c'; g.fillText('小车位置 x', 10, 36);
+      }
+
+      // ---------- 共用主循环 ----------
+      var last = performance.now(), fpsAcc = [], fpsLast = last;
+      function loop(now) {
+        var dtReal = Math.min(0.05, (now - last) / 1000); last = now;
+        var sub = 4, dt = dtReal / sub;
+        if (car.running) { for (var i = 0; i < sub; i++) carStep(dt); }
+        if (pen.running) { for (var j = 0; j < sub; j++) penStep(dt); }
+        carDraw(); carWaveDraw(); penDraw(); penWaveDraw();
+        // FPS(滚动平均)
+        fpsAcc.push(1 / Math.max(0.001, dtReal));
+        if (fpsAcc.length > 30) fpsAcc.shift();
+        var fps = fpsAcc.reduce(function (a, b) { return a + b; }, 0) / fpsAcc.length;
+        var e = car.y - carPath(car.x);
+        var steer = car.hist.length ? car.hist[car.hist.length - 1].s : 0;
+        $('car-num').textContent = 't=' + fmt(car.t, 2) + 's · e=' + fmt(e, 3) + ' · steer=' + fmt(steer, 3) + ' · FPS=' + fmt(fps, 1);
+        var u = pen.hist.length ? pen.hist[pen.hist.length - 1].u : 0;
+        $('pen-num').textContent = 't=' + fmt(pen.t, 2) + 's · θ=' + fmt(pen.th * 180 / Math.PI, 2) + '° · x=' + fmt(pen.x, 3) + ' · u=' + fmt(u, 2) + ' · FPS=' + fmt(fps, 1);
+        requestAnimationFrame(loop);
+      }
+
+      // ---------- 控件 ----------
+      function bindRange(id, obj, key, outId) {
+        var el = $(id); if (!el) return;
+        el.addEventListener('input', function () {
+          obj[key] = parseFloat(el.value);
+          if (outId && $(outId)) $(outId).textContent = fmt(el.value, 2);
+        });
+      }
+      bindRange('kp', car, 'kp', 'kp-v'); bindRange('ki', car, 'ki', 'ki-v'); bindRange('kd', car, 'kd', 'kd-v');
+      bindRange('speed', car, 'speed', 'speed-v');
+      function toggleBtn(id, obj) {
+        var b = $(id); if (!b) return;
+        b.addEventListener('click', function () {
+          obj.running = !obj.running;
+          b.classList.toggle('on', obj.running);
+          b.textContent = obj.running ? '暂停' : '播放';
+        });
+      }
+      toggleBtn('car-play', car); toggleBtn('pen-play', pen);
+      $('car-step').addEventListener('click', function () { car.running = false; $('car-play').classList.remove('on'); $('car-play').textContent = '播放'; carStep(0.004); });
+      $('car-reset').addEventListener('click', carReset);
+      $('car-preset').addEventListener('click', function () {
+        car.kp = 1.2; car.ki = 0.15; car.kd = 0.25; car.speed = 1.6;
+        $('kp').value = 1.2; $('ki').value = 0.15; $('kd').value = 0.25; $('speed').value = 1.6;
+        $('kp-v').textContent = '1.20'; $('ki-v').textContent = '0.15'; $('kd-v').textContent = '0.25'; $('speed-v').textContent = '1.60';
+        carReset();
+      });
+      $('pen-step').addEventListener('click', function () { pen.running = false; $('pen-play').classList.remove('on'); $('pen-play').textContent = '播放'; penStep(0.004); });
+      $('pen-reset').addEventListener('click', penReset);
+      $('pen-kick').addEventListener('click', function () { pen.thd += 0.6; });
+      $('qr').addEventListener('change', function () { pen.qr = parseInt(this.value, 10) || 0; penReset(); });
+      carReset(); penReset();
+      requestAnimationFrame(loop);
+    })();
+  </script>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>

@@ -19,7 +19,13 @@ const PAGES = [
   '/digital/', '/digital/start/', '/digital/sampling-debounce/',
   '/linux-user/', '/linux-user/start/', '/linux-user/serial-pty/',
   '/linux-build/', '/linux-build/start/', '/linux-build/buildroot/',
-  '/directions/', '/directions/ros/', '/directions/pcb/', '/directions/edge-ai/',
+  '/directions/', '/directions/ros/',
+  '/control/', '/control/feedback/', '/control/modeling/', '/control/stability/',
+  '/control/pid/', '/control/digital/', '/control/state-space/', '/control/state-feedback/',
+  '/control/lqr/', '/control/labs/', '/control/estimation/', '/control/mpc/',
+  '/control/nonlinear/', '/control/robustness/', '/control/cases/',
+  '/pcb/', '/pcb/start/', '/pcb/check/',
+  '/edge-ai/', '/edge-ai/quantize/', '/edge-ai/budget/',
   '/linux/', '/mcu/', '/analog/', '/ml/', '/ros/', '/rtos/',
 ];
 

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="方向进阶:边缘 AI 模型部署——FP32 到 INT8 量化、内存/延迟预算、MCU 部署流程,含量化计算器与 gcc 核算证据。" />
+  <title>边缘 AI 模型部署 · 边缘 AI 子站 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <link rel="icon" href="data:," />
+  <style>
+    .box { border: 1px solid #1e2a38; border-radius: 14px; padding: 18px; margin-bottom: 14px; background: linear-gradient(160deg, rgba(19,27,37,.9), rgba(12,17,24,.9)); }
+    .box h3 { margin: 0 0 10px; font-size: 16px; }
+    .sub { margin-top: 26px; }
+    .sub h3 { font-size: 16px; margin: 0 0 10px; }
+    .muted { color: #8b9bb0; }
+    .pill { display: inline-block; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; border: 1px solid #1e2a38; color: #8b9bb0; white-space: nowrap; }
+    .pill.ok { color: #5eead4; border-color: rgba(94,234,212,.25); }
+    .pill.warn { color: #fbbf24; border-color: rgba(251,191,36,.25); }
+    .callout { border-left: 3px solid #5eead4; background: rgba(94,234,212,.05); padding: 10px 14px; border-radius: 0 10px 10px 0; color: #c7d3df; font-size: 13px; line-height: 1.8; margin: 12px 0; }
+    .callout.warn { border-left-color: #fbbf24; background: rgba(251,191,36,.06); }
+    .calc { display: grid; grid-template-columns: minmax(250px, 360px) 1fr; gap: 18px; margin-top: 6px; }
+    .fields { border: 1px solid #1e2a38; border-radius: 12px; padding: 14px; background: #0b1117; }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 11px; }
+    .field label { color: #8b9bb0; font-size: 12.5px; }
+    .field input, .field select { background: #0f151d; color: #e6edf3; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; }
+    .field input:focus, .field select:focus { outline: 1px solid #2c4257; border-color: #2c4257; }
+    .btnrow { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+    .btnrow button { background: #0f151d; color: #c7d3df; border: 1px solid #1e2a38; border-radius: 8px; padding: 6px 10px; font-size: 12px; cursor: pointer; font-family: inherit; }
+    .btnrow button:hover { border-color: #2c4257; color: #5eead4; }
+    .results { min-width: 0; }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .kpi { border: 1px solid #1e2a38; border-radius: 12px; padding: 12px 14px; background: #0b1117; }
+    .kpi .k { color: #8b9bb0; font-size: 12px; }
+    .kpi .v { font-size: 22px; font-weight: 800; color: #5eead4; font-family: ui-monospace, Menlo, monospace; margin-top: 4px; line-height: 1.25; }
+    .kpi .v small { font-size: 11px; color: #8b9bb0; font-weight: 400; display: block; margin-top: 2px; font-family: inherit; }
+    .bars { margin: 14px 0 4px; }
+    .barrow { margin-bottom: 8px; }
+    .barrow .lab { display: flex; justify-content: space-between; font-size: 12px; color: #8b9bb0; margin-bottom: 4px; font-family: ui-monospace, Menlo, monospace; }
+    .bartrack { height: 14px; border: 1px solid #1e2a38; border-radius: 999px; background: #0b1117; overflow: hidden; }
+    .barfill { height: 100%; width: 0; transition: width .25s ease; }
+    .barfill.fp { background: linear-gradient(90deg, #475569, #94a3b8); }
+    .barfill.int { background: linear-gradient(90deg, #0f766e, #5eead4); }
+    table.data { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
+    table.data th, table.data td { padding: 8px 10px; }
+    pre.code { background: #0b1117; border: 1px solid #16212c; border-radius: 10px; padding: 14px; overflow-x: auto; color: #c7d3df; font-size: 12px; line-height: 1.65; }
+    details { border: 1px solid #1e2a38; border-radius: 10px; padding: 10px 14px; background: #0b1117; margin: 10px 0; }
+    details summary { cursor: pointer; color: #8b9bb0; font-size: 13px; }
+    details[open] summary { margin-bottom: 10px; }
+    .checklist label { display: flex; gap: 8px; align-items: flex-start; color: #c7d3df; font-size: 13.5px; line-height: 1.7; margin: 7px 0; }
+    .checklist input { margin-top: 4px; }
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin-bottom: 6px; }
+    .q .opt { display: block; border: 1px solid #1e2a38; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #c7d3df; cursor: pointer; }
+    .q .opt.right { border-color: rgba(94,234,212,.5); background: rgba(94,234,212,.08); color: #5eead4; }
+    .q .opt.wrong { border-color: rgba(248,113,113,.5); background: rgba(248,113,113,.08); color: #f87171; }
+    .q .explain { display: none; color: #8b9bb0; font-size: 12.5px; margin-top: 4px; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    .btn-reset { margin-top: 8px; background: #0f151d; color: #c7d3df; border: 1px solid #1e2a38; border-radius: 8px; padding: 7px 12px; font-size: 12.5px; cursor: pointer; font-family: inherit; }
+    .svgwrap { overflow-x: auto; border: 1px solid #1e2a38; border-radius: 12px; background: #0b1117; padding: 8px; }
+    .svgwrap svg { display: block; min-width: 620px; width: 100%; height: auto; }
+    .flow { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; line-height: 1.75; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .tblnote { color: #8b9bb0; font-size: 12px; line-height: 1.7; margin: 6px 0 18px; }
+    @media (max-width: 760px) {
+      .calc { grid-template-columns: 1fr; }
+      .page table { display: block; overflow-x: auto; }
+    }
+  </style>
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a class="active" href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">DIRECTION · 边缘 AI 模型部署</div>
+    <h1>边缘 AI 模型部署:把模型压进 MCU</h1>
+    <p class="lead">
+      训练一个模型只是开始。边缘部署要同时过三关:<b>精度</b>不能掉出验收线、<b>延迟</b>要满足控制周期、
+      <b>内存</b>要装进 Flash/RAM。本页用"量化映射 + 三本账"把 FP32→INT8 讲清楚,给一个可直接执行的
+      IMU 手势识别部署项目,并用 gcc 核算量化误差、内存与算力下限。
+    </p>
+    <p class="muted">主地址:<code>/edge-ai/quantize/</code> · 旧地址 <a href="/directions/edge-ai/">/directions/edge-ai/</a> 继续可用 · 边缘 AI 子站:<a href="/edge-ai/">/edge-ai/</a></p>
+    <p class="muted" style="font-size:12.5px">
+      学习路线第 7 阶段 · 方向进阶 &nbsp;|&nbsp; 证据标识:
+      <span class="pill ok">compiled</span> 量化/内存/算力核算已用 gcc 运行 &nbsp;
+      <span class="pill">principle</span> 方法与预算公式 &nbsp;
+      <span class="pill warn">hardware-pending</span> 板端精度/延迟/内存需实测回填
+    </p>
+
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>方向定位</td><td>把训练好的小模型变成固件里可稳定调用的一段算子:量化、转换、内存规划、集成、测量、验收。</td></tr>
+        <tr><td>学完能做什么</td><td>独立完成一次 FP32→INT8 部署:解释 scale/zero-point,选择 PTQ 或 QAT,定位不支持算子,规划 arena,用 DWT 测延迟并给出三张对照表。</td></tr>
+        <tr><td>可检查结果</td><td>能说明"参数量压缩 4×"为什么不等于"端到端加速 4×";能给精度/延迟/内存三张表并标注证据来源;能解释一次精度回退的根因。</td></tr>
+        <tr><td>方向项目</td><td>IMU 六轴手势识别 1D-CNN:200×6 输入、11,686 参数、0.61M MAC,量化后部署到 Cortex-M7,给出三表与失败案例。</td></tr>
+        <tr><td>证据标识</td><td><span class="pill ok">compiled</span> 量化误差/内存/算力下限(本页 gcc 实测)&nbsp; <span class="pill">principle</span> 量化与 roofline 方法 &nbsp; <span class="pill warn">hardware-pending</span> 板端准确率、mean/P99 延迟、.map 内存</td></tr>
+      </table>
+      <div class="callout warn">
+        诚实边界:本页的 C 程序在 x86_64 主机上运行,证明的是量化数学与预算算式,不是 MCU 实测。
+        精度损失不能由参数量或 FLOPs 推算,必须用固定验证集跑 FP32 / PTQ / QAT 三组;任何"INT8 无损"的说法都要有测试集与阈值支撑。
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>C 指针、结构体、定点数</td><td>读量化代码、理解 int8 缓冲区与 arena</td><td><a href="/foundations/c/">C 与工程工具</a></td></tr>
+        <tr><td>MCU 定时器、DMA、UART</td><td>100Hz 采样、双缓冲、延迟测量与日志</td><td><a href="/mcu/">MCU Playground</a></td></tr>
+        <tr><td>Python / PyTorch 基础</td><td>训练基线、导出 ONNX、校准与评估</td><td><a href="/ml/">知机 · 机器学习</a></td></tr>
+        <tr><td>卷积/全连接/激活函数</td><td>算 FLOPs、判断算子是否可量化</td><td><a href="/ml/">知机 · 机器学习</a></td></tr>
+        <tr><td>信号与特征</td><td>IMU 去重力、归一化、滑窗</td><td><a href="/knowledge/">知识库</a></td></tr>
+        <tr><td>性能测量方法</td><td>DWT 周期计数、GPIO 翻转、示波器复核</td><td><a href="/labs/">实验室</a></td></tr>
+      </table>
+      <p class="muted" style="font-size:12.5px">不需要先会写 CUDA 或训练大模型;先把一个小 CNN 的量化闭环跑通,比堆模型更有用。</p>
+    </div>
+
+    <div class="section">
+      <h2>3. 原理与图示</h2>
+
+      <h3 style="font-size:16px;margin:16px 0 8px">3.1 量化是什么:一条仿射映射</h3>
+      <p class="lead">
+        INT8 不是"把 float 截断成整数",而是用 scale 与 zero-point 把浮点区间线性映射到 0–255(或 -128–127),
+        推理时用整数乘加,输出再反量化。映射本身有误差,误差大小取决于区间、离群值和粒度。
+      </p>
+      <div class="svgwrap">
+        <svg viewBox="0 0 760 220" role="img" aria-label="浮点区间到 uint8 的仿射量化映射示意">
+          <text x="30" y="32" fill="#e6edf3" font-size="14">浮点张量 x</text>
+          <line x1="60" y1="62" x2="700" y2="62" stroke="#475569" stroke-width="2" />
+          <line x1="60" y1="54" x2="60" y2="70" stroke="#475569" stroke-width="2" />
+          <line x1="700" y1="54" x2="700" y2="70" stroke="#475569" stroke-width="2" />
+          <text x="60" y="88" fill="#8b9bb0" font-size="12" text-anchor="middle">min</text>
+          <text x="700" y="88" fill="#8b9bb0" font-size="12" text-anchor="middle">max</text>
+          <text x="380" y="52" fill="#fbbf24" font-size="12" text-anchor="middle">离群值会把区间拉长 → scale 变粗</text>
+          <line x1="380" y1="98" x2="380" y2="128" stroke="#5eead4" stroke-width="1.5" />
+          <polygon points="380,134 374,124 386,124" fill="#5eead4" />
+          <text x="392" y="118" fill="#5eead4" font-size="12">s = (max−min)/255, z = round(−min/s)</text>
+          <text x="30" y="158" fill="#e6edf3" font-size="14">uint8 整数 q</text>
+          <line x1="60" y1="180" x2="700" y2="180" stroke="#475569" stroke-width="2" />
+          <line x1="60" y1="172" x2="60" y2="188" stroke="#475569" stroke-width="2" />
+          <line x1="380" y1="172" x2="380" y2="188" stroke="#475569" stroke-width="2" />
+          <line x1="700" y1="172" x2="700" y2="188" stroke="#475569" stroke-width="2" />
+          <text x="60" y="206" fill="#8b9bb0" font-size="12" text-anchor="middle">0</text>
+          <text x="380" y="206" fill="#8b9bb0" font-size="12" text-anchor="middle">127 / z</text>
+          <text x="700" y="206" fill="#8b9bb0" font-size="12" text-anchor="middle">255</text>
+          <text x="300" y="158" fill="#8b9bb0" font-size="12">q = clamp(round(x/s)+z, 0, 255);x̂ = s(q−z)</text>
+        </svg>
+      </div>
+      <pre class="code">x ∈ [min, max](范围必须包含 0)      q ∈ [0, 255]
+s = (max − min) / 255                 z = round(−min / s)
+q = clamp( round(x / s) + z, 0, 255 )
+x̂ = s · (q − z)
+
+per-tensor:整个张量共用一个 s/z(激活常用)
+per-channel:每个输出通道一组 s/z(权重常用,能缓解通道间离群值)
+对称 int8:z=0,范围 [−127,127];非对称 uint8 保留 0 的精确表示</pre>
+      <p class="muted" style="font-size:12.5px">
+        上图的 z 是 zero-point,不是"零点漂移";它保证浮点 0 能被整数精确表示。卷积/全连接的权重通常 per-channel 对称量化,
+        激活通常 per-tensor 非对称量化;具体以转换工具的支持矩阵为准。
+      </p>
+
+      <h3 style="font-size:16px;margin:26px 0 8px">3.2 三本账:内存、算力、带宽</h3>
+      <table>
+        <tr><th>账本</th><th>估算式</th><th>常见误判</th></tr>
+        <tr><td>内存</td><td>权重 = 参数量 × 每参数字节(FP32 4B / INT8 1B)+ scale/zp;激活 = 峰值张量 × 字节;再加栈、allocator、双缓冲。</td><td>只算权重,忽略 arena;INT8 权重 12KB,arena 却要 20KB,总 RAM 仍可能超。</td></tr>
+        <tr><td>算力</td><td>计算时间 ≈ FLOPs × batch / (峰值算力 × 利用率)。INT8 峰值通常是 FP32 的 2×/4×,但取决于芯片与 SIMD。</td><td>拿 datasheet 峰值当实测;忽略算子回退 FP32、padding、非线性与调度开销。</td></tr>
+        <tr><td>带宽</td><td>访存时间 ≈ (权重 + 激活 × batch) / 带宽。权重在 batch 内可复用,激活随 batch 线性增长。</td><td>以为 batch 越大越省;batch 增大后激活内存与带宽先撞墙,延迟不一定线性下降。</td></tr>
+      </table>
+      <pre class="code">t_compute ≈ FLOPs · B / (TOPS · 1e12 · util)          // 秒
+t_memory  ≈ (W + A · B) / (BW · 1e9)                  // 秒
+t_est     ≈ max(t_compute, t_memory) + overhead       // 固定开销含调度/前后处理
+
+W = 权重字节,A = 单样本激活字节,B = batch,BW = GB/s,util = 有效利用率
+瓶颈 = 谁更大;优化先打瓶颈,否则只是把另一侧的空闲放大</pre>
+
+      <h3 style="font-size:16px;margin:26px 0 8px">3.3 精度损失从哪里来</h3>
+      <table>
+        <tr><th>来源</th><th>表现</th><th>对策 / 验证</th></tr>
+        <tr><td>舍入与截断</td><td>每个权重/激活有半个 scale 的误差,逐层累积</td><td>per-channel 权重;敏感层保留 FP32;固定测试集对比</td></tr>
+        <tr><td>离群值拉大 scale</td><td>大部分值挤在少量整数格点,分辨率下降</td><td>校准集覆盖真实分布;per-channel;QAT;裁剪极端值(需验证)</td></tr>
+        <tr><td>激活分布随输入变化</td><td>校准时没见过的手势/噪声导致饱和</td><td>校准集按人/场景分层;在线拒绝低置信度;滑动投票</td></tr>
+        <tr><td>算子不支持/回退</td><td>部分层跑 FP32,速度与内存都不如预期</td><td>转换前查算子表;替换/融合;测 op list 而不是只看总延迟</td></tr>
+        <tr><td>预处理不一致</td><td>PC 上准确、板端乱答</td><td>固定一条样本,逐层导出中间张量对比;归一化参数来自训练集</td></tr>
+      </table>
+      <div class="callout">
+        PTQ(训练后量化)快,适合先跑通;QAT(量化感知训练)能恢复部分精度,但成本更高。验收要写清楚:
+        "在固定测试集上,相对 FP32 的 top-1 下降 ≤ X pp",而不是"看起来差不多"。
+      </div>
+
+      <h3 style="font-size:16px;margin:26px 0 8px">3.4 部署链路</h3>
+      <pre class="code flow">数据/标签 → FP32 训练 → 导出 ONNX → 校准集 PTQ(失败则 QAT)
+      → 转换(TFLite Micro / STM32Cube.AI 等)→ 算子支持检查
+      → 内存规划(weights/arena/stack/.map)→ 固件集成(DMA/预处理/后处理)
+      → DWT 延迟 + 固定测试集精度 + .map 内存 → 三张表 → 验收或回退</pre>
+
+      <h3 style="font-size:16px;margin:26px 0 8px">3.5 gcc 核算证据 <span class="pill ok">compiled</span></h3>
+      <p style="font-size:13.5px;line-height:1.8">
+        下面的 C 程序做三件事:① 用仿射 uint8 量化一组浮点数,打印映射与误差;② 对比 per-tensor 与 per-channel
+        在一个离群值下的误差;③ 按 11,686 参数、200×6 输入、608,384 MAC 估算内存与算力下限。
+        本机用 <code>gcc 13.3.0 -O2 -Wall -Wextra -std=c11</code> 编译,0 warning,输出原样贴出。
+      </p>
+      <pre class="code">$ gcc -O2 -Wall -Wextra -std=c11 quant_check.c -o quant_check -lm &amp;&amp; ./quant_check
+A. affine uint8 mapping, clean tensor, scale=0.0101176 zp=127
+float    uint8  dequant   abs_err
+-1.28    0      -1.28494  0.00494
+-0.75    53     -0.74871  0.00129
+-0.20    107    -0.20235  0.00235
+0.00     127    0.00000   0.00000
+0.33     160    0.33388   0.00388
+0.91     217    0.91059   0.00059
+1.27     253    1.27482   0.00482
+1.30     255    1.29506   0.00494
+
+B. one outlier (2.40) in the last element
+per-tensor     scale=0.0144314 zp=89
+  channel 0    scale=0.0050196 zp=255
+  channel 1    scale=0.0094118 zp=0
+per-tensor     max=0.00439 mean=0.00175
+per-channel    max=0.00294 mean=0.00087
+note: max error depends on value alignment; mean is the stabler signal.
+
+C. memory budget | 11,686 params, 200x6 input
+FP32: weights=46744 B, arena=30400 B, total=77144 B
+INT8: weights=12134 B, arena=7600 B, total=19734 B
+reduction: 3.91x
+
+D. compute lower bound | 608,384 MACs @ 480 MHz
+FP32 1 MAC/cycle : 1.267 ms
+INT8 2 MAC/cycle : 0.634 ms
+lower-bound speedup: 2.00x (overhead not included)</pre>
+      <p style="font-size:13.5px;line-height:1.85">
+        <b>怎么读这组数:</b>离群值把 per-tensor 的 scale 从 0.0101176 拉到 0.0144314(分辨率约粗 42.6%);
+        per-channel 把 ch0 拉回 0.0050196,mean 误差从 0.00175 降到 0.00087。但 per-tensor 的 max 误差(0.00439)
+        反而小于干净张量的 0.00494——因为误差还取决于数值落在格点的位置。这正说明:<b>不能用一个 scale 或一个"典型掉点"推断精度,
+        必须用验证集实测。</b>
+      </p>
+      <p style="font-size:13.5px;line-height:1.85">
+        内存 3.91× 而不是 4×,因为 INT8 还要存 102 个权重 scale + 10 个激活 scale;算力下限 2.00× 而不是 4×,
+        因为这里假设 M7 上 FP32 1 MAC/cycle、CMSIS-NN INT8 约 2 MAC/cycle,且不含调度与前后处理。
+        把这两个假设换成你板子的实测 cycles,才是可验收的数字。
+      </p>
+      <details>
+        <summary>展开 quant_check.c 源码(与上面输出逐行对应)</summary>
+        <pre class="code">#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+#include &lt;stdint.h&gt;
+
+#define N 8
+#define NCH 2
+#define CHN 4
+
+typedef struct { float scale; int zp; } qparam;
+
+static qparam make_qparam(const float *x, int n)
+{
+    float mn = 0.0f, mx = 0.0f;
+    qparam p;
+    int i;
+    for (i = 0; i &lt; n; i++) {
+        if (x[i] &lt; mn) mn = x[i];
+        if (x[i] &gt; mx) mx = x[i];
+    }
+    p.scale = (mx - mn) / 255.0f;
+    if (p.scale &lt;= 0.0f) p.scale = 1e-8f;
+    p.zp = (int)lrintf(-mn / p.scale);
+    if (p.zp &lt; 0) p.zp = 0;
+    if (p.zp &gt; 255) p.zp = 255;
+    return p;
+}
+
+static uint8_t to_q(float v, qparam p)
+{
+    long q = lrintf(v / p.scale) + p.zp;
+    if (q &lt; 0) q = 0;
+    if (q &gt; 255) q = 255;
+    return (uint8_t)q;
+}
+
+static float from_q(uint8_t q, qparam p)
+{
+    return p.scale * ((float)q - (float)p.zp);
+}
+
+static void errors(const char *name, const float *x, int n, qparam per[])
+{
+    float maxe = 0.0f, sum = 0.0f;
+    int i;
+    for (i = 0; i &lt; n; i++) {
+        qparam p = per[i];
+        float e = fabsf(from_q(to_q(x[i], p), p) - x[i]);
+        if (e &gt; maxe) maxe = e;
+        sum += e;
+    }
+    printf("%-14s max=%.5f mean=%.5f\n", name, maxe, sum / (float)n);
+}
+
+int main(void)
+{
+    const float base[N] = {-1.28f, -0.75f, -0.20f, 0.00f, 0.33f, 0.91f, 1.27f, 1.30f};
+    float outlier[N];
+    qparam pt_base, pt_out, pc[NCH];
+    int i, c;
+
+    for (i = 0; i &lt; N; i++) outlier[i] = base[i];
+    outlier[N - 1] = 2.40f;
+
+    pt_base = make_qparam(base, N);
+    pt_out  = make_qparam(outlier, N);
+    for (c = 0; c &lt; NCH; c++) pc[c] = make_qparam(&amp;outlier[c * CHN], CHN);
+
+    printf("A. affine uint8 mapping, clean tensor, scale=%.7f zp=%d\n",
+           pt_base.scale, pt_base.zp);
+    printf("%-8s %-6s %-9s %-9s\n", "float", "uint8", "dequant", "abs_err");
+    for (i = 0; i &lt; N; i++) {
+        uint8_t q = to_q(base[i], pt_base);
+        float xh = from_q(q, pt_base);
+        printf("%-8.2f %-6u %-9.5f %-9.5f\n", base[i], q, xh, fabsf(xh - base[i]));
+    }
+
+    printf("\nB. one outlier (2.40) in the last element\n");
+    printf("per-tensor     scale=%.7f zp=%d\n", pt_out.scale, pt_out.zp);
+    for (c = 0; c &lt; NCH; c++)
+        printf("  channel %d    scale=%.7f zp=%d\n", c, pc[c].scale, pc[c].zp);
+    {
+        qparam pt_all[N], pc_all[N];
+        for (i = 0; i &lt; N; i++) {
+            pt_all[i] = pt_out;
+            pc_all[i] = pc[i / CHN];
+        }
+        errors("per-tensor", outlier, N, pt_all);
+        errors("per-channel", outlier, N, pc_all);
+    }
+    printf("note: max error depends on value alignment; mean is the stabler signal.\n");
+
+    printf("\nC. memory budget | 11,686 params, 200x6 input\n");
+    {
+        long params = 11686;
+        long act_fp32 = 7600 * 4L;
+        long act_int8 = 7600L;
+        long w_fp32 = params * 4L;
+        long w_int8 = params + 102L * 4L + 10L * 4L;
+        printf("FP32: weights=%ld B, arena=%ld B, total=%ld B\n", w_fp32, act_fp32, w_fp32 + act_fp32);
+        printf("INT8: weights=%ld B, arena=%ld B, total=%ld B\n", w_int8, act_int8, w_int8 + act_int8);
+        printf("reduction: %.2fx\n", (double)(w_fp32 + act_fp32) / (double)(w_int8 + act_int8));
+    }
+
+    printf("\nD. compute lower bound | 608,384 MACs @ 480 MHz\n");
+    {
+        double macs = 608384.0;
+        double t_fp32 = macs / 480e6 * 1e3;
+        double t_int8 = macs / 2.0 / 480e6 * 1e3;
+        printf("FP32 1 MAC/cycle : %.3f ms\n", t_fp32);
+        printf("INT8 2 MAC/cycle : %.3f ms\n", t_int8);
+        printf("lower-bound speedup: %.2fx (overhead not included)\n", t_fp32 / t_int8);
+    }
+    return 0;
+}</pre>
+      </details>
+      <p class="muted" style="font-size:12.5px">
+        编译运行时间:2026-11-27;主机:x86_64 Linux;gcc 13.3.0。compiled 只证明量化数学与预算算式,
+        不证明你的模型在板端不掉点、不证明真实延迟。
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>4. 操作实验:量化计算器与方向项目</h2>
+
+      <div class="sub">
+        <h3>4.1 交互:量化 / 推理延迟估算器 <span class="pill">principle</span></h3>
+        <div class="box">
+          <div class="calc">
+            <div class="fields">
+              <div class="field">
+                <label for="params">参数量(M)</label>
+                <input id="params" type="number" value="0.011686" min="0.0001" max="2000" step="0.001" />
+              </div>
+              <div class="field">
+                <label for="flops">每样本 FLOPs(M)</label>
+                <input id="flops" type="number" value="1.217" min="0.001" max="100000" step="0.001" />
+              </div>
+              <div class="field">
+                <label for="tops">INT8 峰值算力(TOPS)</label>
+                <input id="tops" type="number" value="0.00192" min="0.000001" max="2000" step="0.001" />
+              </div>
+              <div class="field">
+                <label for="ratio">FP32 / INT8 峰值比</label>
+                <select id="ratio">
+                  <option value="0.5" selected>1/2(MCU SIMD 典型)</option>
+                  <option value="0.25">1/4(NPU 典型)</option>
+                  <option value="1">1/1(无 INT8 加速)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="util">算力利用率(%)</label>
+                <input id="util" type="number" value="70" min="1" max="100" step="5" />
+              </div>
+              <div class="field">
+                <label for="bw">内存带宽(GB/s)</label>
+                <input id="bw" type="number" value="0.5" min="0.001" max="5000" step="0.1" />
+              </div>
+              <div class="field">
+                <label for="batch">批大小 batch</label>
+                <input id="batch" type="number" value="1" min="1" max="256" step="1" />
+              </div>
+              <div class="field">
+                <label for="act">单样本激活 FP32(KB)</label>
+                <input id="act" type="number" value="8" min="0" max="100000" step="1" />
+              </div>
+              <div class="field">
+                <label for="ovh">固定开销(ms)</label>
+                <input id="ovh" type="number" value="0.15" min="0" max="1000" step="0.01" />
+              </div>
+              <div class="btnrow">
+                <button type="button" data-preset="mcu">MCU 手势模型</button>
+                <button type="button" data-preset="soc">边缘 SoC</button>
+                <button type="button" data-preset="npu">NPU(批 8)</button>
+              </div>
+            </div>
+            <div class="results">
+              <div class="kpis">
+                <div class="kpi"><div class="k">权重压缩</div><div class="v" id="out-compress">--</div></div>
+                <div class="kpi"><div class="k">估算端到端加速</div><div class="v" id="out-speedup">--</div></div>
+                <div class="kpi"><div class="k">INT8 瓶颈</div><div class="v" id="out-bound" style="font-size:17px">--</div></div>
+                <div class="kpi"><div class="k">INT8 权重</div><div class="v" id="out-intw">--</div></div>
+              </div>
+              <div class="bars">
+                <div class="barrow">
+                  <div class="lab"><span>FP32 估算延迟</span><span id="bar-fp-label">--</span></div>
+                  <div class="bartrack"><div class="barfill fp" id="bar-fp"></div></div>
+                </div>
+                <div class="barrow">
+                  <div class="lab"><span>INT8 估算延迟</span><span id="bar-int-label">--</span></div>
+                  <div class="bartrack"><div class="barfill int" id="bar-int"></div></div>
+                </div>
+              </div>
+              <table class="data" style="margin-top:10px">
+                <tr><th>项目</th><th>FP32</th><th>INT8</th><th>说明</th></tr>
+                <tr><td>权重</td><td id="w-fp">--</td><td id="w-int">--</td><td>参数量 × 4B / 1B;scale 另计</td></tr>
+                <tr><td>激活</td><td id="a-fp">--</td><td id="a-int">--</td><td>单样本 × batch</td></tr>
+                <tr><td>计算时间</td><td id="c-fp">--</td><td id="c-int">--</td><td>FLOPs×B / (峰值×利用率)</td></tr>
+                <tr><td>访存时间</td><td id="m-fp">--</td><td id="m-int">--</td><td>(权重+激活) / 带宽</td></tr>
+                <tr><td>估算延迟</td><td id="e-fp">--</td><td id="e-int">--</td><td>max(计算,访存)+固定开销</td></tr>
+                <tr><td>瓶颈</td><td id="b-fp">--</td><td id="b-int">--</td><td>谁更大就先优化谁</td></tr>
+              </table>
+              <p class="muted" id="out-insight" style="font-size:12.5px;line-height:1.7;margin:10px 0 0">--</p>
+              <p class="muted" style="font-size:12px;line-height:1.7;margin:8px 0 0">
+                假设:INT8 峰值来自 datasheet 或实测,FP32 峰值 = INT8 × 所选比例;利用率包含 padding/调度损失。
+                这些都是预算,不是实测;INT8 权重未含 scale/zp(本例约 0.4KB,表 C 已计入);精度损失不在本表,必须用验证集测。
+              </p>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13.5px;line-height:1.8;margin-top:10px">
+          <b>做三个对比:</b>
+          ① 保持 MCU 预设,把 batch 从 1 调到 8,记录 FP32/INT8 延迟与加速比,解释权重摊销与固定开销;
+          ② 切到"边缘 SoC",比较 batch=1 与 batch=8,看瓶颈是否从访存转计算;
+          ③ 把"固定开销"调到 0,观察加速比如何接近峰值比——这说明为什么端到端加速总小于算力比。
+        </p>
+      </div>
+
+      <div class="sub">
+        <h3>4.2 方向项目:IMU 手势识别的 INT8 部署 <span class="pill warn">hardware-pending</span></h3>
+        <p class="lead">
+          目标:把一段 6 轴 IMU 手势分类模型部署到 Cortex-M7,并在固定测试集上给出精度、延迟、内存三张对照表。
+          模型刻意做小:输入 200×6(100Hz × 2s),两层 Conv1D + GAP + Dense 6 类,11,686 参数、608,384 MAC。
+        </p>
+        <table class="data">
+          <tr><th>#</th><th>步骤</th><th>具体动作</th><th>产出 / 验收</th></tr>
+          <tr><td>1</td><td>数据与切分</td><td>6 类手势(上/下/左/右/画圈/静止),3 人各 200 段;按人划分 train/val/test,禁止同一段数据跨集;归一化参数只从训练集算。</td><td>切分清单 + 每类样本数;测试集完全不参与调参。</td></tr>
+          <tr><td>2</td><td>FP32 基线</td><td>固定随机种子训练 1D-CNN;记录 val/test top-1 与混淆矩阵;导出 ONNX;确认输入布局 [1,200,6] 与板端一致。</td><td>FP32 测试集 ≥95%(目标);导出模型可复现。</td></tr>
+          <tr><td>3</td><td>量化</td><td>从训练集抽 200 段校准集;权重 per-channel、激活 per-tensor;记录每层 scale/zp 与逐层误差;若掉点 &gt;1.5pp,做 3–5 epoch QAT。</td><td>量化报告;PTQ/QAT 两版权重与验证集结果。</td></tr>
+          <tr><td>4</td><td>转换</td><td>ONNX → TFLite Micro 或 STM32Cube.AI;查算子支持表;Conv1D 常需 reshape 成 Conv2D;GAP/Softmax 是否融合;不支持的算子替换或手写。</td><td>op list 中热路径无 FP32 回退;模型可在 PC 端解释器跑通。</td></tr>
+          <tr><td>5</td><td>内存规划</td><td>权重放 const Flash;计算 arena 峰值;用解释器 arena_used_bytes()/AllocateTensors() 返回值验证;查 .map 的 .rodata/.bss/.stack;给 DMA 双缓冲留空间。</td><td>RAM/Flash 均低于预算;AllocateTensors() 返回 kTfLiteOk,arena_used_bytes() 在预算内。</td></tr>
+          <tr><td>6</td><td>固件集成</td><td>IMU 100Hz 采样,DMA 双缓冲;预处理(去重力/归一化/滑窗)与训练完全一致;invoke 后做阈值拒绝 + 3 帧滑动投票;串口输出类别/置信度/耗时。</td><td>连续 30min 无看门狗复位;误触发率可量化。</td></tr>
+          <tr><td>7</td><td>测量</td><td>DWT cycle counter 包住 invoke,跑 1000 次取 mean/P99;GPIO 翻转 + 示波器复核;固定测试集跑板端精度;记录 .map 与 arena 实际大小。</td><td>延迟 CSV、精度混淆矩阵、内存表三份原始数据。</td></tr>
+          <tr><td>8</td><td>验收</td><td>三张对照表 + 失败案例(哪些手势/人/噪声下错)+ 复现脚本;若精度或延迟不达标,回到量化/模型结构,不放宽阈值。</td><td>报告可被第三人按 README 复现。</td></tr>
+        </table>
+
+        <h3 style="font-size:15px;margin:22px 0 8px">表 A · 精度对照(待实测回填)</h3>
+        <table>
+          <tr><th>配置</th><th>验证集 / 测试集准确率</th><th>相对 FP32</th><th>验收阈值</th><th>证据</th></tr>
+          <tr><td>FP32 基线</td><td>待训练:____% / ____%</td><td>—</td><td>测试集 ≥95.0%</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>INT8 PTQ</td><td>待实测:____% / ____%</td><td>____ pp</td><td>下降 ≤1.5pp</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>INT8 QAT(必要时)</td><td>待实测:____% / ____%</td><td>____ pp</td><td>下降 ≤0.5pp</td><td><span class="pill warn">hardware-pending</span></td></tr>
+        </table>
+        <p class="tblnote">
+          表中刻意不填虚构数字。经验上 PTQ 常见下降 0.5–2pp,但小模型、深度可分离卷积、首尾层与校准集偏差都可能让结果更差;
+          这个量级只是预期,不是承诺。验收必须用固定测试集与同一预处理。
+        </p>
+
+        <h3 style="font-size:15px;margin:22px 0 8px">表 B · 延迟对照</h3>
+        <table>
+          <tr><th>配置</th><th>计算下限(ms)</th><th>实测 mean(ms)</th><th>实测 P99(ms)</th><th>相对 FP32</th><th>测量方法</th></tr>
+          <tr><td>FP32</td><td>1.267</td><td>待测</td><td>待测</td><td>1.00×</td><td>DWT,1000 次,480MHz</td></tr>
+          <tr><td>INT8</td><td>0.634</td><td>待测</td><td>待测</td><td>待测</td><td>同上,记录 cycles/480MHz</td></tr>
+        </table>
+        <p class="tblnote">
+          计算下限来自本页 compiled 输出(FP32 1 MAC/cycle、INT8 约 2 MAC/cycle),不含预处理、后处理、串口与调度。
+          实测要明确边界:只包 invoke,还是包整条"采样→预处理→invoke→后处理";两者不能混着比较。
+        </p>
+
+        <h3 style="font-size:15px;margin:22px 0 8px">表 C · 内存对照</h3>
+        <table>
+          <tr><th>配置</th><th>权重(B)</th><th>激活 arena(B)</th><th>合计(B)</th><th>相对 FP32</th><th>来源</th></tr>
+          <tr><td>FP32</td><td>46,744</td><td>30,400</td><td>77,144</td><td>1.00×</td><td><span class="pill ok">compiled</span> 计算值</td></tr>
+          <tr><td>INT8</td><td>12,134</td><td>7,600</td><td>19,734</td><td>3.91× 更小</td><td><span class="pill ok">compiled</span> 计算值</td></tr>
+        </table>
+        <p class="tblnote">
+          这是"理论峰值"预算,不含栈、allocator 元数据、DMA 双缓冲与日志缓冲;实际以 .map、arena 实际分配与
+          arena_used_bytes() 结果为准。INT8 权重含 102 个 per-channel scale 与 10 个激活 scale(各 4B)。
+        </p>
+
+        <h3 style="font-size:15px;margin:22px 0 8px">验证材料清单</h3>
+        <table>
+          <tr><th>材料</th><th>证明什么</th><th>证据类型</th></tr>
+          <tr><td>数据切分清单 + 每类样本数</td><td>测试集未泄漏,按人划分</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>训练日志 / 配置 / 随机种子</td><td>FP32 基线可复现</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>ONNX + 量化报告(每层 scale、误差)</td><td>量化过程可审计</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>算子支持表 / op list</td><td>热路径没有偷偷回退 FP32</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>.map + arena 实际大小</td><td>内存真的装得下</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>1000 次延迟 CSV(mean/P99)</td><td>满足控制周期,不是单次运气</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>板端混淆矩阵 + 失败案例</td><td>精度不是只看一个总数</td><td><span class="pill warn">hardware-pending</span></td></tr>
+          <tr><td>复现 README(工具版本/命令)</td><td>第三人能重跑</td><td><span class="pill">principle</span></td></tr>
+        </table>
+
+        <h3 style="font-size:15px;margin:22px 0 8px">交付物与验收门槛</h3>
+        <table>
+          <tr><th>交付物</th><th>内容要求</th></tr>
+          <tr><td>模型文件</td><td>FP32 ONNX、INT8 模型(PTQ 与 QAT 若都做)、转换日志;版本与训练配置对应。</td></tr>
+          <tr><td>固件源码</td><td>采样/预处理/invoke/后处理/串口;DWT 计时开关;可一键构建。</td></tr>
+          <tr><td>测量数据</td><td>1000 次延迟 CSV、.map、arena 日志、板端混淆矩阵、失败样本清单。</td></tr>
+          <tr><td>三张表</td><td>精度/延迟/内存,每格标"实测/计算/待测";不把预算写成实测。</td></tr>
+          <tr><td>部署说明(1 页)</td><td>量化策略、算子回退、内存布局、瓶颈、已知失败与回退方案。</td></tr>
+        </table>
+        <p class="tblnote">
+          建议验收线(目标,不是本页实测):测试集准确率下降 ≤1.5pp;invoke mean ≤3ms、P99 ≤5ms(Cortex-M7 @480MHz);
+          RAM ≤64KB;Flash 增量 ≤64KB(含权重,以 .map 为准);30min 连续运行无看门狗复位;热路径无 FP32 回退。
+          P99 定义为 1000 次实测排序后的第 990 个值,不用"平均"掩盖长尾。
+        </p>
+        <div class="callout warn">
+          以上数字是项目验收目标,需在你的板子上实测回填。没有 DWT/示波器数据与 .map 之前,不要写"已部署成功";
+          最多写"PC 端转换通过,板端待测"。
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <div class="checklist" id="checklist">
+        <label><input type="checkbox" /> 用计算器复现 MCU 预设:记录 FP32/INT8 估算延迟、瓶颈,并解释为什么端到端加速不是 4×</label>
+        <label><input type="checkbox" /> 把 batch 从 1 调到 8,记录延迟与加速比变化,说明权重摊销与固定开销的影响</label>
+        <label><input type="checkbox" /> 训练 FP32 基线,在固定测试集上记录准确率与混淆矩阵 <span class="pill warn">hardware-pending</span></label>
+        <label><input type="checkbox" /> 完成 PTQ,记录每层 scale 与验证集准确率;若下降 &gt;1.5pp,完成 QAT 并对比 <span class="pill warn">hardware-pending</span></label>
+        <label><input type="checkbox" /> 用 DWT 测 1000 次 invoke,给出 mean/P99;用 .map 与 arena 日志给出内存实测 <span class="pill warn">hardware-pending</span></label>
+        <label><input type="checkbox" /> 三张对照表 + 失败案例 + 复现步骤齐全,且每项标注实测/计算/待测 <span class="pill warn">hardware-pending</span></label>
+      </div>
+      <p class="muted" id="check-status">已完成 0 / 6</p>
+    </div>
+
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>转换报 unsupported op</td><td>看转换器 op list;确认 Conv1D 是否需 reshape 为 Conv2D;查 GAP/Softmax/激活的融合支持;看是否有动态 shape。</td><td>热路径全部映射为 INT8 算子</td><td>改模型结构 / 替换算子 / 手写 kernel;不要把回退当成功</td></tr>
+        <tr><td>板端输出全 0 或乱码</td><td>输入布局是否 [1,200,6];归一化/去重力是否与训练一致;输入 scale/zp 是否与转换时一致;先跑一条固定样本。</td><td>与 PC 解释器同一输入输出接近</td><td>布局错 → 调 transpose;预处理错 → 固化参数;量化参数错 → 重转换</td></tr>
+        <tr><td>精度掉 &gt;5pp</td><td>校准集是否覆盖测试分布;是否 per-tensor 激活被离群值拉爆;首尾层/深度可分离卷积是否敏感;测试集是否泄漏或预处理不同。</td><td>相对 FP32 下降 ≤1.5pp</td><td>per-channel / QAT / 首尾层保留 FP32;仍差 → 换模型或缩任务</td></tr>
+        <tr><td>延迟远高于预算</td><td>op list 是否回退 FP32;是否开 cache/ITCM;日志/串口是否在计时区间;arena 是否放在慢速外部 RAM;是否每次重建解释器。</td><td>invoke 接近预算,P99 可控</td><td>关闭热路径日志;把权重/arena 放对内存;固定解释器只 invoke</td></tr>
+        <tr><td>RAM 溢出 / arena 分配失败</td><td>看 .map 的 .bss/.stack;arena 是否按峰值分配;DMA 双缓冲与日志是否重复占用;是否 batch 过大。</td><td>RAM 余量 &gt;20%,长时间运行不增长</td><td>降 batch / 复用 buffer / 缩小模型;不要在中断里动态分配</td></tr>
+        <tr><td>PC 正常、板端差</td><td>传感器量程/采样率/单位是否与训练一致;固定点是否溢出;板端滤波是否不同;导出同一段原始数据在 PC 与板端逐层对比。</td><td>同一段数据两边输出差 &lt;1e-3</td><td>预处理不一致 → 统一代码;溢出 → 检查累加器位宽;传感器差异 → 重校准</td></tr>
+        <tr><td>DWT 计时异常</td><td>DWT 是否使能;计数器位宽/溢出;测量区间是否包含中断;用 GPIO 翻转 + 示波器交叉验证。</td><td>两种方法误差 &lt;5%</td><td>未使能 → 开 DEMCR;溢出 → 用 cycles 差值/分段;中断干扰 → 关中断测纯 invoke</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>7. 小测</h2>
+      <div id="quiz"></div>
+      <p class="muted" id="quiz-status">答对 0 / 3</p>
+      <button type="button" class="btn-reset" id="quiz-reset">重做小测</button>
+    </div>
+
+    <div class="section">
+      <h2>8. 下一步</h2>
+      <table>
+        <tr><th>下一步</th><th>内容</th><th>状态</th></tr>
+        <tr><td><a href="/directions/">方向总览</a></td><td>回到方向目录,与 PCB 方向组合成"自采数据 + 自设计板卡 + 本地推理"的完整作品。</td><td><span class="pill">目录</span></td></tr>
+        <tr><td><a href="/route/">学习路线</a></td><td>回到第 7 阶段"方向进阶",把本项目挂到路线成果上。</td><td><span class="pill">已上线</span></td></tr>
+        <tr><td><a href="/ml/">知机 · 机器学习</a></td><td>补训练、验证集、混淆矩阵与过拟合诊断。</td><td><span class="pill">已上线</span></td></tr>
+        <tr><td><a href="/mcu/">MCU Playground</a></td><td>补定时器、DMA、UART 与中断优先级。</td><td><span class="pill">已上线</span></td></tr>
+        <tr><td><a href="/projects/collect/">M0 采集</a> / <a href="/projects/m1/">M1 通信</a></td><td>把传感器数据链路与协议帧接到部署项目上。</td><td><span class="pill">已上线</span></td></tr>
+        <tr><td>进阶:关键词识别 / 视觉检测 / 手写算子</td><td>换更难的模型与算子,练算子支持表、内存规划与 QAT;需要板端实测。</td><td><span class="pill warn">hardware-pending</span></td></tr>
+      </table>
+      <p class="muted" style="font-size:12.5px;line-height:1.8;margin-top:12px">
+        建议顺序:先跑通 FP32 基线 → 做 PTQ 并记录掉点 → 用本页计算器做内存/延迟预算 → 转换与算子检查 →
+        板端 DWT + 固定测试集测量 → 回填三张表。没有实测数据的格子留空,比填一个好看的数字更可信。
+      </p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      function $(id) { return document.getElementById(id); }
+
+      /* ---------- 量化 / 延迟计算器 ---------- */
+      function num(id, fallback) {
+        var v = parseFloat($(id).value);
+        return isFinite(v) ? v : fallback;
+      }
+
+      function sizeKB(mb) {
+        if (mb >= 1) return mb.toFixed(2) + ' MB';
+        return (mb * 1000).toFixed(1) + ' KB';
+      }
+
+      function ms(v) {
+        return v.toFixed(3) + ' ms';
+      }
+
+      function calc() {
+        var P = num('params', 0.011686);
+        var F = num('flops', 1.217);
+        var tops = num('tops', 0.00192);
+        var ratio = parseFloat($('ratio').value) || 0.5;
+        var util = num('util', 70) / 100;
+        var bw = num('bw', 0.5);
+        var B = Math.max(1, Math.round(num('batch', 1)));
+        var actKB = num('act', 8);
+        var ovh = num('ovh', 0.15);
+
+        if (P <= 0) P = 0.0001;
+        if (F <= 0) F = 0.001;
+        if (tops <= 0) tops = 0.000001;
+        if (util <= 0) util = 0.01;
+        if (util > 1) util = 1;
+        if (bw <= 0) bw = 0.001;
+        if (actKB < 0) actKB = 0;
+        if (ovh < 0) ovh = 0;
+
+        var wFp = P * 4;
+        var wInt = P * 1;
+        var actFp = actKB * B / 1024;
+        var actInt = actFp / 4;
+
+        var tCompFp = (F * 1e6 * B) / (tops * ratio * 1e12 * util) * 1000;
+        var tCompInt = (F * 1e6 * B) / (tops * 1e12 * util) * 1000;
+        var tMemFp = ((wFp + actFp) * 1e6) / (bw * 1e9) * 1000;
+        var tMemInt = ((wInt + actInt) * 1e6) / (bw * 1e9) * 1000;
+
+        var estFp = Math.max(tCompFp, tMemFp) + ovh;
+        var estInt = Math.max(tCompInt, tMemInt) + ovh;
+        var speedup = estFp / estInt;
+        var compress = wFp / wInt;
+
+        $('out-compress').textContent = compress.toFixed(2) + '×';
+        $('out-speedup').textContent = speedup.toFixed(2) + '×';
+        $('out-intw').textContent = sizeKB(wInt);
+
+        $('w-fp').textContent = sizeKB(wFp);
+        $('w-int').textContent = sizeKB(wInt);
+        $('a-fp').textContent = sizeKB(actFp);
+        $('a-int').textContent = sizeKB(actInt);
+        $('c-fp').textContent = ms(tCompFp);
+        $('c-int').textContent = ms(tCompInt);
+        $('m-fp').textContent = ms(tMemFp);
+        $('m-int').textContent = ms(tMemInt);
+        $('e-fp').textContent = ms(estFp);
+        $('e-int').textContent = ms(estInt);
+
+        var bFp = tCompFp >= tMemFp ? '计算受限' : '访存受限';
+        var bInt = tCompInt >= tMemInt ? '计算受限' : '访存受限';
+        $('b-fp').textContent = bFp;
+        $('b-int').textContent = bInt;
+        $('out-bound').textContent = bInt;
+
+        var maxEst = Math.max(estFp, estInt);
+        $('bar-fp').style.width = Math.max(2, estFp / maxEst * 100) + '%';
+        $('bar-int').style.width = Math.max(2, estInt / maxEst * 100) + '%';
+        $('bar-fp-label').textContent = ms(estFp);
+        $('bar-int-label').textContent = ms(estInt);
+
+        var insight;
+        if (speedup < 1.15) {
+          insight = '加速被固定开销/带宽吃掉:算力峰值比是 ' + (1 / ratio).toFixed(0) + '×,端到端只有 ' +
+            speedup.toFixed(2) + '×。先削减开销或改瓶颈侧,再谈换硬件。';
+        } else if (bInt === '访存受限' && bFp === '计算受限') {
+          insight = 'INT8 先撞带宽:计算省下来了,但权重/激活搬运成为新瓶颈;继续压模型或提高带宽。';
+        } else if (bInt === '计算受限') {
+          insight = 'INT8 仍计算受限:当前 batch 下算力是主瓶颈;增大 batch 可摊薄固定开销,但激活内存也会上升。';
+        } else {
+          insight = 'INT8 访存受限:当前 shape 下搬数据比算更慢;检查权重是否放对内存、激活是否可复用。';
+        }
+        $('out-insight').textContent = insight;
+      }
+
+      var presets = {
+        mcu: { params: 0.011686, flops: 1.217, tops: 0.00192, ratio: 0.5, util: 70, bw: 0.5, batch: 1, act: 8, ovh: 0.15 },
+        soc: { params: 3.5, flops: 350, tops: 4, ratio: 0.25, util: 45, bw: 12, batch: 1, act: 4096, ovh: 1.0 },
+        npu: { params: 6, flops: 600, tops: 16, ratio: 0.25, util: 50, bw: 68, batch: 8, act: 2048, ovh: 0.5 }
+      };
+
+      ['params', 'flops', 'tops', 'util', 'bw', 'batch', 'act', 'ovh'].forEach(function (id) {
+        $(id).addEventListener('input', calc);
+      });
+      $('ratio').addEventListener('change', calc);
+
+      Array.prototype.forEach.call(document.querySelectorAll('[data-preset]'), function (btn) {
+        btn.addEventListener('click', function () {
+          var p = presets[btn.getAttribute('data-preset')];
+          if (!p) return;
+          $('params').value = p.params;
+          $('flops').value = p.flops;
+          $('tops').value = p.tops;
+          $('ratio').value = String(p.ratio);
+          $('util').value = p.util;
+          $('bw').value = p.bw;
+          $('batch').value = p.batch;
+          $('act').value = p.act;
+          $('ovh').value = p.ovh;
+          calc();
+        });
+      });
+
+      calc();
+
+      /* ---------- 结果检查 ---------- */
+      var boxes = document.querySelectorAll('#checklist input');
+      function updateChecks() {
+        var done = 0;
+        Array.prototype.forEach.call(boxes, function (b) { if (b.checked) done++; });
+        $('check-status').textContent = '已完成 ' + done + ' / ' + boxes.length +
+          (done === boxes.length ? ' ✓ 本页结果检查通过' : '');
+      }
+      Array.prototype.forEach.call(boxes, function (b) { b.addEventListener('change', updateChecks); });
+      updateChecks();
+
+      /* ---------- 小测 ---------- */
+      var QUESTIONS = [
+        {
+          stem: '非对称 uint8 量化中,scale 与 zero-point 通常怎么定?',
+          opts: [
+            'scale = 255 / (max−min),z = min',
+            'scale = (max−min) / 255,z = round(−min / scale)',
+            'scale = max,z = 0',
+            'scale = 1 / 255,z = 128'
+          ],
+          answer: 1,
+          explain: '把 [min,max] 线性映射到 0–255:s=(max−min)/255;z 让浮点 0 精确落在整数格点上。'
+        },
+        {
+          stem: '一个 1M 参数的模型,权重从 FP32 换成 INT8,权重本体大约从多少降到多少?',
+          opts: ['4MB → 1MB', '4MB → 0.5MB', '1MB → 4MB', '8MB → 2MB'],
+          answer: 0,
+          explain: 'FP32 每参数 4B,1M 参数约 4MB;INT8 每参数 1B,约 1MB。scale/zp 另加少量开销。'
+        },
+        {
+          stem: '某 NPU 的 INT8 峰值算力是 FP32 的 4 倍,端到端推理一定能快 4 倍吗?',
+          opts: [
+            '能,峰值算力决定一切',
+            '不能,还要看内存带宽、利用率、算子支持与固定开销',
+            '不能,因为 INT8 精度更低所以一定更慢',
+            '能,只要 batch 足够大'
+          ],
+          answer: 1,
+          explain: '端到端 = max(计算,访存)+开销;带宽、算子回退、调度与前后处理都会限制加速。必须实测 mean/P99。'
+        }
+      ];
+
+      var quizEl = $('quiz');
+      var quizStatus = $('quiz-status');
+      var score = { correct: 0, answered: 0 };
+
+      function buildQuiz() {
+        quizEl.innerHTML = '';
+        score = { correct: 0, answered: 0 };
+        quizStatus.textContent = '答对 0 / ' + QUESTIONS.length;
+
+        QUESTIONS.forEach(function (q, qi) {
+          var wrap = document.createElement('div');
+          wrap.className = 'q';
+
+          var stem = document.createElement('div');
+          stem.className = 'stem';
+          stem.textContent = (qi + 1) + '. ' + q.stem;
+          wrap.appendChild(stem);
+
+          var optEls = [];
+          q.opts.forEach(function (text, oi) {
+            var opt = document.createElement('div');
+            opt.className = 'opt';
+            opt.textContent = String.fromCharCode(65 + oi) + '. ' + text;
+            opt.addEventListener('click', function () {
+              if (wrap.getAttribute('data-done')) return;
+              wrap.setAttribute('data-done', '1');
+              score.answered++;
+              if (oi === q.answer) {
+                opt.classList.add('right');
+                score.correct++;
+              } else {
+                opt.classList.add('wrong');
+                optEls[q.answer].classList.add('right');
+              }
+              explain.classList.add('show');
+              quizStatus.textContent = '答对 ' + score.correct + ' / ' + QUESTIONS.length +
+                (score.answered === QUESTIONS.length ? ' ✓ 全部作答' : '');
+            });
+            optEls.push(opt);
+            wrap.appendChild(opt);
+          });
+
+          var explain = document.createElement('div');
+          explain.className = 'explain';
+          explain.textContent = '解析:' + q.explain;
+          wrap.appendChild(explain);
+          quizEl.appendChild(wrap);
+        });
+      }
+
+      $('quiz-reset').addEventListener('click', buildQuiz);
+      buildQuiz();
+    })();
+  </script>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>

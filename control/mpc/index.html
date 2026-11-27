@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="有限时域优化、状态/输入约束、滚动优化;与无约束基线比较。" /><title>模型预测控制 · 控制理论 · 1kni4r.top</title><link rel="stylesheet" href="/shared/site.css" /><link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+<main class="page"><div class="kicker">CONTROL · 进阶</div><h1>模型预测控制</h1><p class="lead">有限时域优化、状态/输入约束、滚动优化;与无约束基线比较。</p><div class="section"><h2>1. 目标与成果</h2><table><tr><th>项</th><th>内容</th></tr><tr><td>能力</td><td>有限时域优化、状态/输入约束、滚动优化;与无约束基线比较。</td></tr><tr><td>可检查结果</td><td>给定预设复现一次结果并解释边界</td></tr><tr><td>证据</td><td>principle + browser-simulated</td></tr></table></div><div class="section"><h2>2. 前置知识</h2><table><tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr><tr><td>控制核心 8 课</td><td>反馈/建模/状态空间</td><td><a href="/control/">控制首页</a></td></tr><tr><td>线性代数</td><td>矩阵/协方差</td><td>无</td></tr></table></div><div class="section"><h2>3. 原理</h2><p>每步解 QP;首步执行、滚动;约束使控制提前收敛/饱和。</p></div><div class="section"><h2>4. 操作实验</h2><ol><li>使用 <a href="/control/labs/">labs</a> 或站内预设复现一次。</li><li>改变一个参数,记录结果变化与适用边界。</li><li>写下结论与未验证项。</li></ol></div><div class="section"><h2>5. 结果检查</h2><table><tr><th>检查项</th><th>预期</th></tr><tr><td>可复现</td><td>同预设同结果</td></tr><tr><td>边界</td><td>能说明模型/线性化/噪声假设</td></tr></table></div><div class="section"><h2>6. 故障排查</h2><table><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr><tr><td>结果不符</td><td>预设/初值/步长</td><td>逐项核对</td><td>回退到默认预设</td></tr><tr><td>发散</td><td>模型/增益超出范围</td><td>降增益/检查稳定性</td></tr></table></div><div class="section"><h2>7. 小测</h2><p class="muted">进阶简版:请对照原理与实验,自问三个问题——适用范围?代价?与 PID 的区别?</p></div><div class="section"><h2>8. 下一步</h2><p><a href="/control/">控制首页</a> · <a href="/control/labs/">labs</a> · <a href="/directions/">方向进阶</a></p></div></main>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body></html>

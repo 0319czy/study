@@ -31,13 +31,29 @@
   <url><loc>https://1kni4r.top/c/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/c/memory-debug/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/c/start/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/cases/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/digital/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/estimation/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/feedback/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/labs/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/lqr/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/modeling/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/mpc/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/nonlinear/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/pid/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/robustness/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/stability/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/state-feedback/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/control/state-space/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/digital/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/digital/sampling-debounce/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/digital/start/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/directions/</loc><lastmod>2026-11-27</lastmod></url>
-  <url><loc>https://1kni4r.top/directions/edge-ai/</loc><lastmod>2026-11-27</lastmod></url>
-  <url><loc>https://1kni4r.top/directions/pcb/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/directions/ros/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/edge-ai/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/edge-ai/budget/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/edge-ai/quantize/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/foundations/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/knowledge/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/labs/</loc><lastmod>2026-11-27</lastmod></url>
@@ -147,6 +163,9 @@
   <url><loc>https://1kni4r.top/ml/metrics/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/ml/paths/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/ml/quiz/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/pcb/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/pcb/check/</loc><lastmod>2026-11-27</lastmod></url>
+  <url><loc>https://1kni4r.top/pcb/start/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/projects/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/projects/collect/</loc><lastmod>2026-11-27</lastmod></url>
   <url><loc>https://1kni4r.top/projects/m1/</loc><lastmod>2026-11-27</lastmod></url>

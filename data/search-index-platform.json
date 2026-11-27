@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-27T14:28:47.060Z",
+  "generatedAt": "2026-11-27T14:49:08.858Z",
   "site": "platform",
-  "count": 24,
+  "count": 43,
   "items": [
     {
       "id": "platform:page:foundations",
@@ -92,24 +92,6 @@
       "type": "lesson",
       "route": "/directions/ros/",
       "keywords": "ros 2 机器人应用 directions:ros lesson 平台层 · 基础课/项目/方向 platform ros2 节点 话题 tf 导航"
-    },
-    {
-      "id": "platform:lesson:directions:pcb",
-      "title": "电路与 PCB 设计",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/directions/pcb/",
-      "keywords": "电路与 pcb 设计 directions:pcb lesson 平台层 · 基础课/项目/方向 platform pcb 布线 载流 打样"
-    },
-    {
-      "id": "platform:lesson:directions:edge-ai",
-      "title": "边缘 AI 模型部署",
-      "site": "platform",
-      "siteName": "平台层 · 基础课/项目/方向",
-      "type": "lesson",
-      "route": "/directions/edge-ai/",
-      "keywords": "边缘 ai 模型部署 directions:edge-ai lesson 平台层 · 基础课/项目/方向 platform 边缘 ai 量化 部署 int8"
     },
     {
       "id": "platform:page:c:home",
@@ -218,6 +200,195 @@
       "type": "lesson",
       "route": "/linux-build/buildroot/",
       "keywords": "buildroot 与启动 linux-build:buildroot lesson 平台层 · 基础课/项目/方向 platform buildroot dtb 启动链 内核"
+    },
+    {
+      "id": "platform:page:control:home",
+      "title": "控制理论学科子站",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/control/",
+      "keywords": "控制理论学科子站 control:home page 平台层 · 基础课/项目/方向 platform 自动控制原理 传递函数 稳定性 状态空间 pid lqr 控制"
+    },
+    {
+      "id": "platform:lesson:control:feedback",
+      "title": "反馈原理",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/feedback/",
+      "keywords": "反馈原理 control:feedback lesson 平台层 · 基础课/项目/方向 platform 控制 反馈原理 反馈 闭环 误差"
+    },
+    {
+      "id": "platform:lesson:control:modeling",
+      "title": "数学建模",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/modeling/",
+      "keywords": "数学建模 control:modeling lesson 平台层 · 基础课/项目/方向 platform 控制 数学建模 建模 传递函数 一阶 二阶"
+    },
+    {
+      "id": "platform:lesson:control:stability",
+      "title": "稳定性与频域",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/stability/",
+      "keywords": "稳定性与频域 control:stability lesson 平台层 · 基础课/项目/方向 platform 控制 稳定性与频域 稳定性 bode 根轨迹 裕度"
+    },
+    {
+      "id": "platform:lesson:control:pid",
+      "title": "PID 设计",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/pid/",
+      "keywords": "pid 设计 control:pid lesson 平台层 · 基础课/项目/方向 platform 控制 pid 设计 pid kp ki kd 抗饱和"
+    },
+    {
+      "id": "platform:lesson:control:digital",
+      "title": "数字控制",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/digital/",
+      "keywords": "数字控制 control:digital lesson 平台层 · 基础课/项目/方向 platform 控制 数字控制 采样 z 域 离散化"
+    },
+    {
+      "id": "platform:lesson:control:state-space",
+      "title": "现代控制基础",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/state-space/",
+      "keywords": "现代控制基础 control:state-space lesson 平台层 · 基础课/项目/方向 platform 控制 现代控制基础 状态空间 a/b/c/d 可控性 可观性 现代控制"
+    },
+    {
+      "id": "platform:lesson:control:state-feedback",
+      "title": "状态反馈与观测器",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/state-feedback/",
+      "keywords": "状态反馈与观测器 control:state-feedback lesson 平台层 · 基础课/项目/方向 platform 控制 状态反馈与观测器 状态反馈 观测器 luenberger 分离原理"
+    },
+    {
+      "id": "platform:lesson:control:lqr",
+      "title": "LQR 最优控制入门",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/lqr/",
+      "keywords": "lqr 最优控制入门 control:lqr lesson 平台层 · 基础课/项目/方向 platform 控制 lqr 最优控制入门 lqr q/r riccati 最优控制"
+    },
+    {
+      "id": "platform:lesson:control:labs",
+      "title": "控制实验:寻迹小车 PID / 倒立摆 LQR",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/labs/",
+      "keywords": "控制实验:寻迹小车 pid / 倒立摆 lqr control:labs lesson 平台层 · 基础课/项目/方向 platform pid lqr 实验 动画"
+    },
+    {
+      "id": "platform:lesson:control:estimation",
+      "title": "卡尔曼滤波与 LQG",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/estimation/",
+      "keywords": "卡尔曼滤波与 lqg control:estimation lesson 平台层 · 基础课/项目/方向 platform 控制 卡尔曼滤波与 lqg 进阶"
+    },
+    {
+      "id": "platform:lesson:control:mpc",
+      "title": "模型预测控制",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/mpc/",
+      "keywords": "模型预测控制 control:mpc lesson 平台层 · 基础课/项目/方向 platform 控制 模型预测控制 进阶"
+    },
+    {
+      "id": "platform:lesson:control:nonlinear",
+      "title": "非线性与 Lyapunov",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/nonlinear/",
+      "keywords": "非线性与 lyapunov control:nonlinear lesson 平台层 · 基础课/项目/方向 platform 控制 非线性与 lyapunov 进阶"
+    },
+    {
+      "id": "platform:lesson:control:robustness",
+      "title": "鲁棒与工程误差",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/robustness/",
+      "keywords": "鲁棒与工程误差 control:robustness lesson 平台层 · 基础课/项目/方向 platform 控制 鲁棒与工程误差 进阶"
+    },
+    {
+      "id": "platform:lesson:control:cases",
+      "title": "综合仿真项目",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/control/cases/",
+      "keywords": "综合仿真项目 control:cases lesson 平台层 · 基础课/项目/方向 platform 控制 综合仿真项目 进阶"
+    },
+    {
+      "id": "platform:page:pcb:home",
+      "title": "PCB 学科子站",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/pcb/",
+      "keywords": "pcb 学科子站 pcb:home page 平台层 · 基础课/项目/方向 platform pcb"
+    },
+    {
+      "id": "platform:lesson:pcb:start",
+      "title": "从原理图到布局",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/pcb/start/",
+      "keywords": "从原理图到布局 pcb:start lesson 平台层 · 基础课/项目/方向 platform pcb 布局 载流"
+    },
+    {
+      "id": "platform:lesson:pcb:check",
+      "title": "ERC／DRC 与交付检查",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/pcb/check/",
+      "keywords": "erc／drc 与交付检查 pcb:check lesson 平台层 · 基础课/项目/方向 platform pcb drc 交付 erc 交付检查"
+    },
+    {
+      "id": "platform:page:edge-ai:home",
+      "title": "边缘 AI 学科子站",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "page",
+      "route": "/edge-ai/",
+      "keywords": "边缘 ai 学科子站 edge-ai:home page 平台层 · 基础课/项目/方向 platform 边缘 ai"
+    },
+    {
+      "id": "platform:lesson:edge-ai:quantize",
+      "title": "模型量化",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/edge-ai/quantize/",
+      "keywords": "模型量化 edge-ai:quantize lesson 平台层 · 基础课/项目/方向 platform 量化 int8 内存"
+    },
+    {
+      "id": "platform:lesson:edge-ai:budget",
+      "title": "设备资源预算",
+      "site": "platform",
+      "siteName": "平台层 · 基础课/项目/方向",
+      "type": "lesson",
+      "route": "/edge-ai/budget/",
+      "keywords": "设备资源预算 edge-ai:budget lesson 平台层 · 基础课/项目/方向 platform 预算 延迟 精度"
     }
   ]
 }

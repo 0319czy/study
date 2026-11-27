@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="控制理论学科子站:反馈、建模、稳定性、PID、数字控制、状态空间、观测器与 LQR;含可调参交互实验。" />
+  <title>控制理论 · 自动控制原理与现代控制 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">SUBJECT · 控制理论</div>
+    <h1>控制理论:从反馈到 LQR</h1>
+    <p class="lead">自动控制原理与现代控制:反馈与建模、经典分析、数字控制、状态空间与最优控制。PID 与 LQR 是其中两章;每课 8 段,配套可调参实验。</p>
+    <div class="section">
+      <h2>核心路线(8 课)</h2>
+      <div class="grid">
+<a class="card" href="/control/feedback/"><div class="t">反馈原理</div><div class="d">开源/闭环、误差、扰动;指标定义。</div><div class="tagline">进入 →</div></a>
+<a class="card" href="/control/modeling/"><div class="t">数学建模</div><div class="d">微分方程→传递函数;一阶/二阶。</div><div class="tagline">进入 →</div></a>
+<a class="card" href="/control/stability/"><div class="t">稳定性与频域</div><div class="d">极点、Routh、Bode、裕度。</div><div class="tagline">进入 →</div></a>
+<a class="card" href="/control/pid/"><div class="t">PID 设计</div><div class="d">P/I/D 分工、限幅、抗饱和;小车实验。</div><div class="tagline">进入 →</div></a>
+<a class="card" href="/control/digital/"><div class="t">数字控制</div><div class="d">采样、ZOH、离散化、z 域、延迟。</div><div class="tagline">进入 →</div></a>
+<a class="card" href="/control/state-space/"><div class="t">现代控制基础</div><div class="d">A/B/C/D、线性化、可控可观。</div><div class="tagline">进入 →</div></a>
+<a class="card" href="/control/state-feedback/"><div class="t">状态反馈与观测器</div><div class="d">u=−Kx、Luenberger、分离原理。</div><div class="tagline">进入 →</div></a>
+<a class="card" href="/control/lqr/"><div class="t">LQR 入门</div><div class="d">Q/R、Riccati、双积分器/倒立摆。</div><div class="tagline">进入 →</div></a>
+      </div>
+      <p><a href="/control/labs/">打开交互实验:寻迹小车 PID / 小车倒立摆 LQR →</a></p>
+    </div>
+    <div class="section">
+      <h2>进阶(简版)</h2>
+      <div class="grid">
+<div class="card"><div class="t"><a href="/control/estimation/">卡尔曼滤波与 LQG</a></div><div class="d">预测/更新、协方差、带噪观测。</div><div class="tagline">进阶单元 →</div></div>
+<div class="card"><div class="t"><a href="/control/mpc/">模型预测控制</a></div><div class="d">有限时域、约束、滚动优化。</div><div class="tagline">进阶单元 →</div></div>
+<div class="card"><div class="t"><a href="/control/nonlinear/">非线性与 Lyapunov</a></div><div class="d">平衡点、相平面、稳定性直觉。</div><div class="tagline">进阶单元 →</div></div>
+<div class="card"><div class="t"><a href="/control/robustness/">鲁棒与工程误差</a></div><div class="d">不确定性、饱和、延迟。</div><div class="tagline">进阶单元 →</div></div>
+<div class="card"><div class="t"><a href="/control/cases/">综合仿真项目</a></div><div class="d">电机速度与平衡系统两条案例。</div><div class="tagline">进阶单元 →</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>先修与证据</h2>
+      <table>
+        <tr><th>项</th><th>说明</th></tr>
+        <tr><td>先修</td><td>微积分/线性代数基础;<a href="/c/start/">C 与工程工具</a> 用于实现仿真</td></tr>
+        <tr><td>证据</td><td>principle + browser-simulated(可调参实验);<a href="/mcu/">MCU</a>/<a href="/rtos/">RTOS</a> 的实板验证另计,hardware-pending</td></tr>
+        <tr><td>下一步</td><td><a href="/control/labs/">labs</a> · <a href="/projects/">项目 M0–M5</a> · <a href="/directions/">方向进阶</a></td></tr>
+      </table>
+    </div>
+  </main>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>

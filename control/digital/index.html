@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="采样、零阶保持、离散化、z 域极点与延迟:控制周期里的"离散代价"。" />
+  <title>数字控制 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin: 0 0 7px; }
+    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #d8ded6; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #16211d; background: #fff; cursor: pointer; }
+    .q .opt.right { border-color: rgba(15,118,110,.55); background: #e7f4f0; color: #0b5c56; }
+    .q .opt.wrong { border-color: rgba(185,28,28,.5); background: #fdeceb; color: #b91c1c; }
+    .q .explain { display: none; color: #5c6a63; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
+  </style>
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">CONTROL · 数字控制</div>
+    <h1>数字控制</h1>
+    <p class="lead">采样、零阶保持、离散化、z 域极点与延迟:控制周期里的"离散代价"。</p>
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>能解释采样周期/延迟对稳定性的影响,做简单离散化</td></tr>
+        <tr><td>可检查结果</td><td>同一模型两组采样周期/延迟的对照</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>数学建模</td><td>连续模型</td><td>/control/modeling/</td></tr>
+        <tr><td>PID</td><td>控制律</td><td>/control/pid/</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>3. 原理</h2>
+      <p>采样把连续系统变成离散序列;零阶保持近似。z 域稳定:极点在单位圆内。采样周期越大、延迟越大,相位滞后越多,稳定裕度越小;控制周期与执行周期抖动也要算进延迟。</p>
+    </div>
+    <div class="section">
+      <h2>4. 操作实验</h2>
+      <ol><li>对同一对象用两组采样周期仿真。</li><li>加入一个控制周期延迟,观察超调/振荡。</li><li>把连续增益离散化,检查 z 极点。</li></ol>
+      <p><a href="/control/labs/">打开交互实验(labs)</a></p>
+    </div>
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <table>
+        <tr><th>检查项</th><th>预期</th></tr>
+        <tr><td>小周期</td><td>接近连续设计</td></tr>
+        <tr><td>大周期</td><td>裕度下降、振荡</td></tr>
+        <tr><td>延迟</td><td>等效相位滞后</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>离散后振荡</td><td>采样太慢/延迟</td><td>缩短周期或降增益</td><td>对照</td></tr>
+        <tr><td>不稳定</td><td>z 极点出圆</td><td>重新设计</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>7. 小测</h2>
+      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
+      <div id="quiz"></div>
+    </div>
+    <div class="section">
+      <h2>8. 下一步</h2>
+<p><a href="/control/state-space/">现代控制基础</a> · <a href="/control/labs/">交互实验</a></p>
+    </div>
+  </main>
+  <script>
+    (function(){
+      var DATA = [{"q": "离散系统稳定的条件?", "opts": ["z 极点实部<0", "z 极点模<1", "s 极点<0", "增益<1"], "a": 1, "ex": "z 域极点在单位圆内。"}, {"q": "采样周期增大通常?", "opts": ["裕度增大", "相位滞后增大、稳定性下降", "无影响", "消除延迟"], "a": 1, "ex": "采样/保持与延迟等效为相位滞后。"}, {"q": "零阶保持的作用?", "opts": ["平滑插值", "把离散值保持一个周期", "滤波", "放大"], "a": 1, "ex": "ZOH 把采样值保持到下一周期。"}];
+      var root = document.getElementById('quiz');
+      DATA.forEach(function(q,i){
+        var box=document.createElement('div'); box.className='q';
+        var stem=document.createElement('p'); stem.className='stem'; stem.textContent=(i+1)+'. '+q.q; box.appendChild(stem);
+        q.opts.forEach(function(o,oi){
+          var b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=String.fromCharCode(65+oi)+'. '+o;
+          b.addEventListener('click',function(){
+            if(box.dataset.done)return; box.dataset.done='1';
+            var right=oi===q.a; b.className += right?' right':' wrong';
+            if(!right) box.querySelectorAll('.opt')[q.a].className += ' right';
+            var ex=document.createElement('p'); ex.className='explain show'; ex.textContent=q.ex; box.appendChild(ex);
+          });
+          box.appendChild(b);
+        });
+        root.appendChild(box);
+      });
+    })();
+  </script>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>

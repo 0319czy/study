@@ -27,6 +27,13 @@ const PAGES = [
   'digital/index.html', 'digital/start/index.html', 'digital/sampling-debounce/index.html',
   'linux-user/index.html', 'linux-user/start/index.html', 'linux-user/serial-pty/index.html',
   'linux-build/index.html', 'linux-build/start/index.html', 'linux-build/buildroot/index.html',
+  'control/index.html', 'control/feedback/index.html', 'control/modeling/index.html',
+  'control/stability/index.html', 'control/pid/index.html', 'control/digital/index.html',
+  'control/state-space/index.html', 'control/state-feedback/index.html', 'control/lqr/index.html',
+  'control/labs/index.html', 'control/estimation/index.html', 'control/mpc/index.html',
+  'control/nonlinear/index.html', 'control/robustness/index.html', 'control/cases/index.html',
+  'pcb/index.html', 'pcb/start/index.html', 'pcb/check/index.html',
+  'edge-ai/index.html', 'edge-ai/quantize/index.html', 'edge-ai/budget/index.html',
 ];
 const LINK = '<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />';
 const INIT = '<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>';

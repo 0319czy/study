@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="状态、A/B/C/D、平衡点与线性化、可控性与可观性:从"传递函数"到"内部状态"。" />
+  <title>现代控制基础 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin: 0 0 7px; }
+    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #d8ded6; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #16211d; background: #fff; cursor: pointer; }
+    .q .opt.right { border-color: rgba(15,118,110,.55); background: #e7f4f0; color: #0b5c56; }
+    .q .opt.wrong { border-color: rgba(185,28,28,.5); background: #fdeceb; color: #b91c1c; }
+    .q .explain { display: none; color: #5c6a63; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
+  </style>
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">CONTROL · 现代控制基础</div>
+    <h1>现代控制基础</h1>
+    <p class="lead">状态、A/B/C/D、平衡点与线性化、可控性与可观性:从"传递函数"到"内部状态"。</p>
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>写出位置/速度模型的状态空间,判断可控/可观</td></tr>
+        <tr><td>可检查结果</td><td>两个传感器布置的可观性判断</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>线性代数</td><td>矩阵、特征值</td><td>无</td></tr>
+        <tr><td>数学建模</td><td>微分方程</td><td>/control/modeling/</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>3. 原理</h2>
+      <p>x′ = A x + B u,y = C x + D u。平衡点处线性化;特征值决定稳定性;可控性矩阵 [B AB …] 满秩可控;可观性矩阵 [C;CA;…] 满秩可观。测量量不等于状态。</p>
+    </div>
+    <div class="section">
+      <h2>4. 操作实验</h2>
+      <ol><li>对位置/速度模型写 A/B/C/D。</li><li>比较只测位置 vs 测位置+速度的可观性。</li><li>从初始状态观察输出能否区分。</li></ol>
+    </div>
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <table>
+        <tr><th>检查项</th><th>预期</th></tr>
+        <tr><td>A/B/C/D</td><td>维度与物理量一致</td></tr>
+        <tr><td>可控</td><td>矩阵满秩</td></tr>
+        <tr><td>可观</td><td>只测位置仍可观速度(二阶)</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>矩阵写错</td><td>量纲/符号</td><td>按物理方程逐项</td><td>/control/modeling/</td></tr>
+        <tr><td>可观性判断错</td><td>C 矩阵</td><td>重算秩</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>7. 小测</h2>
+      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
+      <div id="quiz"></div>
+    </div>
+    <div class="section">
+      <h2>8. 下一步</h2>
+<p><a href="/control/state-feedback/">状态反馈与观测器</a> · <a href="/control/lqr/">LQR</a></p>
+    </div>
+  </main>
+  <script>
+    (function(){
+      var DATA = [{"q": "状态空间输出方程是?", "opts": ["x′=Ax+Bu", "y=Cx+Du", "u=-Kx", "e=r-y"], "a": 1, "ex": "输出 y=Cx+Du。"}, {"q": "可控性看哪个矩阵的秩?", "opts": ["[B AB A²B …]", "[C;CA;…]", "A 的特征值", "Q/R"], "a": 0, "ex": "可控性矩阵由 B 与 A 构造。"}, {"q": "只测位置能否估计速度?", "opts": ["不能", "二阶系统通常可观", "必须测速度", "取决于采样"], "a": 1, "ex": "位置/速度二阶系统只测位置通常可观(需模型)。"}];
+      var root = document.getElementById('quiz');
+      DATA.forEach(function(q,i){
+        var box=document.createElement('div'); box.className='q';
+        var stem=document.createElement('p'); stem.className='stem'; stem.textContent=(i+1)+'. '+q.q; box.appendChild(stem);
+        q.opts.forEach(function(o,oi){
+          var b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=String.fromCharCode(65+oi)+'. '+o;
+          b.addEventListener('click',function(){
+            if(box.dataset.done)return; box.dataset.done='1';
+            var right=oi===q.a; b.className += right?' right':' wrong';
+            if(!right) box.querySelectorAll('.opt')[q.a].className += ' right';
+            var ex=document.createElement('p'); ex.className='explain show'; ex.textContent=q.ex; box.appendChild(ex);
+          });
+          box.appendChild(b);
+        });
+        root.appendChild(box);
+      });
+    })();
+  </script>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>

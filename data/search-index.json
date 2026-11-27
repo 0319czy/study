@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-27T14:28:47.060Z",
+  "generatedAt": "2026-11-27T14:49:08.858Z",
   "source": "docs/inventory.json",
-  "count": 961,
+  "count": 980,
   "shards": true,
   "sites": [
     {
@@ -43,7 +43,7 @@
     {
       "slug": "platform",
       "name": "平台层 · 基础课/项目/方向",
-      "count": 24,
+      "count": 43,
       "url": "/data/search-index-platform.json"
     }
   ]

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="PCB 交付检查:ERC/DRC、载流与压降、Gerber/坐标/BOM、回板测试项。" /><title>ERC／DRC 与交付检查 · PCB 子站 · 1kni4r.top · 1kni4r.top</title><link rel="stylesheet" href="/shared/site.css" /><link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+<main class="page">
+  <div class="kicker">PCB · 交付检查</div>
+  <h1>ERC／DRC 与交付检查</h1>
+  <p class="lead">布局完成后,真正决定能不能打样的是检查:原理图 ERC、PCB DRC、载流/压降、制造文件与回板测试。把检查项做成一张可核对的表。</p>
+  <div class="section"><h2>1. 目标与成果</h2><table><tr><th>项</th><th>内容</th></tr><tr><td>能力</td><td>能按检查表完成一次可打样的 PCB 审查</td></tr><tr><td>可检查结果</td><td>DRC 0、载流/压降计算记录、Gerber/BOM/坐标完整</td></tr></table></div>
+<div class="section"><h2>2. 前置知识</h2><table><tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr><tr><td>原理图与布局</td><td>/pcb/start/</td><td><a href="/pcb/start/">PCB 首课</a></td></tr><tr><td>载流计算</td><td>IPC-2221</td><td><a href="/pcb/start/">PCB 首课</a></td></tr></table></div>
+<div class="section"><h2>3. 原理</h2>ERC 检查电气规则(悬空、冲突、单端网络);DRC 检查间距、线宽、过孔、丝印与板框。载流按 IPC-2221 用电流/铜厚/温升选线宽,再用压降复核。Gerber、钻孔、坐标、BOM 与版本要一一对应。</div>
+<div class="section"><h2>4. 操作实验</h2><ol><li>在 /pcb/start/ 的载流计算器里算一次目标线宽与压降。</li><li>逐项填写下方审查表,标记通过/不通过。</li><li>把不通过项写成修改动作与复检结果。</li></ol><table><tr><th>检查项</th><th>看什么</th><th>通过标准</th></tr><tr><td>ERC</td><td>悬空/冲突/单端网络</td><td>0 警告或逐条确认</td></tr><tr><td>DRC</td><td>间距/线宽/过孔/板框</td><td>0 错误</td></tr><tr><td>载流</td><td>目标电流与温升</td><td>线宽/铜厚/压降在限内</td></tr><tr><td>制造文件</td><td>Gerber/钻孔/坐标/BOM</td><td>与版本一致</td></tr><tr><td>回板测试</td><td>电压/电流/温升/SWD/I2C</td><td>按计划记录</td></tr></table></div>
+<div class="section"><h2>5. 结果检查</h2><table><tr><th>检查项</th><th>预期</th></tr><tr><td>检查表</td><td>5 项全部有结论</td></tr><tr><td>复检</td><td>修改后 DRC/ERC 仍为 0或已确认</td></tr></table></div>
+<div class="section"><h2>6. 故障排查</h2><table><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr><tr><td>DRC 报错无法消除</td><td>规则与工艺冲突</td><td>按板厂能力调整规则</td><td>换工艺或改设计</td></tr><tr><td>载流不够</td><td>线宽/铜厚/温升</td><td>重算并加宽/铺铜</td><td>复算压降</td></tr></table></div>
+  <p class="muted" style="font-size:12.5px">证据边界:检查表为 principle;真实打样/回板测试需硬件(hardware-pending)。</p>
+  <div class="section"><h2>7. 小测</h2><details style="margin:6px 0"><summary>1. DRC 检查的是什么?</summary><p class="muted">答案:设计规则(间距/线宽/过孔/板框)</p></details><details style="margin:6px 0"><summary>2. 载流线宽主要取决于?</summary><p class="muted">答案:电流、铜厚与允许温升</p></details><details style="margin:6px 0"><summary>3. 打样前制造文件至少包含?</summary><p class="muted">答案:Gerber、钻孔/坐标、BOM 与版本</p></details></div>
+    <div class="section">
+    <h2>8. 下一步</h2>
+    <p><a href="/pcb/start/">PCB 首课</a> · <a href="/pcb/">PCB 子站</a> · <a href="/directions/pcb/">方向页(旧)</a></p>
+  </div>
+</main>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body></html>

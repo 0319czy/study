@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="开环、闭环、负反馈:为什么"测出来再改"比"照着计划做"更稳;用同一对象对比开环与闭环。" />
+  <title>反馈原理 · 1kni4r.top</title>
+  <link rel="stylesheet" href="/shared/site.css" />
+  <style>
+    .q { margin-bottom: 14px; }
+    .q .stem { font-size: 14px; margin: 0 0 7px; }
+    .q .opt { display: block; width: 100%; text-align: left; border: 1px solid #d8ded6; border-radius: 8px; padding: 8px 10px; margin: 5px 0; font-size: 13px; color: #16211d; background: #fff; cursor: pointer; }
+    .q .opt.right { border-color: rgba(15,118,110,.55); background: #e7f4f0; color: #0b5c56; }
+    .q .opt.wrong { border-color: rgba(185,28,28,.5); background: #fdeceb; color: #b91c1c; }
+    .q .explain { display: none; color: #5c6a63; font-size: 12.5px; margin: 6px 0 0; line-height: 1.7; }
+    .q .explain.show { display: block; }
+    pre.code { background:#f1f4ee; border:1px solid #d8ded6; border-radius:10px; padding:12px; overflow-x:auto; font-size:12.5px; line-height:1.65; }
+  </style>
+<link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+  <main class="page">
+    <div class="kicker">CONTROL · 反馈原理</div>
+    <h1>反馈原理</h1>
+    <p class="lead">开环、闭环、负反馈:为什么"测出来再改"比"照着计划做"更稳;用同一对象对比开环与闭环。</p>
+    <div class="section">
+      <h2>1. 目标与成果</h2>
+      <table>
+        <tr><th>项</th><th>内容</th></tr>
+        <tr><td>能力</td><td>能画反馈框图,区分参考值、误差、扰动与测量噪声</td></tr>
+        <tr><td>可检查结果</td><td>同一对象开环 vs 闭环负载实验,给出上升时间/超调/稳态误差对比</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>2. 前置知识</h2>
+      <table>
+        <tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr>
+        <tr><td>代数与函数</td><td>框图、比例关系</td><td>无</td></tr>
+        <tr><td>基础物理</td><td>质量-弹簧-阻尼</td><td>/control/modeling/</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>3. 原理</h2>
+      <p>负反馈把输出测回来与参考比较,用误差驱动执行器;闭环降低对模型误差与扰动的敏感度,但会引入稳定性与噪声放大问题。指标:上升时间(10%→90%)、超调、调节时间(±2%)、稳态误差。</p>
+    </div>
+    <div class="section">
+      <h2>4. 操作实验</h2>
+      <ol><li>在同一对象上先只给固定输入(开环),再加负载阶跃,记录输出偏差。</li><li>切到闭环,重复负载阶跃;对比同一扰动下的偏差。</li><li>把参考值做阶跃,记录上升时间、超调、调节时间。</li></ol>
+      <p><a href="/control/labs/">打开交互实验(labs)</a></p>
+    </div>
+    <div class="section">
+      <h2>5. 结果检查</h2>
+      <table>
+        <tr><th>检查项</th><th>预期</th></tr>
+        <tr><td>开环负载</td><td>输出偏差随负载持续</td></tr>
+        <tr><td>闭环负载</td><td>偏差被抑制,但可能出现振荡</td></tr>
+        <tr><td>参考阶跃</td><td>指标可重复测量</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>6. 故障排查</h2>
+      <table>
+        <tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr>
+        <tr><td>闭环振荡</td><td>增益过高/相位裕度不足</td><td>降低增益或加校正</td><td>/control/stability/</td></tr>
+        <tr><td>稳态误差大</td><td>纯比例控制/积分不足</td><td>加积分</td><td>/control/pid/</td></tr>
+      </table>
+    </div>
+    <div class="section">
+      <h2>7. 小测</h2>
+      <p class="muted">点选选项立即判分;答错会标出正确项并给出解释。</p>
+      <div id="quiz"></div>
+    </div>
+    <div class="section">
+      <h2>8. 下一步</h2>
+<p><a href="/control/modeling/">下一课:数学建模</a> · <a href="/control/">控制站首页</a> · <a href="/control/labs/">交互实验</a></p>
+    </div>
+  </main>
+  <script>
+    (function(){
+      var DATA = [{"q": "负反馈最直接的作用是?", "opts": ["放大误差", "用测量值与参考值之差修正输出", "消除所有扰动", "提高采样率"], "a": 1, "ex": "负反馈靠误差修正,降低对扰动与模型误差的敏感度。"}, {"q": "上升时间通常定义为?", "opts": ["0→100%", "10%→90%", "0→50%", "任意区间"], "a": 1, "ex": "工程上常用 10%→90% 的稳态值区间。"}, {"q": "闭环增益过高最可能?", "opts": ["稳态误差变大", "振荡甚至发散", "上升时间变长", "采样率下降"], "a": 1, "ex": "增益过高会降低相位裕度,导致振荡/发散。"}];
+      var root = document.getElementById('quiz');
+      DATA.forEach(function(q,i){
+        var box=document.createElement('div'); box.className='q';
+        var stem=document.createElement('p'); stem.className='stem'; stem.textContent=(i+1)+'. '+q.q; box.appendChild(stem);
+        q.opts.forEach(function(o,oi){
+          var b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=String.fromCharCode(65+oi)+'. '+o;
+          b.addEventListener('click',function(){
+            if(box.dataset.done)return; box.dataset.done='1';
+            var right=oi===q.a; b.className += right?' right':' wrong';
+            if(!right) box.querySelectorAll('.opt')[q.a].className += ' right';
+            var ex=document.createElement('p'); ex.className='explain show'; ex.textContent=q.ex; box.appendChild(ex);
+          });
+          box.appendChild(b);
+        });
+        root.appendChild(box);
+      });
+    })();
+  </script>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body>
+</html>

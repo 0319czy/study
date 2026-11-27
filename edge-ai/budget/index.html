@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="边缘 AI 资源预算:RAM/Flash、算力与延迟、精度与量化、功耗/热。" /><title>设备资源预算 · 边缘 AI 子站 · 1kni4r.top · 1kni4r.top</title><link rel="stylesheet" href="/shared/site.css" /><link rel="stylesheet" href="/shared/platform-light.css" data-platform-theme="1" />
+<script data-theme-init="1">try{var t=localStorage.getItem("1kni4r-theme-v1");document.documentElement.dataset.theme=(t==="dark")?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="brand-dot"></span>1kni4r 学习实验室</a>
+    <div class="navlinks">
+      <a href="/">学习工作台</a>
+      <a href="/route/">学习路线</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/labs/">实验室</a>
+      <a href="/projects/">项目实战</a>
+      <a href="/tools/">工具与资料</a>
+    </div>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-label="菜单">菜单</button>
+    <button type="button" data-theme-toggle class="theme-toggle" aria-pressed="false">深色</button>
+    <a class="navsearch" href="/search/">搜索 ⌕</a>
+  </nav>
+
+<main class="page">
+  <div class="kicker">EDGE AI · 资源预算</div>
+  <h1>设备资源预算</h1>
+  <p class="lead">模型能跑不等于能在设备上跑:RAM/Flash、算力、延迟、精度和功耗要一起算。用一张预算表把"能不能部署"变成可核对的问题。</p>
+  <div class="section"><h2>1. 目标与成果</h2><table><tr><th>项</th><th>内容</th></tr><tr><td>能力</td><td>能估算模型权重/激活/中间张量内存与延迟下限</td></tr><tr><td>可检查结果</td><td>给出内存/算力预算表与超限项</td></tr></table></div>
+<div class="section"><h2>2. 前置知识</h2><table><tr><th>需要会</th><th>用在哪</th><th>去哪补</th></tr><tr><td>量化基础</td><td>/edge-ai/quantize/</td><td><a href="/edge-ai/quantize/">量化首课</a></td></tr><tr><td>MCU/RTOS</td><td>内存与调度</td><td><a href="/mcu/">MCU</a> / <a href="/rtos/">RTOS</a></td></tr></table></div>
+<div class="section"><h2>3. 原理</h2>权重内存 ≈ 参数量 × 每参数字节(FP32 4、INT8 1);激活/中间张量按最大层与 batch 估算;算力下限 ≈ MAC 数 / 有效吞吐;延迟=计算+访存+调度;精度用验证集比较(量化掉点)。预算要留 20–30% 余量。</div>
+<div class="section"><h2>4. 操作实验</h2><ol><li>用 /edge-ai/quantize/ 的量化数据算权重内存。</li><li>填预算表:权重、激活、总计、算力下限、目标延迟。</li><li>标出超限项与降级方案(减参/量化/裁剪输入)。</li></ol><table><tr><th>预算项</th><th>算法</th><th>通过标准</th></tr><tr><td>权重内存</td><td>参数量×字节</td><td>≤ Flash 预算的 70%</td></tr><tr><td>激活/中间张量</td><td>最大层与 batch</td><td>≤ RAM 预算</td></tr><tr><td>算力下限</td><td>MAC/吞吐</td><td>≤ 目标周期</td></tr><tr><td>精度</td><td>验证集</td><td>掉点 ≤ 目标</td></tr><tr><td>功耗/热</td><td>平均电流×电压</td><td>在电源/散热限内</td></tr></table></div>
+<div class="section"><h2>5. 结果检查</h2><table><tr><th>检查项</th><th>预期</th></tr><tr><td>预算表</td><td>5 项全部有数</td></tr><tr><td>余量</td><td>留 20–30%</td></tr><tr><td>降级方案</td><td>至少一个</td></tr></table></div>
+<div class="section"><h2>6. 故障排查</h2><table><tr><th>现象</th><th>检查步骤</th><th>预期结果</th><th>下一分支</th></tr><tr><td>上板 OOM</td><td>激活/中间张量估算漏项</td><td>按最大层重算</td><td>减 batch/分块</td></tr><tr><td>延迟超标</td><td>访存受限/未用加速器</td><td>profile 热点</td><td>换算子/量化</td></tr></table></div>
+  <p class="muted" style="font-size:12.5px">证据边界:预算为 principle;设备实测延迟/内存需硬件(hardware-pending)。</p>
+  <div class="section"><h2>7. 小测</h2><details style="margin:6px 0"><summary>1. INT8 权重内存约为参数量×?</summary><p class="muted">答案:1 字节</p></details><details style="margin:6px 0"><summary>2. 激活/中间张量按什么估算?</summary><p class="muted">答案:最大层与 batch</p></details><details style="margin:6px 0"><summary>3. 精度掉点应如何验证?</summary><p class="muted">答案:用验证集比较量化前后</p></details></div>
+    <div class="section">
+    <h2>8. 下一步</h2>
+    <p><a href="/edge-ai/quantize/">量化首课</a> · <a href="/edge-ai/">边缘 AI 子站</a> · <a href="/directions/edge-ai/">方向页(旧)</a></p>
+  </div>
+</main>
+<script src="/shared/theme.js" data-platform-theme-js="1"></script>
+</body></html>
