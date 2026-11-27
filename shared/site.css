@@ -12,6 +12,12 @@
 
 * { box-sizing: border-box; }
 
+/* 全站深色底:所有引用 site.css 的页面统一背景与基础文字色。
+ * 各页若有自己的 body 规则会覆盖这里(门户/部分课程页自带背景)。
+ */
+html { background: #080b10; }
+body { margin: 0; background: #080b10; color: #e6edf3; }
+
 .topnav {
   position: sticky;
   top: 0;

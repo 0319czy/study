@@ -979,7 +979,7 @@ void m2_start(void)
 
           for (i = 0; i < res.segs.length; i++) {
             var s = res.segs[i];
-            if (s.t0 >= viewEnd) continue;
+            if (s.t0 > viewEnd) continue;
             var x0 = sx(s.t0), x1 = sx(Math.min(s.t1, viewEnd));
             if (x1 - x0 < 1) x1 = x0 + 1;
             ctx.fillStyle = s.job.missed ? '#f87171' : (COLORS[s.task] || '#8b9bb0');
@@ -1106,6 +1106,7 @@ void m2_start(void)
           ctrl[k].addEventListener('change', render);
         });
         if (viewEl) {
+          viewEl.addEventListener('input', render);
           viewEl.addEventListener('change', render);
         }
         render();
